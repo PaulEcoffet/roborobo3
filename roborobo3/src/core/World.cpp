@@ -265,10 +265,10 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     
 	_iterations++;
     
-    if ( gRefreshUserDisplay == true )
-    {
-        gRefreshUserDisplay = false;
-    }
+//    if ( gRefreshUserDisplay == true )
+//    {
+//        gRefreshUserDisplay = false;
+//    }
 }
 
 

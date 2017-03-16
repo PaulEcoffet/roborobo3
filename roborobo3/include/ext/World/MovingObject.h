@@ -18,6 +18,8 @@ public:
 	~MovingObject() {}
 
 	void display();
+    
+    bool canRegister( int x, int y ); //calls CircleObject::canRegister at the new x and y
 
 	void step();
 	void isTouched( int __idAgent ); // callback, triggered by agent

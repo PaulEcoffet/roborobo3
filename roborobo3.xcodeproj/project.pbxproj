@@ -79,6 +79,7 @@
 		E64820CB1E799BCF005D95AC /* TemplateMovingAgentObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C81E799BCF005D95AC /* TemplateMovingAgentObserver.cpp */; };
 		E64820CC1E799BCF005D95AC /* TemplateMovingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C91E799BCF005D95AC /* TemplateMovingController.cpp */; };
 		E64820CD1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820CA1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp */; };
+		E64820D41E7A96A0005D95AC /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E64820D31E7A96A0005D95AC /* SDL2_image.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -256,6 +257,7 @@
 		E64820C91E799BCF005D95AC /* TemplateMovingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMovingController.cpp; path = TemplateMoving/src/TemplateMovingController.cpp; sourceTree = "<group>"; };
 		E64820CA1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMovingWorldObserver.cpp; path = TemplateMoving/src/TemplateMovingWorldObserver.cpp; sourceTree = "<group>"; };
 		E64820D01E7A9123005D95AC /* template_moving.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = template_moving.properties; sourceTree = "<group>"; };
+		E64820D31E7A96A0005D95AC /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,8 +265,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E64820D41E7A96A0005D95AC /* SDL2_image.framework in Frameworks */,
 				37BA26231BC3C7A9002DF5DC /* SDL2.framework in Frameworks */,
-				37E870AA1E799B20003D6DD8 /* SDL2_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -483,7 +485,7 @@
 				37BA26D71BC3D014002DF5DC /* src */,
 				3705F0891BC67B7C001A016D /* config */,
 				37BA26211BC3C7A9002DF5DC /* SDL2.framework */,
-				37E870A91E799B20003D6DD8 /* SDL2_image.framework */,
+				E64820D31E7A96A0005D95AC /* SDL2_image.framework */,
 				37BA26171BC3C782002DF5DC /* Products */,
 			);
 			sourceTree = "<group>";
@@ -1041,7 +1043,7 @@
 					roborobo3/include/contrib,
 					roborobo3/include/core,
 					/usr/local/include/,
-					/opt/local/include,
+					/opt/local/include/,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1060,7 +1062,7 @@
 					roborobo3/include/contrib,
 					roborobo3/include/core,
 					/usr/local/include/,
-					/opt/local/include,
+					/opt/local/include/,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
