@@ -27,6 +27,7 @@ public :
     ~EnergyItem() { }
 
     void step();
+    void isPushed( int __idAgent, Point2d __speed ); // callback
     void isTouched( int __idAgent ); // callback, triggered by agent
     void isWalked( int __idAgent ); // callback, triggered by agent
 };

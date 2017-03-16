@@ -16,6 +16,10 @@ void RoundObject::step()
     stepPhysicalObject();
 }
 
+void RoundObject::isPushed( int __idAgent, Point2d __speed )
+{
+    
+}
 
 void RoundObject::isTouched( int __idAgent )
 {
