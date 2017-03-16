@@ -264,6 +264,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				37BA26231BC3C7A9002DF5DC /* SDL2.framework in Frameworks */,
+				37E870AA1E799B20003D6DD8 /* SDL2_image.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -482,6 +483,7 @@
 				37BA26D71BC3D014002DF5DC /* src */,
 				3705F0891BC67B7C001A016D /* config */,
 				37BA26211BC3C7A9002DF5DC /* SDL2.framework */,
+				37E870A91E799B20003D6DD8 /* SDL2_image.framework */,
 				37BA26171BC3C782002DF5DC /* Products */,
 			);
 			sourceTree = "<group>";
