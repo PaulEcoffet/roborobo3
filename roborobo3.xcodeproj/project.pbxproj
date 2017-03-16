@@ -255,6 +255,7 @@
 		E64820C81E799BCF005D95AC /* TemplateMovingAgentObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMovingAgentObserver.cpp; path = TemplateMoving/src/TemplateMovingAgentObserver.cpp; sourceTree = "<group>"; };
 		E64820C91E799BCF005D95AC /* TemplateMovingController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMovingController.cpp; path = TemplateMoving/src/TemplateMovingController.cpp; sourceTree = "<group>"; };
 		E64820CA1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMovingWorldObserver.cpp; path = TemplateMoving/src/TemplateMovingWorldObserver.cpp; sourceTree = "<group>"; };
+		E64820D01E7A9123005D95AC /* template_moving.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = template_moving.properties; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -337,6 +338,7 @@
 				37A569C11E38AB2100B983FF /* template_vanillaEE.properties */,
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
 				3705F08B1BC67B7C001A016D /* template_boids.properties */,
+				E64820D01E7A9123005D95AC /* template_moving.properties */,
 				3705F08C1BC67B7C001A016D /* template_medea.properties */,
 				3705F08D1BC67B7C001A016D /* template_wander_bigrobots.properties */,
 				3705F08E1BC67B7C001A016D /* template_wander_smallrobots.properties */,

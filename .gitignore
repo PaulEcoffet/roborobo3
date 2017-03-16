@@ -3,3 +3,4 @@
 logs/
 !roborobo3/roborobo
 .DS_Store
+*.swp
