@@ -48,6 +48,13 @@ void MovingObject::display() {
 	CircleObject::display();
 }
 
+void MovingObject::isPushed( int __idAgent, Point2d __speed)
+{
+   // if (_robotImpulses.count(__idAgent) == 0)
+     //   _robotImpulses.insert(std::pair<int, Point2d>(__idAgent, speed));
+    printf("Boing!\n");
+}
+
 void MovingObject::isTouched( int __idAgent )
 {
 

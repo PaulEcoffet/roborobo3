@@ -16,6 +16,10 @@ void GateObject::step()
     stepPhysicalObject();
 }
 
+void GateObject::isPushed( int __idAgent, Point2d __speed ) {
+    
+}
+
 void GateObject::isTouched( int __idAgent )
 {
 //    if ( gVerbose && gDisplayMode <= 1)

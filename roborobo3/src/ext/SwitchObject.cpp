@@ -31,6 +31,10 @@ void SwitchObject::step()
     stepPhysicalObject();
 }
 
+void SwitchObject::isPushed( int __idAgent, Point2d __speed ) {
+    
+}
+
 void SwitchObject::isTouched( int __idAgent )
 {
 //    if ( gVerbose && gDisplayMode <= 1)

@@ -71,6 +71,7 @@ public :
     virtual void registerObject() = 0; // register object in the world (write images)
     virtual void unregisterObject() = 0; // unregister object in the world (write blank pixels)
 
+    virtual void isPushed( int __idAgent, Point2d __speed) = 0; // callback
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
     virtual void isWalked( int __idAgent ) = 0; // callback, triggered by agent
     
