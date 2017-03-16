@@ -47,6 +47,11 @@ void PhysicalObjectFactory::makeObject( int type )
             gPhysicalObjects.push_back( new SwitchObject(id) );
             break;
         // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
+        case 4:
+            if ( gVerbose )
+                std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
+            gPhysicalObjects.push_back( new MovingObject(id) );
+            break;
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;
             exit(-1);
@@ -55,7 +60,7 @@ void PhysicalObjectFactory::makeObject( int type )
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 4;
+    return 5;
 }
 
 
