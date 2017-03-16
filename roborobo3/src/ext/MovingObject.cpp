@@ -1,4 +1,4 @@
-#include "World/EnergyItem.h"
+#include "World/MovingObject.h"
 
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
