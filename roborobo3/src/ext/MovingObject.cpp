@@ -33,6 +33,7 @@ void MovingObject::step()
         // impulses are in polar form, and angles in degrees
         for (auto& imp : _robotImpulses) {
             //We only want the normal component of the speed wrt the centers of mass
+            // v: robot speed vector, u: robot-object vector
             
             double vx = imp.second.x*cos(imp.second.y * M_PI / 180.0);
             double vy = imp.second.x*sin(imp.second.y * M_PI / 180.0);
@@ -49,10 +50,22 @@ void MovingObject::step()
             impYtot += impY;
         }
         _robotImpulses.clear();
+        
+        int dx = 0, dy = 0;
+        
+        if (impXtot > 0)
+            dx = (int)ceil(impXtot);
+        else
+            dx = (int)floor(impXtot);
+        if (impYtot > 0)
+            dy = (int)ceil(impYtot);
+        else
+            dy = (int)floor(impYtot);
 
-        int newX = _xCenterPixel + (int)lround(impXtot);
-        int newY = _yCenterPixel + (int)lround(impYtot);
-//        printf("[DEBUG] Impulses: %d (x) %d (y).\n", newX-_xCenterPixel, newY-_yCenterPixel);
+        int newX = _xCenterPixel + dx;
+        int newY = _yCenterPixel + dy;
+        printf("[DEBUG] Impulses: %lf->%d (x) %lf->%d (y).\n", impXtot, dx,
+               impYtot, dy);
         
         unregisterObject();
         hide();
