@@ -25,22 +25,34 @@ bool MovingObject::canRegister( int x, int y )
 
 void MovingObject::step()
 {
-    int dx = (rand() % 3) - 1;
-    int dy = (rand() % 3) - 1;
-    
-    unregisterObject();
-    hide();
-    if (canRegister(_xCenterPixel+dx, _yCenterPixel+dy))
+    if (_robotImpulses.size() > 0)
     {
-        _xCenterPixel += dx;
-        _yCenterPixel += dy;
-    }
-    registerObject();
+ //       printf("[DEBUG] Moving object %d\n", _id);
+        double impX = 0, impY = 0;
+        
+        // impulses are in polar form, and angles in degrees
+        for (auto& imp : _robotImpulses) {
+            impX += imp.second.x*cos(imp.second.y * M_PI / 180.0);
+            impY += imp.second.x*sin(imp.second.y * M_PI / 180.0);
+        }
+        _robotImpulses.clear();
 
-//	printf("Moving object %d a little bit, now at %d %d.\n",
-//			_id, _xCenterPixel, _yCenterPixel);
-	stepPhysicalObject();
-	//TODO: probably add stuff here
+        int newX = _xCenterPixel + (int)lround(impX);
+        int newY = _yCenterPixel + (int)lround(impY);
+//        printf("[DEBUG] Impulses: %d (x) %d (y).\n", newX-_xCenterPixel, newY-_yCenterPixel);
+        
+        unregisterObject();
+        hide();
+        
+        if (canRegister(newX, newY))
+        {
+            _xCenterPixel = newX;
+            _yCenterPixel = newY;
+        }
+    
+        registerObject();
+    }
+    stepPhysicalObject();
 }
 
 void MovingObject::display() {
@@ -50,9 +62,9 @@ void MovingObject::display() {
 
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
 {
-   // if (_robotImpulses.count(__idAgent) == 0)
-     //   _robotImpulses.insert(std::pair<int, Point2d>(__idAgent, speed));
-    printf("Boing!\n");
+//    printf("[DEBUG]: object %d is being pushed by agent %d.\n", _id, __idAgent);
+    if (_robotImpulses.count(__idAgent) == 0)
+        _robotImpulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
 }
 
 void MovingObject::isTouched( int __idAgent )
