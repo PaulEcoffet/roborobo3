@@ -81,9 +81,9 @@ void MovingObject::step()
     stepPhysicalObject();
 }
 
-void MovingObject::display() {
+void MovingObject::show() {
 //	printf("Displaying moving object #%d\n", _id);
-	CircleObject::display();
+	CircleObject::show();
 }
 
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
