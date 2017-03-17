@@ -23,7 +23,7 @@ public:
 	MovingObject( int __id );
 	~MovingObject() {}
 
-	void display();
+	void show();
     
     bool canRegister( int x, int y ); //calls CircleObject::canRegister at the new x and y
 
