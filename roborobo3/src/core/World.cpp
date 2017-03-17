@@ -187,11 +187,6 @@ void World::resetWorld()
 
 void World::updateWorld(const Uint8 *__keyboardStates)
 {
-    // update physical object, if any
-    for( std::vector<PhysicalObject*>::iterator it = gPhysicalObjects.begin(); it != gPhysicalObjects.end(); ++it )
-	{
-		(*it)->step();
-	}
     
     // update landmark object, if any
 	for (std::vector<LandmarkObject>::iterator it = gLandmarks.begin(); it < gLandmarks.end() ; it++ )
@@ -264,6 +259,12 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     gLogManager->flush();
     
 	_iterations++;
+    
+    // update physical objects, if any
+    for( std::vector<PhysicalObject*>::iterator it = gPhysicalObjects.begin(); it != gPhysicalObjects.end(); ++it )
+    {
+        (*it)->step();
+    }
     
 //    if ( gRefreshUserDisplay == true )
 //    {
