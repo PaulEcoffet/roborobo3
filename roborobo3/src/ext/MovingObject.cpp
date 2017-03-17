@@ -28,17 +28,30 @@ void MovingObject::step()
     if (_robotImpulses.size() > 0)
     {
  //       printf("[DEBUG] Moving object %d\n", _id);
-        double impX = 0, impY = 0;
+        double impXtot = 0, impYtot = 0;
         
         // impulses are in polar form, and angles in degrees
         for (auto& imp : _robotImpulses) {
-            impX += imp.second.x*cos(imp.second.y * M_PI / 180.0);
-            impY += imp.second.x*sin(imp.second.y * M_PI / 180.0);
+            //We only want the normal component of the speed wrt the centers of mass
+            
+            double vx = imp.second.x*cos(imp.second.y * M_PI / 180.0);
+            double vy = imp.second.x*sin(imp.second.y * M_PI / 180.0);
+            
+            Robot *robot = gWorld->getRobot(imp.first);
+            double ux = (double)_xCenterPixel - robot->getWorldModel()->getXReal();
+            double uy = (double)_yCenterPixel - robot->getWorldModel()->getYReal();
+            double sqnorm = ux*ux + uy*uy;
+            
+            double impX = (vx*ux+vy*uy)*ux/sqnorm;
+            double impY = (vx*ux+vy*uy)*uy/sqnorm;
+            
+            impXtot += impX;
+            impYtot += impY;
         }
         _robotImpulses.clear();
 
-        int newX = _xCenterPixel + (int)lround(impX);
-        int newY = _yCenterPixel + (int)lround(impY);
+        int newX = _xCenterPixel + (int)lround(impXtot);
+        int newY = _yCenterPixel + (int)lround(impYtot);
 //        printf("[DEBUG] Impulses: %d (x) %d (y).\n", newX-_xCenterPixel, newY-_yCenterPixel);
         
         unregisterObject();
