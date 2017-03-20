@@ -53,16 +53,8 @@ void MovingObject::step()
         }
         _impulses.clear();
         
-        int dx = 0, dy = 0;
-        
-        if (impXtot > 0)
-            dx = (int)ceil(impXtot);
-        else
-            dx = (int)floor(impXtot);
-        if (impYtot > 0)
-            dy = (int)ceil(impYtot);
-        else
-            dy = (int)floor(impYtot);
+        int dx = roundAwayFromZero(impXtot);
+        int dy = roundAwayFromZero(impYtot);
 
         int newX = _xCenterPixel + dx;
         int newY = _yCenterPixel + dy;
