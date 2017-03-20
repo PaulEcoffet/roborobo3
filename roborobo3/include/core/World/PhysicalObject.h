@@ -24,6 +24,10 @@ protected :
     Sint16 _xCenterPixel;
     Sint16 _yCenterPixel;
     
+    // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
+    double _xDesiredSpeed;
+    double _yDesiredSpeed;
+    
     Uint8 _displayColorRed;
     Uint8 _displayColorGreen;
     Uint8 _displayColorBlue;

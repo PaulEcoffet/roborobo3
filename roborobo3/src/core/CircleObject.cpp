@@ -164,8 +164,20 @@ bool CircleObject::canRegister()
             if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _radius)
             {
                 Uint32 pixel = getPixel32_secured( gEnvironmentImage, xColor, yColor);
-                if ( pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) )
+                if ( pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) {
+                    // if we touched an object, tell it
+                    Uint8 r, g, b;
+                    SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
+                    
+                    int targetIndex = (r<<16)+(g<<8)+b;
+                    
+                    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset )   // physical object
+                    {
+                        targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
+                        gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_xDesiredSpeed, _yDesiredSpeed));
+                    }
                     return false; // collision!
+                }
             }
         }
     }
