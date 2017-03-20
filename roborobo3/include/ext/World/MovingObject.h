@@ -14,9 +14,9 @@ class MovingObject : public CircleObject
 
 private:
     
-    // the impulses given to the object by nearby robots in the current time step
+    // the impulses given to the object by nearby robots in the current time step, or other objects in the former
     // The vectors are given in polar form
-    std::map<int, Point2d> _robotImpulses;
+    std::map<int, Point2d> _impulses;
 
 public:
 
