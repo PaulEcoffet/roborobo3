@@ -61,6 +61,8 @@ bool convertFromString(T& t,
 
 double computeModulo(double a, double b);
 
+int roundAwayFromZero(double x);
+
 // return current time in a string, with readable format - e.g. 20100526-10h12m08s
 // check: http://www.cplusplus.com/reference/clibrary/ctime/strftime/
 std::string getCurrentTimeAsReadableString();

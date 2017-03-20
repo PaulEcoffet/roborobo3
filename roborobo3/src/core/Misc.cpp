@@ -50,6 +50,14 @@ double computeModulo( double a , double b )
 	return a - static_cast<double>( result ) * b;
 }
 
+int roundAwayFromZero( double x )
+{
+    if (x > 0)
+        return (int)ceil(x);
+    else
+        return (int)floor(x);
+}
+
 
 std::string getCurrentTimeAsReadableString()
 {
