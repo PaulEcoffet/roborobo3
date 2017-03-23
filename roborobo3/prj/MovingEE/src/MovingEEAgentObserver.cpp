@@ -34,7 +34,6 @@ void MovingEEAgentObserver::step()
     if ( _wm->isAlive() && _wm->getPushed() )
     {
         _wm->_fitnessValue = _wm->_fitnessValue + 1;
-        printf("[DEBUG] increased fitness of robot %d\n", _wm->getId());
     }
     _wm->setPushed(false);
 
