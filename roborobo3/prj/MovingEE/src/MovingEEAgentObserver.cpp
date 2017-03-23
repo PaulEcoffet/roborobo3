@@ -24,18 +24,19 @@ MovingEEAgentObserver::~MovingEEAgentObserver()
 }
 
 /*
- * Manage foraging of energy items.
- * If walked on, the item disappear (callback to item object) and agent's fitness function is updated.
- * Assume that *only* energy point's footprint can be walked upon. That means that for this code to correctly run you should avoid placing any objects detectable through the robot's ground sensor.
+ * Manage pushing items.
+ * If we pushed something, increase our fitness.
  *
  */
 void MovingEEAgentObserver::step()
 {
     // * update fitness (if needed)
-    if ( _wm->isAlive() && PhysicalObject::isInstanceOf(_wm->getGroundSensorValue()) )
+    if ( _wm->isAlive() && _wm->getPushed() )
     {
         _wm->_fitnessValue = _wm->_fitnessValue + 1;
+        printf("[DEBUG] increased fitness of robot %d\n", _wm->getId());
     }
+    _wm->setPushed(false);
 
     TemplateEEAgentObserver::step();
 }
