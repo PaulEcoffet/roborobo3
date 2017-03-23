@@ -89,10 +89,15 @@ void MovingObject::show() {
 
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
 {
-    
-//    printf("[DEBUG]: object %d is being pushed by agent %d.\n", _id, __idAgent);
-    if (_impulses.count(__idAgent) == 0)
+    if (_impulses.count(__idAgent) == 0) {
+//        printf("[DEBUG] object %d is being pushed by agent %d.\n", _id, __idAgent);
         _impulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
+        // If the agent is a robot, tell it we pushed something
+        if (__idAgent >= gRobotIndexStartOffset) {
+            Robot* robot = gWorld->getRobot(__idAgent-gRobotIndexStartOffset);
+            robot->getWorldModel()->setPushed(true);
+        }
+    }
 }
 
 void MovingObject::isTouched( int __idAgent )

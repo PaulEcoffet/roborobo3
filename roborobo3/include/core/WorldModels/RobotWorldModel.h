@@ -102,6 +102,10 @@ public:
 	
     double _fitnessValue; // optional
     
+    // interactions with objects
+    
+    bool _pushedObject; // true if we pushed an object in the current time step, used for fitness evaluation
+    
 	// * Initializes the variables
     RobotWorldModel();
     virtual ~RobotWorldModel();
@@ -247,6 +251,15 @@ public:
         return ( _groupId );
     }
 
+    void setPushed( bool __pushedObject )
+    {
+        _pushedObject = __pushedObject;
+    }
+    
+    bool getPushed()
+    {
+        return _pushedObject;
+    }
 
 };
 
