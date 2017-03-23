@@ -251,12 +251,6 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     
 	_iterations++;
     
-    // update physical objects, if any
-    for( std::vector<PhysicalObject*>::iterator it = gPhysicalObjects.begin(); it != gPhysicalObjects.end(); ++it )
-    {
-        (*it)->step();
-    }
-    
 //    if ( gRefreshUserDisplay == true )
 //    {
 //        gRefreshUserDisplay = false;
