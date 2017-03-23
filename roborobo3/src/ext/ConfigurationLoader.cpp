@@ -8,6 +8,7 @@
 #include "Config/TemplateVanillaEEConfigurationLoader.h"
 #include "Config/TemplateMedeaConfigurationLoader.h"
 #include "Config/TemplateMovingConfigurationLoader.h"
+#include "Config/MovingEEConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -67,6 +68,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "TemplateMovingConfigurationLoader" )
 	{
 		return new TemplateMovingConfigurationLoader();
+	}
+#endif
+#if defined PRJ_MOVINGEE || !defined MODULAR
+	else if (configurationLoaderObjectName == "MovingEEConfigurationLoader" )
+	{
+		return new MovingEEConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

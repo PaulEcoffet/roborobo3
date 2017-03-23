@@ -80,6 +80,11 @@
 		E64820CC1E799BCF005D95AC /* TemplateMovingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C91E799BCF005D95AC /* TemplateMovingController.cpp */; };
 		E64820CD1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820CA1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp */; };
 		E64820D41E7A96A0005D95AC /* SDL2_image.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E64820D31E7A96A0005D95AC /* SDL2_image.framework */; };
+		E6F09B401E84087100EF24BD /* MovingEEAgentObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B3C1E84087100EF24BD /* MovingEEAgentObserver.cpp */; };
+		E6F09B411E84087100EF24BD /* MovingEEController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B3D1E84087100EF24BD /* MovingEEController.cpp */; };
+		E6F09B421E84087100EF24BD /* MovingEESharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B3E1E84087100EF24BD /* MovingEESharedData.cpp */; };
+		E6F09B431E84087100EF24BD /* MovingEEWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B3F1E84087100EF24BD /* MovingEEWorldObserver.cpp */; };
+		E6F09B461E84089200EF24BD /* MovingEEConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B451E84089200EF24BD /* MovingEEConfigurationLoader.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -258,6 +263,17 @@
 		E64820CA1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = TemplateMovingWorldObserver.cpp; path = TemplateMoving/src/TemplateMovingWorldObserver.cpp; sourceTree = "<group>"; };
 		E64820D01E7A9123005D95AC /* template_moving.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = template_moving.properties; sourceTree = "<group>"; };
 		E64820D31E7A96A0005D95AC /* SDL2_image.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SDL2_image.framework; path = ../../../../../Library/Frameworks/SDL2_image.framework; sourceTree = "<group>"; };
+		E6F09B381E84086500EF24BD /* MovingEEAgentObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingEEAgentObserver.h; path = MovingEE/include/MovingEEAgentObserver.h; sourceTree = "<group>"; };
+		E6F09B391E84086500EF24BD /* MovingEEController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingEEController.h; path = MovingEE/include/MovingEEController.h; sourceTree = "<group>"; };
+		E6F09B3A1E84086500EF24BD /* MovingEESharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingEESharedData.h; path = MovingEE/include/MovingEESharedData.h; sourceTree = "<group>"; };
+		E6F09B3B1E84086500EF24BD /* MovingEEWorldObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingEEWorldObserver.h; path = MovingEE/include/MovingEEWorldObserver.h; sourceTree = "<group>"; };
+		E6F09B3C1E84087100EF24BD /* MovingEEAgentObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MovingEEAgentObserver.cpp; path = MovingEE/src/MovingEEAgentObserver.cpp; sourceTree = "<group>"; };
+		E6F09B3D1E84087100EF24BD /* MovingEEController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MovingEEController.cpp; path = MovingEE/src/MovingEEController.cpp; sourceTree = "<group>"; };
+		E6F09B3E1E84087100EF24BD /* MovingEESharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MovingEESharedData.cpp; path = MovingEE/src/MovingEESharedData.cpp; sourceTree = "<group>"; };
+		E6F09B3F1E84087100EF24BD /* MovingEEWorldObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MovingEEWorldObserver.cpp; path = MovingEE/src/MovingEEWorldObserver.cpp; sourceTree = "<group>"; };
+		E6F09B441E84088000EF24BD /* MovingEEConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingEEConfigurationLoader.h; sourceTree = "<group>"; };
+		E6F09B451E84089200EF24BD /* MovingEEConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingEEConfigurationLoader.cpp; sourceTree = "<group>"; };
+		E6F09B471E8408BE00EF24BD /* movingEE.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = movingEE.properties; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -342,6 +358,7 @@
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
 				3705F08B1BC67B7C001A016D /* template_boids.properties */,
 				E64820D01E7A9123005D95AC /* template_moving.properties */,
+				E6F09B471E8408BE00EF24BD /* movingEE.properties */,
 				3705F08C1BC67B7C001A016D /* template_medea.properties */,
 				3705F08D1BC67B7C001A016D /* template_wander_bigrobots.properties */,
 				3705F08E1BC67B7C001A016D /* template_wander_smallrobots.properties */,
@@ -651,6 +668,7 @@
 		37BA26591BC3D014002DF5DC /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				E6F09B441E84088000EF24BD /* MovingEEConfigurationLoader.h */,
 				3766DF761E2914160069E44C /* TemplateEEConfigurationLoader.h */,
 				3705F0561BC66E03001A016D /* TemplateBoidsConfigurationLoader.h */,
 				E64820C01E799A6E005D95AC /* TemplateMovingConfigurationLoader.h */,
@@ -680,6 +698,7 @@
 		37BA269F1BC3D014002DF5DC /* prj */ = {
 			isa = PBXGroup;
 			children = (
+				E6F09B331E84081400EF24BD /* MovingEE */,
 				37BA26D61BC3D014002DF5DC /* readme.txt */,
 				E64820C41E799BBD005D95AC /* TemplateMoving */,
 				3766DF671E29125D0069E44C /* TemplateVanillaEE */,
@@ -778,6 +797,7 @@
 				37BA27071BC3D014002DF5DC /* SwitchObject.cpp */,
 				3766DF771E29141E0069E44C /* TemplateEEConfigurationLoader.cpp */,
 				E64820C11E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp */,
+				E6F09B451E84089200EF24BD /* MovingEEConfigurationLoader.cpp */,
 				3705F0591BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp */,
 				3739761A1BCEAA2F00A007BF /* TemplateRandomwalkConfigurationLoader.cpp */,
 				37C8103F1E28AF1F00A71E6F /* TemplateMedeaConfigurationLoader.cpp */,
@@ -814,6 +834,37 @@
 				E64820CA1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp */,
 			);
 			name = src;
+			sourceTree = "<group>";
+		};
+		E6F09B331E84081400EF24BD /* MovingEE */ = {
+			isa = PBXGroup;
+			children = (
+				E6F09B371E84085600EF24BD /* include */,
+				E6F09B351E84084700EF24BD /* src */,
+			);
+			name = MovingEE;
+			sourceTree = "<group>";
+		};
+		E6F09B351E84084700EF24BD /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E6F09B3C1E84087100EF24BD /* MovingEEAgentObserver.cpp */,
+				E6F09B3D1E84087100EF24BD /* MovingEEController.cpp */,
+				E6F09B3E1E84087100EF24BD /* MovingEESharedData.cpp */,
+				E6F09B3F1E84087100EF24BD /* MovingEEWorldObserver.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		E6F09B371E84085600EF24BD /* include */ = {
+			isa = PBXGroup;
+			children = (
+				E6F09B381E84086500EF24BD /* MovingEEAgentObserver.h */,
+				E6F09B391E84086500EF24BD /* MovingEEController.h */,
+				E6F09B3A1E84086500EF24BD /* MovingEESharedData.h */,
+				E6F09B3B1E84086500EF24BD /* MovingEEWorldObserver.h */,
+			);
+			name = include;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -883,6 +934,7 @@
 				37BA273A1BC3D014002DF5DC /* CellularMap.cpp in Sources */,
 				37BA273B1BC3D014002DF5DC /* CircleObject.cpp in Sources */,
 				37C810401E28AF1F00A71E6F /* TemplateMedeaConfigurationLoader.cpp in Sources */,
+				E6F09B401E84087100EF24BD /* MovingEEAgentObserver.cpp in Sources */,
 				3705F0811BC66E3B001A016D /* TemplateBoidsWorldObserver.cpp in Sources */,
 				37BA27431BC3D014002DF5DC /* Misc.cpp in Sources */,
 				37BA27521BC3D014002DF5DC /* EnergyItem.cpp in Sources */,
@@ -892,6 +944,7 @@
 				37BA27461BC3D014002DF5DC /* roborobo.cpp in Sources */,
 				37BA27581BC3D014002DF5DC /* RoundObject.cpp in Sources */,
 				3766DF751E29125D0069E44C /* TemplateVanillaEEWorldObserver.cpp in Sources */,
+				E6F09B461E84089200EF24BD /* MovingEEConfigurationLoader.cpp in Sources */,
 				37BA27381BC3D014002DF5DC /* Agent.cpp in Sources */,
 				37BA27361BC3D014002DF5DC /* Properties.cpp in Sources */,
 				37BA27391BC3D014002DF5DC /* AgentObserver.cpp in Sources */,
@@ -904,6 +957,7 @@
 				37BA273E1BC3D014002DF5DC /* Geometry.cpp in Sources */,
 				3705F07F1BC66E3B001A016D /* TemplateBoidsController.cpp in Sources */,
 				37BA27561BC3D014002DF5DC /* PhysicalObjectFactory.cpp in Sources */,
+				E6F09B411E84087100EF24BD /* MovingEEController.cpp in Sources */,
 				37BA27411BC3D014002DF5DC /* LogManager.cpp in Sources */,
 				37BA27371BC3D014002DF5DC /* StringUtils.cpp in Sources */,
 				E64820CC1E799BCF005D95AC /* TemplateMovingController.cpp in Sources */,
@@ -917,6 +971,7 @@
 				3705F05E1BC66E21001A016D /* TemplateWanderConfigurationLoader.cpp in Sources */,
 				37BA27531BC3D014002DF5DC /* GateObject.cpp in Sources */,
 				376C24661E28BBA800E70850 /* TemplateMedeaWorldObserver.cpp in Sources */,
+				E6F09B431E84087100EF24BD /* MovingEEWorldObserver.cpp in Sources */,
 				3766DF731E29125D0069E44C /* TemplateVanillaEEController.cpp in Sources */,
 				37BA27351BC3D014002DF5DC /* ReservoirNeuralNetwork.cpp in Sources */,
 				E64820C21E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp in Sources */,
@@ -934,6 +989,7 @@
 				37BA27501BC3D014002DF5DC /* ConfigurationLoader.cpp in Sources */,
 				376C24651E28BBA800E70850 /* TemplateMedeaSharedData.cpp in Sources */,
 				3766DF721E29125D0069E44C /* TemplateVanillaEEAgentObserver.cpp in Sources */,
+				E6F09B421E84087100EF24BD /* MovingEESharedData.cpp in Sources */,
 				37BA272F1BC3D014002DF5DC /* Elman.cpp in Sources */,
 				37BA27481BC3D014002DF5DC /* RobotWorldModel.cpp in Sources */,
 				37BA27421BC3D014002DF5DC /* main.cpp in Sources */,
