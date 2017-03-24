@@ -44,7 +44,6 @@ void MovingObject::step()
             impXtot += (vx*ux+vy*uy)*ux/sqnorm;
             impYtot += (vx*ux+vy*uy)*uy/sqnorm;
         }
-        _impulses.clear();
         
         _xDesiredSpeed = impXtot;
         _yDesiredSpeed = impYtot;
@@ -54,23 +53,37 @@ void MovingObject::step()
         
         int newX = _xCenterPixel + dx;
         int newY = _yCenterPixel + dy;
-        //       printf("[DEBUG] Impulses: %lf->%d (x) %lf->%d (y).\n", impXtot, dx,
-        //              impYtot, dy);
-        
-        unregisterObject();
-        hide();
-        
-        if (canRegister(newX, newY))
+    
+        if (dx != 0 || dy != 0) // we're going to try to move
         {
-            _xCenterPixel = newX;
-            _yCenterPixel = newY;
+            unregisterObject();
+            hide();
+            
+            bool actuallyMoved = false;
+            
+            if (canRegister(newX, newY))
+            {
+                _xCenterPixel = newX;
+                _yCenterPixel = newY;
+                actuallyMoved = true;
+            }
+            
+            if (_hitWall) { // reappear somewhere else
+                registered = false;
+                _visible = false;
+            }
+            else {
+                registerObject();
+                // tell robots that the push was successful (remember we did move)
+                if (actuallyMoved)
+                    for (auto& imp: _impulses)
+                        if (imp.first >= gRobotIndexStartOffset) {
+                            Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
+                            robot->getWorldModel()->setPushed(true);
+                        }
+            }
         }
-        if (_hitWall) { // reappear somewhere else
-            registered = false;
-            _visible = false;
-        }
-        else
-            registerObject();
+        _impulses.clear();
     }
     stepPhysicalObject();
 }
@@ -85,11 +98,6 @@ void MovingObject::isPushed( int __idAgent, Point2d __speed)
     if (_impulses.count(__idAgent) == 0) {
 //        printf("[DEBUG] object %d is being pushed by agent %d.\n", _id, __idAgent);
         _impulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
-        // If the agent is a robot, tell it we pushed something
-        if (__idAgent >= gRobotIndexStartOffset) {
-            Robot* robot = gWorld->getRobot(__idAgent-gRobotIndexStartOffset);
-            robot->getWorldModel()->setPushed(true);
-        }
     }
 }
 
