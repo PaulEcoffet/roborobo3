@@ -26,6 +26,8 @@ protected:
     double _xDesiredSpeed;
     double _yDesiredSpeed;
     
+    bool _hitWall;
+    
 public :
     
     CircleObject( int __id ); // use PhysicalObjectFactory instead!
