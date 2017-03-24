@@ -24,8 +24,6 @@ public:
 	~MovingObject() {}
 
 	void show();
-    
-    bool canRegister( int x, int y ); //calls CircleObject::canRegister at the new x and y
 
 	void step();
     void isPushed( int __idAgent, Point2d __speed) ; // callback
