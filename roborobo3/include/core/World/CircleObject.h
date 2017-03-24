@@ -22,6 +22,10 @@ protected:
     double _radius; // radius. In pixels.
     double _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
     
+    // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
+    double _xDesiredSpeed;
+    double _yDesiredSpeed;
+    
 public :
     
     CircleObject( int __id ); // use PhysicalObjectFactory instead!
