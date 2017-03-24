@@ -13,6 +13,7 @@ MovingObject::MovingObject( int __id ) : CircleObject ( __id )
 
 void MovingObject::step()
 {
+    _hitWall = false;
     if (_impulses.size() > 0)
     {
         //       printf("[DEBUG] Moving object %d\n", _id);
@@ -64,8 +65,12 @@ void MovingObject::step()
             _xCenterPixel = newX;
             _yCenterPixel = newY;
         }
-        
-        registerObject();
+        if (_hitWall) { // reappear somewhere else
+            registered = false;
+            _visible = false;
+        }
+        else
+            registerObject();
     }
     stepPhysicalObject();
 }

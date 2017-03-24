@@ -175,6 +175,8 @@ bool CircleObject::canRegister( int __x, int __y )
                     {
                         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
                         gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_xDesiredSpeed, _yDesiredSpeed));
+                    } else if (targetIndex < gRobotIndexStartOffset) {
+                        _hitWall = true;
                     }
                     return false; // collision!
                 }
