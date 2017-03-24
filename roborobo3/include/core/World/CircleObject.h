@@ -31,7 +31,8 @@ public :
     CircleObject( int __id ); // use PhysicalObjectFactory instead!
     ~CircleObject() { }
 
-    bool canRegister(); // test if register object is possible (use both shape or footprints)
+    bool canRegister(); // can we register at current position
+    bool canRegister( int __x, int __y ); // can we register the object at that position
     void registerObject(); // register object in the world (write images)
     void unregisterObject(); // unregister object in the world (write blank pixels)
     void show(); // wrt. screen-rendering

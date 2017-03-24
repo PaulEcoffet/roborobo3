@@ -11,18 +11,6 @@ MovingObject::MovingObject( int __id ) : CircleObject ( __id )
     setType(5);
 }
 
-bool MovingObject::canRegister( int x, int y )
-{
-    int oldX = _xCenterPixel;
-    int oldY = _yCenterPixel;
-    _xCenterPixel = x;
-    _yCenterPixel = y;
-    bool canReg = CircleObject::canRegister();
-    _xCenterPixel = oldX;
-    _yCenterPixel = oldY;
-    return canReg;
-}
-
 void MovingObject::step()
 {
     if (_impulses.size() > 0)

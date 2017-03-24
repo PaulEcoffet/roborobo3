@@ -154,14 +154,14 @@ void CircleObject::hide()
 	}
 }
 
-bool CircleObject::canRegister()
+bool CircleObject::canRegister( int __x, int __y )
 {
     // test shape
-    for (Sint16 xColor = _xCenterPixel - Sint16(_radius) ; xColor < _xCenterPixel + Sint16(_radius) ; xColor++)
+    for (Sint16 xColor = __x - Sint16(_radius) ; xColor < __x + Sint16(_radius) ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_radius) ; yColor < _yCenterPixel + Sint16 (_radius); yColor ++)
+        for (Sint16 yColor = __y - Sint16(_radius) ; yColor < __y + Sint16 (_radius); yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _radius)
+            if ( pow (xColor-__x,2) + pow (yColor - __y,2) < _radius*_radius )
             {
                 Uint32 pixel = getPixel32_secured( gEnvironmentImage, xColor, yColor);
                 if ( pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) {
@@ -183,11 +183,11 @@ bool CircleObject::canRegister()
     }
     
     //  test footprint (pixels from both ground image and environment image must be empty)
-    for (Sint16 xColor = _xCenterPixel - Sint16(_footprintRadius) ; xColor < _xCenterPixel + Sint16(_footprintRadius) ; xColor++)
+    for (Sint16 xColor = __x - Sint16(_footprintRadius) ; xColor < __x + Sint16(_footprintRadius) ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_footprintRadius) ; yColor < _yCenterPixel + Sint16 (_footprintRadius); yColor ++)
+        for (Sint16 yColor = __y - Sint16(_footprintRadius) ; yColor < __y + Sint16 (_footprintRadius); yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _footprintRadius)
+            if ( pow(xColor-__x,2) + pow(yColor - __y,2) < _footprintRadius*_footprintRadius )
             {
                 Uint32 pixelFootprint = getPixel32_secured( gFootprintImage, xColor, yColor);
                 Uint32 pixelEnvironment = getPixel32_secured( gEnvironmentImage, xColor, yColor);
@@ -202,6 +202,11 @@ bool CircleObject::canRegister()
     }
     
     return true;
+}
+
+bool CircleObject::canRegister()
+{
+    return canRegister(_xCenterPixel, _yCenterPixel);
 }
 
 void CircleObject::registerObject()
