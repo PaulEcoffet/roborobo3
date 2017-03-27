@@ -362,7 +362,7 @@ void CircleObject::step()
     stepPhysicalObject();
 }
 
-void CircleObject::isPushed(int __idAgent, Point2d __speed)
+void CircleObject::push(int __idAgent, Point2d __speed)
 {
     if (gMovableCircleObjects)
     {

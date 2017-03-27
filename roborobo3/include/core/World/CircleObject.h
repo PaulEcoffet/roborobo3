@@ -47,7 +47,7 @@ public:
     
     void step(); // handles dynamics
     
-    void isPushed( int __idAgent, Point2d __speed ); // callback
+    void push( int __idAgent, Point2d __speed ); // register we've been pushed
     
 };
 
