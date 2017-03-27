@@ -31,27 +31,10 @@ void MovingNSAgentObserver::reset()
 
 void MovingNSAgentObserver::step()
 {
-    // * send callback messages to objects touched or walked upon.
-    
-    // through distance sensors
-    for( int i = 0 ; i < _wm->_cameraSensorsNb; i++)
+    // * update fitness (if needed)
+    if ( _wm->isAlive() && _wm->getPushed() )
     {
-        int targetIndex = _wm->getObjectIdFromCameraSensor(i);
-        
-        if ( PhysicalObject::isInstanceOf(targetIndex) )   // sensor ray bumped into a physical object
-        {
-            targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-            //std::cout << "[DEBUG] Robot #" << _wm->getId() << " touched " << targetIndex << "\n";
-            gPhysicalObjects[targetIndex]->isTouched(_wm->getId());
-        }
+        _wm->_fitnessValue = _wm->_fitnessValue + 1;
     }
-    
-    // through floor sensor
-    int targetIndex = _wm->getGroundSensorValue();
-    if ( PhysicalObject::isInstanceOf(targetIndex) ) // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
-    {
-        targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-        //std::cout << "[DEBUG] #" << _wm->getId() << " walked upon " << targetIndex << "\n";
-        gPhysicalObjects[targetIndex]->isWalked(_wm->getId());
-    }
+    _wm->setPushed(false);
 }

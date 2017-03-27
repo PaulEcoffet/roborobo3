@@ -698,18 +698,69 @@ void MovingNSController::broadcastGenome()
 
 void MovingNSController::performSelection() // called only if at least 1 genome was stored.
 {
-    switch ( MovingNSSharedData::gSelectionMethod )
+    std::pair<int,int> bestId;
+    
+    std::map<std::pair<int,int>, float >::iterator fitnessesIt = _fitnessValuesList.begin();
+    
+    float bestFitnessValue = (*fitnessesIt).second;
+    bestId = (*fitnessesIt).first;
+    
+    ++fitnessesIt;
+    
+    int nbSimilar = 0;
+    
+    for ( int i = 1 ; fitnessesIt != _fitnessValuesList.end(); ++fitnessesIt, i++)
     {
-        case 0:
-            selectRandomGenome();
-            break;
-        case 1:
-            selectFirstGenome();
-            break;
-        default:
-            std::cerr << "[ERROR] unknown selection method (gSelectionMethod = " << MovingNSSharedData::gSelectionMethod << ")\n";
-            exit(-1);
+        if ( (*fitnessesIt).second >= bestFitnessValue )
+        {
+            if ( (*fitnessesIt).second > bestFitnessValue )
+            {
+                bestFitnessValue = (*fitnessesIt).second;
+                bestId = (*fitnessesIt).first;
+                nbSimilar = 0;
+            }
+            else
+            {
+                nbSimilar++;
+            }
+        }
     }
+    
+    if ( nbSimilar > 0 ) // >1 genomes have the same fitness best value. Pick randomly among them
+    {
+        int count = 0;
+        int randomPick = rand() % ( nbSimilar + 1 );
+        
+        if ( randomPick != 0 ) // not already stored (i.e. not the first one)
+        {
+            fitnessesIt = _fitnessValuesList.begin();
+            for ( int i = 0 ; ; ++fitnessesIt, i++)
+            {
+                if ( (*fitnessesIt).second == bestFitnessValue )
+                {
+                    if ( count == randomPick )
+                    {
+                        bestId = (*fitnessesIt).first;
+                        break;
+                    }
+                    count++;
+                }
+            }
+        }
+    }
+    
+    _birthdate = gWorld->getIterations();
+    
+    _currentGenome = _genomesList[bestId];
+    _currentSigma = _sigmaList[bestId];
+    
+    setNewGenomeStatus(true);
+    
+    // Logging: track descendance
+    std::string sLog = std::string("");
+    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string((*_genomesList.begin()).first.first) + "::" + std::to_string((*_genomesList.begin()).first.second) + "\n";
+    gLogManager->write(sLog);
+    gLogManager->flush();
 }
 
 
@@ -853,7 +904,7 @@ void MovingNSController::logCurrentState()
 double MovingNSController::getFitness()
 {
     // nothing to do
-    return -1;
+    return _wm->_fitnessValue;
 }
 
 /*
@@ -861,7 +912,7 @@ double MovingNSController::getFitness()
  */
 void MovingNSController::resetFitness()
 {
-    // nothing to do
+    _wm->_fitnessValue = 0;
 }
 
 void MovingNSController::updateFitness()
