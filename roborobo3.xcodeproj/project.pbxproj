@@ -698,8 +698,8 @@
 		37BA269F1BC3D014002DF5DC /* prj */ = {
 			isa = PBXGroup;
 			children = (
-				E6F09B331E84081400EF24BD /* MovingEE */,
 				37BA26D61BC3D014002DF5DC /* readme.txt */,
+				E6F09B331E84081400EF24BD /* MovingEE */,
 				E64820C41E799BBD005D95AC /* TemplateMoving */,
 				3766DF671E29125D0069E44C /* TemplateVanillaEE */,
 				376C24581E28BBA800E70850 /* TemplateMedea */,

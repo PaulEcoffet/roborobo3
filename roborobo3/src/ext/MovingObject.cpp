@@ -23,7 +23,7 @@ void MovingObject::show() {
 
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
 {
-    CircleObject::isPushed(__idAgent, __speed);
+    CircleObject::push(__idAgent, __speed);
 }
 
 void MovingObject::isTouched( int __idAgent )
@@ -33,11 +33,5 @@ void MovingObject::isTouched( int __idAgent )
 
 void MovingObject::isWalked( int __idAgent )
 {
-    // just make the object disappear for now
-    regrowTime = regrowTimeMax;
-    
-    registered = false;
-    unregisterObject();
-    hide();
-    _visible = false;
+
 }
