@@ -9,6 +9,8 @@
 #include "MovingNS/include/MovingNSController.h"
 #include "World/World.h"
 
+#include <cfloat>
+
 MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( world )
 {
     _world = world;
@@ -144,20 +146,35 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     // * monitoring: count number of active agents.
     
     int activeCount = 0;
+    double sumOfFitnesses = 0;
+    double minFitness = DBL_MAX;
+    double maxFitness = -DBL_MAX;
+    
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
     {
-        if ( (dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController()))->getWorldModel()->isAlive() == true )
+        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController());
+        
+        if ( ctl->getWorldModel()->isAlive() == true )
+        {
             activeCount++;
+            sumOfFitnesses += ctl->getFitness() ;
+            if ( ctl->getFitness() < minFitness )
+                minFitness = ctl->getFitness();
+            if ( ctl->getFitness() > maxFitness )
+                maxFitness = ctl->getFitness();
+        }
     }
     
     if ( gVerbose && localVerbose )
     {
-        std::cout << "[gen:" << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << ";it:" << gWorld->getIterations() << ";pop:" << activeCount << "]\n";
+        std::cout << "[gen:" << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << ";it:" << gWorld->getIterations() << ";pop:" << activeCount << ";avgFitness:" << sumOfFitnesses/activeCount << "]\n";
     }
+    
+    // display lightweight logs for easy-parsing
+    std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << activeCount << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/activeCount << "\n";
     
     // Logging, population-level: alive
     std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(activeCount) + "\n";
-    
     gLogManager->write(sLog);
     gLogManager->flush();
     
