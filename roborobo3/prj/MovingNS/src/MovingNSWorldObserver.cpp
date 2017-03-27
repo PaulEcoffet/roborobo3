@@ -10,6 +10,7 @@
 #include "World/World.h"
 
 #include <cfloat>
+#include <random>
 
 MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( world )
 {
@@ -84,6 +85,7 @@ void MovingNSWorldObserver::step()
     
     if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
     {
+                
         // update iterations and generations counters
         _generationItCount = 0;
         _generationCount++;
@@ -178,4 +180,26 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     gLogManager->write(sLog);
     gLogManager->flush();
     
+}
+
+int MovingNSWorldObserver::chooseGenome() {
+    double fitnessSum = 0;
+    
+    for (int i = 0; i < gNbOfRobots; i++)
+    {
+        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController());
+        fitnessSum += ctl->getFitness();
+    }
+    
+    bool done = false;
+    int pick = -1;
+    while (done == false)
+    {
+        pick = rand()%gNbOfRobots;
+        MovingNSController *chosenCtl = dynamic_cast<MovingNSController*>(gWorld->getRobot(pick)->getController());
+        double ok = ranf()*fitnessSum;
+        done = (ok <= chosenCtl->getFitness());
+    }
+    
+    return pick;
 }

@@ -696,69 +696,20 @@ void MovingNSController::broadcastGenome()
     }
 }
 
-void MovingNSController::performSelection() // called only if at least 1 genome was stored.
+void MovingNSController::performSelection()
 {
-    std::pair<int,int> bestId;
+    MovingNSWorldObserver *obs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
+    int sourceId = obs->chooseGenome();
     
-    std::map<std::pair<int,int>, float >::iterator fitnessesIt = _fitnessValuesList.begin();
-    
-    float bestFitnessValue = (*fitnessesIt).second;
-    bestId = (*fitnessesIt).first;
-    
-    ++fitnessesIt;
-    
-    int nbSimilar = 0;
-    
-    for ( int i = 1 ; fitnessesIt != _fitnessValuesList.end(); ++fitnessesIt, i++)
-    {
-        if ( (*fitnessesIt).second >= bestFitnessValue )
-        {
-            if ( (*fitnessesIt).second > bestFitnessValue )
-            {
-                bestFitnessValue = (*fitnessesIt).second;
-                bestId = (*fitnessesIt).first;
-                nbSimilar = 0;
-            }
-            else
-            {
-                nbSimilar++;
-            }
-        }
-    }
-    
-    if ( nbSimilar > 0 ) // >1 genomes have the same fitness best value. Pick randomly among them
-    {
-        int count = 0;
-        int randomPick = rand() % ( nbSimilar + 1 );
-        
-        if ( randomPick != 0 ) // not already stored (i.e. not the first one)
-        {
-            fitnessesIt = _fitnessValuesList.begin();
-            for ( int i = 0 ; ; ++fitnessesIt, i++)
-            {
-                if ( (*fitnessesIt).second == bestFitnessValue )
-                {
-                    if ( count == randomPick )
-                    {
-                        bestId = (*fitnessesIt).first;
-                        break;
-                    }
-                    count++;
-                }
-            }
-        }
-    }
-    
-    _birthdate = gWorld->getIterations();
-    
-    _currentGenome = _genomesList[bestId];
-    _currentSigma = _sigmaList[bestId];
+    MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(sourceId)->getController());
+    _currentGenome = ctl->_currentGenome;
+    _currentSigma = ctl->_currentSigma;
     
     setNewGenomeStatus(true);
-    
+        
     // Logging: track descendance
     std::string sLog = std::string("");
-    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string((*_genomesList.begin()).first.first) + "::" + std::to_string((*_genomesList.begin()).first.second) + "\n";
+    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string(sourceId) + "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
 }
@@ -772,110 +723,48 @@ void MovingNSController::loadNewGenome()
             logCurrentState();
         
         // note: at this point, agent got energy, whether because it was revived or because of remaining energy.
+        performSelection();
+        performVariation();
+        clearReservoir();
         
-        if (_genomesList.size() > 0)
+        //logCurrentState();
+        
+        _wm->setAlive(true);
+        
+        std::string sLog = std::string("");
+        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,active\n";
+        gLogManager->write(sLog);
+        gLogManager->flush();
+        
+        if ( _wm->getEnergyLevel() == 0 )
+            _wm->setEnergyLevel(gEnergyInit);
+        
+        _Xinit = _wm->getXReal();
+        _Yinit = _wm->getYReal();
+        _dSumTravelled = 0;
+        
+        _wm->setRobotLED_colorValues(255, 0, 0);
+        
+        // log the genome (or at least the existence of a genome)
+        if ( _wm->isAlive() )
         {
-            // case: 1+ genome(s) imported, random pick.
-            
-            performSelection();
-            performVariation();
-            clearReservoir();
-            
-            //logCurrentState();
-            
-            _wm->setAlive(true);
-            
+            // Logging: full genome
             std::string sLog = std::string("");
-            sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,active\n";
+            sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
+            
+            /*
+             // write genome (takes a lot of disk space)
+             for(unsigned int i=0; i<_genome.size(); i++)
+             {
+             sLog += std::to_string(_genome[i]) + ",";
+             //gLogFile << std::fixed << std::showpoint << _wm->_genome[i] << " ";
+             }
+             */
+            sLog += "(...)"; // do not write genome
+            
+            sLog += "\n";
             gLogManager->write(sLog);
             gLogManager->flush();
-            
-            if ( _wm->getEnergyLevel() == 0 )
-                _wm->setEnergyLevel(gEnergyInit);
-            
-            _Xinit = _wm->getXReal();
-            _Yinit = _wm->getYReal();
-            _dSumTravelled = 0;
-            
-            _wm->setRobotLED_colorValues(255, 0, 0);
-            
-            // log the genome (or at least the existence of a genome)
-            if ( _wm->isAlive() )
-            {
-                // Logging: full genome
-                std::string sLog = std::string("");
-                sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
-                
-                /*
-                 // write genome (takes a lot of disk space)
-                 for(unsigned int i=0; i<_genome.size(); i++)
-                 {
-                 sLog += std::to_string(_genome[i]) + ",";
-                 //gLogFile << std::fixed << std::showpoint << _wm->_genome[i] << " ";
-                 }
-                 */
-                sLog += "(...)"; // do not write genome
-                
-                sLog += "\n";
-                gLogManager->write(sLog);
-                gLogManager->flush();
-            }
-        }
-        else
-        {
-            // case: no imported genome and the robot is/was active - robot is set to inactive (which means: robot is put off-line (if gDeathState is true), then wait for new genome (if gListenState is true))
-            
-            if ( _wm->isAlive() == true )
-            {
-                
-                // Logging: "no genome"
-                std::string sLog = std::string("");
-                sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,n/a.\n";
-                gLogManager->write(sLog);
-                gLogManager->flush();
-                
-                reset(); // destroy then create a new NN
-                
-                _wm->setAlive(false); // inactive robot *must* import a genome from others (ie. no restart).
-                
-                if ( MovingNSSharedData::gNotListeningStateDelay != 0 ) // ie. -1 (infinite,dead) or >0 (temporary,mute)
-                {
-                    _isListening = false;
-
-                    _notListeningDelay = MovingNSSharedData::gNotListeningStateDelay;
-                    _listeningDelay = MovingNSSharedData::gListeningStateDelay;
-                    _wm->setRobotLED_colorValues(0, 0, 255); // is not listening
-                    
-                    std::string sLog = std::string("");
-                    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,inactive\n";
-                    gLogManager->write(sLog);
-                    gLogManager->flush();
-                    
-                }
-                else
-                {
-                    _listeningDelay = MovingNSSharedData::gListeningStateDelay;
-
-                    if ( _listeningDelay > 0 || _listeningDelay == -1 )
-                    {
-                        _isListening = true;
-                        
-                        _wm->setRobotLED_colorValues(0, 255, 0); // is listening
-                        
-                        std::string sLog = std::string("");
-                        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,listening\n";
-                        gLogManager->write(sLog);
-                        gLogManager->flush();
-                    }
-                    else
-                    {
-                        std::string sLog = std::string("");
-                        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,inactive\n";
-                        gLogManager->write(sLog);
-                        gLogManager->flush();
-                    }
-                }
-            }
         }
     }
 }
