@@ -14,6 +14,8 @@
 
 #include "World/PhysicalObject.h"
 
+#include <map>
+
 class CircleObject : public PhysicalObject
 {
 
@@ -22,13 +24,16 @@ protected:
     double _radius; // radius. In pixels.
     double _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
     
+    // the impulses given to the object by nearby robots in the current time step, or other objects in the former
+    std::map<int, Point2d> _impulses;
+    
     // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
     double _xDesiredSpeed;
     double _yDesiredSpeed;
     
     bool _hitWall;
     
-public :
+public:
     
     CircleObject( int __id ); // use PhysicalObjectFactory instead!
     ~CircleObject() { }
@@ -39,6 +44,10 @@ public :
     void unregisterObject(); // unregister object in the world (write blank pixels)
     void show(); // wrt. screen-rendering
     void hide();    // wrt. screen-rendering
+    
+    void step(); // handles dynamics
+    
+    void isPushed( int __idAgent, Point2d __speed ); // callback
     
 };
 
