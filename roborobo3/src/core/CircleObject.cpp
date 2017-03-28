@@ -5,6 +5,7 @@
 #include "World/World.h"
 
 #include <iomanip>
+#include <algorithm>
 
 CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and consistent __id should be given as argument
 {
@@ -322,9 +323,12 @@ void CircleObject::step()
         _xDesiredSpeed = impXtot;
         _yDesiredSpeed = impYtot;
         
+        gMaxXimp = std::max(fabs(impXtot), gMaxXimp);
+        gMaxYimp = std::max(fabs(impYtot), gMaxYimp);
+        
         int dx = roundAwayFromZero(impXtot);
         int dy = roundAwayFromZero(impYtot);
-        
+                
         int newX = _xCenterPixel + dx;
         int newY = _yCenterPixel + dy;
         
