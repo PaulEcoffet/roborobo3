@@ -175,6 +175,10 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << activeCount << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/activeCount << "\n";
     
+    printf("Max X impulse: %lf\nMax Y impulse: %lf\n", gMaxXimp, gMaxYimp);
+    gMaxXimp = 0;
+    gMaxYimp = 0;
+    
     // Logging, population-level: alive
     std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(activeCount) + "\n";
     gLogManager->write(sLog);
