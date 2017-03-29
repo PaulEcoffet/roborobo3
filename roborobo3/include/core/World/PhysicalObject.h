@@ -39,7 +39,6 @@ protected :
     void init();  // called by constructor only
     
 protected:
-    int findRandomLocation( );
     void setType ( int __type ) { type = __type; }
     
 public :
@@ -70,6 +69,8 @@ public :
     virtual bool canRegister() = 0; // test if register object is possible (use both shape or footprints)
     virtual void registerObject() = 0; // register object in the world (write images)
     virtual void unregisterObject() = 0; // unregister object in the world (write blank pixels)
+    int findRandomLocation( );
+
 
     virtual void isPushed( int __idAgent, Point2d __speed) = 0; // callback
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
