@@ -247,9 +247,6 @@ int gTrajectoryMonitorIt = 0;
 
 bool gMovableCircleObjects = false;
 
-double gMaxXimp = 0;
-double gMaxYimp = 0;
-
 // =-=-=-=-=
 
 bool gKeyUp=false, gKeyDown=false, gKeyRight=false, gKeyLeft=false;

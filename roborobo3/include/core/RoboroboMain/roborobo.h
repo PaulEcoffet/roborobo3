@@ -89,9 +89,6 @@ extern long int gVersion;
 
 extern bool gMovableCircleObjects; // should circle objects be movable in this simulation
 
-extern double gMaxXimp;
-extern double gMaxYimp;
-
 // global data
 
 class World;
