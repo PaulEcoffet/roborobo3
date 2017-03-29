@@ -55,6 +55,8 @@ public:
     
     static double gSigma;
     
+    static double gTotalFitness; // sum of all fitnesses, for the fitness-proportionate selection algorithm
+    
     // -----
     
     

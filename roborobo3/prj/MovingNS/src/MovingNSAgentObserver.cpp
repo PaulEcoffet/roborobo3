@@ -34,7 +34,8 @@ void MovingNSAgentObserver::step()
     // * update fitness (if needed)
     if ( _wm->isAlive() && _wm->getPushed() )
     {
-        _wm->_fitnessValue = _wm->_fitnessValue + 1;
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(_wm->getId())->getController());
+        ctl->updateFitness(ctl->getFitness()+1);
     }
     _wm->setPushed(false);
 }

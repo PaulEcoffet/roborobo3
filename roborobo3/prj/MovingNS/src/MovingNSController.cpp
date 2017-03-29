@@ -801,11 +801,17 @@ double MovingNSController::getFitness()
  */
 void MovingNSController::resetFitness()
 {
-    _wm->_fitnessValue = 0;
+    updateFitness(0);
+}
+
+void MovingNSController::updateFitness( double __newFitness )
+{
+    double delta = __newFitness - _wm->_fitnessValue;
+    _wm->_fitnessValue += delta;
+    MovingNSSharedData::gTotalFitness += delta;
 }
 
 void MovingNSController::updateFitness()
 {
-    // nothing to do
-}
 
+}

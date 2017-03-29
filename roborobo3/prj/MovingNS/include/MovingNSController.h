@@ -119,7 +119,9 @@ public:
     bool isListening() { return _isListening; }
     
     virtual double getFitness();
-
+    
+    virtual void updateFitness( double __newFitness );
+    
     
 };
 

@@ -33,5 +33,5 @@ void MovingObject::isTouched( int __idAgent )
 
 void MovingObject::isWalked( int __idAgent )
 {
-
+    
 }
