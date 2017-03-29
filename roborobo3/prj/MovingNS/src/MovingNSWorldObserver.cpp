@@ -97,6 +97,12 @@ void MovingNSWorldObserver::step()
         }
         
         // TODO: Reset the positions of all objects
+        for (auto object : gPhysicalObjects)
+        {
+            object->unregisterObject();
+            object->findRandomLocation();
+            object->registerObject();
+        }
         
         // update iterations and generations counters
         _generationItCount = 0;
@@ -112,15 +118,7 @@ void MovingNSWorldObserver::step()
 
 void MovingNSWorldObserver::updateEnvironment()
 {
-    // example: moving landmarks
-    /*
-    if ( gWorld->getIterations() % 2000 == 0 )
-        for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
-        {
-            Point2d* position = new Point2d( 200+rand()%(gAreaWidth-400) , 200+rand()%(gAreaHeight-400) );
-            gLandmarks[i]->setPosition(*position);
-        }
-    */
+
 }
 
 void MovingNSWorldObserver::updateMonitoring()
