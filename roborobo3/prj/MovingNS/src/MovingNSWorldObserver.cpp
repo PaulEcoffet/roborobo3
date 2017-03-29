@@ -77,6 +77,7 @@ MovingNSWorldObserver::~MovingNSWorldObserver()
 
 void MovingNSWorldObserver::reset()
 {
+    
 }
 
 void MovingNSWorldObserver::step()
@@ -85,7 +86,18 @@ void MovingNSWorldObserver::step()
     
     if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
     {
-                
+        
+        // Reset the positions of all robots
+        
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+        {
+            Robot *robot = gWorld->getRobot(iRobot);
+            robot->setCoordReal(rand()%gAgentsInitAreaWidth+gAgentsInitAreaX,
+                                rand()%gAgentsInitAreaHeight+gAgentsInitAreaY);
+        }
+        
+        // TODO: Reset the positions of all objects
+        
         // update iterations and generations counters
         _generationItCount = 0;
         _generationCount++;
@@ -174,17 +186,15 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << activeCount << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/activeCount << "\n";
-    
-    printf("Max X impulse: %lf\nMax Y impulse: %lf\n", gMaxXimp, gMaxYimp);
-    gMaxXimp = 0;
-    gMaxYimp = 0;
-    
+        
     // Logging, population-level: alive
     std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(activeCount) + "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
     
 }
+
+// O(1) fitness-proportionate selection algorithm: see https://arxiv.org/pdf/1109.3627.pdf
 
 int MovingNSWorldObserver::chooseGenome() {
     double fitnessSum = 0;

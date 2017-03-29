@@ -322,10 +322,7 @@ void CircleObject::step()
         
         _xDesiredSpeed = impXtot;
         _yDesiredSpeed = impYtot;
-        
-        gMaxXimp = std::max(fabs(impXtot), gMaxXimp);
-        gMaxYimp = std::max(fabs(impYtot), gMaxYimp);
-        
+                
         int dx = roundAwayFromZero(impXtot);
         int dy = roundAwayFromZero(impYtot);
                 
