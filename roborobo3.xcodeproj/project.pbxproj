@@ -266,6 +266,7 @@
 		E62037AD1E8945F1004B5859 /* MovingNSSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingNSSharedData.h; path = MovingNS/include/MovingNSSharedData.h; sourceTree = "<group>"; };
 		E62037AE1E8945F1004B5859 /* MovingNSWorldObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingNSWorldObserver.h; path = MovingNS/include/MovingNSWorldObserver.h; sourceTree = "<group>"; };
 		E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingNSConfigurationLoader.cpp; sourceTree = "<group>"; };
+		E631EB071E8BBCB60031AD2D /* MovingNSConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingNSConfigurationLoader.h; sourceTree = "<group>"; };
 		E64820BC1E7994FB005D95AC /* MovingObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingObject.h; sourceTree = "<group>"; };
 		E64820BD1E79950E005D95AC /* MovingObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingObject.cpp; sourceTree = "<group>"; };
 		E64820C01E799A6E005D95AC /* TemplateMovingConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateMovingConfigurationLoader.h; sourceTree = "<group>"; };
@@ -687,6 +688,7 @@
 				E6F09B441E84088000EF24BD /* MovingEEConfigurationLoader.h */,
 				3766DF761E2914160069E44C /* TemplateEEConfigurationLoader.h */,
 				3705F0561BC66E03001A016D /* TemplateBoidsConfigurationLoader.h */,
+				E631EB071E8BBCB60031AD2D /* MovingNSConfigurationLoader.h */,
 				E64820C01E799A6E005D95AC /* TemplateMovingConfigurationLoader.h */,
 				3705F0581BC66E03001A016D /* TemplateWanderConfigurationLoader.h */,
 				3739761C1BCEAA6200A007BF /* TemplateRandomwalkConfigurationLoader.h */,
