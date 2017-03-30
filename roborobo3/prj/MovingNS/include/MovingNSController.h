@@ -81,6 +81,10 @@ protected:
     std::vector<double> _currentGenome;
     float _currentSigma;
     
+    // fitness memory
+    
+    double _lastFitnesses[5]; // fitness we gained on the last 5 rounds
+    
     // ANN
     double _minValue;
     double _maxValue;

@@ -283,6 +283,15 @@ std::vector<double> MovingNSController::getInputs(){
         inputs.push_back( _wm->getEnergyLevel() / gEnergyMax );
     }
     
+    // remember if we gained fitness recently
+    
+    double fitSum = 0;
+    
+    for (auto& fit: _lastFitnesses)
+        fitSum += fit;
+    
+    inputs.push_back(fitSum);
+    
     return inputs;
 }
 
@@ -582,6 +591,9 @@ void MovingNSController::setIOcontrollerSize()
     if ( gNbOfLandmarks > 0 )
         _nbInputs += 2; // incl. landmark (angle,dist)
     
+    // last fitnesses
+    _nbInputs += 1;
+    
     // wrt outputs
     
     _nbOutputs = 2;
@@ -801,6 +813,8 @@ double MovingNSController::getFitness()
  */
 void MovingNSController::resetFitness()
 {
+    for (auto& fit: _lastFitnesses)
+        fit = 0;
     updateFitness(0);
 }
 
@@ -809,6 +823,7 @@ void MovingNSController::updateFitness( double __newFitness )
     double delta = __newFitness - _wm->_fitnessValue;
     _wm->_fitnessValue += delta;
     MovingNSSharedData::gTotalFitness += delta;
+    _lastFitnesses[_iteration%5] = __newFitness;
 }
 
 void MovingNSController::updateFitness()
