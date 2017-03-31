@@ -86,20 +86,16 @@ void MovingNSWorldObserver::step()
     
     if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
     {
-        
-        // Reset the positions of all robots
+        // Remove objects, reset robots, and add objects again
+
+        for (auto object: gPhysicalObjects)
+            object->unregisterObject();
         
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-        {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->setCoordReal(rand()%gAgentsInitAreaWidth+gAgentsInitAreaX,
-                                rand()%gAgentsInitAreaHeight+gAgentsInitAreaY);
-        }
+            gWorld->getRobot(iRobot)->reset();
         
-        // TODO: Reset the positions of all objects
-        for (auto object : gPhysicalObjects)
+        for (auto object: gPhysicalObjects)
         {
-            object->unregisterObject();
             object->findRandomLocation();
             object->registerObject();
         }
