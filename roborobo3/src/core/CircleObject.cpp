@@ -354,7 +354,7 @@ void CircleObject::step()
                     for (auto& imp: _impulses)
                         if (imp.first >= gRobotIndexStartOffset) {
                             Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
-                            robot->getWorldModel()->setPushed(true);
+                            robot->getWorldModel()->setDidPush(true);
                         }
             }
         }

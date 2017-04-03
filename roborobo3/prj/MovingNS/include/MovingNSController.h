@@ -84,6 +84,7 @@ protected:
     // fitness memory
     
     double _lastFitnesses[5]; // fitness we gained on the last 5 rounds
+    bool _lastPushTries[5]; // did we try to push recently
     
     // ANN
     double _minValue;
@@ -126,6 +127,7 @@ public:
     
     virtual void updateFitness( double __newFitness );
     
+    virtual void updatePushes();
     
 };
 

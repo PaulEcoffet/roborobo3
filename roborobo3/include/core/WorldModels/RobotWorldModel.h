@@ -104,7 +104,8 @@ public:
     
     // interactions with objects
     
-    bool _pushedObject; // true if we pushed an object in the current time step, used for fitness evaluation
+    bool _triedPushing; // did we try to push
+    bool _didPush; // did it work
     
 	// * Initializes the variables
     RobotWorldModel();
@@ -251,14 +252,24 @@ public:
         return ( _groupId );
     }
 
-    void setPushed( bool __pushedObject )
+    void setTriedPushing( bool __triedPushing )
     {
-        _pushedObject = __pushedObject;
+        _triedPushing = __triedPushing;
     }
     
-    bool getPushed()
+    bool getTriedPushing()
     {
-        return _pushedObject;
+        return _triedPushing;
+    }
+    
+    void setDidPush( bool __didPush )
+    {
+        _didPush = __didPush;
+    }
+    
+    bool getDidPush()
+    {
+        return _didPush;
     }
 
 };

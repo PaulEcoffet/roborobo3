@@ -83,21 +83,37 @@ void MovingNSWorldObserver::reset()
 void MovingNSWorldObserver::step()
 {
     _generationItCount++;
+ 
+    saveRenderScreenshot();
     
     if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
     {
         // Remove objects, reset robots, and add objects again
-
-        for (auto object: gPhysicalObjects)
-            object->unregisterObject();
+                
+//        saveEnvironmentScreenshot();
         
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-            gWorld->getRobot(iRobot)->reset();
+        for (auto object: gPhysicalObjects) {
+            object->unregisterObject();
+        }
+        
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+            Robot *robot = gWorld->getRobot(iRobot);
+//            if (gWorld->isRobotRegistered(iRobot))
+                robot->unregisterRobot();
+        }
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+            Robot *robot = gWorld->getRobot(iRobot);
+            robot->reset();
+//            if (gWorld->isRobotRegistered(iRobot))
+                robot->registerRobot();
+//            saveEnvironmentScreenshot();
+        }
         
         for (auto object: gPhysicalObjects)
         {
             object->findRandomLocation();
             object->registerObject();
+//            saveEnvironmentScreenshot();
         }
         
         // update iterations and generations counters
