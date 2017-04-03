@@ -286,11 +286,15 @@ std::vector<double> MovingNSController::getInputs(){
     // remember if we gained fitness recently
     
     double fitSum = 0;
-    
-    for (auto& fit: _lastFitnesses)
+    for (auto fit: _lastFitnesses)
         fitSum += fit;
-    
     inputs.push_back(fitSum);
+    
+    double pushSum = 0;
+    for (auto push: _lastPushTries)
+        if (push)
+            pushSum++;
+    inputs.push_back(pushSum);
     
     return inputs;
 }
@@ -594,6 +598,9 @@ void MovingNSController::setIOcontrollerSize()
     // last fitnesses
     _nbInputs += 1;
     
+    // last pushes
+    _nbInputs += 1;
+    
     // wrt outputs
     
     _nbOutputs = 2;
@@ -829,4 +836,9 @@ void MovingNSController::updateFitness( double __newFitness )
 void MovingNSController::updateFitness()
 {
 
+}
+
+void MovingNSController::updatePushes()
+{
+    _lastPushTries[_iteration%5] = _wm->getTriedPushing();
 }
