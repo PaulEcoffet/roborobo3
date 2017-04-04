@@ -288,12 +288,14 @@ std::vector<double> MovingNSController::getInputs(){
     double fitSum = 0;
     for (auto fit: _lastFitnesses)
         fitSum += fit;
+    fitSum = 2*fitSum-5; // put it in [-5, 5]
     inputs.push_back(fitSum);
     
     double pushSum = 0;
     for (auto push: _lastPushTries)
         if (push)
             pushSum++;
+    pushSum = 2*pushSum-5;
     inputs.push_back(pushSum);
     
     return inputs;
