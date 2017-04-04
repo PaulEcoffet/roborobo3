@@ -161,6 +161,12 @@ int PhysicalObject::findRandomLocation( )
         exit(-1);
     }
     
+    if ( gVerbose )
+    {
+        std::cout << "[INFO] Object " << _id << " positioned at (" << _xCenterPixel << "), ";
+        std::cout<< _yCenterPixel << " -- [random pick after " << tries << " tries]" << std::endl;
+    }
+        
     return tries;
 }
 

@@ -84,7 +84,7 @@ void MovingNSWorldObserver::step()
 {
     _generationItCount++;
  
-    saveRenderScreenshot();
+//    saveRenderScreenshot();
     
     if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
     {

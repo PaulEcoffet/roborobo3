@@ -234,6 +234,7 @@ void Robot::reset()
     }
 
 	setCoordReal(x,y);
+    setCoord(x, y);
 
     //Initialize coordinate and displacement
 	_xDelta = 0;
