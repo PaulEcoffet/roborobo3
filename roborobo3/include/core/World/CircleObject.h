@@ -28,8 +28,9 @@ protected:
     std::map<int, Point2d> _impulses;
     
     // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
-    double _xDesiredSpeed;
-    double _yDesiredSpeed;
+    // in polar coordinates
+    double _desiredSpeedOrientation;
+    double _desiredLinearSpeed;
     
     bool _hitWall;
     
