@@ -39,9 +39,7 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
     _isListening = true;
     _notListeningDelay = MovingNSSharedData::gNotListeningStateDelay;
     _listeningDelay = MovingNSSharedData::gListeningStateDelay;
-    
-    _nbGenomeTransmission = 0;
-    
+        
     if ( gEnergyLevel )
         _wm->setEnergyLevel(gEnergyInit);
     
@@ -288,14 +286,12 @@ std::vector<double> MovingNSController::getInputs(){
     double fitSum = 0;
     for (auto fit: _lastFitnesses)
         fitSum += fit;
-    fitSum = 2*fitSum-5; // put it in [-5, 5]
 //    inputs.push_back(fitSum);
     
     double pushSum = 0;
     for (auto push: _lastPushTries)
         if (push)
             pushSum++;
-    pushSum = 2*pushSum-5;
 //    inputs.push_back(pushSum);
     
     return inputs;
@@ -387,17 +383,12 @@ void MovingNSController::stepEvolution()
     {
         // * lifetime ended: replace genome (if possible)
         loadNewGenome();
-        _nbGenomeTransmission = 0;
         resetFitness();
     }
     else
     {
         // * broadcasting genome : robot broadcasts its genome to all neighbors (contact-based wrt proximity sensors)
         // note: no broadcast if last iteration before replacement -- this is enforced as roborobo update method is random-asynchroneous. This means that robots broadcasting may transmit genomes to robot already at the next generation depending on the update ordering (should be avoided).
-        if ( _wm->isAlive() == true && gRadioNetwork )  	// only if agent is active (ie. not just revived) and deltaE>0.
-        {
-            broadcastGenome();
-        }
 
         _dSumTravelled = _dSumTravelled + getEuclidianDistance( _wm->getXReal(), _wm->getYReal(), _Xinit, _Yinit ); //remark: incl. squareroot.
     }
@@ -456,81 +447,6 @@ void MovingNSController::performVariation()
         }
     }
 }
-
-void MovingNSController::selectRandomGenome() // if called, assume genomeList.size()>0
-{
-    int randomIndex = rand()%_genomesList.size();
-
-    std::map<std::pair<int,int>, std::vector<double> >::iterator it = _genomesList.begin();
-    while (randomIndex !=0 )
-    {
-        it ++;
-        randomIndex --;
-    }
-    
-    _currentGenome = (*it).second;
-    _currentSigma = _sigmaList[(*it).first];
-    _birthdate = gWorld->getIterations();
-    
-    setNewGenomeStatus(true); 
-    
-    // Logging: track descendance
-    std::string sLog = std::string("");
-    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string((*_genomesList.begin()).first.first) + "::" + std::to_string((*_genomesList.begin()).first.second) + "\n";
-    gLogManager->write(sLog);
-    gLogManager->flush();
-}
-
-void MovingNSController::selectFirstGenome()  // if called, assume genomeList.size()>0
-{
-    _currentGenome = (*_genomesList.begin()).second;
-    _currentSigma = _sigmaList[(*_genomesList.begin()).first];
-    _birthdate = gWorld->getIterations();
-    
-    setNewGenomeStatus(true);
-    
-    // Logging: track descendance
-    std::string sLog = std::string("");
-    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string((*_genomesList.begin()).first.first) + "::" + std::to_string((*_genomesList.begin()).first.second) + "\n";
-    gLogManager->write(sLog);
-    gLogManager->flush();
-}
-
-/* manage storage of a genome received from a neighbour
- *
- * Note that in case of multiple encounters with the same robot (same id, same "birthdate"), genome is stored only once, and last known fitness value is stored (i.e. updated at each encounter).
- */
-bool MovingNSController::storeGenome(std::vector<double> genome, std::pair<int,int> senderId, float sigma, float fitness) // fitness is optional (default: 0)
-{
-    if ( !_isListening )
-    {
-        return false; // current agent is not listening: do nothing.
-    }
-    else
-    {
-        std::map<std::pair<int,int>, std::vector<double> >::const_iterator it = _genomesList.find(senderId);
-    
-        /*
-        _genomesList[senderId] = genome;
-        _sigmaList[senderId] = sigma;
-        _fitnessValuesList[senderId] = fitness;
-        */
-        
-        if ( it != _genomesList.end() ) // this exact agent's genome is already stored. Exact means: same robot, same generation. Then: update fitness value (the rest in unchanged)
-        {
-            _fitnessValuesList[senderId] = fitness; // update with most recent fitness (IMPLEMENTATION CHOICE) [!n]
-            return false;
-        }
-        else
-        {
-            _genomesList[senderId] = genome;
-            _sigmaList[senderId] = sigma;
-            _fitnessValuesList[senderId] = fitness;
-            return true;
-        }
-    }
-}
-
 
 void MovingNSController::mutateGaussian(float sigma) // mutate within bounds.
 {
@@ -636,19 +552,6 @@ void MovingNSController::initController()
     
     setNewGenomeStatus(true);
     
-    clearReservoir(); // will contain the genomes received from other robots
-}
-
-
-void MovingNSController::clearReservoir()
-{
-    //std::cout << "[DEBUG] genomesList for agent #" << _wm->getId() << "::" << getBirthdate() << ", at time " << gWorld->getIterations() << "\n";
-    //for ( std::map<std::pair<int,int>, std::vector<double> >::iterator it = _genomesList.begin() ; it != _genomesList.end() ; it++ )
-    //    std::cout << "[DEBUG] " << (*it).first.first << "::" << (*it).first.second << "\n";
-    
-    _genomesList.clear(); // empty the list of received genomes
-    _sigmaList.clear();
-    _fitnessValuesList.clear();
 }
 
 void MovingNSController::reset()
@@ -685,38 +588,6 @@ void MovingNSController::mutateSigmaValue()
     }
 }
 
-
-void MovingNSController::broadcastGenome()
-{
-    // remarque \todo: limiting genome transmission is sensitive to sensor order. (but: assume ok)
-    
-    for( int i = 0 ; i < _wm->_cameraSensorsNb && ( MovingNSSharedData::gLimitGenomeTransmission == false || ( MovingNSSharedData::gLimitGenomeTransmission == true && _nbGenomeTransmission < MovingNSSharedData::gMaxNbGenomeTransmission ) ); i++)
-    {
-        int targetIndex = _wm->getObjectIdFromCameraSensor(i);
-        
-        if ( targetIndex >= gRobotIndexStartOffset && targetIndex < gRobotIndexStartOffset+gNbOfRobots )   // sensor ray bumped into a robot : communication is possible
-        {
-            targetIndex = targetIndex - gRobotIndexStartOffset; // convert image registering index into robot id.
-            
-            MovingNSController* targetRobotController = dynamic_cast<MovingNSController*>(gWorld->getRobot(targetIndex)->getController());
-            
-            if ( ! targetRobotController )
-            {
-                std::cerr << "Error from robot " << _wm->getId() << " : the observer of robot " << targetIndex << " is not compatible." << std::endl;
-                exit(-1);
-            }
-            
-            if ( targetRobotController->isListening() )
-            {
-                bool success = targetRobotController->storeGenome(_currentGenome, std::make_pair(_wm->getId(), _birthdate), _currentSigma, _wm->_fitnessValue); // other agent stores my genome. Contaminant stragegy. Note that medea does not use fitnessValue (default value: 0)
-                
-                if ( success == true )
-                    _nbGenomeTransmission++; // count unique transmissions (ie. nb of different genomes stored).
-            }
-        }
-    }
-}
-
 void MovingNSController::performSelection()
 {
     MovingNSWorldObserver *obs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
@@ -746,7 +617,6 @@ void MovingNSController::loadNewGenome()
         // note: at this point, agent got energy, whether because it was revived or because of remaining energy.
         performSelection();
         performVariation();
-        clearReservoir();
         
         //logCurrentState();
         
@@ -796,7 +666,6 @@ void MovingNSController::logCurrentState()
     std::string sLog = "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) +
     ",age," + std::to_string(gWorld->getIterations()-_birthdate) +
     ",energy," +  std::to_string(_wm->getEnergyLevel()) +
-    ",genomesListSize," + std::to_string(_genomesList.size()) +
     ",sigma," + std::to_string(_currentSigma) +
     ",x_init," + std::to_string(_wm->getXReal()) +
     ",y_init," + std::to_string(_wm->getYReal()) +

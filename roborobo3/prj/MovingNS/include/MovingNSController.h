@@ -30,9 +30,7 @@ protected:
     bool _isListening;
     int _notListeningDelay;
     int _listeningDelay;
-    
-    int _nbGenomeTransmission;
-    
+        
     std::vector<double> _parameters;
     std::string _nnType;
     std::vector<int> _nbHiddenNeuronsPerLayer;
@@ -60,8 +58,6 @@ protected:
     
     void stepEvolution();
     
-    virtual void broadcastGenome();
-    
     void loadNewGenome();
     
     unsigned int computeRequiredNumberOfWeights();
@@ -69,13 +65,7 @@ protected:
     //        void setAliveStatus( bool isAlive ) { _isAlive = isAlive; }
     bool getNewGenomeStatus() { return _isNewGenome; }
     void setNewGenomeStatus( bool __status ) { _isNewGenome = __status; }
-    
-    // incoming genomes reservoir
-    
-    std::map< std::pair<int,int>, std::vector<double> > _genomesList;
-    std::map< std::pair<int,int>, float > _sigmaList;
-    std::map< std::pair<int,int>, float > _fitnessValuesList;
-    
+            
     // current genome
     
     std::vector<double> _currentGenome;
@@ -99,10 +89,7 @@ protected:
     double _Yinit;
     double _dSumTravelled;
     
-    bool storeGenome(std::vector<double> genome, std::pair<int,int> senderId, float sigma, float fitness=0);
     void reset();
-    
-    void clearReservoir(); // clear genomesList, sigmaList, fitnessesList and birthdayList
     
     virtual void logCurrentState();
     
