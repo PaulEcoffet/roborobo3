@@ -52,10 +52,10 @@ double computeModulo( double a , double b )
 
 int roundAwayFromZero( double x )
 {
-    if (x > 0)
-        return (int)ceil(x);
+    if ( x > 0 )
+        return (int)(x+0.5);
     else
-        return (int)floor(x);
+        return (int)(x-0.5);
 }
 
 
