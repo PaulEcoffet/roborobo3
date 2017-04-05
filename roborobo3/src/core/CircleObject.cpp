@@ -175,7 +175,7 @@ bool CircleObject::canRegister( int __x, int __y )
                     if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset )   // physical object
                     {
                         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-                        gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_xDesiredSpeed, _yDesiredSpeed));
+                        gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_desiredLinearSpeed, _desiredSpeedOrientation));
                     } else if (targetIndex < gRobotIndexStartOffset) {
                         _hitWall = true;
                     }
@@ -297,21 +297,19 @@ void CircleObject::step()
         for (auto& imp : _impulses) {
             // We only want the component of the speed normal to the centers of mass
             // v: agent speed vector, u: agent-object vector
+            // impulses are in polar form
+            vx = imp.second.x*cos(imp.second.y * M_PI / 180.0);
+            vy = imp.second.x*sin(imp.second.y * M_PI / 180.0);
+            
             if (imp.first >= gRobotIndexStartOffset) { // robot
-                // impulses are in polar form, and angles in degrees
                 Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
-                vx = imp.second.x*cos(imp.second.y * M_PI / 180.0);
-                vy = imp.second.x*sin(imp.second.y * M_PI / 180.0);
                 ux = (double)_xCenterPixel - robot->getWorldModel()->getXReal();
                 uy = (double)_yCenterPixel - robot->getWorldModel()->getYReal();
                 
             }
             else // other object
             {
-                // impulse is cartesian and not polar here
                 PhysicalObject *object = gPhysicalObjects[imp.first];
-                vx = imp.second.x;
-                vy = imp.second.y;
                 ux = (double)_xCenterPixel - object->getPosition().x;
                 uy = (double)_yCenterPixel - object->getPosition().y;
             }
@@ -320,8 +318,8 @@ void CircleObject::step()
             impYtot += (vx*ux+vy*uy)*uy/sqnorm;
         }
         
-        _xDesiredSpeed = impXtot;
-        _yDesiredSpeed = impYtot;
+        _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
+        _desiredSpeedOrientation = atan2(impYtot, impXtot) * 180 / M_PI;
                 
         int dx = roundAwayFromZero(impXtot);
         int dy = roundAwayFromZero(impYtot);
