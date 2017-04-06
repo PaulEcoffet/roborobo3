@@ -361,7 +361,7 @@ void CircleObject::step()
     stepPhysicalObject();
 }
 
-void CircleObject::push(int __idAgent, Point2d __speed)
+void CircleObject::isPushed(int __idAgent, Point2d __speed)
 {
     if (gMovableCircleObjects)
     {
@@ -369,4 +369,14 @@ void CircleObject::push(int __idAgent, Point2d __speed)
             _impulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
         }
     }
+}
+
+void CircleObject::isTouched( int __idAgent )
+{
+    //do nothing
+}
+
+void CircleObject::isWalked( int __idAgent )
+{
+    //do nothing
 }
