@@ -67,7 +67,7 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     
     // * step evolution
     
-    stepEvolution();
+//    stepEvolution();
     
     // * step controller
     
@@ -375,48 +375,48 @@ unsigned int MovingNSController::computeRequiredNumberOfWeights()
 // ################ ######################## ################
 // ################ ######################## ################
 
-void MovingNSController::stepEvolution()
-{
-    
-    if( gWorld->getIterations() > 0 && gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == 0 )
-                    //dynamic_cast<MovingNSWorldObserver*>(gWorld->getWorldObserver())->getGenerationItCount() == 0 )  //todelete
-    {
-        // * lifetime ended: replace genome (if possible)
-        loadNewGenome();
-        resetFitness();
-    }
-    else
-    {
-        // * broadcasting genome : robot broadcasts its genome to all neighbors (contact-based wrt proximity sensors)
-        // note: no broadcast if last iteration before replacement -- this is enforced as roborobo update method is random-asynchroneous. This means that robots broadcasting may transmit genomes to robot already at the next generation depending on the update ordering (should be avoided).
-
-        _dSumTravelled = _dSumTravelled + getEuclidianDistance( _wm->getXReal(), _wm->getYReal(), _Xinit, _Yinit ); //remark: incl. squareroot.
-    }
-    
-    // log the genome (only at the second iteration during snapshot time)
-    if ( MovingNSSharedData::gLogGenomeSnapshot && gWorld->getIterations() % ( MovingNSSharedData::gEvaluationTime * MovingNSSharedData::gSnapshotsFrequency ) == 1 )
-    {
-        // Logging: full genome
-        std::string sLog = std::string("");
-        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
-        if ( _wm->isAlive() )
-        {
-            for(unsigned int i=0; i<_currentGenome.size(); i++)
-            {
-                sLog += std::to_string(_currentGenome[i]);
-                if ( i < _currentGenome.size()-1 )
-                    sLog += ",";
-            }
-        }
-        else
-            sLog += "n/a"; // do not write genome
-        
-        sLog += "\n";
-        gLogManager->write(sLog);
-        gLogManager->flush();
-    }
-    
-}
+//void MovingNSController::stepEvolution()
+//{
+//    
+//    if( gWorld->getIterations() > 0 && gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == 0 )
+//                    //dynamic_cast<MovingNSWorldObserver*>(gWorld->getWorldObserver())->getGenerationItCount() == 0 )  //todelete
+//    {
+//        // * lifetime ended: replace genome (if possible)
+//        loadNewGenome();
+//        resetFitness();
+//    }
+//    else
+//    {
+//        // * broadcasting genome : robot broadcasts its genome to all neighbors (contact-based wrt proximity sensors)
+//        // note: no broadcast if last iteration before replacement -- this is enforced as roborobo update method is random-asynchroneous. This means that robots broadcasting may transmit genomes to robot already at the next generation depending on the update ordering (should be avoided).
+//
+//        _dSumTravelled = _dSumTravelled + getEuclidianDistance( _wm->getXReal(), _wm->getYReal(), _Xinit, _Yinit ); //remark: incl. squareroot.
+//    }
+//    
+//    // log the genome (only at the second iteration during snapshot time)
+//    if ( MovingNSSharedData::gLogGenomeSnapshot && gWorld->getIterations() % ( MovingNSSharedData::gEvaluationTime * MovingNSSharedData::gSnapshotsFrequency ) == 1 )
+//    {
+//        // Logging: full genome
+//        std::string sLog = std::string("");
+//        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
+//        if ( _wm->isAlive() )
+//        {
+//            for(unsigned int i=0; i<_currentGenome.size(); i++)
+//            {
+//                sLog += std::to_string(_currentGenome[i]);
+//                if ( i < _currentGenome.size()-1 )
+//                    sLog += ",";
+//            }
+//        }
+//        else
+//            sLog += "n/a"; // do not write genome
+//        
+//        sLog += "\n";
+//        gLogManager->write(sLog);
+//        gLogManager->flush();
+//    }
+//    
+//}
 
 void MovingNSController::performVariation()
 {
@@ -600,57 +600,61 @@ void MovingNSController::performSelection()
 }
 
 
-void MovingNSController::loadNewGenome()
+void MovingNSController::loadNewGenome( genome __newGenome )
 {
-    if ( _wm->isAlive() || gEnergyRefill )  // ( gEnergyRefill == true ) enables revive
-    {
-        if ( _wm->isAlive() )
-            logCurrentState();
-        
-        // note: at this point, agent got energy, whether because it was revived or because of remaining energy.
-        performSelection();
-        performVariation();
-        
-        //logCurrentState();
-        
-        _wm->setAlive(true);
-        
-        std::string sLog = std::string("");
-        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,active\n";
-        gLogManager->write(sLog);
-        gLogManager->flush();
-        
-        if ( _wm->getEnergyLevel() == 0 )
-            _wm->setEnergyLevel(gEnergyInit);
-        
-        _Xinit = _wm->getXReal();
-        _Yinit = _wm->getYReal();
-        _dSumTravelled = 0;
-        
-        _wm->setRobotLED_colorValues(255, 0, 0);
-        
-        // log the genome (or at least the existence of a genome)
-        if ( _wm->isAlive() )
-        {
-            // Logging: full genome
-            std::string sLog = std::string("");
-            sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
-            
-            /*
-             // write genome (takes a lot of disk space)
-             for(unsigned int i=0; i<_genome.size(); i++)
-             {
-             sLog += std::to_string(_genome[i]) + ",";
-             //gLogFile << std::fixed << std::showpoint << _wm->_genome[i] << " ";
-             }
-             */
-            sLog += "(...)"; // do not write genome
-            
-            sLog += "\n";
-            gLogManager->write(sLog);
-            gLogManager->flush();
-        }
-    }
+    _currentGenome = __newGenome.first;
+    _currentSigma = __newGenome.second;
+    performVariation();
+    updatePhenotype();
+//    if ( _wm->isAlive() || gEnergyRefill )  // ( gEnergyRefill == true ) enables revive
+//    {
+//        if ( _wm->isAlive() )
+//            logCurrentState();
+//        
+//        // note: at this point, agent got energy, whether because it was revived or because of remaining energy.
+//        performSelection();
+//        performVariation();
+//        
+//        //logCurrentState();
+//        
+//        _wm->setAlive(true);
+//        
+//        std::string sLog = std::string("");
+//        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,active\n";
+//        gLogManager->write(sLog);
+//        gLogManager->flush();
+//        
+//        if ( _wm->getEnergyLevel() == 0 )
+//            _wm->setEnergyLevel(gEnergyInit);
+//        
+//        _Xinit = _wm->getXReal();
+//        _Yinit = _wm->getYReal();
+//        _dSumTravelled = 0;
+//        
+//        _wm->setRobotLED_colorValues(255, 0, 0);
+//        
+//        // log the genome (or at least the existence of a genome)
+//        if ( _wm->isAlive() )
+//        {
+//            // Logging: full genome
+//            std::string sLog = std::string("");
+//            sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
+//            
+//            /*
+//             // write genome (takes a lot of disk space)
+//             for(unsigned int i=0; i<_genome.size(); i++)
+//             {
+//             sLog += std::to_string(_genome[i]) + ",";
+//             //gLogFile << std::fixed << std::showpoint << _wm->_genome[i] << " ";
+//             }
+//             */
+//            sLog += "(...)"; // do not write genome
+//            
+//            sLog += "\n";
+//            gLogManager->write(sLog);
+//            gLogManager->flush();
+//        }
+//    }
 }
 
 void MovingNSController::updatePhenotype() {

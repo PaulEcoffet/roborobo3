@@ -88,9 +88,10 @@ void MovingNSWorldObserver::step()
     
     if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
     {
-        // Remove objects, reset robots, and add objects again
-                
-//        saveEnvironmentScreenshot();
+        // Perform an evolution step on robots (give them new genomes and mutate them), and
+        // reset their positions and the objects
+        
+        // Position stuff
         
         for (auto object: gPhysicalObjects) {
             object->unregisterObject();
@@ -98,23 +99,50 @@ void MovingNSWorldObserver::step()
         
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
             Robot *robot = gWorld->getRobot(iRobot);
-//            if (gWorld->isRobotRegistered(iRobot))
                 robot->unregisterRobot();
         }
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
             Robot *robot = gWorld->getRobot(iRobot);
             robot->reset();
-//            if (gWorld->isRobotRegistered(iRobot))
-                robot->registerRobot();
-//            saveEnvironmentScreenshot();
+            robot->registerRobot();
         }
         
         for (auto object: gPhysicalObjects)
         {
             object->findRandomLocation();
             object->registerObject();
-//            saveEnvironmentScreenshot();
         }
+        
+        // Evolution stuff
+        
+        double totalFitness = 0;
+        std::vector<double> fitnesses(gNbOfRobots);
+        std::vector<genome> genomes(gNbOfRobots);
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+        {
+            Robot *robot = gWorld->getRobot(iRobot);
+            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+            fitnesses[iRobot] = ctl->getFitness();
+            totalFitness += ctl->getFitness();
+            genomes[iRobot] = ctl->getGenome();
+        }
+        
+        // O(1) fitness-proportionate selection
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+        {
+            Robot *robot = gWorld->getRobot(iRobot);
+            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+            bool done = false;
+            int pick = -1;
+            while (done == false) {
+                pick = rand()%gNbOfRobots;
+                double draw = ranf()*totalFitness;
+                if (draw <= fitnesses[pick]) // choose this robot
+                    done = true;
+            }
+            ctl->loadNewGenome(genomes[pick]);
+        }
+        
         
         // update iterations and generations counters
         _generationItCount = 0;
