@@ -17,8 +17,11 @@
 #include <neuralnetworks/NeuralNetwork.h>
 
 #include <iomanip>
+#include <utility>
 
 using namespace Neural;
+
+typedef std::pair<std::vector<double>, double> genome;
 
 
 class MovingNSController : public Controller
@@ -56,8 +59,6 @@ protected:
     virtual void stepController();
     
     void stepEvolution();
-    
-    void loadNewGenome();
     
     void updatePhenotype(); // updates the neural network when the genome is changed
     
@@ -108,6 +109,10 @@ public:
     int getBirthdate() { return _birthdate; }
     
     bool isListening() { return _isListening; }
+    
+    genome getGenome() { return std::make_pair(_currentGenome, _currentSigma); }
+    
+    void loadNewGenome( genome __newGenome );
     
     virtual double getFitness();
     
