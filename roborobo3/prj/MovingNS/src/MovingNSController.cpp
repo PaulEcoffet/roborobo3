@@ -698,9 +698,7 @@ void MovingNSController::resetFitness()
 
 void MovingNSController::updateFitness( double __newFitness )
 {
-    double delta = __newFitness - _wm->_fitnessValue;
-    _wm->_fitnessValue += delta;
-    MovingNSSharedData::gTotalFitness += delta;
+    _wm->_fitnessValue = __newFitness;
     _lastFitnesses[_iteration%5] = __newFitness;
 }
 
