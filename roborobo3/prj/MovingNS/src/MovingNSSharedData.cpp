@@ -47,5 +47,3 @@ double MovingNSSharedData::gIndividualMutationRate = 1.0;
 int MovingNSSharedData::gMutationOperator = 1; // 0: uniform, 1: gaussian
 
 double MovingNSSharedData::gSigma = 0.01; // 0.01 is just some random value.
-
-double MovingNSSharedData::gTotalFitness = 0;
