@@ -49,7 +49,7 @@ void PhysicalObjectFactory::makeObject( int type )
         // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         case 4:
             if ( gVerbose )
-                std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
+                std::cout << "[INFO] Circle Object created (type = " << type << ").\n";
             gPhysicalObjects.push_back( new CircleObject(id) );
             break;
         default:
