@@ -14,7 +14,6 @@
 #include "World/EnergyItem.h"
 #include "World/GateObject.h"
 #include "World/SwitchObject.h"
-#include "World/MovingObject.h"
 
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
