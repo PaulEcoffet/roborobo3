@@ -40,7 +40,6 @@ protected:
     void createNN();
     
     //bool _isAlive; // agent stand still if not.
-    bool _isNewGenome;
     
     void selectRandomGenome();
     void selectFirstGenome();
@@ -60,11 +59,11 @@ protected:
     
     void loadNewGenome();
     
+    void updatePhenotype(); // updates the neural network when the genome is changed
+    
     unsigned int computeRequiredNumberOfWeights();
     
     //        void setAliveStatus( bool isAlive ) { _isAlive = isAlive; }
-    bool getNewGenomeStatus() { return _isNewGenome; }
-    void setNewGenomeStatus( bool __status ) { _isNewGenome = __status; }
             
     // current genome
     
