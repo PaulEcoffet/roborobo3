@@ -91,33 +91,12 @@ void MovingNSWorldObserver::step()
         // Perform an evolution step on robots (give them new genomes and mutate them), and
         // reset their positions and the objects
         
-        // Position stuff
-        
-        for (auto object: gPhysicalObjects) {
-            object->unregisterObject();
-        }
-        
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-                robot->unregisterRobot();
-        }
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->reset();
-            robot->registerRobot();
-        }
-        
-        for (auto object: gPhysicalObjects)
-        {
-            object->findRandomLocation();
-            object->registerObject();
-        }
-        
         // Evolution stuff
         
         double totalFitness = 0;
         std::vector<double> fitnesses(gNbOfRobots);
         std::vector<genome> genomes(gNbOfRobots);
+		std::vector<int> newGenomePick(gNbOfRobots);
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
         {
             Robot *robot = gWorld->getRobot(iRobot);
@@ -130,8 +109,6 @@ void MovingNSWorldObserver::step()
         // O(1) fitness-proportionate selection
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
         {
-            Robot *robot = gWorld->getRobot(iRobot);
-            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
             bool done = false;
             int pick = -1;
             while (done == false) {
@@ -140,8 +117,39 @@ void MovingNSWorldObserver::step()
                 if (draw <= fitnesses[pick]) // choose this robot
                     done = true;
             }
-            ctl->loadNewGenome(genomes[pick]);
+            newGenomePick[iRobot] = pick;
         }
+        
+        // Environment stuff
+        
+        for (auto object: gPhysicalObjects) {
+            object->unregisterObject();
+        }
+        
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+            Robot *robot = gWorld->getRobot(iRobot);
+            robot->unregisterRobot();
+        }
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+            Robot *robot = gWorld->getRobot(iRobot);
+            robot->reset();
+            robot->registerRobot();
+        }
+        
+        for (auto object: gPhysicalObjects)
+        {
+            object->findRandomLocation();
+            object->registerObject();
+        }
+
+		// update genomes (we do it here because Robot::reset() also resets genomes)
+		
+		for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+		{
+            Robot *robot = gWorld->getRobot(iRobot);
+            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+			ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
+		}
         
         // update iterations and generations counters
         _generationItCount = 0;
