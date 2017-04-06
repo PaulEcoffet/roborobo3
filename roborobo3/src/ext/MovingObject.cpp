@@ -23,7 +23,7 @@ void MovingObject::show() {
 
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
 {
-    CircleObject::push(__idAgent, __speed);
+    CircleObject::isPushed(__idAgent, __speed);
 }
 
 void MovingObject::isTouched( int __idAgent )
