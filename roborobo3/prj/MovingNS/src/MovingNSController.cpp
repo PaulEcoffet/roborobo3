@@ -375,49 +375,6 @@ unsigned int MovingNSController::computeRequiredNumberOfWeights()
 // ################ ######################## ################
 // ################ ######################## ################
 
-//void MovingNSController::stepEvolution()
-//{
-//    
-//    if( gWorld->getIterations() > 0 && gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == 0 )
-//                    //dynamic_cast<MovingNSWorldObserver*>(gWorld->getWorldObserver())->getGenerationItCount() == 0 )  //todelete
-//    {
-//        // * lifetime ended: replace genome (if possible)
-//        loadNewGenome();
-//        resetFitness();
-//    }
-//    else
-//    {
-//        // * broadcasting genome : robot broadcasts its genome to all neighbors (contact-based wrt proximity sensors)
-//        // note: no broadcast if last iteration before replacement -- this is enforced as roborobo update method is random-asynchroneous. This means that robots broadcasting may transmit genomes to robot already at the next generation depending on the update ordering (should be avoided).
-//
-//        _dSumTravelled = _dSumTravelled + getEuclidianDistance( _wm->getXReal(), _wm->getYReal(), _Xinit, _Yinit ); //remark: incl. squareroot.
-//    }
-//    
-//    // log the genome (only at the second iteration during snapshot time)
-//    if ( MovingNSSharedData::gLogGenomeSnapshot && gWorld->getIterations() % ( MovingNSSharedData::gEvaluationTime * MovingNSSharedData::gSnapshotsFrequency ) == 1 )
-//    {
-//        // Logging: full genome
-//        std::string sLog = std::string("");
-//        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
-//        if ( _wm->isAlive() )
-//        {
-//            for(unsigned int i=0; i<_currentGenome.size(); i++)
-//            {
-//                sLog += std::to_string(_currentGenome[i]);
-//                if ( i < _currentGenome.size()-1 )
-//                    sLog += ",";
-//            }
-//        }
-//        else
-//            sLog += "n/a"; // do not write genome
-//        
-//        sLog += "\n";
-//        gLogManager->write(sLog);
-//        gLogManager->flush();
-//    }
-//    
-//}
-
 void MovingNSController::performVariation()
 {
     if ( MovingNSSharedData::gIndividualMutationRate > rand()/RAND_MAX ) // global mutation rate (whether this genome will get any mutation or not) - default: always
