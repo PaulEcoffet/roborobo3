@@ -416,13 +416,6 @@ void MovingNSController::stepEvolution()
         gLogManager->flush();
     }
     
-    
-    if ( getNewGenomeStatus() ) // check for new NN parameters
-    {
-        _parameters.clear();
-        _parameters = _currentGenome;
-        setNewGenomeStatus(false);
-    }
 }
 
 void MovingNSController::performVariation()
@@ -550,7 +543,7 @@ void MovingNSController::initController()
         _currentGenome.push_back((double)(rand()%MovingNSSharedData::gNeuronWeightRange)/(MovingNSSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
     }
     
-    setNewGenomeStatus(true);
+    updatePhenotype();
     
 }
 
@@ -597,7 +590,7 @@ void MovingNSController::performSelection()
     _currentGenome = ctl->_currentGenome;
     _currentSigma = ctl->_currentSigma;
     
-    setNewGenomeStatus(true);
+    updatePhenotype();
         
     // Logging: track descendance
     std::string sLog = std::string("");
@@ -658,6 +651,11 @@ void MovingNSController::loadNewGenome()
             gLogManager->flush();
         }
     }
+}
+
+void MovingNSController::updatePhenotype() {
+    // could be more complicated!
+    _parameters = _currentGenome;
 }
 
 void MovingNSController::logCurrentState()
