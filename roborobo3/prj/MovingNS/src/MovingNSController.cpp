@@ -652,6 +652,8 @@ void MovingNSController::resetFitness()
 {
     for (auto& fit: _lastFitnesses)
         fit = 0;
+    for (auto& push: _lastPushTries)
+        push = false;
     updateFitness(0);
 }
 
