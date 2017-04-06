@@ -143,7 +143,6 @@ void MovingNSWorldObserver::step()
             ctl->loadNewGenome(genomes[pick]);
         }
         
-        
         // update iterations and generations counters
         _generationItCount = 0;
         _generationCount++;

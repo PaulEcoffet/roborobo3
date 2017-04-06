@@ -507,6 +507,7 @@ void MovingNSController::initController()
 void MovingNSController::reset()
 {
     initController();
+    resetFitness();
 }
 
 
