@@ -687,7 +687,7 @@ bool Robot::isCollision()
 
                         int targetIndex = (r<<16)+(g<<8)+b;
                         
-                        if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset )   // physical object
+                        if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableCircleObjects)   // physical object
                         {
                             targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
                             gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, Point2d(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));

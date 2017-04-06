@@ -172,7 +172,7 @@ bool CircleObject::canRegister( int __x, int __y )
                     
                     int targetIndex = (r<<16)+(g<<8)+b;
                     
-                    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset )   // physical object
+                    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableCircleObjects)   // physical object
                     {
                         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
                         gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_desiredLinearSpeed, _desiredSpeedOrientation));
@@ -363,11 +363,8 @@ void CircleObject::step()
 
 void CircleObject::isPushed(int __idAgent, Point2d __speed)
 {
-    if (gMovableCircleObjects)
-    {
-        if (_impulses.count(__idAgent) == 0) {
-            _impulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
-        }
+    if (_impulses.count(__idAgent) == 0) {
+        _impulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
     }
 }
 
