@@ -50,7 +50,7 @@ void PhysicalObjectFactory::makeObject( int type )
         case 4:
             if ( gVerbose )
                 std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
-            gPhysicalObjects.push_back( new CircleObject(id) );
+            gPhysicalObjects.push_back( new MovingObject(id) );
             break;
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;

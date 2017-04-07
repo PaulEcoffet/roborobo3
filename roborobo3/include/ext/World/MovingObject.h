@@ -7,10 +7,14 @@
 
 #include "World/CircleObject.h"
 
-#include <map>
+#include <set>
 
 class MovingObject : public CircleObject
 {
+    
+private:
+    
+    std::set<int> _nearbyRobots; // robots that are in the footprint in this iteration
 
 public:
 
