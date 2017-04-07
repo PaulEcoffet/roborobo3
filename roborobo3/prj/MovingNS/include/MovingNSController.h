@@ -97,7 +97,6 @@ protected:
     virtual void performVariation();
     
     virtual void resetFitness();
-    virtual void updateFitness();
     
 public:
     
