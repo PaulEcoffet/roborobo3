@@ -65,16 +65,11 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 {
     _iteration++;
     
-    // * step evolution
-    
-//    stepEvolution();
-    
     // * step controller
     
     if ( _wm->isAlive() )
     {
         stepController();
-        updateFitness();
     }
     else
     {
@@ -662,11 +657,6 @@ void MovingNSController::updateFitness( double __newFitness )
 {
     _wm->_fitnessValue = __newFitness;
     _lastFitnesses[_iteration%5] = __newFitness;
-}
-
-void MovingNSController::updateFitness()
-{
-
 }
 
 void MovingNSController::updatePushes()
