@@ -79,6 +79,7 @@
 		E62037A91E8945E6004B5859 /* MovingNSSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E62037A51E8945E6004B5859 /* MovingNSSharedData.cpp */; };
 		E62037AA1E8945E6004B5859 /* MovingNSWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E62037A61E8945E6004B5859 /* MovingNSWorldObserver.cpp */; };
 		E62037B01E8946DC004B5859 /* MovingNSConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */; };
+		E64820BE1E79950E005D95AC /* MovingObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820BD1E79950E005D95AC /* MovingObject.cpp */; };
 		E64820C21E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C11E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp */; };
 		E64820CB1E799BCF005D95AC /* TemplateMovingAgentObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C81E799BCF005D95AC /* TemplateMovingAgentObserver.cpp */; };
 		E64820CC1E799BCF005D95AC /* TemplateMovingController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C91E799BCF005D95AC /* TemplateMovingController.cpp */; };
@@ -266,6 +267,8 @@
 		E62037AE1E8945F1004B5859 /* MovingNSWorldObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingNSWorldObserver.h; path = MovingNS/include/MovingNSWorldObserver.h; sourceTree = "<group>"; };
 		E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingNSConfigurationLoader.cpp; sourceTree = "<group>"; };
 		E631EB071E8BBCB60031AD2D /* MovingNSConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingNSConfigurationLoader.h; sourceTree = "<group>"; };
+		E64820BC1E7994FB005D95AC /* MovingObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingObject.h; sourceTree = "<group>"; };
+		E64820BD1E79950E005D95AC /* MovingObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingObject.cpp; sourceTree = "<group>"; };
 		E64820C01E799A6E005D95AC /* TemplateMovingConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateMovingConfigurationLoader.h; sourceTree = "<group>"; };
 		E64820C11E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = TemplateMovingConfigurationLoader.cpp; sourceTree = "<group>"; };
 		E64820C51E799BCF005D95AC /* TemplateMovingAgentObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = TemplateMovingAgentObserver.h; path = TemplateMoving/include/TemplateMovingAgentObserver.h; sourceTree = "<group>"; };
@@ -704,6 +707,7 @@
 				37BA26631BC3D014002DF5DC /* LandmarkObject.h */,
 				37BA26641BC3D014002DF5DC /* PhysicalObjectFactory.h */,
 				37BA26651BC3D014002DF5DC /* RoundObject.h */,
+				E64820BC1E7994FB005D95AC /* MovingObject.h */,
 				37BA26661BC3D014002DF5DC /* SwitchObject.h */,
 			);
 			path = World;
@@ -808,6 +812,7 @@
 				37BA27021BC3D014002DF5DC /* LandmarkObject.cpp */,
 				37BA27041BC3D014002DF5DC /* PhysicalObjectFactory.cpp */,
 				37BA27061BC3D014002DF5DC /* RoundObject.cpp */,
+				E64820BD1E79950E005D95AC /* MovingObject.cpp */,
 				37BA27071BC3D014002DF5DC /* SwitchObject.cpp */,
 				3766DF771E29141E0069E44C /* TemplateEEConfigurationLoader.cpp */,
 				3705F0591BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp */,
@@ -1000,6 +1005,7 @@
 				37BA274D1BC3D014002DF5DC /* WorldObserver.cpp in Sources */,
 				37BA27321BC3D014002DF5DC /* NeuralNetwork.cpp in Sources */,
 				3705F0881BC66E3B001A016D /* TemplateWanderWorldObserver.cpp in Sources */,
+				E64820BE1E79950E005D95AC /* MovingObject.cpp in Sources */,
 				E62037B01E8946DC004B5859 /* MovingNSConfigurationLoader.cpp in Sources */,
 				3766DF781E29141E0069E44C /* TemplateEEConfigurationLoader.cpp in Sources */,
 				3705F07E1BC66E3B001A016D /* TemplateBoidsAgentObserver.cpp in Sources */,
