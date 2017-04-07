@@ -289,6 +289,7 @@ void CircleObject::unregisterObject()
 void CircleObject::step()
 {
     _hitWall = false;
+    _didMove = false;
     if (_impulses.size() > 0)
     {
         //       printf("[DEBUG] Moving object %d\n", _id);
@@ -332,13 +333,11 @@ void CircleObject::step()
             unregisterObject();
             hide();
             
-            bool actuallyMoved = false;
-            
             if (canRegister(newX, newY))
             {
                 _xCenterPixel = newX;
                 _yCenterPixel = newY;
-                actuallyMoved = true;
+                _didMove = true;
             }
             
             if (_hitWall) { // reappear somewhere else
@@ -348,7 +347,7 @@ void CircleObject::step()
             else {
                 registerObject();
                 // tell robots that the push was successful (remember we did move)
-                if (actuallyMoved)
+                if (_didMove)
                     for (auto& imp: _impulses)
                         if (imp.first >= gRobotIndexStartOffset) {
                             Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);

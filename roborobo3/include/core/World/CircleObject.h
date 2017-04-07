@@ -33,6 +33,7 @@ protected:
     double _desiredLinearSpeed;
     
     bool _hitWall;
+    bool _didMove;
     
 public:
     
