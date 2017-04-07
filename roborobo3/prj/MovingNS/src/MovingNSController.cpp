@@ -626,7 +626,7 @@ void MovingNSController::logCurrentState()
     ",y_init," + std::to_string(_wm->getYReal()) +
     ",x_current," + std::to_string(_Xinit) +
     ",y_current," + std::to_string(_Yinit) +
-    ",dist," + std::to_string( getEuclidianDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
+    ",dist," + std::to_string( getEuclideanDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
     ",sumOfDist," + std::to_string( _dSumTravelled ) +
     ",groupId," + std::to_string(_wm->getGroupId()) +
     ",fitnessValue," + std::to_string(_wm->_fitnessValue) + 

@@ -172,7 +172,7 @@ bool CircleObject::canRegister( int __x, int __y )
                     
                     int targetIndex = (r<<16)+(g<<8)+b;
                     
-                    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableCircleObjects)   // physical object
+                    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableObjects)   // physical object
                     {
                         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
                         gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_desiredLinearSpeed, _desiredSpeedOrientation));

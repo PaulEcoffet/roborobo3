@@ -228,7 +228,7 @@ void Robot::reset()
     }
 
 	setCoordReal(x,y);
-    setCoord(x, y);
+    setCoord(x,y);
 
     //Initialize coordinate and displacement
 	_xDelta = 0;
@@ -679,7 +679,7 @@ bool Robot::isCollision()
 
                         int targetIndex = (r<<16)+(g<<8)+b;
                         
-                        if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableCircleObjects)   // physical object
+                        if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableObjects)   // physical object
                         {
                             targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
                             gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, Point2d(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
