@@ -86,8 +86,6 @@ extern bool gMonitorRobot;			// display currently selected robot input/output va
 extern int gTrajectoryMonitorIt;    // store the iteration when the last trajectory monitoring started. Use to create the trajectory image filename.
 extern long int gVersion;
 
-extern bool gMovableCircleObjects; // should circle objects be movable in this simulation
-
 // global data
 
 class World;

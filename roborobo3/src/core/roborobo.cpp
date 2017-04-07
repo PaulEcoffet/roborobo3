@@ -246,8 +246,6 @@ bool gMonitorRobot = false;
 
 int gTrajectoryMonitorIt = 0;
 
-bool gMovableCircleObjects = false;
-
 // =-=-=-=-=
 
 bool gKeyUp=false, gKeyDown=false, gKeyRight=false, gKeyLeft=false;
@@ -1333,6 +1331,7 @@ bool loadProperties( std::string __propertiesFilename )
         gPhysicalObjectsInitAreaHeight = -1;  // initialized when gAreaHeight is known
     }
     
+    
     if ( gProperties.hasProperty("gAgentsInitAreaX") )
         convertFromString<int>(gAgentsInitAreaX, gProperties.getProperty("gAgentsInitAreaX"), std::dec);
     else
@@ -1515,19 +1514,7 @@ bool loadProperties( std::string __propertiesFilename )
 		{
 			std::cerr << "[WARNING] gRobotDisplayFocus is missing or corrupt (default is \"false\").\n";
 			//returnValue = false; // not critical
-		}
-    
-    s = gProperties.getProperty("gMovableCircleObjects");
-    if ( s == "true" || s == "True" || s == "TRUE" )
-        gMovableCircleObjects = true;
-    else
-        if ( s == "false" || s == "False" || s == "FALSE" )
-            gMovableCircleObjects = false;
-        else
-        {
-            std::cerr << "[WARNING] gMovableCircleObjects is missing or corrupt (default is \"false\").\n";
-            //returnValue = false; // not critical
-        }
+		}	
 
     if ( gBatchMode_commandlineargument == false )
     {

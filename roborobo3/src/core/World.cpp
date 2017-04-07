@@ -171,6 +171,13 @@ void World::initWorld()
 
 void World::updateWorld(const Uint8 *__keyboardStates)
 {
+    // Remark: objects and agents are updated *in random order* so as to avoid "effect" order (e.g. low index agents moves first).
+    //    This is very important to avoid possible nasty effect from ordering such as "agents with low indexes moves first"
+    //    outcome: among many iterations, the effect of ordering is reduced.
+    //    This means that roborobo is turn-based, with stochastic update ordering within one turn
+
+    
+    // * update physical object, if any (in random order)
     
     int shuffledObjectIndex[gNbOfPhysicalObjects];
     for ( int i = 0 ; i < gNbOfPhysicalObjects ; i++ )
@@ -235,11 +242,7 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     gLogManager->flush();
     
 	_iterations++;
-    
-//    if ( gRefreshUserDisplay == true )
-//    {
-//        gRefreshUserDisplay = false;
-//    }
+
 }
 
 
