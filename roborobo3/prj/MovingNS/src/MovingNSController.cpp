@@ -663,3 +663,8 @@ void MovingNSController::updatePushes()
 {
     _lastPushTries[_iteration%5] = _wm->getTriedPushing();
 }
+
+void MovingNSController::increaseFitness( double __delta )
+{
+    updateFitness(_wm->_fitnessValue+__delta);
+}
