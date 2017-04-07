@@ -97,6 +97,8 @@ protected:
     virtual void performVariation();
     
     virtual void resetFitness();
+    virtual void updateFitness( double __newFitness );
+
     
 public:
     
@@ -115,7 +117,7 @@ public:
     
     virtual double getFitness();
     
-    virtual void updateFitness( double __newFitness );
+    void increaseFitness( double __delta );
     
     virtual void updatePushes();
     
