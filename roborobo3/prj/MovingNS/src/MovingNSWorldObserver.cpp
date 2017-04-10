@@ -233,27 +233,3 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     gLogManager->flush();
     
 }
-
-// O(1) fitness-proportionate selection algorithm: see https://arxiv.org/pdf/1109.3627.pdf
-
-int MovingNSWorldObserver::chooseGenome() {
-    double fitnessSum = 0;
-    
-    for (int i = 0; i < gNbOfRobots; i++)
-    {
-        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController());
-        fitnessSum += ctl->getFitness();
-    }
-    
-    bool done = false;
-    int pick = -1;
-    while (done == false)
-    {
-        pick = rand()%gNbOfRobots;
-        MovingNSController *chosenCtl = dynamic_cast<MovingNSController*>(gWorld->getRobot(pick)->getController());
-        double ok = ranf()*fitnessSum;
-        done = (ok <= chosenCtl->getFitness());
-    }
-    
-    return pick;
-}

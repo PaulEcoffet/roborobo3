@@ -67,6 +67,7 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     // * step controller
 
     stepController();
+    
 }
 
 
@@ -463,25 +464,6 @@ void MovingNSController::mutateSigmaValue()
         }
     }
 }
-
-void MovingNSController::performSelection()
-{
-    MovingNSWorldObserver *obs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
-    int sourceId = obs->chooseGenome();
-    
-    MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(sourceId)->getController());
-    _currentGenome = ctl->_currentGenome;
-    _currentSigma = ctl->_currentSigma;
-    
-    updatePhenotype();
-        
-    // Logging: track descendance
-    std::string sLog = std::string("");
-    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string(sourceId) + "\n";
-    gLogManager->write(sLog);
-    gLogManager->flush();
-}
-
 
 void MovingNSController::loadNewGenome( genome __newGenome )
 {
