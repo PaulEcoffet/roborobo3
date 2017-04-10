@@ -16,14 +16,11 @@ MovingObject::MovingObject( int __id ) : CircleObject ( __id )
 void MovingObject::step()
 {
     CircleObject::step(); //handles movement, and sets _didMove
-    if (_didMove)
+    for (auto robotID: _nearbyRobots)
     {
-        for (auto robotID: _nearbyRobots)
-        {
-            Robot *robot = gWorld->getRobot(robotID);
-            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-            ctl->increaseFitness(1);
-        }
+        Robot *robot = gWorld->getRobot(robotID);
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+        ctl->wasNearObject(_didMove);
     }
     _nearbyRobots.clear();
 }
