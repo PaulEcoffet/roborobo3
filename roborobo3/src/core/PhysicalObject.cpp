@@ -127,11 +127,8 @@ void PhysicalObject::init()
         y = -1.0;
 	}
     
-    _position = Point2d(x,y);
-    
-	_xCenterPixel = x;
-	_yCenterPixel = y;
-
+    _xReal = x;
+    _yReal = y;
 }
 
 int PhysicalObject::findRandomLocation( )
@@ -147,10 +144,8 @@ int PhysicalObject::findRandomLocation( )
         //x = (rand() % (gAreaWidth-20)) + 10;  // deprecated
         //y = (rand() % (gAreaHeight-20)) + 10; // deprecated
         
-        _position = Point2d(x,y);
-        
-        _xCenterPixel = x;
-        _yCenterPixel = y;
+        _xReal = x;
+        _yReal = y;
         
         tries++;
     } while ( canRegister() == false && tries < gLocationFinderMaxNbOfTrials );
@@ -163,8 +158,8 @@ int PhysicalObject::findRandomLocation( )
     
     if ( gVerbose )
     {
-        std::cout << "[INFO] Object " << _id << " positioned at (" << _xCenterPixel << "), ";
-        std::cout<< _yCenterPixel << " -- [random pick after " << tries << " tries]" << std::endl;
+        std::cout << "[INFO] Object " << _id << " positioned at (" << _xReal << "), ";
+        std::cout<< _yReal << " -- [random pick after " << tries << " tries]" << std::endl;
     }
         
     return tries;

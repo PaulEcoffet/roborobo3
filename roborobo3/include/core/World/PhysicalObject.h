@@ -20,9 +20,8 @@ protected :
     int type;
     
     // coordinates
-    Point2d _position;
-    Sint16 _xCenterPixel;
-    Sint16 _yCenterPixel;
+    double _xReal;
+    double _yReal;
     
     Uint8 _displayColorRed;
     Uint8 _displayColorGreen;
@@ -51,16 +50,17 @@ public :
         return _id;
     }
     
-    void setPosition(Point2d position)
+    double getXReal() { return _xReal; }
+    double getYReal() { return _yReal; }
+    
+    Sint16 getXCenterPixel()
     {
-        _position = position;
-        _xCenterPixel = position.x;
-        _yCenterPixel = position.y;
+        return (Sint16)_xReal;
     }
     
-    Point2d getPosition()
+    Sint16 getYCenterPixel()
     {
-        return _position;
+        return (Sint16)_yReal;
     }
     
     virtual void step() = 0;

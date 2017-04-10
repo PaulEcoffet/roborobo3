@@ -19,8 +19,8 @@ void MovingObject::step()
     for (auto robotID: _nearbyRobots)
     {
         Robot *robot = gWorld->getRobot(robotID);
-        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-        ctl->wasNearObject(_didMove);
+//        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+//        ctl->wasNearObject(_didMove);
     }
     _nearbyRobots.clear();
 }

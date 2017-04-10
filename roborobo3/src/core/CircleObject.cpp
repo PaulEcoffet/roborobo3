@@ -38,8 +38,8 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
     }
 
     double x = 0.0, y = 0.0;
-    x = _xCenterPixel;
-	y = _yCenterPixel;
+    x = _xReal;
+	y = _yReal;
     
     int tries = 0;
     bool randomLocation = false;
@@ -61,7 +61,7 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
     
     if ( gVerbose )
     {
-        std::cout << "[INFO] Physical Object #" << getId() << " (of super type CircleObject) positioned at ( "<< std::setw(5) << _xCenterPixel << " , " << std::setw(5) << _yCenterPixel << " ) -- ";
+        std::cout << "[INFO] Physical Object #" << getId() << " (of super type CircleObject) positioned at ( "<< std::setw(5) << _xReal << " , " << std::setw(5) << _yReal << " ) -- ";
         if ( randomLocation == false )
             std::cout << "[user-defined position]\n";
         else
@@ -86,6 +86,9 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
 
 void CircleObject::show() // display on screen (called in the step() method if gDisplayMode=0 and _visible=true)
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+
     //  draw footprint
     
     Uint8 r = 0xF0;
@@ -122,6 +125,9 @@ void CircleObject::show() // display on screen (called in the step() method if g
 
 void CircleObject::hide()
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+    
     //  hide footprint (draw white)
     
     Uint8 r = 0xFF;
@@ -155,7 +161,7 @@ void CircleObject::hide()
 	}
 }
 
-bool CircleObject::canRegister( int __x, int __y )
+bool CircleObject::canRegister( Sint16 __x, Sint16 __y )
 {
     // test shape
     for (Sint16 xColor = __x - Sint16(_radius) ; xColor < __x + Sint16(_radius) ; xColor++)
@@ -209,12 +215,14 @@ bool CircleObject::canRegister( int __x, int __y )
 
 bool CircleObject::canRegister()
 {
-    return canRegister(_xCenterPixel, _yCenterPixel);
+    return canRegister(getXCenterPixel(), getYCenterPixel());
 }
 
 void CircleObject::registerObject()
 {
     int id_converted = _id + gPhysicalObjectIndexStartOffset;
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
     
     //  draw footprint
     
@@ -249,6 +257,9 @@ void CircleObject::registerObject()
 
 void CircleObject::unregisterObject()
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+    
     //  clear footprint
     
     Uint32 color = SDL_MapRGBA( gFootprintImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE );
@@ -304,15 +315,15 @@ void CircleObject::step()
             
             if (imp.first >= gRobotIndexStartOffset) { // robot
                 Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
-                ux = (double)_xCenterPixel - robot->getWorldModel()->getXReal();
-                uy = (double)_yCenterPixel - robot->getWorldModel()->getYReal();
+                ux = _xReal - robot->getWorldModel()->getXReal();
+                uy = _yReal - robot->getWorldModel()->getYReal();
                 
             }
             else // other object
             {
                 PhysicalObject *object = gPhysicalObjects[imp.first];
-                ux = (double)_xCenterPixel - object->getPosition().x;
-                uy = (double)_yCenterPixel - object->getPosition().y;
+                ux = _xReal - object->getXReal();
+                uy = _yReal - object->getYReal();
             }
             double sqnorm = ux*ux + uy*uy;
             impXtot += (vx*ux+vy*uy)*ux/sqnorm;
@@ -321,21 +332,17 @@ void CircleObject::step()
         
         _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
         _desiredSpeedOrientation = atan2(impYtot, impXtot) * 180 / M_PI;
-                
-        int dx = roundAwayFromZero(impXtot);
-        int dy = roundAwayFromZero(impYtot);
-                
-        int newX = _xCenterPixel + dx;
-        int newY = _yCenterPixel + dy;
         
-        if (dx != 0 || dy != 0) // we're going to try to move
+        if ((Sint16)(_xReal+impXtot) != getXCenterPixel() ||
+            (Sint16)(_yReal+impYtot) != getYCenterPixel()) // we're going to try to move onscreen
         {
             unregisterObject();
             hide();
             
-            if (canRegister(newX, newY))
+            if (canRegister((Sint16)_xReal+impXtot, (Sint16)_yReal+impYtot))
             {
-                setPosition(Point2d(newX, newY));
+                _xReal += impXtot;
+                _yReal += impYtot;
                 _didMove = true;
             }
             
