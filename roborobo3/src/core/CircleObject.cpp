@@ -361,6 +361,11 @@ void CircleObject::step()
                         }
             }
         }
+        else // silently move offscreen by less than a pixel
+        {
+            _xReal += impXtot;
+            _yReal += impYtot;
+        }
         _impulses.clear();
     }
     stepPhysicalObject();
