@@ -41,7 +41,7 @@ public:
     ~CircleObject() { }
 
     bool canRegister(); // can we register at current position
-    bool canRegister( int __x, int __y ); // can we register the object at that position
+    bool canRegister( Sint16 __x, Sint16 __y ); // can we register the object at that position
     void registerObject(); // register object in the world (write images)
     void unregisterObject(); // unregister object in the world (write blank pixels)
     void show(); // wrt. screen-rendering

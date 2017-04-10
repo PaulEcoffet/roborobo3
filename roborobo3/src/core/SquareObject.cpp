@@ -61,8 +61,8 @@ SquareObject::SquareObject( int __id ) : PhysicalObject( __id ) // a unique and 
     }
 
     double x = 0.0, y = 0.0;
-    x = _xCenterPixel;
-	y = _yCenterPixel;
+    x = getXCenterPixel();
+	y = getYCenterPixel();
     
     int tries = 0;
     bool randomLocation = false;
@@ -84,7 +84,7 @@ SquareObject::SquareObject( int __id ) : PhysicalObject( __id ) // a unique and 
     
     if ( gVerbose )
     {
-        std::cout << "[INFO] Physical Object #" << getId() << "  (of super type SquareObject) positioned at ( "<< std::setw(5) << _xCenterPixel << " , " << std::setw(5) << _yCenterPixel << " ) -- ";
+        std::cout << "[INFO] Physical Object #" << getId() << "  (of super type SquareObject) positioned at ( "<< std::setw(5) << getXCenterPixel() << " , " << std::setw(5) << getYCenterPixel() << " ) -- ";
         if ( randomLocation == false )
             std::cout << "[user-defined position]\n";
         else
@@ -108,6 +108,9 @@ SquareObject::SquareObject( int __id ) : PhysicalObject( __id ) // a unique and 
 
 void SquareObject::show() // display on screen (called in the step() method if gDisplayMode=0 and _visible=true)
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+
     //  draw footprint
     
     Uint8 r = 0xF0;
@@ -139,6 +142,9 @@ void SquareObject::show() // display on screen (called in the step() method if g
 
 void SquareObject::hide()
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+
     //  hide footprint (draw white)
     
     Uint8 r = 0xFF;
@@ -168,6 +174,9 @@ void SquareObject::hide()
 
 bool SquareObject::canRegister()
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+
     // test shape
 	for (Sint16 xColor = _xCenterPixel - Sint16(_solid_w/2) ; xColor < _xCenterPixel + Sint16(_solid_w/2) ; xColor++)
 	{
@@ -201,6 +210,8 @@ bool SquareObject::canRegister()
 void SquareObject::registerObject()
 {
     int id_converted = _id + gPhysicalObjectIndexStartOffset;
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
     
     //  draw footprint
     
@@ -229,6 +240,9 @@ void SquareObject::registerObject()
 
 void SquareObject::unregisterObject()
 {
+    Sint16 _xCenterPixel = getXCenterPixel();
+    Sint16 _yCenterPixel = getYCenterPixel();
+
     //  draw footprint
     
     Uint32 color = SDL_MapRGBA( gFootprintImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE );
