@@ -34,8 +34,6 @@ public:
     virtual void step();
     
     virtual int getGenerationItCount() { return _generationItCount; }
-    
-    virtual int chooseGenome(); // pick a fitprop-random genome (returns robot ID)
 
 };
 
