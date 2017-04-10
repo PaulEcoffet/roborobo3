@@ -49,7 +49,6 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
     reset();
     resetFitness();
     
-    _wm->setAlive(true);
     _wm->setRobotLED_colorValues(255, 0, 0);
     
 }
@@ -66,77 +65,8 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     _iteration++;
     
     // * step controller
-    
-    if ( _wm->isAlive() )
-    {
-        stepController();
-    }
-    else
-    {
-        _wm->_desiredTranslationalValue = 0.0;
-        _wm->_desiredRotationalVelocity = 0.0;
-    }
-    
-    // * updating listening state
-    
-    if ( _wm->isAlive() == false )
-    {
-        assert ( _notListeningDelay >= -1 ); // -1 means infinity
-        
-        if ( _notListeningDelay > 0 )
-        {
-            _notListeningDelay--;
-            
-            if ( _notListeningDelay == 0 )
-            {
-                
-                _listeningDelay = MovingNSSharedData::gListeningStateDelay;
-                
-                if ( _listeningDelay > 0 || _listeningDelay == -1 )
-                {
-                    _isListening = true;
-                    
-                    _wm->setRobotLED_colorValues(0, 255, 0); // is listening
-                    
-                    std::string sLog = std::string("");
-                    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,listening\n";
-                    gLogManager->write(sLog);
-                    gLogManager->flush();
-                }
-                else
-                {
-                    std::string sLog = std::string("");
-                    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,inactive\n"; // never listen again.
-                    gLogManager->write(sLog);
-                    gLogManager->flush();
-                }
-            }
-        }
-        else
-            if ( _notListeningDelay != -1 && _listeningDelay > 0 )
-            {
-                assert ( _isListening == true );
-                
-                _listeningDelay--;
-                
-                if ( _listeningDelay == 0 )
-                {
-                    _isListening = false;
-                    // Logging: robot is dead
-                    std::string sLog = std::string("");
-                    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,inactive\n";
-                    gLogManager->write(sLog);
-                    gLogManager->flush();
 
-                    _notListeningDelay = -1; // agent will not be able to be active anymore
-                    _wm->setRobotLED_colorValues(0, 0, 255); // is not listening
-                    
-                    reset(); // destroy then create a new NN
-                    
-                    _wm->setAlive(false);
-                }
-            }
-    }
+    stepController();
 }
 
 
@@ -559,55 +489,6 @@ void MovingNSController::loadNewGenome( genome __newGenome )
     _currentSigma = __newGenome.second;
     performVariation();
     updatePhenotype();
-//    if ( _wm->isAlive() || gEnergyRefill )  // ( gEnergyRefill == true ) enables revive
-//    {
-//        if ( _wm->isAlive() )
-//            logCurrentState();
-//        
-//        // note: at this point, agent got energy, whether because it was revived or because of remaining energy.
-//        performSelection();
-//        performVariation();
-//        
-//        //logCurrentState();
-//        
-//        _wm->setAlive(true);
-//        
-//        std::string sLog = std::string("");
-//        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,active\n";
-//        gLogManager->write(sLog);
-//        gLogManager->flush();
-//        
-//        if ( _wm->getEnergyLevel() == 0 )
-//            _wm->setEnergyLevel(gEnergyInit);
-//        
-//        _Xinit = _wm->getXReal();
-//        _Yinit = _wm->getYReal();
-//        _dSumTravelled = 0;
-//        
-//        _wm->setRobotLED_colorValues(255, 0, 0);
-//        
-//        // log the genome (or at least the existence of a genome)
-//        if ( _wm->isAlive() )
-//        {
-//            // Logging: full genome
-//            std::string sLog = std::string("");
-//            sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
-//            
-//            /*
-//             // write genome (takes a lot of disk space)
-//             for(unsigned int i=0; i<_genome.size(); i++)
-//             {
-//             sLog += std::to_string(_genome[i]) + ",";
-//             //gLogFile << std::fixed << std::showpoint << _wm->_genome[i] << " ";
-//             }
-//             */
-//            sLog += "(...)"; // do not write genome
-//            
-//            sLog += "\n";
-//            gLogManager->write(sLog);
-//            gLogManager->flush();
-//        }
-//    }
 }
 
 void MovingNSController::updatePhenotype() {
