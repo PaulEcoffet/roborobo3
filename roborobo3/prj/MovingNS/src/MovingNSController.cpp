@@ -227,7 +227,7 @@ std::vector<double> MovingNSController::getInputs(){
             pushSum++;
 //    inputs.push_back(pushSum);
     
-    // Are we in the first half of the generation ?
+    // Are we in the first half of the generation?
     MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     if (wobs->getGenerationItCount() <= MovingNSSharedData::gEvaluationTime/2)
         inputs.push_back(0);
