@@ -32,10 +32,9 @@ void MovingNSAgentObserver::reset()
 void MovingNSAgentObserver::step()
 {
     // * update fitness (if needed)
-    if ( _wm->isAlive() && _wm->getDidPush() )
+    if ( _wm->getDidPush() )
     {
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(_wm->getId())->getController());
-//        ctl->increaseFitness(1);
         ctl->updatePushes();
     }
     
