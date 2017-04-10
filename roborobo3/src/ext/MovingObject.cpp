@@ -22,7 +22,7 @@ void MovingObject::step()
         Robot *robot = gWorld->getRobot(robotID);
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
         double movement = sqrt((oldX-_xReal)*(oldX-_xReal) + (oldY-_yReal)*(oldY-_yReal));
-        ctl->wasNearObject(movement);
+        ctl->wasNearObject(movement, _didMove);
     }
     _nearbyRobots.clear();
 }
