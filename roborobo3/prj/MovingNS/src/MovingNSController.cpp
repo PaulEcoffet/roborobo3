@@ -668,3 +668,10 @@ void MovingNSController::increaseFitness( double __delta )
 {
     updateFitness(_wm->_fitnessValue+__delta);
 }
+
+void MovingNSController::wasNearObject( bool __objectMoved )
+{
+//    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
+    if (__objectMoved)
+        increaseFitness(1);
+}
