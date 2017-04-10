@@ -335,8 +335,7 @@ void CircleObject::step()
             
             if (canRegister(newX, newY))
             {
-                _xCenterPixel = newX;
-                _yCenterPixel = newY;
+                setPosition(Point2d(newX, newY));
                 _didMove = true;
             }
             
