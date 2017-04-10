@@ -204,7 +204,6 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
 {
     // * monitoring: count number of active agents.
     
-    int activeCount = 0;
     double sumOfFitnesses = 0;
     double minFitness = DBL_MAX;
     double maxFitness = -DBL_MAX;
@@ -212,53 +211,25 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
     {
         MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController());
-        
-        if ( ctl->getWorldModel()->isAlive() == true )
-        {
-            activeCount++;
+
             sumOfFitnesses += ctl->getFitness() ;
             if ( ctl->getFitness() < minFitness )
                 minFitness = ctl->getFitness();
             if ( ctl->getFitness() > maxFitness )
                 maxFitness = ctl->getFitness();
-        }
     }
     
     if ( gVerbose && localVerbose )
     {
-        std::cout << "[gen:" << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << ";it:" << gWorld->getIterations() << ";pop:" << activeCount << ";avgFitness:" << sumOfFitnesses/activeCount << "]\n";
+        std::cout << "[gen:" << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << ";it:" << gWorld->getIterations() << ";pop:" << gNbOfRobots << ";avgFitness:" << sumOfFitnesses/gNbOfRobots << "]\n";
     }
     
     // display lightweight logs for easy-parsing
-    std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << activeCount << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/activeCount << "\n";
+    std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/gNbOfRobots << "\n";
         
     // Logging, population-level: alive
-    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(activeCount) + "\n";
+    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(gNbOfRobots) + "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
     
-}
-
-// O(1) fitness-proportionate selection algorithm: see https://arxiv.org/pdf/1109.3627.pdf
-
-int MovingNSWorldObserver::chooseGenome() {
-    double fitnessSum = 0;
-    
-    for (int i = 0; i < gNbOfRobots; i++)
-    {
-        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController());
-        fitnessSum += ctl->getFitness();
-    }
-    
-    bool done = false;
-    int pick = -1;
-    while (done == false)
-    {
-        pick = rand()%gNbOfRobots;
-        MovingNSController *chosenCtl = dynamic_cast<MovingNSController*>(gWorld->getRobot(pick)->getController());
-        double ok = ranf()*fitnessSum;
-        done = (ok <= chosenCtl->getFitness());
-    }
-    
-    return pick;
 }
