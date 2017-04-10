@@ -75,6 +75,7 @@ protected:
     
     double _lastFitnesses[5]; // fitness we gained on the last 5 rounds
     bool _lastPushTries[5]; // did we try to push recently
+    bool _isNearObject; //are we near an object
     
     // ANN
     double _minValue;
@@ -93,10 +94,11 @@ protected:
     
     virtual void logCurrentState();
     
-    virtual void performSelection();
     virtual void performVariation();
     
     virtual void resetFitness();
+    virtual void updateFitness( double __newFitness );
+
     
 public:
     
@@ -115,9 +117,11 @@ public:
     
     virtual double getFitness();
     
-    virtual void updateFitness( double __newFitness );
+    void increaseFitness( double __delta );
     
     virtual void updatePushes();
+    
+    void wasNearObject( bool __objectMoved ); // callback from the object whose footprint we're on
     
 };
 
