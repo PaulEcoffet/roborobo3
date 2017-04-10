@@ -63,6 +63,13 @@ MovingNSController::~MovingNSController()
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
     _iteration++;
+
+    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
+    
+    if (_isNearObject == false && wobs->getGenerationItCount() > MovingNSSharedData::gEvaluationTime/2)
+        increaseFitness(0.2);
+    
+    _isNearObject = false;
     
     // * step controller
 
@@ -219,6 +226,13 @@ std::vector<double> MovingNSController::getInputs(){
         if (push)
             pushSum++;
 //    inputs.push_back(pushSum);
+    
+    // Are we in the first half of the generation ?
+    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
+    if (wobs->getGenerationItCount() <= MovingNSSharedData::gEvaluationTime/2)
+        inputs.push_back(0);
+    else
+        inputs.push_back(1);
     
     return inputs;
 }
@@ -395,6 +409,9 @@ void MovingNSController::setIOcontrollerSize()
     // last pushes
 //    _nbInputs += 1;
     
+    // first/second half of the generation
+    _nbInputs += 1;
+    
     // wrt outputs
     
     _nbOutputs = 2;
@@ -534,7 +551,8 @@ void MovingNSController::increaseFitness( double __delta )
 
 void MovingNSController::wasNearObject( bool __objectMoved )
 {
-//    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
-    if (__objectMoved)
+    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
+    _isNearObject = true;
+    if (__objectMoved && wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
         increaseFitness(1);
 }
