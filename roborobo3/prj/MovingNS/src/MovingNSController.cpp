@@ -549,10 +549,10 @@ void MovingNSController::increaseFitness( double __delta )
     updateFitness(_wm->_fitnessValue+__delta);
 }
 
-void MovingNSController::wasNearObject( double __movement)
+void MovingNSController::wasNearObject( bool __ObjectDidMove, double __movement )
 {
     MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     _isNearObject = true;
-    if (wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
+    if (__ObjectDidMove && wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
         increaseFitness(__movement);
 }

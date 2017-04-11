@@ -121,7 +121,7 @@ public:
     
     virtual void updatePushes();
     
-    void wasNearObject( double __movement ); // callback from the object whose footprint we're on, telling us how much it moved
+    void wasNearObject( bool __objectDidMove, double __movement ); // callback from the object whose footprint we're on, telling us how much it moved
     
 };
 
