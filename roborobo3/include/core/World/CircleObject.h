@@ -21,8 +21,8 @@ class CircleObject : public PhysicalObject
 
 protected:
     
-    double _radius; // radius. In pixels.
-    double _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
+    int _radius; // radius. In pixels.
+    int _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
     
     // the impulses given to the object by nearby robots in the current time step, or other objects in the former
     std::map<int, Point2d> _impulses;
