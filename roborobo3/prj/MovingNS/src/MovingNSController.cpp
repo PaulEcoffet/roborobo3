@@ -10,6 +10,7 @@
 #include "Utilities/Misc.h"
 #include <math.h>
 #include <string>
+#include <algorithm>
 
 #include <neuralnetworks/MLP.h>
 #include <neuralnetworks/Perceptron.h>
@@ -66,8 +67,13 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 
     MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     
-    if (_isNearObject == false && wobs->getGenerationItCount() > MovingNSSharedData::gEvaluationTime/2)
-        increaseFitness(0.2);
+    if (wobs->getGenerationItCount() > MovingNSSharedData::gEvaluationTime/2)
+	{
+		if (_isNearObject)
+			increaseFitness(-0.2);
+		else
+			increaseFitness(0.2);
+	}
     
     _isNearObject = false;
     
@@ -535,6 +541,8 @@ void MovingNSController::resetFitness()
 
 void MovingNSController::updateFitness( double __newFitness )
 {
+	if (__newFitness < 0)
+		updateFitness(0);
     _wm->_fitnessValue = __newFitness;
     _lastFitnesses[_iteration%5] = __newFitness;
 }
