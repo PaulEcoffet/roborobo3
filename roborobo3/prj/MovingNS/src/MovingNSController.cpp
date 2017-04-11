@@ -541,6 +541,8 @@ void MovingNSController::resetFitness()
 
 void MovingNSController::updateFitness( double __newFitness )
 {
+	if (__newFitness < 0)
+		updateFitness(0);
     _wm->_fitnessValue = __newFitness;
     _lastFitnesses[_iteration%5] = __newFitness;
 }
