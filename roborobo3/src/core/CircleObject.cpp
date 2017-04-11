@@ -17,7 +17,7 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
 	s += out.str();
 	s += "].radius";
 	if ( gProperties.hasProperty( s ) )
-		convertFromString<double>(_radius, gProperties.getProperty( s ), std::dec);
+		convertFromString<int>(_radius, gProperties.getProperty( s ), std::dec);
 	else
     {
         if ( gVerbose )
@@ -29,7 +29,7 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
 	s += out.str();
 	s += "].footprintRadius";
 	if ( gProperties.hasProperty( s ) )
-		convertFromString<double>(_footprintRadius, gProperties.getProperty( s ), std::dec);
+		convertFromString<int>(_footprintRadius, gProperties.getProperty( s ), std::dec);
 	else
     {
         if ( gVerbose )
@@ -96,11 +96,11 @@ void CircleObject::show() // display on screen (called in the step() method if g
     Uint8 b = 0xF0;
     Uint32 color = SDL_MapRGBA(gScreen->format,r,g,b,SDL_ALPHA_OPAQUE);
     
-    for (Sint16 xColor = _xCenterPixel - Sint16(_footprintRadius) ; xColor < _xCenterPixel + Sint16(_footprintRadius) ; xColor++)
+    for (Sint16 xColor = _xCenterPixel - _footprintRadius ; xColor < _xCenterPixel + _footprintRadius ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_footprintRadius) ; yColor < _yCenterPixel + Sint16 (_footprintRadius); yColor ++)
+        for (Sint16 yColor = _yCenterPixel - _footprintRadius ; yColor < _yCenterPixel + _footprintRadius; yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _footprintRadius)
+            if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _footprintRadius*_footprintRadius)
             {
                 putPixel32_secured(gScreen, xColor, yColor,  color);
             }
@@ -111,11 +111,11 @@ void CircleObject::show() // display on screen (called in the step() method if g
     
     color = SDL_MapRGBA(gScreen->format,_displayColorRed,_displayColorGreen,_displayColorBlue,SDL_ALPHA_OPAQUE);
     
-	for (Sint16 xColor = _xCenterPixel - Sint16(_radius) ; xColor < _xCenterPixel + Sint16(_radius) ; xColor++)
+	for (Sint16 xColor = _xCenterPixel - _radius ; xColor < _xCenterPixel + _radius ; xColor++)
 	{
-		for (Sint16 yColor = _yCenterPixel - Sint16(_radius) ; yColor < _yCenterPixel + Sint16 (_radius); yColor ++)
+		for (Sint16 yColor = _yCenterPixel - _radius ; yColor < _yCenterPixel + _radius; yColor ++)
 		{
-			if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _radius)
+			if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _radius*_radius)
 			{
                 putPixel32(gScreen, xColor, yColor,  color);
 			}
@@ -136,11 +136,11 @@ void CircleObject::hide()
     
     Uint32 color = SDL_MapRGBA(gScreen->format,r,g,b,SDL_ALPHA_OPAQUE);
     
-    for (Sint16 xColor = _xCenterPixel - Sint16(_footprintRadius) ; xColor < _xCenterPixel + Sint16(_footprintRadius) ; xColor++)
+    for (Sint16 xColor = _xCenterPixel - _footprintRadius ; xColor < _xCenterPixel + _footprintRadius ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_footprintRadius) ; yColor < _yCenterPixel + Sint16 (_footprintRadius); yColor ++)
+        for (Sint16 yColor = _yCenterPixel - _footprintRadius ; yColor < _yCenterPixel + _footprintRadius; yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _footprintRadius)
+            if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _footprintRadius*_footprintRadius)
             {
                 putPixel32_secured(gScreen, xColor, yColor,  color);
             }
@@ -149,11 +149,11 @@ void CircleObject::hide()
     
     // hide object (draw white)
     
-	for (Sint16 xColor = _xCenterPixel - Sint16(_radius) ; xColor < _xCenterPixel + Sint16(_radius) ; xColor++)
+	for (Sint16 xColor = _xCenterPixel - _radius ; xColor < _xCenterPixel + _radius ; xColor++)
 	{
-		for (Sint16 yColor = _yCenterPixel - Sint16(_radius) ; yColor < _yCenterPixel + Sint16 (_radius); yColor ++)
+		for (Sint16 yColor = _yCenterPixel - _radius ; yColor < _yCenterPixel + _radius; yColor ++)
 		{
-			if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _radius)
+			if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _radius*_radius)
 			{
                 putPixel32(gScreen, xColor, yColor,  color);
 			}
@@ -164,9 +164,9 @@ void CircleObject::hide()
 bool CircleObject::canRegister( Sint16 __x, Sint16 __y )
 {
     // test shape
-    for (Sint16 xColor = __x - Sint16(_radius) ; xColor < __x + Sint16(_radius) ; xColor++)
+    for (Sint16 xColor = __x - _radius ; xColor < __x + _radius ; xColor++)
     {
-        for (Sint16 yColor = __y - Sint16(_radius) ; yColor < __y + Sint16 (_radius); yColor ++)
+        for (Sint16 yColor = __y - _radius ; yColor < __y + _radius; yColor ++)
         {
             if ( pow (xColor-__x,2) + pow (yColor - __y,2) < _radius*_radius )
             {
@@ -192,9 +192,9 @@ bool CircleObject::canRegister( Sint16 __x, Sint16 __y )
     }
     
 //    //  test footprint (pixels from both ground image and environment image must be empty)
-//    for (Sint16 xColor = __x - Sint16(_footprintRadius) ; xColor < __x + Sint16(_footprintRadius) ; xColor++)
+//    for (Sint16 xColor = __x - _footprintRadius ; xColor < __x + _footprintRadius ; xColor++)
 //    {
-//        for (Sint16 yColor = __y - Sint16(_footprintRadius) ; yColor < __y + Sint16 (_footprintRadius); yColor ++)
+//        for (Sint16 yColor = __y - _footprintRadius ; yColor < __y + Sint16 (_footprintRadius); yColor ++)
 //        {
 //            if ( pow(xColor-__x,2) + pow(yColor - __y,2) < _footprintRadius*_footprintRadius )
 //            {
@@ -228,11 +228,11 @@ void CircleObject::registerObject()
     
     Uint32 color = SDL_MapRGBA( gFootprintImage->format, (Uint8)((id_converted & 0xFF0000)>>16), (Uint8)((id_converted & 0xFF00)>>8), (Uint8)(id_converted & 0xFF), SDL_ALPHA_OPAQUE );
     
-    for (Sint16 xColor = _xCenterPixel - Sint16(_footprintRadius) ; xColor < _xCenterPixel + Sint16(_footprintRadius) ; xColor++)
+    for (Sint16 xColor = _xCenterPixel - _footprintRadius ; xColor < _xCenterPixel + _footprintRadius ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_footprintRadius) ; yColor < _yCenterPixel + Sint16 (_footprintRadius); yColor ++)
+        for (Sint16 yColor = _yCenterPixel - _footprintRadius ; yColor < _yCenterPixel + _footprintRadius; yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _footprintRadius)
+            if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _footprintRadius*_footprintRadius)
             {
                 putPixel32_secured(gFootprintImage, xColor, yColor,  color);
             }
@@ -243,11 +243,11 @@ void CircleObject::registerObject()
     
     color = SDL_MapRGBA( gEnvironmentImage->format, (Uint8)((id_converted & 0xFF0000)>>16), (Uint8)((id_converted & 0xFF00)>>8), (Uint8)(id_converted & 0xFF), SDL_ALPHA_OPAQUE );
     
-    for (Sint16 xColor = _xCenterPixel - Sint16(_radius) ; xColor < _xCenterPixel + Sint16(_radius) ; xColor++)
+    for (Sint16 xColor = _xCenterPixel - _radius ; xColor < _xCenterPixel + _radius ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_radius) ; yColor < _yCenterPixel + Sint16 (_radius); yColor ++)
+        for (Sint16 yColor = _yCenterPixel - _radius ; yColor < _yCenterPixel + _radius; yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _radius)
+            if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _radius*_radius)
             {
                 putPixel32_secured(gEnvironmentImage, xColor, yColor,  color);//color);
             }
@@ -264,11 +264,11 @@ void CircleObject::unregisterObject()
     
     Uint32 color = SDL_MapRGBA( gFootprintImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE );
     
-    for (Sint16 xColor = _xCenterPixel - Sint16(_footprintRadius) ; xColor < _xCenterPixel + Sint16(_footprintRadius) ; xColor++)
+    for (Sint16 xColor = _xCenterPixel - _footprintRadius ; xColor < _xCenterPixel + _footprintRadius ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_footprintRadius) ; yColor < _yCenterPixel + Sint16 (_footprintRadius); yColor ++)
+        for (Sint16 yColor = _yCenterPixel - _footprintRadius ; yColor < _yCenterPixel + _footprintRadius; yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _footprintRadius)
+            if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _footprintRadius*_footprintRadius)
             {
                 if ( gFootprintImage_restoreOriginal == true )
                 {
@@ -285,11 +285,11 @@ void CircleObject::unregisterObject()
     
     color = SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE );
     
-    for (Sint16 xColor = _xCenterPixel - Sint16(_radius) ; xColor < _xCenterPixel + Sint16(_radius) ; xColor++)
+    for (Sint16 xColor = _xCenterPixel - _radius ; xColor < _xCenterPixel + _radius ; xColor++)
     {
-        for (Sint16 yColor = _yCenterPixel - Sint16(_radius) ; yColor < _yCenterPixel + Sint16 (_radius); yColor ++)
+        for (Sint16 yColor = _yCenterPixel - _radius ; yColor < _yCenterPixel + _radius; yColor ++)
         {
-            if ((sqrt ( pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2))) < _radius)
+            if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _radius*_radius)
             {
                 putPixel32_secured(gEnvironmentImage, xColor, yColor,  color);//color);
             }
