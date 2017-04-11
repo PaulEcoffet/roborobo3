@@ -562,5 +562,5 @@ void MovingNSController::wasNearObject( bool __ObjectDidMove, double __movement 
     MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     _isNearObject = true;
     if (__ObjectDidMove && wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
-        increaseFitness(__movement);
+        increaseFitness(std::max(1.0, __movement));
 }
