@@ -86,8 +86,9 @@ void MovingNSWorldObserver::step()
  
     if (_generationItCount == MovingNSSharedData::gEvaluationTime/2)
         printf("[DEBUG] Half-generation\n");
-    
-    if( _generationItCount == MovingNSSharedData::gEvaluationTime+1 ) // switch to next generation.
+	
+    // switch to next generation.
+    if( _generationItCount == MovingNSSharedData::gEvaluationTime )
     {
         // Perform an evolution step on robots (give them new genomes and mutate them), and
         // reset their positions and the objects
@@ -106,7 +107,7 @@ void MovingNSWorldObserver::step()
             totalFitness += ctl->getFitness();
             genomes[iRobot] = ctl->getGenome();
         }
-        
+			
         // O(1) fitness-proportionate selection
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
         {
@@ -160,7 +161,6 @@ void MovingNSWorldObserver::step()
     updateMonitoring();
     
     updateEnvironment();
-    
 }
 
 
@@ -175,7 +175,7 @@ void MovingNSWorldObserver::updateMonitoring()
 
     //if( gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == 1 || gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == MovingNSSharedData::gEvaluationTime-1 ) // beginning(+1) *and* end of generation. ("==1" is required to monitor the outcome of the first iteration)
     // log at end of generation.
-    if( gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == MovingNSSharedData::gEvaluationTime-1 )
+    if( _generationItCount == MovingNSSharedData::gEvaluationTime - 1)
     {
         monitorPopulation();
     }
@@ -198,7 +198,7 @@ void MovingNSWorldObserver::updateMonitoring()
                     std::cout << "[STOP]  Video recording: generation #" << (gWorld->getIterations() / MovingNSSharedData::gEvaluationTime ) << ".\n";
                 saveTrajectoryImage();
             }
-    }    
+	}
 }
 
 void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
