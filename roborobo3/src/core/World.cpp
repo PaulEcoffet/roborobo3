@@ -175,7 +175,10 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     //    This is very important to avoid possible nasty effect from ordering such as "agents with low indexes moves first"
     //    outcome: among many iterations, the effect of ordering is reduced.
     //    This means that roborobo is turn-based, with stochastic update ordering within one turn
-
+    
+    // * update world level observer
+    
+    _worldObserver->step();
     
     // * update physical object, if any (in random order)
     
@@ -192,10 +195,6 @@ void World::updateWorld(const Uint8 *__keyboardStates)
 	{
 		(*it)->step();
 	}
-    
-	// * update world level observer
-	
-    _worldObserver->step();
 
     // * update agents
 	
