@@ -16,13 +16,19 @@ MovingObject::MovingObject( int __id ) : CircleObject ( __id )
 void MovingObject::step()
 {
     double oldX = _xReal, oldY = _yReal;
+
     CircleObject::step(); //handles movement, and sets _didMove
+
+    double movement = sqrt((oldX-_xReal)*(oldX-_xReal) + (oldY-_yReal)*(oldY-_yReal));
+	int nbRobots = _nearbyRobots.size();
+	double coeff = 1.0/(1.0+pow(nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
+	double gain = movement * coeff;
+
     for (auto robotID: _nearbyRobots)
     {
         Robot *robot = gWorld->getRobot(robotID);
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-        double movement = sqrt((oldX-_xReal)*(oldX-_xReal) + (oldY-_yReal)*(oldY-_yReal));
-        ctl->wasNearObject(_didMove, movement);
+        ctl->wasNearObject(_didMove, gain, nbRobots);
     }
     _nearbyRobots.clear();
 }
