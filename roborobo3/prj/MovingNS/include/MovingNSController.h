@@ -71,11 +71,10 @@ protected:
     std::vector<double> _currentGenome;
     float _currentSigma;
     
-    // fitness memory
+    // other neural network inputs
     
-    double _lastFitnesses[5]; // fitness we gained on the last 5 rounds
-    bool _lastPushTries[5]; // did we try to push recently
-    bool _isNearObject; //are we near an object
+    bool _isNearObject; // are we near an object
+	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
     
     // ANN
     double _minValue;
@@ -119,9 +118,7 @@ public:
     
     void increaseFitness( double __delta );
     
-    virtual void updatePushes();
-    
-    void wasNearObject( bool __objectDidMove, double __movement ); // callback from the object whose footprint we're on, telling us how much it moved
+    void wasNearObject( bool __objectDidMove, double __gain, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
     
 };
 

@@ -31,13 +31,6 @@ void MovingNSAgentObserver::reset()
 
 void MovingNSAgentObserver::step()
 {
-    // * update fitness (if needed)
-    if ( _wm->getDidPush() )
-    {
-        MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(_wm->getId())->getController());
-        ctl->updatePushes();
-    }
-    
     // See whether we're close to an object
     
     int targetIndex = _wm->getGroundSensorValue();

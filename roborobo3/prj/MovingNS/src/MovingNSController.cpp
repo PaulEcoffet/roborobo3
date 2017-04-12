@@ -67,16 +67,6 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 
     MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     
-    if (wobs->getGenerationItCount() > MovingNSSharedData::gEvaluationTime/2)
-	{
-		if (_isNearObject)
-			increaseFitness(-0.2);
-		else
-			increaseFitness(0.2);
-	}
-    
-    _isNearObject = false;
-    
     // * step controller
 
     stepController();
@@ -220,25 +210,14 @@ std::vector<double> MovingNSController::getInputs(){
         inputs.push_back( _wm->getEnergyLevel() / gEnergyMax );
     }
     
-    // remember if we gained fitness recently
-    
-    double fitSum = 0;
-    for (auto fit: _lastFitnesses)
-        fitSum += fit;
-//    inputs.push_back(fitSum);
-    
-    double pushSum = 0;
-    for (auto push: _lastPushTries)
-        if (push)
-            pushSum++;
-//    inputs.push_back(pushSum);
-    
-    // Are we in the first half of the generation?
-    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
-    if (wobs->getGenerationItCount() <= MovingNSSharedData::gEvaluationTime/2)
-        inputs.push_back(0);
-    else
-        inputs.push_back(1);
+	// are we near an object?
+	if ( _isNearObject )
+		inputs.push_back(1);
+	else
+		inputs.push_back(0);
+
+	// how many robots around?
+	inputs.push_back(_nbNearbyRobots);
     
     return inputs;
 }
@@ -409,15 +388,10 @@ void MovingNSController::setIOcontrollerSize()
     if ( gNbOfLandmarks > 0 )
         _nbInputs += 2; // incl. landmark (angle,dist)
     
-    // last fitnesses
-//    _nbInputs += 1;
-    
-    // last pushes
-//    _nbInputs += 1;
-    
-    // first/second half of the generation
-    _nbInputs += 1;
-    
+	_nbInputs += 1; // near an object?
+	
+	_nbInputs += 1; // how many robots around?
+
     // wrt outputs
     
     _nbOutputs = 2;
@@ -532,10 +506,6 @@ double MovingNSController::getFitness()
  */
 void MovingNSController::resetFitness()
 {
-    for (auto& fit: _lastFitnesses)
-        fit = 0;
-    for (auto& push: _lastPushTries)
-        push = false;
     updateFitness(0);
 }
 
@@ -547,12 +517,6 @@ void MovingNSController::updateFitness( double __newFitness )
 		return;
 	}
     _wm->_fitnessValue = __newFitness;
-    _lastFitnesses[_iteration%5] = __newFitness;
-}
-
-void MovingNSController::updatePushes()
-{
-    _lastPushTries[_iteration%5] = _wm->getTriedPushing();
 }
 
 void MovingNSController::increaseFitness( double __delta )
@@ -560,10 +524,11 @@ void MovingNSController::increaseFitness( double __delta )
     updateFitness(_wm->_fitnessValue+__delta);
 }
 
-void MovingNSController::wasNearObject( bool __ObjectDidMove, double __movement )
+void MovingNSController::wasNearObject( bool __ObjectDidMove, double __gain, int __nbRobots )
 {
     MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     _isNearObject = true;
+	_nbNearbyRobots = __nbRobots;
     if (__ObjectDidMove && wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
-        increaseFitness(std::max(1.0, __movement));
+        increaseFitness(__gain);
 }

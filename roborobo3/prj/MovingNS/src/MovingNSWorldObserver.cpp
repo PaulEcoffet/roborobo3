@@ -84,9 +84,6 @@ void MovingNSWorldObserver::step()
 {
     _generationItCount++;
  
-    if (_generationItCount == MovingNSSharedData::gEvaluationTime/2)
-        printf("[DEBUG] Half-generation\n");
-	
     // switch to next generation.
     if( _generationItCount == MovingNSSharedData::gEvaluationTime )
     {
