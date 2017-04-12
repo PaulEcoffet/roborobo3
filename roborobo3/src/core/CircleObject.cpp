@@ -333,13 +333,15 @@ void CircleObject::step()
         _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
         _desiredSpeedOrientation = atan2(impYtot, impXtot) * 180 / M_PI;
         
-        if ((Sint16)(_xReal+impXtot) != getXCenterPixel() ||
-            (Sint16)(_yReal+impYtot) != getYCenterPixel()) // we're going to try to move onscreen
+        Sint16 newX = _xReal+impXtot;
+        Sint16 newY = _yReal+impYtot;
+        
+        if (newX != getXCenterPixel() || newY != getYCenterPixel()) // we're going to try to move onscreen
         {
             unregisterObject();
             hide();
             
-            if (canRegister((Sint16)_xReal+impXtot, (Sint16)_yReal+impYtot))
+            if (canRegister(newX, newY))
             {
                 _xReal += impXtot;
                 _yReal += impYtot;
