@@ -354,14 +354,8 @@ void CircleObject::step()
             }
             else {
                 registerObject();
-                // tell robots that the push was successful (remember we did move)
-                if (_didMove)
-                    for (auto& imp: _impulses)
-                        if (imp.first >= gRobotIndexStartOffset) {
-                            Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
-                            robot->getWorldModel()->setDidPush(true);
-                        }
             }
+            
         }
         else // silently move offscreen by less than a pixel
         {

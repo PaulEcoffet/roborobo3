@@ -41,6 +41,4 @@ void MovingNSAgentObserver::step()
         gPhysicalObjects[targetIndex]->isWalked(_wm->getId());
     }
     
-    _wm->setDidPush(false);
-    _wm->setTriedPushing(false);
 }

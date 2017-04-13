@@ -31,12 +31,10 @@ MovingEEAgentObserver::~MovingEEAgentObserver()
 void MovingEEAgentObserver::step()
 {
     // * update fitness (if needed)
-    if ( _wm->isAlive() && _wm->getDidPush() )
+    if ( _wm->isAlive() )
     {
         _wm->_fitnessValue = _wm->_fitnessValue + 1;
     }
-    _wm->setTriedPushing(false);
-    _wm->setDidPush(false);
 
     TemplateEEAgentObserver::step();
 }
