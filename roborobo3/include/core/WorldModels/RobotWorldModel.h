@@ -102,11 +102,6 @@ public:
 	
     double _fitnessValue; // optional
     
-    // interactions with objects
-    
-    bool _triedPushing; // did we try to push
-    bool _didPush; // did it work
-    
 	// * Initializes the variables
     RobotWorldModel();
     virtual ~RobotWorldModel();
@@ -250,26 +245,6 @@ public:
     int getGroupId(  )
     {
         return ( _groupId );
-    }
-
-    void setTriedPushing( bool __triedPushing )
-    {
-        _triedPushing = __triedPushing;
-    }
-    
-    bool getTriedPushing()
-    {
-        return _triedPushing;
-    }
-    
-    void setDidPush( bool __didPush )
-    {
-        _didPush = __didPush;
-    }
-    
-    bool getDidPush()
-    {
-        return _didPush;
     }
 
 };
