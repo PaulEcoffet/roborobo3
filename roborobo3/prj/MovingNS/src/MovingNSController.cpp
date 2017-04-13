@@ -47,6 +47,10 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
     if ( gNbOfLandmarks > 0 )
         _wm->updateLandmarkSensor(); // wrt closest landmark
     
+    _isNearObject = false;
+    _nbNearbyRobots = 0;
+    _successfulPushes = std::vector<int>(MovingNSSharedData::gMemorySize, 0);
+    
     reset();
     resetFitness();
     
@@ -64,12 +68,19 @@ MovingNSController::~MovingNSController()
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
     _iteration++;
-
-    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     
-    // * step controller
+    if (_successfulPush)
+        _successfulPushes[_iteration%MovingNSSharedData::gMemorySize] = 1;
+    else
+        _successfulPushes[_iteration%MovingNSSharedData::gMemorySize] = 0;
+    
+// * step controller
 
     stepController();
+    
+    _isNearObject = false;
+    _nbNearbyRobots = 0;
+    _successfulPush = false;
     
 }
 
@@ -218,6 +229,12 @@ std::vector<double> MovingNSController::getInputs(){
 
 	// how many robots around?
 	inputs.push_back(_nbNearbyRobots);
+    
+    // successful pushes?
+    int nbSuccessfulPushes = 0;
+    for (auto push: _successfulPushes)
+        nbSuccessfulPushes += push;
+    inputs.push_back(nbSuccessfulPushes);
     
     return inputs;
 }
@@ -391,6 +408,8 @@ void MovingNSController::setIOcontrollerSize()
 	_nbInputs += 1; // near an object?
 	
 	_nbInputs += 1; // how many robots around?
+    
+    _nbInputs += 1; // how many successful pushes recently?
 
     // wrt outputs
     
@@ -506,6 +525,8 @@ double MovingNSController::getFitness()
  */
 void MovingNSController::resetFitness()
 {
+    for (auto& push: _successfulPushes)
+        push = 0;
     updateFitness(0);
 }
 
@@ -524,11 +545,13 @@ void MovingNSController::increaseFitness( double __delta )
     updateFitness(_wm->_fitnessValue+__delta);
 }
 
-void MovingNSController::wasNearObject( bool __ObjectDidMove, double __gain, int __nbRobots )
+void MovingNSController::wasNearObject( bool __objectDidMove, double __gain, int __nbRobots )
 {
-    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     _isNearObject = true;
 	_nbNearbyRobots = __nbRobots;
-    if (__ObjectDidMove && wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
+    if (__objectDidMove)
+    {
         increaseFitness(__gain);
+        _successfulPush = true;
+    }
 }
