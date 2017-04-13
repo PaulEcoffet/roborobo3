@@ -54,6 +54,8 @@ public:
     static int gMutationOperator;
     
     static double gSigma;
+    
+    static const int gMemorySize; // how many iterations to remember
         
     // -----
     

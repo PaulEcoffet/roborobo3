@@ -71,10 +71,13 @@ protected:
     std::vector<double> _currentGenome;
     float _currentSigma;
     
-    // other neural network inputs
+    // other neural network inputs and state variables
     
     bool _isNearObject; // are we near an object
+    bool _successfulPush; // did we successfully push in the last iteration
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
+    std::vector<int> _successfulPushes; // memory of recent successfully object pushes
+    // we don't use std::vector<bool> because it's super weird
     
     // ANN
     double _minValue;
