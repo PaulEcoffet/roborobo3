@@ -69,6 +69,10 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 
     stepController();
     
+    // Update state variables
+    
+    _isNearObject = false;
+    
 }
 
 
