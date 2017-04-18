@@ -64,8 +64,6 @@ MovingNSController::~MovingNSController()
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
     _iteration++;
-
-    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     
     // * step controller
 
@@ -524,11 +522,10 @@ void MovingNSController::increaseFitness( double __delta )
     updateFitness(_wm->_fitnessValue+__delta);
 }
 
-void MovingNSController::wasNearObject( bool __ObjectDidMove, double __gain, int __nbRobots )
+void MovingNSController::wasNearObject( bool __objectDidMove, double __gain, int __nbRobots )
 {
-    MovingNSWorldObserver *wobs = dynamic_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
     _isNearObject = true;
 	_nbNearbyRobots = __nbRobots;
-    if (__ObjectDidMove && wobs->getGenerationItCount() < MovingNSSharedData::gEvaluationTime/2)
+    if (__objectDidMove)
         increaseFitness(__gain);
 }
