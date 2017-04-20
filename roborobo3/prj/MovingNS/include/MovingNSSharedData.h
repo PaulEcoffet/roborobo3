@@ -54,6 +54,8 @@ public:
     static int gMutationOperator;
     
     static double gSigma;
+
+	static constexpr int gMemorySize = 5;
         
     // -----
     
