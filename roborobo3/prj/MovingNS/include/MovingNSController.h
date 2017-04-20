@@ -75,6 +75,7 @@ protected:
     
     bool _isNearObject; // are we near an object
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
+	bool _objectMoves[MovingNSSharedData::gMemorySize]; // the number of times the object we're near moved recently
     
     // ANN
     double _minValue;
