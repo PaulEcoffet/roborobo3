@@ -71,7 +71,7 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     // * Logfile
     
-    std::string logFilename = gLogDirectoryname + "/observer_" + gStartTime + ".txt";
+    std::string logFilename = gLogDirectoryname + "/observer.txt";
     _logFile.open(logFilename.c_str());
     _logManager = new LogManager();
     _logManager->setLogFile(_logFile);
