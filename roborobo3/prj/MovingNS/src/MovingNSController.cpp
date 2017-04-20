@@ -47,8 +47,7 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
     if ( gNbOfLandmarks > 0 )
         _wm->updateLandmarkSensor(); // wrt closest landmark
     
-    reset();
-    resetFitness();
+    reset(); // resetFitness() is called in reset()
     
     _wm->setRobotLED_colorValues(255, 0, 0);
     
@@ -63,16 +62,22 @@ MovingNSController::~MovingNSController()
 
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
+
+	// If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
+	if (_isNearObject == false)
+		_objectMoves[_iteration%MovingNSSharedData::gMemorySize] = false;
+
     _iteration++;
     
     // * step controller
 
     stepController();
-    
+
     // Update state variables
     
     _isNearObject = false;
-    
+	_nbNearbyRobots = 0;
+
 }
 
 
@@ -220,6 +225,12 @@ std::vector<double> MovingNSController::getInputs(){
 
 	// how many robots around?
 	inputs.push_back(_nbNearbyRobots);
+
+	int nbMoves = 0;
+	for (auto moved: _objectMoves)
+		if (moved)
+			nbMoves++;
+//	inputs.push_back(nbMoves);
     
     return inputs;
 }
@@ -394,6 +405,8 @@ void MovingNSController::setIOcontrollerSize()
 	
 	_nbInputs += 1; // how many robots around?
 
+//	_nbInputs += 1; // did the object move recently?
+
     // wrt outputs
     
     _nbOutputs = 2;
@@ -426,7 +439,12 @@ void MovingNSController::initController()
     }
     
     updatePhenotype();
-    
+
+	// state variables
+	_isNearObject = false;
+	_nbNearbyRobots = 0;
+    for (auto& moved: _objectMoves)
+		moved = false;
 }
 
 void MovingNSController::reset()
@@ -526,10 +544,12 @@ void MovingNSController::increaseFitness( double __delta )
     updateFitness(_wm->_fitnessValue+__delta);
 }
 
+// called only once per step (experimentally verified)
 void MovingNSController::wasNearObject( bool __objectDidMove, double __gain, int __nbRobots )
 {
     _isNearObject = true;
 	_nbNearbyRobots = __nbRobots;
     if (__objectDidMove)
         increaseFitness(__gain);
+	_objectMoves[_iteration%MovingNSSharedData::gMemorySize] = __objectDidMove;
 }
