@@ -15,6 +15,7 @@ LogManager::LogManager(std::ofstream __logFile)
 LogManager::LogManager()
 {
     logFile = &gLogFile;
+    buffer = "";
 }
 
 LogManager::~LogManager()
