@@ -75,7 +75,7 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     _logFile.open(logFilename.c_str());
     _logManager = new LogManager();
     _logManager->setLogFile(_logFile);
-    _logManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tMEDFIT\tSTDDEV\n");
+    _logManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     _logManager->flush();
 }
 
@@ -223,11 +223,9 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     
     double minFit = fitnesses[0];
     double maxFit = fitnesses[gNbOfRobots-1];
-    double medFit = -1;
-    if (gNbOfRobots%2 == 0)
-        medFit = (fitnesses[gNbOfRobots/2]+fitnesses[(gNbOfRobots-1)/2])*0.5;
-    else
-        medFit = fitnesses[gNbOfRobots/2];
+    double medFit = fitnesses[gNbOfRobots/2];
+    double lowQuartFit = fitnesses[gNbOfRobots/4];
+    double highQuartFit = fitnesses[3*gNbOfRobots/4];
     double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0)/(double)gNbOfRobots;
     double stddevFit = -1;
     for (auto& fitness: fitnesses)
@@ -242,7 +240,9 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     genLog << minFit << "\t";
     genLog << maxFit << "\t";
     genLog << avgFit << "\t";
+    genLog << lowQuartFit << "\t";
     genLog << medFit << "\t";
+    genLog << highQuartFit << "\t";
     genLog << stddevFit << "\n";
     
     _logManager->write(genLog.str());
