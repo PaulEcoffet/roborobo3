@@ -68,11 +68,20 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     _generationItCount = -1;
     _generationCount = -1;
+    
+    // * Logfile
+    
+    std::string logFilename = gLogDirectoryname + "/observer_" + gStartTime + ".txt";
+    _logFile.open(logFilename.c_str());
+    _logManager = new LogManager();
+    _logManager->setLogFile(_logFile);
+    _logManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tMEDFIT\tSTDDEV\n");
+    _logManager->flush();
 }
 
 MovingNSWorldObserver::~MovingNSWorldObserver()
 {
-    // nothing to do.
+    _logFile.close();
 }
 
 void MovingNSWorldObserver::reset()
@@ -202,32 +211,49 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
 {
     // * monitoring: count number of active agents.
     
-    double sumOfFitnesses = 0;
-    double minFitness = DBL_MAX;
-    double maxFitness = -DBL_MAX;
+    std::vector<double> fitnesses(gNbOfRobots);
     
-    for ( int i = 0 ; i != gNbOfRobots ; i++ )
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
-        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(i)->getController());
-
-            sumOfFitnesses += ctl->getFitness() ;
-            if ( ctl->getFitness() < minFitness )
-                minFitness = ctl->getFitness();
-            if ( ctl->getFitness() > maxFitness )
-                maxFitness = ctl->getFitness();
+        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(iRobot)->getController());
+        fitnesses[iRobot] = ctl->getFitness();
     }
     
-    if ( gVerbose && localVerbose )
-    {
-        std::cout << "[gen:" << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << ";it:" << gWorld->getIterations() << ";pop:" << gNbOfRobots << ";avgFitness:" << sumOfFitnesses/gNbOfRobots << "]\n";
-    }
+    std::sort(fitnesses.begin(), fitnesses.end());
+    
+    double minFit = fitnesses[0];
+    double maxFit = fitnesses[gNbOfRobots-1];
+    double medFit = -1;
+    if (gNbOfRobots%2 == 0)
+        medFit = (fitnesses[gNbOfRobots/2]+fitnesses[(gNbOfRobots-1)/2])*0.5;
+    else
+        medFit = fitnesses[gNbOfRobots/2];
+    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0)/(double)gNbOfRobots;
+    double stddevFit = -1;
+    for (auto& fitness: fitnesses)
+        fitness = (fitness-avgFit)*(fitness-avgFit);
+    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0)/(double)gNbOfRobots, 0.5);
+    
+    std::stringstream genLog;
+    
+    genLog << std::setprecision(5);
+    genLog << _generationCount+1 << "\t";
+    genLog << gNbOfRobots << "\t";
+    genLog << minFit << "\t";
+    genLog << maxFit << "\t";
+    genLog << avgFit << "\t";
+    genLog << medFit << "\t";
+    genLog << stddevFit << "\n";
+    
+    _logManager->write(genLog.str());
+    _logManager->flush();
     
     // display lightweight logs for easy-parsing
-    std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/gNbOfRobots << "\n";
+    std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
         
     // Logging, population-level: alive
-    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(gNbOfRobots) + "\n";
-    gLogManager->write(sLog);
-    gLogManager->flush();
+//    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(gNbOfRobots) + "\n";
+//    gLogManager->write(sLog);
+//    gLogManager->flush();
     
 }
