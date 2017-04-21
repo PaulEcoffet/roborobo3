@@ -77,6 +77,8 @@ protected:
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
 	bool _objectMoves[MovingNSSharedData::gMemorySize]; // the number of times the object we're near moved recently
     
+    double _movements[MovingNSSharedData::gMemorySize]; // our total movement recently (see if we're blocked)
+    
     // ANN
     double _minValue;
     double _maxValue;
