@@ -31,12 +31,12 @@ else:
 	else:
 		suffix = "exp"
 
-prefix = "./logs/"+getTimestamp()
+prefix = "./logs/"
 
 for i in range(nbrep):
 	print "[INFO] Starting replicate #",i
 	
-	dirname = prefix + "_" + str(i).zfill(len(str(nbrep)))+ "_" + suffix 
+	dirname = prefix + suffix + "_" + str(i).zfill(len(str(nbrep)))
 	
 	createdir(dirname)
 	
