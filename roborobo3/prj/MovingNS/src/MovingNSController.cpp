@@ -66,6 +66,8 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 	// If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
 	if (_isNearObject == false)
 		_objectMoves[_iteration%MovingNSSharedData::gMemorySize] = false;
+    
+    _movements[_iteration%MovingNSSharedData::gMemorySize] = fabs(_wm->_actualTranslationalValue); // might be negative
 
     _iteration++;
     
@@ -231,6 +233,11 @@ std::vector<double> MovingNSController::getInputs(){
 		if (moved)
 			nbMoves++;
 //	inputs.push_back(nbMoves);
+    
+    double totalMovement = 0;
+    for (auto move: _movements)
+        totalMovement += move;
+    inputs.push_back(totalMovement);
     
     return inputs;
 }
@@ -406,6 +413,8 @@ void MovingNSController::setIOcontrollerSize()
 	_nbInputs += 1; // how many robots around?
 
 //	_nbInputs += 1; // did the object move recently?
+    
+    _nbInputs += 1; // how much did we recently move?
 
     // wrt outputs
     
@@ -445,6 +454,8 @@ void MovingNSController::initController()
 	_nbNearbyRobots = 0;
     for (auto& moved: _objectMoves)
 		moved = false;
+    for (auto& move: _movements)
+        move = 0;
 }
 
 void MovingNSController::reset()
