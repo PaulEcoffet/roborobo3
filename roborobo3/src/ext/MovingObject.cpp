@@ -20,7 +20,7 @@ void MovingObject::step()
     CircleObject::step(); //handles movement, and sets _didMove
 
     double movement = sqrt((oldX-_xReal)*(oldX-_xReal) + (oldY-_yReal)*(oldY-_yReal));
-	int nbRobots = _nearbyRobots.size();
+	int nbRobots = static_cast<int>(_nearbyRobots.size());
 	double coeff = 1.0/(1.0+pow(nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
 	double gain = movement * coeff;
 
