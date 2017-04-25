@@ -146,7 +146,7 @@ void MonoRobotWorldObserver::step()
         
         for (auto object: gPhysicalObjects)
         {
-            object->findRandomLocation();
+            object->resetLocation();
             object->registerObject();
         }
 
