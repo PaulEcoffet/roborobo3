@@ -5,6 +5,8 @@
 #include "World/World.h"
 
 #include "../prj/MovingNS/include/MovingNSController.h"
+#include "../prj/MonoRobot/include/MonoRobotController.h"
+
 
 #include <iomanip>
 
@@ -27,7 +29,7 @@ void MovingObject::step()
     for (auto robotID: _nearbyRobots)
     {
         Robot *robot = gWorld->getRobot(robotID);
-        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
         ctl->wasNearObject(_didMove, gain, nbRobots);
     }
     _nearbyRobots.clear();
