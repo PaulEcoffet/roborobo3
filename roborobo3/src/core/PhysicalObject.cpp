@@ -241,3 +241,16 @@ bool PhysicalObject::triggerRegrow()
     
     return true;
 }
+
+void PhysicalObject::resetLocation()
+{
+    printf("[DEBUG] Resetting location of object %d\n", _id);
+    std::string loc = "physicalObject[" + std::to_string(_id) + "]";
+    if (gProperties.hasProperty(loc + ".x") && gProperties.hasProperty(loc + ".y"))
+    {
+        convertFromString<double>(_xReal, gProperties.getProperty(loc+".x"), std::dec);
+        convertFromString<double>(_yReal, gProperties.getProperty(loc+".y"), std::dec);
+    }
+    else
+        findRandomLocation();
+}
