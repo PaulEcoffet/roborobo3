@@ -79,6 +79,11 @@
 		E62037A91E8945E6004B5859 /* MovingNSSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E62037A51E8945E6004B5859 /* MovingNSSharedData.cpp */; };
 		E62037AA1E8945E6004B5859 /* MovingNSWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E62037A61E8945E6004B5859 /* MovingNSWorldObserver.cpp */; };
 		E62037B01E8946DC004B5859 /* MovingNSConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */; };
+		E63F18591EAF46C2007D2C3A /* MonoRobotAgentObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E63F18551EAF46C2007D2C3A /* MonoRobotAgentObserver.cpp */; };
+		E63F185A1EAF46C2007D2C3A /* MonoRobotController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E63F18561EAF46C2007D2C3A /* MonoRobotController.cpp */; };
+		E63F185B1EAF46C2007D2C3A /* MonoRobotSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E63F18571EAF46C2007D2C3A /* MonoRobotSharedData.cpp */; };
+		E63F185C1EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E63F18581EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp */; };
+		E63F185E1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E63F185D1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp */; };
 		E64820BE1E79950E005D95AC /* MovingObject.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820BD1E79950E005D95AC /* MovingObject.cpp */; };
 		E64820C21E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C11E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp */; };
 		E64820CB1E799BCF005D95AC /* TemplateMovingAgentObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E64820C81E799BCF005D95AC /* TemplateMovingAgentObserver.cpp */; };
@@ -267,6 +272,17 @@
 		E62037AE1E8945F1004B5859 /* MovingNSWorldObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MovingNSWorldObserver.h; path = MovingNS/include/MovingNSWorldObserver.h; sourceTree = "<group>"; };
 		E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingNSConfigurationLoader.cpp; sourceTree = "<group>"; };
 		E631EB071E8BBCB60031AD2D /* MovingNSConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingNSConfigurationLoader.h; sourceTree = "<group>"; };
+		E63F18511EAF46B4007D2C3A /* MonoRobotAgentObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonoRobotAgentObserver.h; path = MonoRobot/include/MonoRobotAgentObserver.h; sourceTree = "<group>"; };
+		E63F18521EAF46B4007D2C3A /* MonoRobotController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonoRobotController.h; path = MonoRobot/include/MonoRobotController.h; sourceTree = "<group>"; };
+		E63F18531EAF46B4007D2C3A /* MonoRobotSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonoRobotSharedData.h; path = MonoRobot/include/MonoRobotSharedData.h; sourceTree = "<group>"; };
+		E63F18541EAF46B4007D2C3A /* MonoRobotWorldObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MonoRobotWorldObserver.h; path = MonoRobot/include/MonoRobotWorldObserver.h; sourceTree = "<group>"; };
+		E63F18551EAF46C2007D2C3A /* MonoRobotAgentObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MonoRobotAgentObserver.cpp; path = MonoRobot/src/MonoRobotAgentObserver.cpp; sourceTree = "<group>"; };
+		E63F18561EAF46C2007D2C3A /* MonoRobotController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MonoRobotController.cpp; path = MonoRobot/src/MonoRobotController.cpp; sourceTree = "<group>"; };
+		E63F18571EAF46C2007D2C3A /* MonoRobotSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MonoRobotSharedData.cpp; path = MonoRobot/src/MonoRobotSharedData.cpp; sourceTree = "<group>"; };
+		E63F18581EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = MonoRobotWorldObserver.cpp; path = MonoRobot/src/MonoRobotWorldObserver.cpp; sourceTree = "<group>"; };
+		E63F185D1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MonoRobotConfigurationLoader.cpp; sourceTree = "<group>"; };
+		E63F185F1EAF46EF007D2C3A /* MonoRobotConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MonoRobotConfigurationLoader.h; sourceTree = "<group>"; };
+		E63F18601EAF4717007D2C3A /* monoRobot.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = monoRobot.properties; sourceTree = "<group>"; };
 		E64820BC1E7994FB005D95AC /* MovingObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingObject.h; sourceTree = "<group>"; };
 		E64820BD1E79950E005D95AC /* MovingObject.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingObject.cpp; sourceTree = "<group>"; };
 		E64820C01E799A6E005D95AC /* TemplateMovingConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TemplateMovingConfigurationLoader.h; sourceTree = "<group>"; };
@@ -370,6 +386,7 @@
 		3705F0891BC67B7C001A016D /* config */ = {
 			isa = PBXGroup;
 			children = (
+				E63F18601EAF4717007D2C3A /* monoRobot.properties */,
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
 				37A569C11E38AB2100B983FF /* template_vanillaEE.properties */,
 				3705F08B1BC67B7C001A016D /* template_boids.properties */,
@@ -685,6 +702,7 @@
 		37BA26591BC3D014002DF5DC /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				E63F185F1EAF46EF007D2C3A /* MonoRobotConfigurationLoader.h */,
 				E6F09B441E84088000EF24BD /* MovingEEConfigurationLoader.h */,
 				3766DF761E2914160069E44C /* TemplateEEConfigurationLoader.h */,
 				3705F0561BC66E03001A016D /* TemplateBoidsConfigurationLoader.h */,
@@ -717,6 +735,7 @@
 			isa = PBXGroup;
 			children = (
 				37BA26D61BC3D014002DF5DC /* readme.txt */,
+				E63F184E1EAF4693007D2C3A /* MonoRobot */,
 				E62037A01E8945C4004B5859 /* MovingNS */,
 				E6F09B331E84081400EF24BD /* MovingEE */,
 				E64820C41E799BBD005D95AC /* TemplateMoving */,
@@ -806,6 +825,7 @@
 		37BA26FB1BC3D014002DF5DC /* ext */ = {
 			isa = PBXGroup;
 			children = (
+				E63F185D1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp */,
 				37BA26FE1BC3D014002DF5DC /* ConfigurationLoader.cpp */,
 				37BA27001BC3D014002DF5DC /* EnergyItem.cpp */,
 				37BA27011BC3D014002DF5DC /* GateObject.cpp */,
@@ -854,6 +874,37 @@
 				E62037A41E8945E6004B5859 /* MovingNSController.cpp */,
 				E62037A51E8945E6004B5859 /* MovingNSSharedData.cpp */,
 				E62037A61E8945E6004B5859 /* MovingNSWorldObserver.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		E63F184E1EAF4693007D2C3A /* MonoRobot */ = {
+			isa = PBXGroup;
+			children = (
+				E63F184F1EAF469D007D2C3A /* include */,
+				E63F18501EAF46A3007D2C3A /* src */,
+			);
+			name = MonoRobot;
+			sourceTree = "<group>";
+		};
+		E63F184F1EAF469D007D2C3A /* include */ = {
+			isa = PBXGroup;
+			children = (
+				E63F18511EAF46B4007D2C3A /* MonoRobotAgentObserver.h */,
+				E63F18521EAF46B4007D2C3A /* MonoRobotController.h */,
+				E63F18531EAF46B4007D2C3A /* MonoRobotSharedData.h */,
+				E63F18541EAF46B4007D2C3A /* MonoRobotWorldObserver.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
+		E63F18501EAF46A3007D2C3A /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E63F18551EAF46C2007D2C3A /* MonoRobotAgentObserver.cpp */,
+				E63F18561EAF46C2007D2C3A /* MonoRobotController.cpp */,
+				E63F18571EAF46C2007D2C3A /* MonoRobotSharedData.cpp */,
+				E63F18581EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp */,
 			);
 			name = src;
 			sourceTree = "<group>";
@@ -977,8 +1028,10 @@
 				37BA27471BC3D014002DF5DC /* Robot.cpp in Sources */,
 				376C24541E28BB8800E70850 /* TemplateEEAgentObserver.cpp in Sources */,
 				37BA274A1BC3D014002DF5DC /* Timer.cpp in Sources */,
+				E63F185C1EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp in Sources */,
 				3705F05C1BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp in Sources */,
 				E62037A81E8945E6004B5859 /* MovingNSController.cpp in Sources */,
+				E63F185E1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp in Sources */,
 				E64820CD1E799BCF005D95AC /* TemplateMovingWorldObserver.cpp in Sources */,
 				37BA273C1BC3D014002DF5DC /* Controller.cpp in Sources */,
 				3739761B1BCEAA2F00A007BF /* TemplateRandomwalkConfigurationLoader.cpp in Sources */,
@@ -986,9 +1039,11 @@
 				37BA273A1BC3D014002DF5DC /* CellularMap.cpp in Sources */,
 				37BA273B1BC3D014002DF5DC /* CircleObject.cpp in Sources */,
 				E62037A91E8945E6004B5859 /* MovingNSSharedData.cpp in Sources */,
+				E63F185A1EAF46C2007D2C3A /* MonoRobotController.cpp in Sources */,
 				37C810401E28AF1F00A71E6F /* TemplateMedeaConfigurationLoader.cpp in Sources */,
 				E6F09B401E84087100EF24BD /* MovingEEAgentObserver.cpp in Sources */,
 				3705F0811BC66E3B001A016D /* TemplateBoidsWorldObserver.cpp in Sources */,
+				E63F18591EAF46C2007D2C3A /* MonoRobotAgentObserver.cpp in Sources */,
 				37BA27431BC3D014002DF5DC /* Misc.cpp in Sources */,
 				37BA27521BC3D014002DF5DC /* EnergyItem.cpp in Sources */,
 				37BA27311BC3D014002DF5DC /* MLP.cpp in Sources */,
@@ -1012,6 +1067,7 @@
 				E62037A71E8945E6004B5859 /* MovingNSAgentObserver.cpp in Sources */,
 				37BA273E1BC3D014002DF5DC /* Geometry.cpp in Sources */,
 				3705F07F1BC66E3B001A016D /* TemplateBoidsController.cpp in Sources */,
+				E63F185B1EAF46C2007D2C3A /* MonoRobotSharedData.cpp in Sources */,
 				37BA27561BC3D014002DF5DC /* PhysicalObjectFactory.cpp in Sources */,
 				E6F09B411E84087100EF24BD /* MovingEEController.cpp in Sources */,
 				37BA27411BC3D014002DF5DC /* LogManager.cpp in Sources */,
