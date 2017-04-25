@@ -70,6 +70,7 @@ public :
     virtual void registerObject() = 0; // register object in the world (write images)
     virtual void unregisterObject() = 0; // unregister object in the world (write blank pixels)
     int findRandomLocation( );
+    void resetLocation(); // reset to the starting position if there was one, or pick a new random location
 
 
     virtual void isPushed( int __idAgent, Point2d __speed) = 0; // callback
