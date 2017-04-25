@@ -10,6 +10,7 @@
 #include "Config/TemplateMovingConfigurationLoader.h"
 #include "Config/MovingEEConfigurationLoader.h"
 #include "Config/MovingNSConfigurationLoader.h"
+#include "Config/MonoRobotConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -81,6 +82,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "MovingNSConfigurationLoader" )
 	{
 		return new MovingNSConfigurationLoader();
+	}
+#endif
+#if defined PRJ_MONOROBOT || !defined MODULAR
+	else if (configurationLoaderObjectName == "MonoRobotConfigurationLoader" )
+	{
+		return new MonoRobotConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
