@@ -322,7 +322,7 @@ unsigned int MonoRobotController::computeRequiredNumberOfWeights()
 
 void MonoRobotController::performVariation()
 {
-    if ( MonoRobotSharedData::gIndividualMutationRate > rand()/RAND_MAX ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( MonoRobotSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( MonoRobotSharedData::gMutationOperator )
         {
