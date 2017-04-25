@@ -825,7 +825,6 @@
 		37BA26FB1BC3D014002DF5DC /* ext */ = {
 			isa = PBXGroup;
 			children = (
-				E63F185D1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp */,
 				37BA26FE1BC3D014002DF5DC /* ConfigurationLoader.cpp */,
 				37BA27001BC3D014002DF5DC /* EnergyItem.cpp */,
 				37BA27011BC3D014002DF5DC /* GateObject.cpp */,
@@ -834,6 +833,7 @@
 				37BA27061BC3D014002DF5DC /* RoundObject.cpp */,
 				E64820BD1E79950E005D95AC /* MovingObject.cpp */,
 				37BA27071BC3D014002DF5DC /* SwitchObject.cpp */,
+				E63F185D1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp */,
 				3766DF771E29141E0069E44C /* TemplateEEConfigurationLoader.cpp */,
 				3705F0591BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp */,
 				3739761A1BCEAA2F00A007BF /* TemplateRandomwalkConfigurationLoader.cpp */,
