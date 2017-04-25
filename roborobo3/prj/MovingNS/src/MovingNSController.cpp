@@ -322,7 +322,7 @@ unsigned int MovingNSController::computeRequiredNumberOfWeights()
 
 void MovingNSController::performVariation()
 {
-    if ( MovingNSSharedData::gIndividualMutationRate > rand()/RAND_MAX ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( MovingNSSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( MovingNSSharedData::gMutationOperator )
         {
