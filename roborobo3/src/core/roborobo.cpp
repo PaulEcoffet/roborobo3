@@ -148,6 +148,7 @@ int gAgentsInitAreaWidth = -1;
 int gAgentsInitAreaHeight = -1;
 
 bool gMovableObjects = false;
+bool gStuckMovableObjects = false;
 
 bool gRobotDisplayFocus = false;
 
@@ -1762,6 +1763,19 @@ bool loadProperties( std::string __propertiesFilename )
             std::cerr << "[WARNING] gMovableObjects is missing or corrupt (default is \"false\").\n";
             //returnValue = false;
         }
+    
+    s = gProperties.getProperty("gStuckMovableObjects");
+    if ( s == "true" || s == "True" || s == "TRUE" )
+        gStuckMovableObjects = true;
+    else
+        if ( s == "false" || s == "False" || s == "FALSE" )
+            gStuckMovableObjects = false;
+        else
+        {
+            std::cerr << "[WARNING] gStuckMovableObjects is missing or corrupt (default is \"false\").\n";
+            //returnValue = false;
+        }
+    
 
 	if ( gProperties.hasProperty("gRobotMaskImageFilename") )
 		gRobotMaskImageFilename = gProperties.getProperty("gRobotMaskImageFilename");

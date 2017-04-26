@@ -101,6 +101,7 @@ extern int gPhysicalObjectIndexStartOffset; // used for encoding the physical ob
 extern int gRobotIndexStartOffset; // used for encoding the robot's index into the environment image.
 
 extern bool gMovableObjects; // enable physics for moving (some) objects
+extern bool gStuckMovableObjects;
 
 extern bool gRobotDisplayFocus;  // make focused robot more visible
 

@@ -301,6 +301,8 @@ void CircleObject::step()
 {
     _hitWall = false;
     _didMove = false;
+    _desiredX = _xReal;
+    _desiredY = _yReal;
     if (_impulses.size() > 0)
     {
         //       printf("[DEBUG] Moving object %d\n", _id);
@@ -332,35 +334,38 @@ void CircleObject::step()
         
         _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
         _desiredSpeedOrientation = atan2(impYtot, impXtot) * 180 / M_PI;
+        _desiredX = _xReal+impXtot;
+        _desiredY = _yReal+impYtot;
+
+        Sint16 newX = _desiredX; //rounded
+        Sint16 newY = _desiredY;
         
-        Sint16 newX = _xReal+impXtot;
-        Sint16 newY = _yReal+impYtot;
-        
-        if (newX != getXCenterPixel() || newY != getYCenterPixel()) // we're going to try to move onscreen
-        {
-            unregisterObject();
-            hide();
-            
-            if (canRegister(newX, newY))
+        if (gStuckMovableObjects == false) {
+            if (newX != getXCenterPixel() || newY != getYCenterPixel()) // we're going to try to move onscreen
             {
-                _xReal += impXtot;
-                _yReal += impYtot;
-                _didMove = true;
+                unregisterObject();
+                hide();
+                
+                if (canRegister(newX, newY))
+                {
+                    _xReal = _desiredX;
+                    _yReal = _desiredY;
+                    _didMove = true;
+                }
+                
+                if (_hitWall) { // reappear somewhere else
+                    registered = false;
+                    _visible = false;
+                }
+                else {
+                    registerObject();
+                }
             }
-            
-            if (_hitWall) { // reappear somewhere else
-                registered = false;
-                _visible = false;
+            else // silently move offscreen by less than a pixel
+            {
+                _xReal = _desiredX;
+                _yReal = _desiredY;
             }
-            else {
-                registerObject();
-            }
-            
-        }
-        else // silently move offscreen by less than a pixel
-        {
-            _xReal += impXtot;
-            _yReal += impYtot;
         }
         _impulses.clear();
     }
