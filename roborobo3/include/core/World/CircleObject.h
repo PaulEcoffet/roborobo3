@@ -32,6 +32,11 @@ protected:
     double _desiredSpeedOrientation;
     double _desiredLinearSpeed;
     
+    // the coordinates we'd like to end up in after we move
+    // (don't go there is gStuckMovableObjects is set, or if we collide)
+    double _desiredX;
+    double _desiredY;
+    
     bool _hitWall;
     bool _didMove;
     
