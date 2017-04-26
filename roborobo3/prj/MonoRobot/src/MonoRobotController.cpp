@@ -64,7 +64,7 @@ void MonoRobotController::step() // handles control decision and evolution (but:
 {
 
 	// If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
-	if (_isNearObject == false)
+    if (_isNearObject == false)
 		_objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = false;
     
     _movements[_iteration%MonoRobotSharedData::gMemorySize] = fabs(_wm->_actualTranslationalValue); // might be negative
@@ -79,6 +79,7 @@ void MonoRobotController::step() // handles control decision and evolution (but:
     
     _isNearObject = false;
 	_nbNearbyRobots = 0;
+    _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = 0;
 
 }
 
@@ -238,6 +239,11 @@ std::vector<double> MonoRobotController::getInputs(){
     for (auto move: _movements)
         totalMovement += move;
     inputs.push_back(totalMovement);
+    
+    double totalFitness = 0;
+    for (auto fitness: _fitnesses)
+        totalFitness += fitness;
+    inputs.push_back(totalFitness);
     
     return inputs;
 }
@@ -415,6 +421,8 @@ void MonoRobotController::setIOcontrollerSize()
 //	_nbInputs += 1; // did the object move recently?
     
     _nbInputs += 1; // how much did we recently move?
+    
+    _nbInputs += 1; // how much fitness did we recently gain?
 
     // wrt outputs
     
@@ -558,7 +566,7 @@ void MonoRobotController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __gain, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near an object (which moved: %s), and could gain %lf fitness\n", _wm->_id, __objectDidMove?"yes":"no", __gain);
+//    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
     _isNearObject = true;
 	_nbNearbyRobots = __nbRobots;
     if (__objectDidMove || gStuckMovableObjects) {
@@ -569,6 +577,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         {
 //            printf("[DEBUG] fitness!\n");
             increaseFitness(__gain);
+            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = __gain;
         }
     }
 	_objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
