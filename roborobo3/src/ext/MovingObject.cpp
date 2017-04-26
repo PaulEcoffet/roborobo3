@@ -37,7 +37,7 @@ void MovingObject::step()
         Robot *robot = gWorld->getRobot(robotID);
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
         MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-        ctl->wasNearObject(_didMove, gain, nbRobots);
+        ctl->wasNearObject(_id, _didMove, gain, nbRobots);
     }
     _nearbyRobots.clear();
 }
@@ -49,7 +49,6 @@ void MovingObject::show() {
 
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
 {
-    printf("[DEBUG] Object %d is being pushed by agent %d\n", _id, __idAgent);
     CircleObject::isPushed(__idAgent, __speed);
 }
 

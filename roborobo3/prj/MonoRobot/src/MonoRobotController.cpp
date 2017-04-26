@@ -556,11 +556,20 @@ void MonoRobotController::increaseFitness( double __delta )
 }
 
 // called only once per step (experimentally verified)
-void MonoRobotController::wasNearObject( bool __objectDidMove, double __gain, int __nbRobots )
+void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __gain, int __nbRobots )
 {
+//    printf("[DEBUG] Robot %d was near an object (which moved: %s), and could gain %lf fitness\n", _wm->_id, __objectDidMove?"yes":"no", __gain);
     _isNearObject = true;
 	_nbNearbyRobots = __nbRobots;
-    if (__objectDidMove)
-        increaseFitness(__gain);
+    if (__objectDidMove || gStuckMovableObjects) {
+        // In half the periods, the leftmost object (id%2 == 0) gives us fitness, and the others it's the rightmost
+        MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
+        int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
+        if (period%2 == __objectId%2)
+        {
+//            printf("[DEBUG] fitness!\n");
+            increaseFitness(__gain);
+        }
+    }
 	_objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }
