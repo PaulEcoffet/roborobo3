@@ -674,15 +674,18 @@ bool Robot::isCollision()
 					Uint32 pixel = getPixel32( gEnvironmentImage , _x+i , _y+j);
 					if (  pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) )
 					{
-                        Uint8 r, g, b;
-                        SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
-
-                        int targetIndex = (r<<16)+(g<<8)+b;
-                        
-                        if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableObjects)   // physical object
+                        if (gMovableObjects)
                         {
-                            targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-                            gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, Point2d(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
+                            Uint8 r, g, b;
+                            SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
+
+                            int targetIndex = (r<<16)+(g<<8)+b;
+                            
+                            if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // physical object
+                            {
+                                targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
+                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, Point2d(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
+                            }
                         }
 						return true;
 					}
