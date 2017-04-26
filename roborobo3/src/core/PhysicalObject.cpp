@@ -244,7 +244,6 @@ bool PhysicalObject::triggerRegrow()
 
 void PhysicalObject::resetLocation()
 {
-    printf("[DEBUG] Resetting location of object %d\n", _id);
     std::string loc = "physicalObject[" + std::to_string(_id) + "]";
     if (gProperties.hasProperty(loc + ".x") && gProperties.hasProperty(loc + ".y"))
     {
