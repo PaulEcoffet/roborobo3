@@ -62,7 +62,14 @@ MonoRobotController::~MonoRobotController()
 
 void MonoRobotController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-
+/*	if (_wm->_id == 0) {
+		printf("[DEBUG] dumping robot #0's recent fitness: ");
+		double totfit = 0;
+		for (auto fit: _fitnesses)
+			totfit += fit;
+		printf("%lf\n", totfit);
+	}
+*/
 	// If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
     if (_isNearObject == false)
 		_objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = false;
