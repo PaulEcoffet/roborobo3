@@ -237,23 +237,28 @@ std::vector<double> MonoRobotController::getInputs(){
     //	inputs.push_back(_nbNearbyRobots);
     
     // did the object recently move?
-    int nbMoves = 0;
-    for (auto moved: _objectMoves)
-        if (moved)
-            nbMoves++;
-    //	inputs.push_back(nbMoves);
+//    int nbMoves = 0;
+//    for (auto moved: _objectMoves)
+//        if (moved)
+//            nbMoves++;
+//    inputs.push_back(nbMoves);
     
     // how much did we recently move?
-    double totalMovement = 0;
-    for (auto move: _movements)
-        totalMovement += move;
-    //    inputs.push_back(totalMovement);
+//    double totalMovement = 0;
+//    for (auto move: _movements)
+//        totalMovement += move;
+//    inputs.push_back(totalMovement);
     
     // how much fitness did we recently gain?
-    double totalFitness = 0;
-    for (auto fitness: _fitnesses)
-        totalFitness += fitness;
-    inputs.push_back(totalFitness);
+//    double totalFitness = 0;
+//    for (auto fitness: _fitnesses)
+//        totalFitness += fitness;
+//    inputs.push_back(totalFitness);
+    
+    // should we go left or right?
+    MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
+    int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
+    inputs.push_back((period+wobs->getStartObjectOffset())%2);
     
     return inputs;
 }
@@ -432,7 +437,9 @@ void MonoRobotController::setIOcontrollerSize()
     
     //    _nbInputs += 1; // how much did we recently move?
     
-    _nbInputs += 1; // how much fitness did we recently gain?
+    //  _nbInputs += 1; // how much fitness did we recently gain?
+    
+    _nbInputs += 1; // should we go left or right?
     
     // wrt outputs
     
@@ -583,7 +590,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         // In half the periods, the leftmost object (id%2 == 0) gives us fitness, and the others it's the rightmost
         MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
         int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
-        if (period%2 == (__objectId+wobs->getStartObjectOffset())%2)
+        if (__objectId%2 == (period+wobs->getStartObjectOffset())%2)
         {
             //            printf("[DEBUG] fitness!\n");
             increaseFitness(__gain);
