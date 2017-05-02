@@ -228,25 +228,28 @@ std::vector<double> MonoRobotController::getInputs(){
     }
     
 	// are we near an object?
-	if ( _isNearObject )
-		inputs.push_back(1);
-	else
-		inputs.push_back(0);
+//	if ( _isNearObject )
+//		inputs.push_back(1);
+//	else
+//		inputs.push_back(0);
 
 	// how many robots around?
-	inputs.push_back(_nbNearbyRobots);
+//	inputs.push_back(_nbNearbyRobots);
 
+	// did the object recently move?
 	int nbMoves = 0;
 	for (auto moved: _objectMoves)
 		if (moved)
 			nbMoves++;
 //	inputs.push_back(nbMoves);
     
+	// how much did we recently move?
     double totalMovement = 0;
     for (auto move: _movements)
         totalMovement += move;
-    inputs.push_back(totalMovement);
+//    inputs.push_back(totalMovement);
     
+	// how much fitness did we recently gain?
     double totalFitness = 0;
     for (auto fitness: _fitnesses)
         totalFitness += fitness;
@@ -421,13 +424,13 @@ void MonoRobotController::setIOcontrollerSize()
     if ( gNbOfLandmarks > 0 )
         _nbInputs += 2; // incl. landmark (angle,dist)
     
-	_nbInputs += 1; // near an object?
+//	_nbInputs += 1; // are we near an object?
 	
-	_nbInputs += 1; // how many robots around?
+//	_nbInputs += 1; // how many robots around?
 
-//	_nbInputs += 1; // did the object move recently?
+//	_nbInputs += 1; // did the object recently move?
     
-    _nbInputs += 1; // how much did we recently move?
+//    _nbInputs += 1; // how much did we recently move?
     
     _nbInputs += 1; // how much fitness did we recently gain?
 
