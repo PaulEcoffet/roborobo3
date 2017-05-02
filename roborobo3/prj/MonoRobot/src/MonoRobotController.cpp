@@ -40,7 +40,7 @@ MonoRobotController::MonoRobotController( RobotWorldModel *wm )
     _isListening = true;
     _notListeningDelay = MonoRobotSharedData::gNotListeningStateDelay;
     _listeningDelay = MonoRobotSharedData::gListeningStateDelay;
-        
+    
     if ( gEnergyLevel )
         _wm->setEnergyLevel(gEnergyInit);
     
@@ -62,32 +62,32 @@ MonoRobotController::~MonoRobotController()
 
 void MonoRobotController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-/*	if (_wm->_id == 0) {
-		printf("[DEBUG] dumping robot #0's recent fitness: ");
-		double totfit = 0;
-		for (auto fit: _fitnesses)
-			totfit += fit;
-		printf("%lf\n", totfit);
-	}
-*/
-	// If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
+    /*	if (_wm->_id == 0) {
+     printf("[DEBUG] dumping robot #0's recent fitness: ");
+     double totfit = 0;
+     for (auto fit: _fitnesses)
+     totfit += fit;
+     printf("%lf\n", totfit);
+     }
+     */
+    // If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
     if (_isNearObject == false)
-		_objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = false;
+        _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = false;
     
     _movements[_iteration%MonoRobotSharedData::gMemorySize] = fabs(_wm->_actualTranslationalValue); // might be negative
-
+    
     _iteration++;
     
     // * step controller
-
+    
     stepController();
-
+    
     // Update state variables
     
     _isNearObject = false;
-	_nbNearbyRobots = 0;
+    _nbNearbyRobots = 0;
     _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = 0;
-
+    
 }
 
 
@@ -129,7 +129,7 @@ std::vector<double> MonoRobotController::getInputs(){
     //
     // => number of sensory inputs: N * rangeSensors + 6, with rangeSensors varying from 1 to many, if extended sensory inputs are on.
     
-
+    
     
     std::vector<double> inputs;
     
@@ -143,59 +143,59 @@ std::vector<double> MonoRobotController::getInputs(){
             int objectId = _wm->getObjectIdFromCameraSensor(i);
             
             // input: physical object? which type?
-            if ( PhysicalObject::isInstanceOf(objectId) )
-            {
-                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-                for ( int i = 0 ; i != nbOfTypes ; i++ )
-                {
-                    if ( i == gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset]->getType() )
-                        inputs.push_back( 1 ); // match
-                    else
-                        inputs.push_back( 0 );
-                }
-            }
-            else
-            {
-                // not a physical object. But: should still fill in the inputs (with zeroes)
-                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-                for ( int i = 0 ; i != nbOfTypes ; i++ )
-                {
-                    inputs.push_back( 0 );
-                }
-            }
+            //            if ( PhysicalObject::isInstanceOf(objectId) )
+            //            {
+            //                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
+            //                for ( int i = 0 ; i != nbOfTypes ; i++ )
+            //                {
+            //                    if ( i == gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset]->getType() )
+            //                        inputs.push_back( 1 ); // match
+            //                    else
+            //                        inputs.push_back( 0 );
+            //                }
+            //            }
+            //            else
+            //            {
+            //                // not a physical object. But: should still fill in the inputs (with zeroes)
+            //                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
+            //                for ( int i = 0 ; i != nbOfTypes ; i++ )
+            //                {
+            //                    inputs.push_back( 0 );
+            //                }
+            //            }
             
-            // input: another agent? If yes: same group?
+            // input: another robot? If yes: same group?
             if ( Agent::isInstanceOf(objectId) )
             {
-                // this is an agent
+                // this is a robot
                 inputs.push_back( 1 );
                 
                 // same group?
-                if ( gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->getGroupId() == _wm->getGroupId() )
-                {
-                    inputs.push_back( 1 ); // match: same group
-                }
-                else
-                {
-                    inputs.push_back( 0 ); // not the same group
-                }
+                //                if ( gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->getGroupId() == _wm->getGroupId() )
+                //                {
+                //                    inputs.push_back( 1 ); // match: same group
+                //                }
+                //                else
+                //                {
+                //                    inputs.push_back( 0 ); // not the same group
+                //                }
                 
                 // relative orientation? (ie. angle difference wrt. current agent)
-                double srcOrientation = _wm->_agentAbsoluteOrientation;
-                double tgtOrientation = gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->_agentAbsoluteOrientation;
-                double delta_orientation = - ( srcOrientation - tgtOrientation );
-                if ( delta_orientation >= 180.0 )
-                    delta_orientation = - ( 360.0 - delta_orientation );
-                else
-                    if ( delta_orientation <= -180.0 )
-                        delta_orientation = - ( - 360.0 - delta_orientation );
-                inputs.push_back( delta_orientation/180.0 );
+                //                double srcOrientation = _wm->_agentAbsoluteOrientation;
+                //                double tgtOrientation = gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->_agentAbsoluteOrientation;
+                //                double delta_orientation = - ( srcOrientation - tgtOrientation );
+                //                if ( delta_orientation >= 180.0 )
+                //                    delta_orientation = - ( 360.0 - delta_orientation );
+                //                else
+                //                    if ( delta_orientation <= -180.0 )
+                //                        delta_orientation = - ( - 360.0 - delta_orientation );
+                //                inputs.push_back( delta_orientation/180.0 );
             }
             else
             {
-                inputs.push_back( 0 ); // not an agent...
-                inputs.push_back( 0 ); // ...therefore no match wrt. group.
-                inputs.push_back( 0 ); // ...and no orientation.
+                inputs.push_back( 0 ); // not a robot...
+                //               inputs.push_back( 0 ); // ...therefore no match wrt. group.
+                //               inputs.push_back( 0 ); // ...and no orientation.
             }
             
             // input: wall or empty?
@@ -227,29 +227,29 @@ std::vector<double> MonoRobotController::getInputs(){
         inputs.push_back( _wm->getEnergyLevel() / gEnergyMax );
     }
     
-	// are we near an object?
-//	if ( _isNearObject )
-//		inputs.push_back(1);
-//	else
-//		inputs.push_back(0);
-
-	// how many robots around?
-//	inputs.push_back(_nbNearbyRobots);
-
-	// did the object recently move?
-	int nbMoves = 0;
-	for (auto moved: _objectMoves)
-		if (moved)
-			nbMoves++;
-//	inputs.push_back(nbMoves);
+    // are we near an object?
+    //	if ( _isNearObject )
+    //		inputs.push_back(1);
+    //	else
+    //		inputs.push_back(0);
     
-	// how much did we recently move?
+    // how many robots around?
+    //	inputs.push_back(_nbNearbyRobots);
+    
+    // did the object recently move?
+    int nbMoves = 0;
+    for (auto moved: _objectMoves)
+        if (moved)
+            nbMoves++;
+    //	inputs.push_back(nbMoves);
+    
+    // how much did we recently move?
     double totalMovement = 0;
     for (auto move: _movements)
         totalMovement += move;
-//    inputs.push_back(totalMovement);
+    //    inputs.push_back(totalMovement);
     
-	// how much fitness did we recently gain?
+    // how much fitness did we recently gain?
     double totalFitness = 0;
     for (auto fitness: _fitnesses)
         totalFitness += fitness;
@@ -260,7 +260,7 @@ std::vector<double> MonoRobotController::getInputs(){
 
 void MonoRobotController::stepController()
 {
-
+    
     // ---- compute and read out ----
     
     nn->setWeights(_parameters); // set-up NN
@@ -415,7 +415,7 @@ void MonoRobotController::setIOcontrollerSize()
     
     if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
     {
-        _nbInputs = ( PhysicalObjectFactory::getNbOfTypes()+3+1 ) * _wm->_cameraSensorsNb; // nbOfTypes + ( isItAnAgent? + isItSameGroupId? + agentAngleDifference?) + isItAWall?
+        _nbInputs = ( 1+1 ) * _wm->_cameraSensorsNb; //  ( isItAnAgent?) + isItAWall?
     }
     
     _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
@@ -424,16 +424,16 @@ void MonoRobotController::setIOcontrollerSize()
     if ( gNbOfLandmarks > 0 )
         _nbInputs += 2; // incl. landmark (angle,dist)
     
-//	_nbInputs += 1; // are we near an object?
-	
-//	_nbInputs += 1; // how many robots around?
-
-//	_nbInputs += 1; // did the object recently move?
+    //	_nbInputs += 1; // are we near an object?
     
-//    _nbInputs += 1; // how much did we recently move?
+    //	_nbInputs += 1; // how many robots around?
+    
+    //	_nbInputs += 1; // did the object recently move?
+    
+    //    _nbInputs += 1; // how much did we recently move?
     
     _nbInputs += 1; // how much fitness did we recently gain?
-
+    
     // wrt outputs
     
     _nbOutputs = 2;
@@ -450,7 +450,7 @@ void MonoRobotController::initController()
         (*_nbNeuronsPerHiddenLayer)[i] = MonoRobotSharedData::gNbNeuronsPerHiddenLayer;
     
     createNN();
-
+    
     unsigned int const nbGene = computeRequiredNumberOfWeights();
     
     if ( gVerbose )
@@ -466,12 +466,12 @@ void MonoRobotController::initController()
     }
     
     updatePhenotype();
-
-	// state variables
-	_isNearObject = false;
-	_nbNearbyRobots = 0;
+    
+    // state variables
+    _isNearObject = false;
+    _nbNearbyRobots = 0;
     for (auto& moved: _objectMoves)
-		moved = false;
+        moved = false;
     for (auto& move: _movements)
         move = 0;
 }
@@ -538,7 +538,7 @@ void MonoRobotController::logCurrentState()
     ",dist," + std::to_string( getEuclideanDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
     ",sumOfDist," + std::to_string( _dSumTravelled ) +
     ",groupId," + std::to_string(_wm->getGroupId()) +
-    ",fitnessValue," + std::to_string(_wm->_fitnessValue) + 
+    ",fitnessValue," + std::to_string(_wm->_fitnessValue) +
     "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
@@ -560,11 +560,11 @@ void MonoRobotController::resetFitness()
 
 void MonoRobotController::updateFitness( double __newFitness )
 {
-	if (__newFitness < 0)
-	{
-		updateFitness(0);
-		return;
-	}
+    if (__newFitness < 0)
+    {
+        updateFitness(0);
+        return;
+    }
     _wm->_fitnessValue = __newFitness;
 }
 
@@ -576,19 +576,19 @@ void MonoRobotController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __gain, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
+    //    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
     _isNearObject = true;
-	_nbNearbyRobots = __nbRobots;
+    _nbNearbyRobots = __nbRobots;
     if (__objectDidMove || gStuckMovableObjects) {
         // In half the periods, the leftmost object (id%2 == 0) gives us fitness, and the others it's the rightmost
         MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
         int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
         if (period%2 == (__objectId+wobs->getStartObjectOffset())%2)
         {
-//            printf("[DEBUG] fitness!\n");
+            //            printf("[DEBUG] fitness!\n");
             increaseFitness(__gain);
             _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = __gain;
         }
     }
-	_objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
+    _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }
