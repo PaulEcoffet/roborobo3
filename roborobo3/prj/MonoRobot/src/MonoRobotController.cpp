@@ -583,7 +583,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         // In half the periods, the leftmost object (id%2 == 0) gives us fitness, and the others it's the rightmost
         MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
         int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
-        if (period%2 == __objectId%2)
+        if (period%2 == (__objectId+wobs->getStartObjectOffset())%2)
         {
 //            printf("[DEBUG] fitness!\n");
             increaseFitness(__gain);

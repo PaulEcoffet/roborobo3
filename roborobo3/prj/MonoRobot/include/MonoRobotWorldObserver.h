@@ -26,6 +26,8 @@ protected:
     int _generationCount;
     int _generationItCount;
     
+    int _startObjectOffset; // either 0 or 1, to tell us whether we should go to the left- or rightmost object first
+    
     std::ofstream _logFile;
     LogManager *_logManager; // Our own little logfile
     
@@ -37,6 +39,7 @@ public:
     virtual void step();
     
     virtual int getGenerationItCount() { return _generationItCount; }
+    int getStartObjectOffset() { return _startObjectOffset; }
 
 };
 

@@ -69,6 +69,8 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     _generationItCount = -1;
     _generationCount = -1;
     
+    _startObjectOffset = rand()%2;
+    
     // * Logfile
     
     std::string logFilename = gLogDirectoryname + "/observer.txt";
@@ -92,10 +94,10 @@ void MonoRobotWorldObserver::reset()
 void MonoRobotWorldObserver::step()
 {
     _generationItCount++;
- 
+    
     // switch to next generation.
     if( _generationItCount == MonoRobotSharedData::gEvaluationTime )
-    {
+    {        
         // Perform an evolution step on robots (give them new genomes and mutate them), and
         // reset their positions and the objects
         
@@ -162,6 +164,8 @@ void MonoRobotWorldObserver::step()
         // update iterations and generations counters
         _generationItCount = 0;
         _generationCount++;
+        
+        _startObjectOffset = rand()%2;
     }
     
     updateMonitoring();
