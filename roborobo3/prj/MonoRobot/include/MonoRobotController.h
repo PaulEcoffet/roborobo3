@@ -74,6 +74,7 @@ protected:
     // other neural network inputs
     
     bool _isNearObject; // are we near an object
+    int _nearbyObjectId; // the ID of the object nearby
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
 	bool _objectMoves[MonoRobotSharedData::gMemorySize]; // the number of times the object we're near moved recently
     double _movements[MonoRobotSharedData::gMemorySize]; // our total movement recently (see if we're blocked)
