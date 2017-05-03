@@ -255,10 +255,24 @@ std::vector<double> MonoRobotController::getInputs(){
 //        totalFitness += fitness;
 //    inputs.push_back(totalFitness);
     
-    // should we go left or right?
+    // are we on the right object?
     MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
     int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
-    inputs.push_back((period+wobs->getStartObjectOffset())%2);
+    if ( _isNearObject)
+    {
+        if (_nearbyObjectId == (period+wobs->getStartObjectOffset())%2)
+        {
+//            printf("[DEBUG] Right object!\n");
+            inputs.push_back(1);
+        }
+        else
+        {
+//            printf("[DEBUG] Wrong object!\n");
+            inputs.push_back(0);
+        }
+    }
+    else
+        inputs.push_back(0);
     
     return inputs;
 }
@@ -439,7 +453,7 @@ void MonoRobotController::setIOcontrollerSize()
     
     //  _nbInputs += 1; // how much fitness did we recently gain?
     
-    _nbInputs += 1; // should we go left or right?
+    _nbInputs += 1; // are we on the object that's giving fitness?
     
     // wrt outputs
     
@@ -585,6 +599,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
 {
     //    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
     _isNearObject = true;
+    _nearbyObjectId = __objectId;
     _nbNearbyRobots = __nbRobots;
     if (__objectDidMove || gStuckMovableObjects) {
         // In half the periods, the leftmost object (id%2 == 0) gives us fitness, and the others it's the rightmost
