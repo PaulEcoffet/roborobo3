@@ -250,29 +250,29 @@ std::vector<double> MonoRobotController::getInputs(){
 //    inputs.push_back(totalMovement);
     
     // how much fitness did we recently gain?
-//    double totalFitness = 0;
-//    for (auto fitness: _fitnesses)
-//        totalFitness += fitness;
-//    inputs.push_back(totalFitness);
+    double totalFitness = 0;
+    for (auto fitness: _fitnesses)
+        totalFitness += fitness;
+    inputs.push_back(totalFitness);
     
     // are we on the right object?
-    MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
-    int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
-    if ( _isNearObject)
-    {
-        if (_nearbyObjectId == (period+wobs->getStartObjectOffset())%2)
-        {
-//            printf("[DEBUG] Right object!\n");
-            inputs.push_back(1);
-        }
-        else
-        {
-//            printf("[DEBUG] Wrong object!\n");
-            inputs.push_back(0);
-        }
-    }
-    else
-        inputs.push_back(0);
+//    MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
+//    int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
+//    if ( _isNearObject)
+//    {
+//        if (_nearbyObjectId == (period+wobs->getStartObjectOffset())%2)
+//        {
+////            printf("[DEBUG] Right object!\n");
+//            inputs.push_back(1);
+//        }
+//        else
+//        {
+////            printf("[DEBUG] Wrong object!\n");
+//            inputs.push_back(0);
+//        }
+//    }
+//    else
+//        inputs.push_back(0);
     
     return inputs;
 }
@@ -451,9 +451,9 @@ void MonoRobotController::setIOcontrollerSize()
     
     //    _nbInputs += 1; // how much did we recently move?
     
-    //  _nbInputs += 1; // how much fitness did we recently gain?
+      _nbInputs += 1; // how much fitness did we recently gain?
     
-    _nbInputs += 1; // are we on the object that's giving fitness?
+//    _nbInputs += 1; // are we on the object that's giving fitness?
     
     // wrt outputs
     
@@ -602,10 +602,8 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     _nearbyObjectId = __objectId;
     _nbNearbyRobots = __nbRobots;
     if (__objectDidMove || gStuckMovableObjects) {
-        // In half the periods, the leftmost object (id%2 == 0) gives us fitness, and the others it's the rightmost
-        MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
-        int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
-        if (__objectId%2 == (period+wobs->getStartObjectOffset())%2)
+        // Only give fitness if both robots are on the same object
+        if (__nbRobots >= 2)
         {
             //            printf("[DEBUG] fitness!\n");
             increaseFitness(__gain);
