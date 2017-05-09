@@ -921,3 +921,22 @@ void Robot::applyRobotPhysics( )
         }
     }
 }
+
+int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
+{
+    int tries = 0;
+    int x = 0, y = 0;
+    do {
+        x = rand() % (__xMax - __xMin) + __xMin;
+        y = rand() % (__yMax - __yMin) + __yMin;
+        setCoord(x, y);
+        setCoordReal(x, y);
+        tries++;
+    } while (isCollision() == true && tries < gLocationFinderMaxNbOfTrials);
+    if (tries == gLocationFinderMaxNbOfTrials)
+    {
+        std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
+    }
+//    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
+    return tries;
+}
