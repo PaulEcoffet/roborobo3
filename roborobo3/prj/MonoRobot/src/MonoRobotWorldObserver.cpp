@@ -56,6 +56,12 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     
     gProperties.checkAndGetPropertyValue("gSigma",&MonoRobotSharedData::gSigma,false);
     
+    gProperties.checkAndGetPropertyValue("gBorderSize", &MonoRobotSharedData::gBorderSize, true);
+    gProperties.checkAndGetPropertyValue("gZoneHeight", &MonoRobotSharedData::gZoneHeight, true);
+    gProperties.checkAndGetPropertyValue("gZoneWidth", &MonoRobotSharedData::gZoneWidth, true);
+    gProperties.checkAndGetPropertyValue("gNbLines", &MonoRobotSharedData::gNbLines, true);
+    gProperties.checkAndGetPropertyValue("gNbRows", &MonoRobotSharedData::gNbRows, true);
+    
     // ====
     
     if ( !gRadioNetwork)
@@ -131,7 +137,7 @@ void MonoRobotWorldObserver::step()
         }
         
         // Environment stuff
-        
+        // unregister everyone
         for (auto object: gPhysicalObjects) {
             object->unregisterObject();
         }
@@ -140,17 +146,26 @@ void MonoRobotWorldObserver::step()
             Robot *robot = gWorld->getRobot(iRobot);
             robot->unregisterRobot();
         }
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->reset();
-            robot->registerRobot();
-        }
-        
+        // register objects first because they might have fixed locations, whereas robots move anyway
         for (auto object: gPhysicalObjects)
         {
             object->resetLocation();
             object->registerObject();
         }
+        
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+            Robot *robot = gWorld->getRobot(iRobot);
+            robot->reset();
+            // super specific stuff here
+            int gridBox = iRobot/2;
+            int line = gridBox/MonoRobotSharedData::gNbRows;
+            int row = gridBox%MonoRobotSharedData::gNbRows;
+            int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
+            int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize);
+            robot->findRandomLocation(xMin, xMin + MonoRobotSharedData::gZoneWidth, yMin, yMin + MonoRobotSharedData::gZoneHeight);
+            robot->registerRobot();
+        }
+    
 
 		// update genomes (we do it here because Robot::reset() also resets genomes)
 		
@@ -160,7 +175,7 @@ void MonoRobotWorldObserver::step()
             MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
 			ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
 		}
-        
+                
         // update iterations and generations counters
         _generationItCount = 0;
         _generationCount++;

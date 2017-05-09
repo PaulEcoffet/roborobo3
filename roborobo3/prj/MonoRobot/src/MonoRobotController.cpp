@@ -548,7 +548,8 @@ void MonoRobotController::updatePhenotype() {
 void MonoRobotController::logCurrentState()
 {
     // Logging
-    std::string sLog = "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) +
+    std::string sLog = "" + std::to_string(gWorld->getIterations()) +
+    "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) +
     ",age," + std::to_string(gWorld->getIterations()-_birthdate) +
     ",energy," +  std::to_string(_wm->getEnergyLevel()) +
     ",sigma," + std::to_string(_currentSigma) +
