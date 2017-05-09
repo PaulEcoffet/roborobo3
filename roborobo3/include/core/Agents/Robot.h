@@ -87,6 +87,9 @@ class Robot : public Agent
 		
 		void registerRobot();
 		void unregisterRobot();
+    
+        int findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax);
+        // the interval is [min, max[
 		
 		void behaviorUpdate_remoteController(const Uint8* __keyStates);
 
