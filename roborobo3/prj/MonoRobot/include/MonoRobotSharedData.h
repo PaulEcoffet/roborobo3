@@ -58,6 +58,13 @@ public:
 	static constexpr int gMemorySize = 20;
     
     static int gNumberOfPeriods;
+    
+    // Parameters relative to the grid
+    static int gBorderSize;
+    static int gZoneWidth;
+    static int gZoneHeight;
+    static int gNbLines;
+    static int gNbRows;
         
     // -----
     
