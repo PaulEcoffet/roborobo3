@@ -171,12 +171,12 @@ std::vector<double> MonoRobotController::getInputs(){
 //    {
 //        if (_nearbyObjectId == (period+wobs->getStartObjectOffset())%2)
 //        {
-////            printf("[DEBUG] Right object!\n");
+//            printf("[DEBUG] Right object!\n");
 //            inputs.push_back(1);
 //        }
 //        else
 //        {
-////            printf("[DEBUG] Wrong object!\n");
+//            printf("[DEBUG] Wrong object!\n");
 //            inputs.push_back(0);
 //        }
 //    }
@@ -501,7 +501,7 @@ void MonoRobotController::increaseFitness( double __delta )
 }
 
 // called only once per step (experimentally verified)
-void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __gain, int __nbRobots )
+void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __movement, int __nbRobots )
 {
     //    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
     MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
@@ -513,13 +513,16 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     _nearbyObjectId = __objectId;
     _nbNearbyRobots = __nbRobots;
     
+    double coeff = 1.0/(1.0+pow(__nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
+    double gain = coeff * __nbRobots;
+    
     if (__objectDidMove || gStuckMovableObjects) {
         // Only give fitness if both robots are on the same object and the object is active
         if (__nbRobots >= 2 && wobs->objectIsActive(__objectId))
         {
 //                        printf("[DEBUG] fitness (it %d)!\n", gWorld->getIterations());
-            increaseFitness(__gain);
-            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = __gain;
+            increaseFitness(gain);
+            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = gain;
         }
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
