@@ -100,37 +100,6 @@ void MonoRobotController::step() // handles control decision and evolution (but:
 
 std::vector<double> MonoRobotController::getInputs(){
     
-    
-    // WHAT FOLLOWS IS AN EXAMPLE OF LOADING A NN-CONTROLER WITH A FULL-FLEDGE SENSORY INPUT INFORMATION
-    // Rewrite to match your own extended input scheme, if needed.
-    // Note that you may tune it on/off using gExtendedSensoryInputs defined in the properties file.
-    // When modifying this code, dont forget to update the initialization in the reset() method
-    // Example:
-    //      - you may want to distinguish between robot's groups (if more than 1)
-    //      - you may want to restrict the number of objects that can be identified (if not all possible objects are in use)
-    //      - you may want to compress inputs (e.g. binary encoding instead of one-input-per-object-type.
-    //      - (...)
-    //
-    // In the following, sensory inputs for each sensor are ordered (and filled in) as follow:
-    // - N range sensors
-    //      - distance to obstacle (max if nothing)
-    //      IF extendedInputs is True:
-    //          - [0...N_physicalobjecttypes] Is it an object of type i? (0: no, 1: yes) -- type: 0 (round), 1 (energy item), 2 (gate), 3 (switch), ...? (cf. PhysicalObjectFactory)
-    //          - is it a robot? (1 or 0)
-    //          - is it from the same group? (1 or 0)
-    //          - relative orientation wrt. current robot (relative orientation or 0 if not a robot)
-    //          - is it a wall? (ie. a non-distinguishible something) (1 or 0)
-    // - floor sensor, red value
-    // - floor sensor, green value
-    // - floor sensor, blue value
-    // - relative direction to the closest landmark
-    // - distance to the closest landmark
-    // - normalized energy level (if any)
-    //
-    // => number of sensory inputs: N * rangeSensors + 6, with rangeSensors varying from 1 to many, if extended sensory inputs are on.
-    
-    
-    
     std::vector<double> inputs;
     
     // distance sensors
@@ -142,60 +111,15 @@ std::vector<double> MonoRobotController::getInputs(){
         {
             int objectId = _wm->getObjectIdFromCameraSensor(i);
             
-            // input: physical object? which type?
-            //            if ( PhysicalObject::isInstanceOf(objectId) )
-            //            {
-            //                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-            //                for ( int i = 0 ; i != nbOfTypes ; i++ )
-            //                {
-            //                    if ( i == gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset]->getType() )
-            //                        inputs.push_back( 1 ); // match
-            //                    else
-            //                        inputs.push_back( 0 );
-            //                }
-            //            }
-            //            else
-            //            {
-            //                // not a physical object. But: should still fill in the inputs (with zeroes)
-            //                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-            //                for ( int i = 0 ; i != nbOfTypes ; i++ )
-            //                {
-            //                    inputs.push_back( 0 );
-            //                }
-            //            }
-            
             // input: another robot? If yes: same group?
             if ( Agent::isInstanceOf(objectId) )
             {
                 // this is a robot
                 inputs.push_back( 1 );
-                
-                // same group?
-                //                if ( gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->getGroupId() == _wm->getGroupId() )
-                //                {
-                //                    inputs.push_back( 1 ); // match: same group
-                //                }
-                //                else
-                //                {
-                //                    inputs.push_back( 0 ); // not the same group
-                //                }
-                
-                // relative orientation? (ie. angle difference wrt. current agent)
-                //                double srcOrientation = _wm->_agentAbsoluteOrientation;
-                //                double tgtOrientation = gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->_agentAbsoluteOrientation;
-                //                double delta_orientation = - ( srcOrientation - tgtOrientation );
-                //                if ( delta_orientation >= 180.0 )
-                //                    delta_orientation = - ( 360.0 - delta_orientation );
-                //                else
-                //                    if ( delta_orientation <= -180.0 )
-                //                        delta_orientation = - ( - 360.0 - delta_orientation );
-                //                inputs.push_back( delta_orientation/180.0 );
             }
             else
             {
                 inputs.push_back( 0 ); // not a robot...
-                //               inputs.push_back( 0 ); // ...therefore no match wrt. group.
-                //               inputs.push_back( 0 ); // ...and no orientation.
             }
             
             // input: wall or empty?
@@ -212,21 +136,6 @@ std::vector<double> MonoRobotController::getInputs(){
     inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
     
-    // landmark (closest landmark)
-    if ( gNbOfLandmarks > 0 )
-    {
-        _wm->updateLandmarkSensor(); // update with closest landmark
-        inputs.push_back( _wm->getLandmarkDirectionAngleValue() );
-        inputs.push_back( _wm->getLandmarkDistanceValue() );
-    }
-    
-    
-    // energy level
-    if ( gEnergyLevel )
-    {
-        inputs.push_back( _wm->getEnergyLevel() / gEnergyMax );
-    }
-    
     // are we near an object?
     //	if ( _isNearObject )
     //		inputs.push_back(1);
@@ -234,7 +143,7 @@ std::vector<double> MonoRobotController::getInputs(){
     //		inputs.push_back(0);
     
     // how many robots around?
-    //	inputs.push_back(_nbNearbyRobots);
+    inputs.push_back(_nbNearbyRobots);
     
     // did the object recently move?
 //    int nbMoves = 0;
@@ -438,22 +347,18 @@ void MonoRobotController::setIOcontrollerSize()
     }
     
     _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
-    if ( gEnergyLevel )
-        _nbInputs += 1; // incl. energy level
-    if ( gNbOfLandmarks > 0 )
-        _nbInputs += 2; // incl. landmark (angle,dist)
     
-    //	_nbInputs += 1; // are we near an object?
+//	_nbInputs += 1; // are we near an object?
     
-    //	_nbInputs += 1; // how many robots around?
+    _nbInputs += 1; // how many robots around?
     
-    //	_nbInputs += 1; // did the object recently move?
+//	_nbInputs += 1; // did the object recently move?
     
-    //    _nbInputs += 1; // how much did we recently move?
+//  _nbInputs += 1; // how much did we recently move?
     
-      _nbInputs += 1; // how much fitness did we recently gain?
+    _nbInputs += 1; // how much fitness did we recently gain?
     
-//    _nbInputs += 1; // are we on the object that's giving fitness?
+//  _nbInputs += 1; // are we on the object that's giving fitness?
     
     // wrt outputs
     
@@ -599,14 +504,20 @@ void MonoRobotController::increaseFitness( double __delta )
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __gain, int __nbRobots )
 {
     //    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
+    MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
+    // add 1 to the number of robots if the fake robot is here
+    if (wobs->getFakeRobotObject() == __objectId%4)
+        __nbRobots++;
+    
     _isNearObject = true;
     _nearbyObjectId = __objectId;
     _nbNearbyRobots = __nbRobots;
+    
     if (__objectDidMove || gStuckMovableObjects) {
-        // Only give fitness if both robots are on the same object
-        if (__nbRobots >= 2)
+        // Only give fitness if both robots are on the same object and the object is active
+        if (__nbRobots >= 2 && wobs->objectIsActive(__objectId))
         {
-            //            printf("[DEBUG] fitness!\n");
+//                        printf("[DEBUG] fitness (it %d)!\n", gWorld->getIterations());
             increaseFitness(__gain);
             _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = __gain;
         }

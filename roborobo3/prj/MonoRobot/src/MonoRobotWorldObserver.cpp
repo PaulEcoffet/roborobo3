@@ -75,8 +75,6 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     _generationItCount = -1;
     _generationCount = -1;
     
-    _startObjectOffset = rand()%2;
-    
     // * Logfile
     
     std::string logFilename = gLogDirectoryname + "/observer.txt";
@@ -94,93 +92,150 @@ MonoRobotWorldObserver::~MonoRobotWorldObserver()
 
 void MonoRobotWorldObserver::reset()
 {
+    // * Active objects and fake robot
     
+    resetObjects();
+}
+
+void MonoRobotWorldObserver::resetObjects()
+{
+    _activeObjects[0] = rand()%4;
+    do {
+        _activeObjects[1] = rand()%4;
+    } while (_activeObjects[1] == _activeObjects[0]);
+    
+    if (rand()%2)
+        _fakeRobotObject = _activeObjects[0];
+    else
+        _fakeRobotObject = _activeObjects[1];
+    
+    resetLandmarks();
+    
+    printf("[DEBUG] Active objects: %d and %d\n", _activeObjects[0], _activeObjects[1]);
+    printf("[DEBUG] Fake robot on object %d\n", _fakeRobotObject);
+}
+
+void MonoRobotWorldObserver::resetLandmarks()
+{
+    // put the landmarks in the right position
+    
+    for (int iLand = 0; iLand < gNbOfLandmarks; iLand++)
+    {
+        int objectId = iLand*4 + _fakeRobotObject;
+        int x, y;
+        gProperties.checkAndGetPropertyValue("physicalObject[" + std::to_string(objectId) + "].x", &x, true);
+        gProperties.checkAndGetPropertyValue("physicalObject[" + std::to_string(objectId) + "].y", &y, true);
+        gLandmarks[iLand]->setPosition(Point2d(x, y));
+    }
+}
+
+bool MonoRobotWorldObserver::objectIsActive(int __objectId)
+{
+    return (__objectId%4 == _activeObjects[0] || __objectId%4 == _activeObjects[1]);
+}
+
+void MonoRobotWorldObserver::stepGeneration()
+{
+    // Perform an evolution step on robots (give them new genomes and mutate them), and
+    // reset their positions and the objects
+    
+    // Evolution stuff
+    
+    double totalFitness = 0;
+    std::vector<double> fitnesses(gNbOfRobots);
+    std::vector<genome> genomes(gNbOfRobots);
+    std::vector<int> newGenomePick(gNbOfRobots);
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        Robot *robot = gWorld->getRobot(iRobot);
+        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+        fitnesses[iRobot] = ctl->getFitness();
+        totalFitness += ctl->getFitness();
+        genomes[iRobot] = ctl->getGenome();
+    }
+    
+    // O(1) fitness-proportionate selection
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        bool done = false;
+        int pick = -1;
+        while (done == false) {
+            pick = rand()%gNbOfRobots;
+            double draw = ranf()*totalFitness;
+            if (draw <= fitnesses[pick]) // choose this robot
+                done = true;
+        }
+        newGenomePick[iRobot] = pick;
+    }
+    
+    // Environment stuff
+    // unregister everyone
+    for (auto object: gPhysicalObjects) {
+        object->unregisterObject();
+    }
+    
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+        Robot *robot = gWorld->getRobot(iRobot);
+        robot->unregisterRobot();
+    }
+    // register objects first because they might have fixed locations, whereas robots move anyway
+    for (auto object: gPhysicalObjects)
+    {
+        object->resetLocation();
+        object->registerObject();
+    }
+    
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+        Robot *robot = gWorld->getRobot(iRobot);
+        robot->reset();
+        // super specific stuff here
+        int gridBox = iRobot;
+        int line = gridBox/MonoRobotSharedData::gNbRows;
+        int row = gridBox%MonoRobotSharedData::gNbRows;
+        int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
+        int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize);
+        robot->findRandomLocation(xMin, xMin + MonoRobotSharedData::gZoneWidth, yMin, yMin + MonoRobotSharedData::gZoneHeight);
+        robot->registerRobot();
+    }
+    
+    
+    // update genomes (we do it here because Robot::reset() also resets genomes)
+    
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        Robot *robot = gWorld->getRobot(iRobot);
+        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+        ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
+    }
+    
+    // Reset the environment parameters
+    
+    resetObjects();
+
 }
 
 void MonoRobotWorldObserver::step()
 {
     _generationItCount++;
     
+    // change the fake robot's location
+    if (_generationItCount == MonoRobotSharedData::gEvaluationTime/2)
+    {
+        if (_fakeRobotObject == _activeObjects[0])
+            _fakeRobotObject = _activeObjects[1];
+        else
+            _fakeRobotObject = _activeObjects[0];
+        resetLandmarks();
+        printf("[DEBUG] Fake robot moved to object %d\n", _fakeRobotObject);
+    }
+    
     // switch to next generation.
     if( _generationItCount == MonoRobotSharedData::gEvaluationTime )
-    {        
-        // Perform an evolution step on robots (give them new genomes and mutate them), and
-        // reset their positions and the objects
-        
-        // Evolution stuff
-        
-        double totalFitness = 0;
-        std::vector<double> fitnesses(gNbOfRobots);
-        std::vector<genome> genomes(gNbOfRobots);
-		std::vector<int> newGenomePick(gNbOfRobots);
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-        {
-            Robot *robot = gWorld->getRobot(iRobot);
-            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-            fitnesses[iRobot] = ctl->getFitness();
-            totalFitness += ctl->getFitness();
-            genomes[iRobot] = ctl->getGenome();
-        }
-			
-        // O(1) fitness-proportionate selection
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-        {
-            bool done = false;
-            int pick = -1;
-            while (done == false) {
-                pick = rand()%gNbOfRobots;
-                double draw = ranf()*totalFitness;
-                if (draw <= fitnesses[pick]) // choose this robot
-                    done = true;
-            }
-            newGenomePick[iRobot] = pick;
-        }
-        
-        // Environment stuff
-        // unregister everyone
-        for (auto object: gPhysicalObjects) {
-            object->unregisterObject();
-        }
-        
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->unregisterRobot();
-        }
-        // register objects first because they might have fixed locations, whereas robots move anyway
-        for (auto object: gPhysicalObjects)
-        {
-            object->resetLocation();
-            object->registerObject();
-        }
-        
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->reset();
-            // super specific stuff here
-            int gridBox = iRobot/2;
-            int line = gridBox/MonoRobotSharedData::gNbRows;
-            int row = gridBox%MonoRobotSharedData::gNbRows;
-            int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
-            int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize);
-            robot->findRandomLocation(xMin, xMin + MonoRobotSharedData::gZoneWidth, yMin, yMin + MonoRobotSharedData::gZoneHeight);
-            robot->registerRobot();
-        }
-    
-
-		// update genomes (we do it here because Robot::reset() also resets genomes)
-		
-		for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-		{
-            Robot *robot = gWorld->getRobot(iRobot);
-            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-			ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
-		}
-                
+    {
+        stepGeneration();
         // update iterations and generations counters
         _generationItCount = 0;
         _generationCount++;
-        
-        _startObjectOffset = rand()%2;
     }
     
     updateMonitoring();
