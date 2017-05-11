@@ -19,9 +19,9 @@ class LandmarkObject
     int _id;
     static int _nextId;
     
-    Uint8 r = 0xFF;
-    Uint8 g = 0xD4;
-    Uint8 b = 0x82;
+    Uint8 r = 0x00;
+    Uint8 g = 0x99;
+    Uint8 b = 0xFF;
 	
 	protected :
     
