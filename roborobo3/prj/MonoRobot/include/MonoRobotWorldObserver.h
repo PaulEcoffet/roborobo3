@@ -26,8 +26,9 @@ protected:
     int _generationCount;
     int _generationItCount;
     
-    int _startObjectOffset; // either 0 or 1, to tell us whether we should go to the left- or rightmost object first
-    
+    int _activeObjects[2]; // which 2 objects of the 4 are active
+    int _fakeRobotObject; // the object the fake robot is on
+
     std::ofstream _logFile;
     LogManager *_logManager; // Our own little logfile
     
@@ -35,11 +36,18 @@ public:
     MonoRobotWorldObserver(World *world);
     ~MonoRobotWorldObserver();
     
+    
     virtual void reset();
     virtual void step();
+    void stepGeneration();
+    void resetObjects(); // reset which objects are active, etc.
+    void resetLandmarks();
+
+    bool objectIsActive(int __objectId); // tell if an object is active
+    
+    int getFakeRobotObject() { return _fakeRobotObject; }
     
     virtual int getGenerationItCount() { return _generationItCount; }
-    int getStartObjectOffset() { return _startObjectOffset; }
 
 };
 
