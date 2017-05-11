@@ -111,8 +111,8 @@ void MonoRobotWorldObserver::resetObjects()
     
     resetLandmarks();
     
-    printf("[DEBUG] Active objects: %d and %d\n", _activeObjects[0], _activeObjects[1]);
-    printf("[DEBUG] Fake robot on object %d\n", _fakeRobotObject);
+//    printf("[DEBUG] Active objects: %d and %d\n", _activeObjects[0], _activeObjects[1]);
+//    printf("[DEBUG] Fake robot on object %d\n", _fakeRobotObject);
 }
 
 void MonoRobotWorldObserver::resetLandmarks()
@@ -226,7 +226,7 @@ void MonoRobotWorldObserver::step()
         else
             _fakeRobotObject = _activeObjects[0];
         resetLandmarks();
-        printf("[DEBUG] Fake robot moved to object %d\n", _fakeRobotObject);
+//        printf("[DEBUG] Fake robot moved to object %d\n", _fakeRobotObject);
     }
     
     // switch to next generation.
