@@ -23,8 +23,6 @@ void MovingObject::step()
 
     double movement = sqrt((oldX-_desiredX)*(oldX-_desiredX) + (oldY-_desiredY)*(oldY-_desiredY));
 	int nbRobots = static_cast<int>(_nearbyRobots.size());
-	double coeff = 1.0/(1.0+pow(nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
-	double gain = movement * coeff;
     
     if (gStuckMovableObjects) // get back into place!
     {
@@ -37,7 +35,7 @@ void MovingObject::step()
         Robot *robot = gWorld->getRobot(robotID);
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
         MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-        ctl->wasNearObject(_id, _didMove, gain, nbRobots);
+        ctl->wasNearObject(_id, _didMove, movement, nbRobots);
     }
     _nearbyRobots.clear();
 }
