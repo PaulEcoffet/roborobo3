@@ -793,15 +793,6 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
             
             if ( gNiceRendering ) // + ( gDisplayMode != 2 || gSnapshot...? || gVideoRecording...? )   // !n
             {
-                // Show landmark(s) on the screen
-                for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
-                {
-                    if ( gLandmarks[i]->isVisible() )
-                    {
-                        gLandmarks[i]->show();
-                    }
-                }
-                
                 // Show object(s) on the screen
                 {
                     for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
@@ -813,6 +804,15 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
                     }
                 }
 
+                // Show landmark(s) on the screen
+                for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
+                {
+                    if ( gLandmarks[i]->isVisible() )
+                    {
+                        gLandmarks[i]->show();
+                    }
+                }
+                
                 // Show agent(s) on the screen
                 for ( int i = 0 ; i != gNbOfRobots ; i++ )
                 {
