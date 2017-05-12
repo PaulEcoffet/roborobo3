@@ -24,14 +24,16 @@ void MovingObject::move() {
     if (_impulses.size() > 0)
     {
         //       printf("[DEBUG] Moving object %d\n", _id);
-        double impXtot = 0, impYtot = 0, vx, vy, ux, uy;
+        double impXtot = 0, impYtot = 0, vr, vtheta, vx, vy, ux, uy;
         
         for (auto& imp : _impulses) {
             // We only want the component of the speed normal to the centers of mass
             // v: agent speed vector, u: agent-object vector
             // impulses are in polar form
-            vx = imp.second.x*cos(imp.second.y * M_PI / 180.0);
-            vy = imp.second.x*sin(imp.second.y * M_PI / 180.0);
+            vr = imp.second.x;
+            vtheta = imp.second.y;
+            vx = vr*cos(vtheta * M_PI / 180.0);
+            vy = vr*sin(vtheta * M_PI / 180.0);
             
             if (imp.first >= gRobotIndexStartOffset) { // robot
                 Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
@@ -108,8 +110,10 @@ void MovingObject::step()
     {
         Robot *robot = gWorld->getRobot(robotID);
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
-        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-        ctl->wasNearObject(_id, _didMove, movement, nbRobots);
+//        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+//        ctl->wasNearObject(_id, _didMove, movement, nbRobots);
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+        ctl->wasNearObject(_didMove, movement, nbRobots);
     }
     _nearbyRobots.clear();
     stepPhysicalObject();
