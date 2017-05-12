@@ -15,6 +15,22 @@ class MovingObject : public CircleObject
 private:
     
     std::set<int> _nearbyRobots; // robots that are in the footprint in this iteration
+    
+    // the impulses given to the object by nearby robots in the current time step, or other objects in the former
+    std::map<int, Point2d> _impulses;
+    
+    // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
+    // in polar coordinates
+    double _desiredSpeedOrientation;
+    double _desiredLinearSpeed;
+    
+    // the coordinates we'd like to end up in after we move
+    // (don't go there is gStuckMovableObjects is set, or if we collide)
+    double _desiredX;
+    double _desiredY;
+    
+    bool _hitWall;
+    bool _didMove;
 
 public:
 
@@ -22,8 +38,12 @@ public:
 	~MovingObject() {}
 
 	void show();
+    
+    bool canRegister(); // can we register at current position
+    bool canRegister( Sint16 __x, Sint16 __y ); // can we register the object at that position
 
 	void step();
+    void move(); // physically move
     void isPushed( int __idAgent, Point2d __speed) ; // callback
 	void isTouched( int __idAgent ); // callback, triggered by agent
 	void isWalked( int __idAgent ); // callback, triggered by agent

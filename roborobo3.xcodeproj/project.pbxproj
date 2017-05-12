@@ -387,6 +387,7 @@
 			isa = PBXGroup;
 			children = (
 				E63F18601EAF4717007D2C3A /* monoRobot.properties */,
+				E620379F1E8945BA004B5859 /* movingNS.properties */,
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
 				37A569C11E38AB2100B983FF /* template_vanillaEE.properties */,
 				3705F08B1BC67B7C001A016D /* template_boids.properties */,
@@ -395,7 +396,6 @@
 				3705F08D1BC67B7C001A016D /* template_wander_bigrobots.properties */,
 				3705F08E1BC67B7C001A016D /* template_wander_smallrobots.properties */,
 				3739761D1BCF8D1F00A007BF /* template_randomwalk.properties */,
-				E620379F1E8945BA004B5859 /* movingNS.properties */,
 				E6F09B471E8408BE00EF24BD /* movingEE.properties */,
 				3705F08F1BC67B7C001A016D /* test.properties */,
 			);
