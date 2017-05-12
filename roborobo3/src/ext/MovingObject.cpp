@@ -108,9 +108,8 @@ void MovingObject::step()
     {
         Robot *robot = gWorld->getRobot(robotID);
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
-        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-//        ctl->wasNearObject(_id, _didMove, movement, nbRobots);
-        ctl->wasNearObject(_didMove, movement, nbRobots);
+        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+        ctl->wasNearObject(_id, _didMove, movement, nbRobots);
     }
     _nearbyRobots.clear();
     stepPhysicalObject();
