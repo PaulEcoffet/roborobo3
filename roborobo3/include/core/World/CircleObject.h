@@ -34,14 +34,7 @@ public:
     void unregisterObject(); // unregister object in the world (write blank pixels)
     void show(); // wrt. screen-rendering
     void hide();    // wrt. screen-rendering
-    
-    void step(); // handles dynamics
-    
-    void isPushed( int __idAgent, Point2d __speed ); // register we've been pushed
-    
-    void isTouched( int __idAgent );
-    void isWalked( int __idAgent );
-    
+        
 };
 
 #endif
