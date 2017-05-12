@@ -44,7 +44,7 @@ public:
 
 	void step();
     void move(); // physically move
-    void isPushed( int __idAgent, Point2d __speed) ; // callback
+    void isPushed( int __idAgent, std::tuple<double, double> __speed ); // callback
 	void isTouched( int __idAgent ); // callback, triggered by agent
 	void isWalked( int __idAgent ); // callback, triggered by agent
 
