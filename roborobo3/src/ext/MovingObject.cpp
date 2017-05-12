@@ -140,7 +140,7 @@ bool MovingObject::canRegister( Sint16 __x, Sint16 __y )
                     if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset && gMovableObjects)   // physical object
                     {
                         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-                        gPhysicalObjects[targetIndex]->isPushed(_id, Point2d(_desiredLinearSpeed, _desiredSpeedOrientation));
+                        gPhysicalObjects[targetIndex]->isPushed(_id, std::tuple<double, double>(_desiredLinearSpeed, _desiredSpeedOrientation));
                     } else if (targetIndex < gRobotIndexStartOffset) {
                         _hitWall = true;
                     }
@@ -182,10 +182,10 @@ void MovingObject::show() {
     CircleObject::show();
 }
 
-void MovingObject::isPushed( int __idAgent, Point2d __speed)
+void MovingObject::isPushed( int __idAgent, std::tuple<double, double> __speed )
 {
     if (_impulses.count(__idAgent) == 0) {
-        _impulses.insert(std::pair<int, std::tuple<double, double>>(__idAgent, std::tuple<double, double>(__speed.x, __speed.y)));
+        _impulses.insert(std::pair<int, std::tuple<double, double>>(__idAgent, __speed));
     }
 }
 

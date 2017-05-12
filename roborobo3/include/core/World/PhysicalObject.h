@@ -73,7 +73,7 @@ public :
     void resetLocation(); // reset to the starting position if there was one, or pick a new random location
 
 
-    virtual void isPushed( int __idAgent, Point2d __speed) = 0; // callback
+    virtual void isPushed( int __idAgent, std::tuple<double, double> __speed ) = 0; // callback
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
     virtual void isWalked( int __idAgent ) = 0; // callback, triggered by agent
     

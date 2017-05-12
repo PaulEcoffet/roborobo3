@@ -16,7 +16,7 @@ void GateObject::step()
     stepPhysicalObject();
 }
 
-void GateObject::isPushed( int __idAgent, Point2d __speed ) {
+void GateObject::isPushed( int __idAgent, std::tuple<double, double> __speed ) {
     
 }
 

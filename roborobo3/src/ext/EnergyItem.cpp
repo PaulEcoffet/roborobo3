@@ -44,7 +44,7 @@ void EnergyItem::step()
     stepPhysicalObject();
 }
 
-void EnergyItem::isPushed( int __idAgent, Point2d __speed) {
+void EnergyItem::isPushed( int __idAgent, std::tuple<double, double> __speed ) {
     
 }
 

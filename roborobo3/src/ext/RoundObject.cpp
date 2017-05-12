@@ -16,7 +16,7 @@ void RoundObject::step()
     stepPhysicalObject();
 }
 
-void RoundObject::isPushed( int __idAgent, Point2d __speed )
+void RoundObject::isPushed( int __idAgent, std::tuple<double, double> __speed )
 {
     
 }
