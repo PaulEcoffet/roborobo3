@@ -17,7 +17,7 @@ private:
     std::set<int> _nearbyRobots; // robots that are in the footprint in this iteration
     
     // the impulses given to the object by nearby robots in the current time step, or other objects in the former
-    std::map<int, Point2d> _impulses;
+    std::map<int, std::tuple<double, double>> _impulses;
     
     // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
     // in polar coordinates

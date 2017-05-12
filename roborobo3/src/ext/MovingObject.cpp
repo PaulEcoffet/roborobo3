@@ -30,8 +30,9 @@ void MovingObject::move() {
             // We only want the component of the speed normal to the centers of mass
             // v: agent speed vector, u: agent-object vector
             // impulses are in polar form
-            vr = imp.second.x;
-            vtheta = imp.second.y;
+            std::tie(vr, vtheta) = imp.second;
+//            vr = imp.second.x;
+ //           vtheta = imp.second.y;
             vx = vr*cos(vtheta * M_PI / 180.0);
             vy = vr*sin(vtheta * M_PI / 180.0);
             
@@ -184,7 +185,7 @@ void MovingObject::show() {
 void MovingObject::isPushed( int __idAgent, Point2d __speed)
 {
     if (_impulses.count(__idAgent) == 0) {
-        _impulses.insert(std::pair<int, Point2d>(__idAgent, __speed));
+        _impulses.insert(std::pair<int, std::tuple<double, double>>(__idAgent, std::tuple<double, double>(__speed.x, __speed.y)));
     }
 }
 
