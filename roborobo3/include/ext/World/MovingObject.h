@@ -18,6 +18,7 @@ private:
     
     // the impulses given to the object by nearby robots in the current time step, or other objects in the former
     std::map<int, std::tuple<double, double>> _impulses;
+    std::map<int, double> _efforts; // remember how much each robot actually pushed us
     
     // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
     // in polar coordinates
