@@ -24,29 +24,12 @@ protected:
     int _radius; // radius. In pixels.
     int _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
     
-    // the impulses given to the object by nearby robots in the current time step, or other objects in the former
-    std::map<int, Point2d> _impulses;
-    
-    // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
-    // in polar coordinates
-    double _desiredSpeedOrientation;
-    double _desiredLinearSpeed;
-    
-    // the coordinates we'd like to end up in after we move
-    // (don't go there is gStuckMovableObjects is set, or if we collide)
-    double _desiredX;
-    double _desiredY;
-    
-    bool _hitWall;
-    bool _didMove;
-    
 public:
     
     CircleObject( int __id ); // use PhysicalObjectFactory instead!
     ~CircleObject() { }
 
     bool canRegister(); // can we register at current position
-    bool canRegister( Sint16 __x, Sint16 __y ); // can we register the object at that position
     void registerObject(); // register object in the world (write images)
     void unregisterObject(); // unregister object in the world (write blank pixels)
     void show(); // wrt. screen-rendering
