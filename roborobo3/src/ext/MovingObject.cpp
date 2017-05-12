@@ -47,8 +47,11 @@ void MovingObject::move() {
                 uy = _yReal - object->getYReal();
             }
             double sqnorm = ux*ux + uy*uy;
-            impXtot += (vx*ux+vy*uy)*ux/sqnorm;
-            impYtot += (vx*ux+vy*uy)*uy/sqnorm;
+            double impX =(vx*ux+vy*uy)*ux/sqnorm;
+            double impY = (vx*ux+vy*uy)*uy/sqnorm;
+            impXtot += impX;
+            impYtot += impY;
+            _efforts.insert(std::tuple<int, double>(imp.first, sqrt(impX*impX+impY*impY)));
         }
         
         _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
@@ -108,13 +111,20 @@ void MovingObject::step()
     for (auto robotID: _nearbyRobots)
     {
         Robot *robot = gWorld->getRobot(robotID);
+    
+        // see how much the robot helped push us
+        double effort = 0;
+        if (_efforts.count(robotID+gRobotIndexStartOffset) > 0)
+        {
+            effort = _efforts.find(robotID+gRobotIndexStartOffset)->second;
+        }
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
 //        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-//        ctl->wasNearObject(_id, _didMove, movement, nbRobots);
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-        ctl->wasNearObject(_didMove, movement, nbRobots);
+        ctl->wasNearObject(_id, _didMove, movement, effort, nbRobots);
     }
     _nearbyRobots.clear();
+    _efforts.clear();
     stepPhysicalObject();
 }
 

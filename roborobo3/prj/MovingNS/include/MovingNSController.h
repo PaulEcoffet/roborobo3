@@ -121,7 +121,7 @@ public:
     
     void increaseFitness( double __delta );
     
-    void wasNearObject( bool __objectDidMove, double __gain, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
+    void wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
     
 };
 
