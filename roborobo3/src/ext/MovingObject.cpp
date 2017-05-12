@@ -31,8 +31,6 @@ void MovingObject::move() {
             // v: agent speed vector, u: agent-object vector
             // impulses are in polar form
             std::tie(vr, vtheta) = imp.second;
-//            vr = imp.second.x;
- //           vtheta = imp.second.y;
             vx = vr*cos(vtheta * M_PI / 180.0);
             vy = vr*sin(vtheta * M_PI / 180.0);
             
@@ -149,25 +147,6 @@ bool MovingObject::canRegister( Sint16 __x, Sint16 __y )
             }
         }
     }
-    
-    //    //  test footprint (pixels from both ground image and environment image must be empty)
-    //    for (Sint16 xColor = __x - _footprintRadius ; xColor < __x + _footprintRadius ; xColor++)
-    //    {
-    //        for (Sint16 yColor = __y - _footprintRadius ; yColor < __y + Sint16 (_footprintRadius); yColor ++)
-    //        {
-    //            if ( pow(xColor-__x,2) + pow(yColor - __y,2) < _footprintRadius*_footprintRadius )
-    //            {
-    //                Uint32 pixelFootprint = getPixel32_secured( gFootprintImage, xColor, yColor);
-    //                Uint32 pixelEnvironment = getPixel32_secured( gEnvironmentImage, xColor, yColor);
-    //                if (
-    //                        pixelEnvironment != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ||
-    //                        ( gFootprintImage_restoreOriginal == true  && pixelFootprint != getPixel32_secured( gFootprintImageBackup, xColor, yColor ) ) || // case: ground as initialized or rewritten (i.e. white)
-    //                        ( gFootprintImage_restoreOriginal == false && pixelFootprint != SDL_MapRGBA( gFootprintImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) // case: only white ground
-    //                   )
-    //                    return false; // collision!
-    //            }
-    //        }
-    //    }
     
     return true;
 }
