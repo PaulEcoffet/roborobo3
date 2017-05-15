@@ -558,8 +558,8 @@ void MovingNSController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots )
 {
-    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
-           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
+//    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
+//           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
     _isNearObject = true;
 	_nbNearbyRobots = __nbRobots;
     double gain = __objectMove;

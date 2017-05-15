@@ -252,6 +252,7 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
+    
     // * Log at end of each generation
 
     //if( gWorld->getIterations() % MonoRobotSharedData::gEvaluationTime == 1 || gWorld->getIterations() % MonoRobotSharedData::gEvaluationTime == MonoRobotSharedData::gEvaluationTime-1 ) // beginning(+1) *and* end of generation. ("==1" is required to monitor the outcome of the first iteration)
@@ -263,7 +264,7 @@ void MonoRobotWorldObserver::updateMonitoring()
     
     // * Every N generations, take a video (duration: one generation time)
     
-    if ( MonoRobotSharedData::gSnapshots )
+/*    if ( MonoRobotSharedData::gSnapshots )
     {
         if ( ( gWorld->getIterations() ) % ( MonoRobotSharedData::gEvaluationTime * MonoRobotSharedData::gSnapshotsFrequency ) == 0 )
         {
@@ -279,7 +280,8 @@ void MonoRobotWorldObserver::updateMonitoring()
                     std::cout << "[STOP]  Video recording: generation #" << (gWorld->getIterations() / MonoRobotSharedData::gEvaluationTime ) << ".\n";
                 saveTrajectoryImage();
             }
-	}
+    }
+*/
 }
 
 void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )

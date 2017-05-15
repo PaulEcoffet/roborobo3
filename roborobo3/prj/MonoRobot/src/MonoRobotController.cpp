@@ -503,26 +503,29 @@ void MonoRobotController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots )
 {
-    //    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
+//    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
+//           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
     MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
     // add 1 to the number of robots if the fake robot is here
-    if (wobs->getFakeRobotObject() == __objectId%4)
+    if (wobs->getFakeRobotObject() == __objectId%4) {
         __nbRobots++;
+        __objectMove *= 2; // assume the other robot pushed just as much as we did
+    }
     
     _isNearObject = true;
     _nearbyObjectId = __objectId;
     _nbNearbyRobots = __nbRobots;
     
     double coeff = 1.0/(1.0+pow(__nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
-    double gain = coeff * __nbRobots;
+    double payoff = coeff * pow(__objectMove, 0.5) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
         // Only give fitness if both robots are on the same object and the object is active
         if (__nbRobots >= 2 && wobs->objectIsActive(__objectId))
         {
-//                        printf("[DEBUG] fitness (it %d)!\n", gWorld->getIterations());
-            increaseFitness(gain);
-            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = gain;
+//            printf("[DEBUG] objectMove: %lf, coeff: %lf, effort:%lf, payoff: %lf\n", __objectMove, coeff, __effort, payoff);
+            increaseFitness(payoff);
+            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
         }
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
