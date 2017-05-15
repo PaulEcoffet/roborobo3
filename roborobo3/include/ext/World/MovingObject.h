@@ -7,7 +7,9 @@
 
 #include "World/CircleObject.h"
 
+#include <map>
 #include <set>
+#include <tuple>
 
 class MovingObject : public CircleObject
 {

@@ -51,7 +51,7 @@ void MovingObject::move() {
             double impY = (vx*ux+vy*uy)*uy/sqnorm;
             impXtot += impX;
             impYtot += impY;
-            _efforts.insert(std::tuple<int, double>(imp.first, sqrt(impX*impX+impY*impY)));
+            _efforts.insert(std::pair<int, double>(imp.first, sqrt(impX*impX+impY*impY)));
         }
         
         _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
@@ -173,7 +173,7 @@ void MovingObject::show() {
 void MovingObject::isPushed( int __idAgent, std::tuple<double, double> __speed )
 {
     if (_impulses.count(__idAgent) == 0) {
-        _impulses.insert(std::tie(__idAgent, __speed));
+        _impulses.insert(std::pair<int, std::tuple<double, double>>(__idAgent, __speed));
     }
 }
 
