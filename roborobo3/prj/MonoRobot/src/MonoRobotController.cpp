@@ -501,7 +501,7 @@ void MonoRobotController::increaseFitness( double __delta )
 }
 
 // called only once per step (experimentally verified)
-void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __movement, int __nbRobots )
+void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots )
 {
     //    printf("[DEBUG] Robot %d was near an object at time %d, and could gain %lf fitness\n", _wm->_id, gWorld->getIterations(), __gain);
     MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());

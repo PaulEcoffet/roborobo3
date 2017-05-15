@@ -8,6 +8,7 @@
 #include "MonoRobot/include/MonoRobotWorldObserver.h"
 #include "MonoRobot/include/MonoRobotController.h"
 #include "World/World.h"
+#include "Utilities/Misc.h"
 
 #include <cfloat>
 #include <random>

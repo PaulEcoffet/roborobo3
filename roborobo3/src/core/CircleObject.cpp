@@ -7,10 +7,6 @@
 #include "RoboroboMain/roborobo.h"
 #include <Utilities/Graphics.h>
 #include "Utilities/Misc.h"
-#include "World/World.h"
-
-#include <iomanip>
-#include <algorithm>
 
 CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and consistent __id should be given as argument
 {
