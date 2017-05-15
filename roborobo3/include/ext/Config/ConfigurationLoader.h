@@ -5,16 +5,13 @@
 #ifndef CONFIGURATIONLOADER_H
 #define CONFIGURATIONLOADER_H
 
-
-#include "Observers/WorldObserver.h"
-#include "WorldModels/RobotWorldModel.h"
-#include "Observers/AgentObserver.h"
-#include "Controllers/Controller.h"
-
 #include "RoboroboMain/common.h"
-#include "Utilities/ExtendedProperties.h"
-#include <string.h>
 
+class WorldObserver;
+class RobotWorldModel;
+class AgentObserver;
+class Controller;
+class World;
 
 class ConfigurationLoader
 {

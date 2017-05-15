@@ -8,6 +8,8 @@
  */
 
 #include "Agents/Agent.h"
+#include "RoboroboMain/roborobo.h"
+#include "Utilities/Graphics.h"
 
 Agent::Agent()
 {

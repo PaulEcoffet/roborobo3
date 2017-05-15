@@ -1,10 +1,8 @@
 #include "World/EnergyItem.h"
-
 #include "RoboroboMain/roborobo.h"
-#include "Utilities/Misc.h"
 #include "World/World.h"
-
-#include <iomanip>
+#include "WorldModels/RobotWorldModel.h"
+#include "Utilities/Misc.h"
 
 EnergyItem::EnergyItem( int __id ) : CircleObject( __id ) // should only be called by PhysicalObjectFactory
 {

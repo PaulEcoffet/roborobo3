@@ -11,10 +11,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "RoboroboMain/common.h"
-#include "RoboroboMain/roborobo.h"
-#include "Utilities/Graphics.h"
-#include "WorldModels/RobotWorldModel.h"
+class RobotWorldModel;
 
 class Controller
 {

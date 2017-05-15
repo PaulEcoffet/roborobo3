@@ -1,5 +1,5 @@
 /*
- *  SDL_gfxRoborobo.cpp
+ *  Graphics.cpp
  *  roborobo
  *
  *  Created by Nicolas on 16/01/09.
@@ -7,15 +7,15 @@
  *
  */
 
+#include "RoboroboMain/roborobo.h"
 #include "Utilities/Graphics.h"
 #include "Utilities/Misc.h"
 
-
+int gSnapshotIndex = 0;
 int gRenderScreenshotIndex = 0; // numbering screenshots
 int gEnvironmentScreenshotIndex = 0;
 int gFootprintScreenshotIndex = 0;
 int gTrajectoryFileIndex = 0; // numbering trajectory images (used by saveTrajectoryImage(...))
-
 
 void saveImage ( SDL_Surface *image, std::string __prefix, std::string __comment ) // comment is optional
 {
@@ -34,6 +34,84 @@ void saveImage ( SDL_Surface *image, std::string __prefix, std::string __comment
         sLog += ".png";
         IMG_SavePNG(image,sLog.c_str()); // dependance: SDL+SDL_image
     }
+}
+
+void saveSnapshot ( std::string __comment )
+{
+    // preparing
+    
+    std::string snapshotIndexStr = convertToString(gSnapshotIndex);
+    
+    while( snapshotIndexStr.length() < 6 )
+    {
+        snapshotIndexStr =  "0" + snapshotIndexStr;
+    }
+    
+    // rendering
+    
+    std::cout << "NOT IMPLEMENTED - WORK IN PROGRESS!" << std::endl;
+    /*
+     if ( gInspectorMode )
+     gWorld->inspectorAgent->set_camera();
+     else
+     gWorld->getRobot(gRobotIndexFocus)->set_camera();
+     */
+    //Show the background image and foreground image (active borders) [note: this is what costs a lot wrt. computation time]
+
+    SDL_FillRect( gSnapshot, &gSnapshot->clip_rect, SDL_MapRGBA( gSnapshot->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ); // clear screen
+    
+    // nice snapshot
+    apply_surface( 0, 0, gFootprintImage, gSnapshot, &gCamera );
+    apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
+    
+    // true snapshot
+    //apply_surface( 0, 0, gEnvironmentImage, gSnapshot, &gCamera );
+    //apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
+
+
+    
+    /*
+    if ( true )
+    {
+        // Show landmark(s) on the screen
+        for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
+        {
+            if ( gLandmarks[i]->isVisible() )
+            {
+                gLandmarks[i]->show();
+            }
+        }
+    }
+    */
+    if ( true )
+    {
+        // Show object(s) on the screen
+        {
+            for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
+            {
+                if ( gPhysicalObjects[i]->isVisible() )
+                {
+                    gPhysicalObjects[i]->show();
+                }
+            }
+        }
+    }
+
+    if ( true )
+    {
+        // Show agent(s) on the screen
+        for ( int i = 0 ; i != gNbOfRobots ; i++ )
+        {
+            // Show agent(s) on the screen
+            gRobots[i]->show(); // show sensor rays. ==> DELETE SENSOR RAY!
+        }
+    }
+    
+    // saving
+    
+    saveImage(gSnapshot,"snapshot_",snapshotIndexStr+"_"+__comment);
+    
+    gSnapshotIndex++;
 }
 
 void saveTrajectoryImage ( std::string __comment )
@@ -155,7 +233,26 @@ bool initSDL(Uint32 flags) // parameter is optional (default: SDL_HWSURFACE | SD
                                     0xFF000000);
     
     if( gScreen == NULL ) // error?
+    {
+        std::cerr << "[CRITICAL] Failed to create screen surface (gScreen). Stop.\n";
         return false;
+    }
+    
+    gSnapshot = SDL_CreateRGBSurface (
+                                    0, // flags (unused)
+                                    gScreenWidth,
+                                    gScreenHeight,
+                                    32,
+                                    0x00FF0000,
+                                    0x0000FF00,
+                                    0x000000FF,
+                                    0xFF000000);
+    
+    if( gScreen == NULL ) // error?
+    {
+        std::cerr << "[CRITICAL] Failed to create snapshot surface (gSnapshot). Stop.\n";
+        return false;
+    }
     
     if ( !gBatchMode )
     {

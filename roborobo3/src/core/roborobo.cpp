@@ -49,7 +49,6 @@
 
 // Project headers
 
-//#include "common.h"
 #include "Utilities/Graphics.h"
 #include "World/World.h"
 #include "Agents/Agent.h"
@@ -58,6 +57,7 @@
 #include "Utilities/Timer.h"
 #include "Utilities/Misc.h"
 #include "Utilities/Graphics.h"
+#include "WorldModels/RobotWorldModel.h"
 
 #include "Config/GlobalConfigurationLoader.h"
 
@@ -101,9 +101,6 @@ bool gOutputImageFormat = false; // default: PNG. (if True: BMP)
 
 bool gTrajectoryMonitor = false;
 int gTrajectoryMonitorMode = 0;
-
-//std::vector<std::string> gRemainingCommandLineParameters;    //todelete: 2014-09-17, deprecated
-
 
 //filenames
 
@@ -192,6 +189,7 @@ int gPhysicalObjectDefaultSoft_w = 22;
 int gPhysicalObjectDefaultSoft_h = 22;
 
 std::vector<PhysicalObject*> gPhysicalObjects;
+
 bool gPhysicalObjectsRedraw = false;
 
 bool gEnergyLevel = false;
@@ -271,6 +269,7 @@ SDL_Rect gCamera;
 
 //image surfaces
 
+SDL_Surface  *gSnapshot = NULL;
 SDL_Surface  *gScreen = NULL;
 SDL_Texture  *gScreenTexture = NULL;
 SDL_Renderer *gScreenRenderer = NULL;
@@ -299,6 +298,10 @@ World *gWorld = NULL;
 Timer fps;
 int timetag=-1;
 Timer timeWatch;
+
+std::vector<Robot*> gRobots;
+std::vector<bool> gRobotsRegistry;
+
 
 
 /* ********************
@@ -831,6 +834,7 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
             
             if ( gWorld->getIterations() == 1 )
             {
+                saveSnapshot("firstIteration");
                 saveRenderScreenshot("firstIteration");
                 saveEnvironmentScreenshot("firstIteration");
                 saveFootprintScreenshot("firstIteration");
@@ -840,6 +844,7 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
             {
                 if ( gWorld->getIterations() == gMaxIt-1 )
                 {
+                    saveSnapshot("firstIteration");
                     saveRenderScreenshot("lastIteration");
                     saveEnvironmentScreenshot("lastIteration");
                     saveFootprintScreenshot("lastIteration");
@@ -937,7 +942,7 @@ void initLogging()
 	gLogFile << "# LOG DATA " << std::endl;
 	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
 	gLogFile << "#" << std::endl;
-	gLogFile << "# =-= Roborobo^2 " << std::endl;
+	gLogFile << "# =-= Roborobo^3 " << std::endl;
 	gLogFile << "# =-= Official version tag    : " << gVersion << std::endl;
 	gLogFile << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
 	gLogFile << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;

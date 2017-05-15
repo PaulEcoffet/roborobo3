@@ -7,12 +7,15 @@
  */
 
 #include "Config/GlobalConfigurationLoader.h"
-
 #include "Agents/Robot.h"
-
+#include "RoboroboMain/roborobo.h"
+#include "Agents/Agent.h"
+#include "Controllers/Controller.h"
+#include "WorldModels/RobotWorldModel.h"
+#include "World/World.h"
+#include "Utilities/Misc.h"
+#include "Observers/AgentObserver.h"
 #include "Utilities/Graphics.h"
-
-#include <iomanip>
 
 Robot::Robot( World *__world )
 {

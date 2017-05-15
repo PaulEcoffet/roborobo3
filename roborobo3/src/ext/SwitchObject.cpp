@@ -1,10 +1,6 @@
 #include "World/SwitchObject.h"
-
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
-#include "World/World.h"
-
-#include <iomanip>
 
 SwitchObject::SwitchObject( int __id ) : CircleObject( __id ) // should only be called by PhysicalObjectFactory
 {
