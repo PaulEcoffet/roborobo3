@@ -8,6 +8,7 @@
 #include "MovingNS/include/MovingNSWorldObserver.h"
 #include "MovingNS/include/MovingNSController.h"
 #include "World/World.h"
+#include "Utilities/Misc.h"
 
 #include <cfloat>
 #include <random>
