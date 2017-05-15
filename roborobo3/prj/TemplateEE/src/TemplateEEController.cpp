@@ -5,15 +5,14 @@
 
 #include "TemplateEE/include/TemplateEEController.h"
 #include "TemplateEE/include/TemplateEEWorldObserver.h"
-
+#include "TemplateEE/include/TemplateEESharedData.h"
+#include "RoboroboMain/roborobo.h"
+#include "WorldModels/RobotWorldModel.h"
 #include "World/World.h"
-#include "Utilities/Misc.h"
-#include <math.h>
-#include <string>
-
 #include <neuralnetworks/MLP.h>
 #include <neuralnetworks/Perceptron.h>
 #include <neuralnetworks/Elman.h>
+#include "Utilities/Misc.h"
 
 using namespace Neural;
 
@@ -413,10 +412,15 @@ void TemplateEEController::stepEvolution()
     
     if ( getNewGenomeStatus() ) // check for new NN parameters
     {
-        _parameters.clear();
-        _parameters = _currentGenome;
+        mapGenotypeToPhenotype();
         setNewGenomeStatus(false);
     }
+}
+
+void TemplateEEController::mapGenotypeToPhenotype()
+{
+    _parameters.clear();
+    _parameters = _currentGenome;
 }
 
 void TemplateEEController::performVariation()

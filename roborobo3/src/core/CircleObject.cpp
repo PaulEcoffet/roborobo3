@@ -1,6 +1,11 @@
-#include "World/CircleObject.h"
+/**
+ * @author Nicolas Bredeche <nicolas.bredeche@upmc.fr>
+ *
+ */
 
+#include "World/CircleObject.h"
 #include "RoboroboMain/roborobo.h"
+#include <Utilities/Graphics.h>
 #include "Utilities/Misc.h"
 #include "World/World.h"
 
@@ -117,7 +122,7 @@ void CircleObject::show() // display on screen (called in the step() method if g
 		{
 			if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _radius*_radius)
 			{
-                putPixel32(gScreen, xColor, yColor,  color);
+                putPixel32_secured(gScreen, xColor, yColor,  color);
 			}
 		}
 	}
@@ -155,7 +160,7 @@ void CircleObject::hide()
 		{
 			if (pow (xColor-_xCenterPixel,2) + pow (yColor - _yCenterPixel,2) < _radius*_radius)
 			{
-                putPixel32(gScreen, xColor, yColor,  color);
+                putPixel32_secured(gScreen, xColor, yColor,  color);
 			}
 		}
 	}

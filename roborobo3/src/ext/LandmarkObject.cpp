@@ -1,11 +1,7 @@
 #include "World/LandmarkObject.h"
-
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
-
-#include "World/World.h"
-
-#include <iomanip>
+#include "Utilities/Graphics.h"
 
 int LandmarkObject::_nextId = 0;
 

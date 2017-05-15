@@ -1,10 +1,7 @@
 #include "World/GateObject.h"
-
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
 #include "World/World.h"
-
-#include <iomanip>
 
 GateObject::GateObject( int __id ) : SquareObject( __id ) // should only be called by PhysicalObjectFactory
 {

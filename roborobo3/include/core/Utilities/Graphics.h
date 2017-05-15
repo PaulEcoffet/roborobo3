@@ -9,10 +9,11 @@
 #ifndef GRAPHICS_H
 #define GRAPHICS_H
 
+//#include "RoboroboMain/roborobo.h"
 #include "RoboroboMain/common.h"
-#include "RoboroboMain/roborobo.h"
 
-extern int gScreenshotIndex;
+extern int gSnapshotIndex;
+extern int gRenderScreenshotIndex;
 extern int gEnvironmentScreenshotIndex; 
 extern int gTrajectoryImageIndex;
 
@@ -63,6 +64,7 @@ void toggle_fullscreen();
 
 SDL_Surface *load_image( std::string filename );
 
+void saveSnapshot( std::string __comment = "");
 void saveRenderScreenshot( std::string __comment = "");
 void saveEnvironmentScreenshot( std::string __comment = "" );
 void saveFootprintScreenshot( std::string __comment = "" );

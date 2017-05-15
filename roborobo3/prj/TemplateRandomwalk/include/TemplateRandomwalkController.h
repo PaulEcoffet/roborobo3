@@ -7,15 +7,10 @@
 #ifndef TEMPLATERANDOMWALKCONTROLLER_H
 #define TEMPLATERANDOMWALKCONTROLLER_H
 
-#include "RoboroboMain/common.h"
-#include "RoboroboMain/roborobo.h"
-
 #include "Controllers/Controller.h"
+#include "RoboroboMain/common.h"
 
-#include "WorldModels/RobotWorldModel.h"
-
-#include "Agents/Agent.h"
-#include "Agents/Robot.h"
+class RobotWorldModel;
 
 class TemplateRandomwalkController : public Controller
 {

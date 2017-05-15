@@ -13,15 +13,9 @@
 #include "Utilities/ExtendedProperties.h"
 #include "Utilities/LogManager.h"
 #include "World/LandmarkObject.h"
-
+#include "Agents/Robot.h"
 #include "World/PhysicalObjectFactory.h"
 #include "World/PhysicalObject.h"
-
-#include <boost/multi_array.hpp>
-//#include <boost/filesystem.hpp> // unfortunately, not a header-only part of boost (cf. http://www.boost.org/doc/libs/1_53_0/more/getting_started/windows.html#header-only-libraries)
-
-#include <string.h>
-#include <vector>
 
 // project-wide Global data
 
@@ -90,6 +84,9 @@ extern long int gVersion;
 
 class World;
 extern World *gWorld;				// pointer to the World
+
+extern std::vector<Robot*> gRobots;
+extern std::vector<bool> gRobotsRegistry;
 
 extern int	gInitialNumberOfRobots;			// number of robots that should be created at start-up
 extern int	gNbOfRobots;	    // actual number of robots existing in the simulation right now
@@ -203,7 +200,8 @@ extern SDL_Rect gCamera;
 
 
 //image surfaces
-extern SDL_Surface *gScreen;			// surface for rendering
+extern SDL_Surface *gSnapshot;			// surface for rendering snapshot (prior to save to disk)
+extern SDL_Surface *gScreen;			// surface for rendering (possibly used for display)
 extern SDL_Texture *gScreenTexture;     // texture to transfer surface to renderer
 extern SDL_Renderer *gScreenRenderer;   // renderer
 extern SDL_Window   *gScreenWindow;     // window

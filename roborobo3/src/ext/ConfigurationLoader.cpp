@@ -1,6 +1,4 @@
 #include "Config/ConfigurationLoader.h"
-#include <string.h>
-
 #include "Config/TemplateWanderConfigurationLoader.h"
 #include "Config/TemplateBoidsConfigurationLoader.h"
 #include "Config/TemplateRandomwalkConfigurationLoader.h"
