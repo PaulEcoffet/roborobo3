@@ -47,6 +47,6 @@ for i in range(nbrep):
 	else:
 		print command
 	
-	time.sleep(0.2)
+	time.sleep(1.5)
 
 print "[INFO] Terminated."
