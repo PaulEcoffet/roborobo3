@@ -525,7 +525,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         {
 //            printf("[DEBUG] objectMove: %lf, coeff: %lf, effort:%lf, payoff: %lf\n", __objectMove, coeff, __effort, payoff);
             increaseFitness(payoff);
-            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
+            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
         }
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
