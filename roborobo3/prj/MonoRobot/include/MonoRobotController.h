@@ -79,6 +79,7 @@ protected:
 	bool _objectMoves[MonoRobotSharedData::gMemorySize]; // the number of times the object we're near moved recently
     double _movements[MonoRobotSharedData::gMemorySize]; // our total movement recently (see if we're blocked)
     double _fitnesses[MonoRobotSharedData::gMemorySize]; // our recent fitness gains
+	double _efforts[MonoRobotSharedData::gMemorySize]; // how much we tried pushing
     
     // ANN
     double _minValue;

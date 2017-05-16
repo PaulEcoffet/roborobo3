@@ -87,6 +87,7 @@ void MonoRobotController::step() // handles control decision and evolution (but:
     _isNearObject = false;
     _nbNearbyRobots = 0;
     _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = 0;
+    _efforts[_iteration%MonoRobotSharedData::gMemorySize] = 0;
     
 }
 
@@ -159,11 +160,17 @@ std::vector<double> MonoRobotController::getInputs(){
 //    inputs.push_back(totalMovement);
     
     // how much fitness did we recently gain?
-    double totalFitness = 0;
-    for (auto fitness: _fitnesses)
-        totalFitness += fitness;
-    inputs.push_back(totalFitness);
-    
+//    double totalFitness = 0;
+//    for (auto fitness: _fitnesses)
+//        totalFitness += fitness;
+//    inputs.push_back(totalFitness);
+  
+	// how much effort did we contribute?
+	double totalEffort = 0;
+	for (auto eff: _efforts)
+		totalEffort += eff;
+	inputs.push_back(totalEffort);
+
     // are we on the right object?
 //    MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
 //    int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
@@ -356,7 +363,9 @@ void MonoRobotController::setIOcontrollerSize()
     
 //  _nbInputs += 1; // how much did we recently move?
     
-    _nbInputs += 1; // how much fitness did we recently gain?
+//  _nbInputs += 1; // how much fitness did we recently gain?
+
+	_nbInputs += 1; // how much effort did we contribute?
     
 //  _nbInputs += 1; // are we on the object that's giving fitness?
     
@@ -400,6 +409,10 @@ void MonoRobotController::initController()
         moved = false;
     for (auto& move: _movements)
         move = 0;
+	for (auto& fit: _fitnesses)
+		fit = 0;
+	for (auto& eff: _efforts)
+		eff = 0;
 }
 
 void MonoRobotController::reset()
@@ -525,8 +538,10 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         {
 //            printf("[DEBUG] objectMove: %lf, coeff: %lf, effort:%lf, payoff: %lf\n", __objectMove, coeff, __effort, payoff);
             increaseFitness(payoff);
-            _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
+			_fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
         }
+		// but register the effort anyway
+		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }
