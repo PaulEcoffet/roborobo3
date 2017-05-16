@@ -220,7 +220,7 @@ void MonoRobotWorldObserver::step()
     _generationItCount++;
     
     // change the fake robot's location
-    if (_generationItCount == MonoRobotSharedData::gEvaluationTime/2)
+    if (_generationItCount == MonoRobotSharedData::gEvaluationTime/MonoRobotSharedData::gNumberOfPeriods)
     {
         if (_fakeRobotObject == _activeObjects[0])
             _fakeRobotObject = _activeObjects[1];
