@@ -52,3 +52,9 @@ void SwitchObject::isWalked( int __idAgent )
     registered = false;
     regrowTime = regrowTimeMax;
 }
+
+void SwitchObject::isPushed( int __id, std::tuple<double, double> __speed )
+{
+    //    if ( gVerbose && gDisplayMode <= 1)
+    //        std::cout << "[DEBUG] Physical object #" << this->getId() << " (switch) pushed by robot/object #" << __idAgent << std::endl;
+}

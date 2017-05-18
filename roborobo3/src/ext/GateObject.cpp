@@ -35,3 +35,9 @@ void GateObject::isWalked( int __idAgent )
     registered = false;
     regrowTime = regrowTimeMax;
 }
+
+void GateObject::isPushed( int __id, std::tuple<double, double> __speed )
+{
+    //    if ( gVerbose && gDisplayMode <= 1)
+    //        std::cout << "[DEBUG] Physical object item #" << this->getId() << " (gate) pushed by robot/object #" << __id << std::endl;
+}

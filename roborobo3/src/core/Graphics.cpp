@@ -3,7 +3,7 @@
  *  roborobo
  *
  *  Created by Nicolas on 16/01/09.
- *  Copyright 2009 __MyCompanyName__. All rights reserved.
+ *  Copyright 2009. All rights reserved.
  *
  */
 
@@ -19,7 +19,7 @@ int gTrajectoryFileIndex = 0; // numbering trajectory images (used by saveTrajec
 
 void saveImage ( SDL_Surface *image, std::string __prefix, std::string __comment ) // comment is optional
 {
-    std::string sLog = gLogDirectoryname + "/" + __prefix + "_" + gStartTime;
+    std::string sLog = gLogDirectoryname + "/" + __prefix + "_" + gStartTime + "_" + getpidAsReadableString();
 
 	if ( __comment != "" )
 		sLog += "_" + __comment;
@@ -36,8 +36,10 @@ void saveImage ( SDL_Surface *image, std::string __prefix, std::string __comment
     }
 }
 
-void saveSnapshot ( std::string __comment )
+void saveCustomScreenshot ( std::string __comment )
 {
+    //std::cout << "[DEBUG] saveCustomScreenshot: WORK IN PROGRESS!" << std::endl;
+    
     // preparing
     
     std::string snapshotIndexStr = convertToString(gSnapshotIndex);
@@ -49,67 +51,53 @@ void saveSnapshot ( std::string __comment )
     
     // rendering
     
-    std::cout << "NOT IMPLEMENTED - WORK IN PROGRESS!" << std::endl;
-    /*
-     if ( gInspectorMode )
-     gWorld->inspectorAgent->set_camera();
-     else
-     gWorld->getRobot(gRobotIndexFocus)->set_camera();
-     */
-    //Show the background image and foreground image (active borders) [note: this is what costs a lot wrt. computation time]
-
     SDL_FillRect( gSnapshot, &gSnapshot->clip_rect, SDL_MapRGBA( gSnapshot->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ); // clear screen
-    
-    // nice snapshot
-    apply_surface( 0, 0, gFootprintImage, gSnapshot, &gCamera );
-    apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
-    
-    // true snapshot
-    //apply_surface( 0, 0, gEnvironmentImage, gSnapshot, &gCamera );
-    //apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
 
-
-    
-    /*
-    if ( true )
+    if ( gCustomSnapshot_niceRendering == true )
     {
-        // Show landmark(s) on the screen
+        // nice snapshot
+        apply_surface( 0, 0, gFootprintImage, gSnapshot, &gCamera );
+        apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
+    }
+    else
+    {
+        // true snapshot
+        apply_surface( 0, 0, gEnvironmentImage, gSnapshot, &gCamera );
+        apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
+    }
+
+    if ( gCustomSnapshot_showLandmarks == true )
+    {
         for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
-        {
             if ( gLandmarks[i]->isVisible() )
-            {
-                gLandmarks[i]->show();
-            }
-        }
+                gLandmarks[i]->show(gSnapshot);
     }
-    */
-    if ( true )
+    
+    if ( gCustomSnapshot_showObjects == true )
     {
-        // Show object(s) on the screen
-        {
-            for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
-            {
-                if ( gPhysicalObjects[i]->isVisible() )
-                {
-                    gPhysicalObjects[i]->show();
-                }
-            }
-        }
+        for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
+            if ( gPhysicalObjects[i]->isVisible() )
+                gPhysicalObjects[i]->show(gSnapshot);
     }
-
-    if ( true )
+    
+    if ( gCustomSnapshot_showRobots == true )
     {
-        // Show agent(s) on the screen
+        int backupDisplaySensorsValue = gDisplaySensors;
+        if ( gCustomSnapshot_showSensorRays == true )
+            gDisplaySensors = 2;
+        else
+            gDisplaySensors = 0;
         for ( int i = 0 ; i != gNbOfRobots ; i++ )
         {
             // Show agent(s) on the screen
-            gRobots[i]->show(); // show sensor rays. ==> DELETE SENSOR RAY!
+            gRobots[i]->show(gSnapshot);
         }
+        gDisplaySensors = backupDisplaySensorsValue;
     }
     
     // saving
     
-    saveImage(gSnapshot,"snapshot_",snapshotIndexStr+"_"+__comment);
+    saveImage(gSnapshot,"screenshot_custom",snapshotIndexStr+"_"+__comment);
     
     gSnapshotIndex++;
 }

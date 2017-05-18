@@ -12,6 +12,8 @@
 #include "RoboroboMain/common.h"
 #include "Utilities/Geometry.h"
 
+extern SDL_Surface *gScreen;
+
 class PhysicalObject
 {
 protected :
@@ -62,7 +64,7 @@ public :
     {
         return (Sint16)_yReal;
     }
-    
+
     virtual void step() = 0;
     void stepPhysicalObject(); // default step method. Suggested: call this method from step().
     
@@ -76,8 +78,9 @@ public :
     virtual void isPushed( int __idAgent, std::tuple<double, double> __speed ) = 0; // callback
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
     virtual void isWalked( int __idAgent ) = 0; // callback, triggered by agent
+    virtual void isPushed( int __id, std::tuple<double, double> __speed ) = 0; // callback, triggered by collision w/ agent/object
     
-    virtual void show() = 0;
+    virtual void show(SDL_Surface *surface = gScreen) = 0;
     virtual void hide() = 0;
     
     bool isVisible() { return _visible; }

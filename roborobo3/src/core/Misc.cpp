@@ -8,6 +8,7 @@
 
 #include "Utilities/Misc.h"
 #include "RoboroboMain/common.h"
+#include <string>
 
 // useful functions. 
 // see header file for description and credits/sources.
@@ -63,7 +64,7 @@ std::string getCurrentTimeAsReadableString()
 {
 	// --- get current time information
 	
-	time_t now = time(0);
+	time_t now = time(NULL);
 	char timestamp[19] = "";
 	//strftime (timestamp, 19,"%Y%m%d-%Hh%Mm%Ss", localtime(&now));
 	strftime (timestamp, 19,"%Y%m%d-%Hh%Mm%Ss", localtime(&now));

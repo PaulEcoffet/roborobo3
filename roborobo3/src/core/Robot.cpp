@@ -614,55 +614,57 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 
 	}
 	else
-	{
-		// actual rotational and translational values matches desired values
-		_wm->_actualRotationalVelocity = _wm->_desiredRotationalVelocity;
-		_wm->_actualTranslationalValue = _wm->_agentAbsoluteLinearSpeed; // (!) _wm->_desiredTranslationalValue is different as the "desired" translation speed may not be reached due to physical actuator limitations
-	}
-	
-	// * update sensors
-    
-	for ( int i = 0 ; i != _wm->_cameraSensorsNb ; i++ )
-	{
-		// Warning: the following is repeated in the show method because coordinates are not stored, but are needed to display the sensor rays.
-		double x1 = (_wm->_xReal + _wm->getCameraSensorValue(i,SENSOR_SOURCENORM) * cos( _wm->getCameraSensorValue(i,SENSOR_SOURCEANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
-		double y1 = (_wm->_yReal + _wm->getCameraSensorValue(i,SENSOR_SOURCENORM) * sin( _wm->getCameraSensorValue(i,SENSOR_SOURCEANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
-		double x2 = (_wm->_xReal + _wm->getCameraSensorValue(i,SENSOR_TARGETNORM) * cos( _wm->getCameraSensorValue(i,SENSOR_TARGETANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
-		double y2 = (_wm->_yReal + _wm->getCameraSensorValue(i,SENSOR_TARGETNORM) * sin( _wm->getCameraSensorValue(i,SENSOR_TARGETANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
-
-		// cast sensor ray.
-		_wm->setCameraSensorValue(i,SENSOR_DISTANCEVALUE, castSensorRay(gEnvironmentImage, x1, y1, &x2, &y2, _wm->getCameraSensorMaximumDistanceValue(i)) ); // x2 and y2 are overriden with collision coordinate if ray hits object. -- not used here.
+    {
+        // actual rotational and translational values matches desired values
+        _wm->_actualRotationalVelocity = _wm->_desiredRotationalVelocity;
+        _wm->_actualTranslationalValue = _wm->_agentAbsoluteLinearSpeed; // (!) _wm->_desiredTranslationalValue is different as the "desired" translation speed may not be reached due to physical actuator limitations
         
-		Uint8 r, g, b;
-		Uint32 pixel = getPixel32( gEnvironmentImage, x2 , y2);
-		SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
-        if ( r == 0xFF && g == 0xFF && b == 0xFF )
-            _wm->setCameraSensorValue(i,SENSOR_OBJECTVALUE, -1); // nothing
-        else
-            _wm->setCameraSensorValue(i,SENSOR_OBJECTVALUE, (r<<16)+(g<<8)+b); // type of objects. [0-gRobotIndexStartOffset[ is object, [gRobotIndexStartOffset-...[ is robots
+        // * update sensors
+        
+        for ( int i = 0 ; i != _wm->_cameraSensorsNb ; i++ )
+        {
+            // Warning: the following is repeated in the show method because coordinates are not stored, but are needed to display the sensor rays.
+            double x1 = (_wm->_xReal + _wm->getCameraSensorValue(i,SENSOR_SOURCENORM) * cos( _wm->getCameraSensorValue(i,SENSOR_SOURCEANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
+            double y1 = (_wm->_yReal + _wm->getCameraSensorValue(i,SENSOR_SOURCENORM) * sin( _wm->getCameraSensorValue(i,SENSOR_SOURCEANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
+            double x2 = (_wm->_xReal + _wm->getCameraSensorValue(i,SENSOR_TARGETNORM) * cos( _wm->getCameraSensorValue(i,SENSOR_TARGETANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
+            double y2 = (_wm->_yReal + _wm->getCameraSensorValue(i,SENSOR_TARGETNORM) * sin( _wm->getCameraSensorValue(i,SENSOR_TARGETANGLE) + _wm->_agentAbsoluteOrientation * M_PI / 180 ) ) ;
+            
+            // cast sensor ray.
+            _wm->setCameraSensorValue(i,SENSOR_DISTANCEVALUE, castSensorRay(gEnvironmentImage, x1, y1, &x2, &y2, _wm->getCameraSensorMaximumDistanceValue(i)) ); // x2 and y2 are overriden with collision coordinate if ray hits object. -- not used here.
+            
+            Uint8 r, g, b;
+            Uint32 pixel = getPixel32( gEnvironmentImage, x2 , y2);
+            SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
+            if ( r == 0xFF && g == 0xFF && b == 0xFF )
+                _wm->setCameraSensorValue(i,SENSOR_OBJECTVALUE, -1); // nothing
+            else
+                _wm->setCameraSensorValue(i,SENSOR_OBJECTVALUE, (r<<16)+(g<<8)+b); // type of objects. [0-gRobotIndexStartOffset[ is object, [gRobotIndexStartOffset-...[ is robots
             //_wm->setCameraSensorValue(i,SENSOR_OBJECTVALUE, (r<<16)+(g<<8)+b); // type of objects. [0-gRobotIndexStartOffset[ is object, [gRobotIndexStartOffset-...[ is robots
-	}
-    
-	Uint8 r, g, b;
-	Uint32 pixel = getPixel32( gFootprintImage, _wm->_xReal+0.5, _wm->_yReal+0.5);
-	SDL_GetRGB(pixel,gFootprintImage->format,&r,&g,&b); 
-	_wm->_groundSensorValue[0] = r;
-	_wm->_groundSensorValue[1] = g;
-	_wm->_groundSensorValue[2] = b;
+        }
+        
+        Uint8 r, g, b;
+        Uint32 pixel = getPixel32( gFootprintImage, _wm->_xReal+0.5, _wm->_yReal+0.5);
+        SDL_GetRGB(pixel,gFootprintImage->format,&r,&g,&b); 
+        _wm->_groundSensorValue[0] = r;
+        _wm->_groundSensorValue[1] = g;
+        _wm->_groundSensorValue[2] = b;
+    }
 }
 
 /* Check collision between the robot and the environment (gEnvironmentImage - contains robots, physical objects, walls)
 */
 bool Robot::isCollision()
 {
+    bool collision = false;
+    
 	// check collision with borders and environment objects.
     if ( 
 		( _x < 0 ) || ( _x + gRobotWidth >= gAreaWidth ) ||
 		( _y < 0 ) || ( _y + gRobotHeight >= gAreaHeight )
 	   )
 	{
-		// * collision with border 
-		return true;
+		// * collision with border
+        collision = true;
 	}
 	else
 	{
@@ -696,7 +698,7 @@ bool Robot::isCollision()
 			}
 	}	
 	
-	return false;
+    return collision;
 }
 
 
@@ -705,12 +707,12 @@ bool Robot::isCollision()
 	* 
 	* (render mode only) 
     */
-void Robot::show() // display on screen
+void Robot::show(SDL_Surface *surface) // display on screen
 {    
     //Show the dot
     
 	if ( gNiceRendering )
-		apply_surface( _x - gCamera.x, _y - gCamera.y, gRobotDisplayImage, gScreen ); // OPTIONAL (agent is already visible/registered through the environment image -- but: may be useful for image capture
+		apply_surface( _x - gCamera.x, _y - gCamera.y, gRobotDisplayImage, surface ); // OPTIONAL (agent is already visible/registered through the environment image -- but: may be useful for image capture
 
 	if ( gRobotLEDdisplay == true )
 	{
@@ -725,7 +727,7 @@ void Robot::show() // display on screen
 			for ( int xTmp = xcenter - dx; xTmp != xcenter + dx + 1 ; xTmp++ )
 				for ( int yTmp = ycenter - dy - 1 ; yTmp != ycenter + dy ; yTmp++ )
 				{
-					putPixel32_secured( gScreen, xTmp - gCamera.x, yTmp + dy - gCamera.y , SDL_MapRGBA( gScreen->format, r, g, b, SDL_ALPHA_OPAQUE ) );
+					putPixel32_secured( surface, xTmp - gCamera.x, yTmp + dy - gCamera.y , SDL_MapRGBA( surface->format, r, g, b, SDL_ALPHA_OPAQUE ) );
 				}		
 	}
 
@@ -742,14 +744,14 @@ void Robot::show() // display on screen
 						
 			for ( int xTmp = xcenter - dx ; xTmp != xcenter + dx + 1 ; xTmp++ )
 			{
-				putPixel32( gScreen, xTmp - gCamera.x, ycenter - dy - gCamera.y , SDL_MapRGBA( gScreen->format, r, g, b, SDL_ALPHA_OPAQUE ) );
-				putPixel32( gScreen, xTmp - gCamera.x, ycenter + dy - gCamera.y , SDL_MapRGBA( gScreen->format, r, g, b, SDL_ALPHA_OPAQUE ) );
+				putPixel32( surface, xTmp - gCamera.x, ycenter - dy - gCamera.y , SDL_MapRGBA( surface->format, r, g, b, SDL_ALPHA_OPAQUE ) );
+				putPixel32( surface, xTmp - gCamera.x, ycenter + dy - gCamera.y , SDL_MapRGBA( surface->format, r, g, b, SDL_ALPHA_OPAQUE ) );
 			}
 
 			for ( int yTmp = ycenter - dy ; yTmp != ycenter + dy + 1 ; yTmp++ )
 			{
-				putPixel32( gScreen, xcenter - dx - gCamera.x, yTmp - gCamera.y , SDL_MapRGBA( gScreen->format, r, g, b, SDL_ALPHA_OPAQUE ) );
-				putPixel32( gScreen, xcenter + dx - gCamera.x, yTmp - gCamera.y , SDL_MapRGBA( gScreen->format, r, g, b, SDL_ALPHA_OPAQUE ) );
+				putPixel32( surface, xcenter - dx - gCamera.x, yTmp - gCamera.y , SDL_MapRGBA( surface->format, r, g, b, SDL_ALPHA_OPAQUE ) );
+				putPixel32( surface, xcenter + dx - gCamera.x, yTmp - gCamera.y , SDL_MapRGBA( surface->format, r, g, b, SDL_ALPHA_OPAQUE ) );
 			}
 	}
 
@@ -774,14 +776,14 @@ void Robot::show() // display on screen
 			if ( _wm->getCameraSensorValue(i,SENSOR_DISTANCEVALUE) < _wm->getCameraSensorMaximumDistanceValue(i)-1 ) //gSensorRange-1 )
             {
                 if ( gDisplaySensors == 2 )
-                    traceRayRGB(gScreen, int(x1+0.5)-gCamera.x, int(y1+0.5)-gCamera.y, int(x2+0.5)-gCamera.x, int(y2+0.5)-gCamera.y, 255 , 0 , 0 );
+                    traceRayRGB(surface, int(x1+0.5)-gCamera.x, int(y1+0.5)-gCamera.y, int(x2+0.5)-gCamera.x, int(y2+0.5)-gCamera.y, 255 , 0 , 0 );
                 else
-                    traceRayRGB(gScreen, int(x1+0.5)-gCamera.x, int(y1+0.5)-gCamera.y, int(x2+0.5)-gCamera.x, int(y2+0.5)-gCamera.y, 192 , 192 , 255 );
+                    traceRayRGB(surface, int(x1+0.5)-gCamera.x, int(y1+0.5)-gCamera.y, int(x2+0.5)-gCamera.x, int(y2+0.5)-gCamera.y, 192 , 192 , 255 );
             }
 			else
             {
                 if ( gDisplaySensors == 2 || gDisplaySensors == 3 )
-                    traceRayRGB(gScreen, int(x1+0.5)-gCamera.x, int(y1+0.5)-gCamera.y, int(x2+0.5)-gCamera.x, int(y2+0.5)-gCamera.y, 192 , 192 , 255 );
+                    traceRayRGB(surface, int(x1+0.5)-gCamera.x, int(y1+0.5)-gCamera.y, int(x2+0.5)-gCamera.x, int(y2+0.5)-gCamera.y, 192 , 192 , 255 );
             }
 		}
         
@@ -804,12 +806,12 @@ void Robot::show() // display on screen
         // show orientation (multicolor) - this is done by adding a *virtual* tail *behind* the robot
         for ( int xTmp = -1 ; xTmp < 2 ; xTmp+=2 )
             for ( int yTmp = -1 ; yTmp < 2 ; yTmp+=2 )
-                traceRayRGB(gScreen, (int)(_wm->_xReal+(double)xTmp)  - gCamera.x, (int)(_wm->_yReal+(double)yTmp) - gCamera.y, xOrientationMarkerTarget - gCamera.x, yOrientationMarkerTarget - gCamera.y, r , g , b );
+                traceRayRGB(surface, (int)(_wm->_xReal+(double)xTmp)  - gCamera.x, (int)(_wm->_yReal+(double)yTmp) - gCamera.y, xOrientationMarkerTarget - gCamera.x, yOrientationMarkerTarget - gCamera.y, r , g , b );
         
         // show position (multicolor)
         for ( int xTmp = -2 ; xTmp != 3 ; xTmp++ )
             for ( int yTmp = -2 ; yTmp != 3 ; yTmp++ )
-                putPixel32( gScreen, xOrientationMarkerSource - gCamera.x + xTmp, yOrientationMarkerSource - gCamera.y + yTmp , SDL_MapRGB( gScreen->format, r, b , g ) );
+                putPixel32( surface, xOrientationMarkerSource - gCamera.x + xTmp, yOrientationMarkerSource - gCamera.y + yTmp , SDL_MapRGB( surface->format, r, b , g ) );
         
     }
     else
@@ -822,7 +824,7 @@ void Robot::show() // display on screen
 
             for ( int xTmp = -1 ; xTmp < 2 ; xTmp+=2 )
                 for ( int yTmp = -1 ; yTmp < 2 ; yTmp+=2 )
-                    traceRayRGB(gScreen, (int)(_wm->_xReal+(double)xTmp)  - gCamera.x, (int)(_wm->_yReal+(double)yTmp) - gCamera.y, xOrientationMarkerTarget - gCamera.x, yOrientationMarkerTarget - gCamera.y, 90, 113, 148 ); // 255 , 128 , 0
+                    traceRayRGB(surface, (int)(_wm->_xReal+(double)xTmp)  - gCamera.x, (int)(_wm->_yReal+(double)yTmp) - gCamera.y, xOrientationMarkerTarget - gCamera.x, yOrientationMarkerTarget - gCamera.y, 90, 113, 148 ); // 255 , 128 , 0
         }
         
     }

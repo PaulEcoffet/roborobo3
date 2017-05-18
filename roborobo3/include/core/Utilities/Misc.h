@@ -67,6 +67,9 @@ int roundAwayFromZero(double x);
 // check: http://www.cplusplus.com/reference/clibrary/ctime/strftime/
 std::string getCurrentTimeAsReadableString();
 
+// return PID as a string. Useful to desambiguate timestamps
+std::string getpidAsReadableString();
+
 // check: http://notfaq.wordpress.com/2006/08/30/c-convert-int-to-string/
 std::string convertToString( int __value );
 
