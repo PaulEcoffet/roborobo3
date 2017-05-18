@@ -29,7 +29,7 @@ public:
     bool canRegister(); // can we register at current position
     void registerObject(); // register object in the world (write images)
     void unregisterObject(); // unregister object in the world (write blank pixels)
-    void show(); // wrt. screen-rendering
+    void show(SDL_Surface *surface = gScreen); // wrt. screen-rendering
     void hide();    // wrt. screen-rendering
         
 };
