@@ -683,16 +683,18 @@ bool Robot::isCollision()
                         {
                             Uint8 r, g, b;
                             SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
-
+                            
                             int targetIndex = (r<<16)+(g<<8)+b;
                             
-                            if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // physical object
+                            if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // this is a physical object
                             {
                                 targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
                                 gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
                             }
+                            collision = true;
                         }
-						return true;
+                        else
+                            return true; // stop whenever collision is met
 					}
 				}
 			}

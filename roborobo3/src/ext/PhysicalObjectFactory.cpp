@@ -4,6 +4,7 @@
 #include "World/GateObject.h"
 #include "World/SwitchObject.h"
 #include "World/MovingObject.h"
+#include "World/MovableObject.h"
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
 
@@ -60,7 +61,7 @@ void PhysicalObjectFactory::makeObject( int type )
             gPhysicalObjects.push_back( new MovableObject(id) );
             break;
         // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
-        case 4:
+        case 5:
             if ( gVerbose )
                 std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
             gPhysicalObjects.push_back( new MovingObject(id) );

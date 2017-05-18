@@ -11,27 +11,25 @@
 
 #include "World/PhysicalObject.h"
 
-#include <map>
-
 class CircleObject : public PhysicalObject
 {
 
 protected:
     
-    int _radius; // radius. In pixels.
-    int _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
+    double _radius; // radius. In pixels.
+    double _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
     
-public:
+public :
     
     CircleObject( int __id ); // use PhysicalObjectFactory instead!
     ~CircleObject() { }
 
-    bool canRegister(); // can we register at current position
+    bool canRegister(); // test if register object is possible (use both shape or footprints)
     void registerObject(); // register object in the world (write images)
     void unregisterObject(); // unregister object in the world (write blank pixels)
     void show(SDL_Surface *surface = gScreen); // wrt. screen-rendering
     void hide();    // wrt. screen-rendering
-        
+    
 };
 
 #endif

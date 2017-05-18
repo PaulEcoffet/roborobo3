@@ -129,8 +129,7 @@ void PhysicalObject::init()
         y = -1.0;
 	}
     
-    _xReal = x;
-    _yReal = y;
+    setCoordinates( x, y );
 }
 
 int PhysicalObject::findRandomLocation( )
@@ -146,8 +145,7 @@ int PhysicalObject::findRandomLocation( )
         //x = (rand() % (gAreaWidth-20)) + 10;  // deprecated
         //y = (rand() % (gAreaHeight-20)) + 10; // deprecated
         
-        _xReal = x;
-        _yReal = y;
+        setCoordinates( x, y );
         
         tries++;
     } while ( canRegister() == false && tries < gLocationFinderMaxNbOfTrials );

@@ -59,6 +59,10 @@ int roundAwayFromZero( double x )
         return (int)(x-0.5);
 }
 
+std::string getpidAsReadableString()
+{
+    return boost::lexical_cast<std::string>((long)::getpid());
+}
 
 std::string getCurrentTimeAsReadableString()
 {
