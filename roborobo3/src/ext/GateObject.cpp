@@ -13,10 +13,6 @@ void GateObject::step()
     stepPhysicalObject();
 }
 
-void GateObject::isPushed( int __idAgent, std::tuple<double, double> __speed ) {
-    
-}
-
 void GateObject::isTouched( int __idAgent )
 {
 //    if ( gVerbose && gDisplayMode <= 1)

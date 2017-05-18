@@ -42,10 +42,6 @@ void EnergyItem::step()
     stepPhysicalObject();
 }
 
-void EnergyItem::isPushed( int __idAgent, std::tuple<double, double> __speed ) {
-    
-}
-
 void EnergyItem::isTouched( int __idAgent )
 {
 //    if ( gVerbose && gDisplayMode <= 1)

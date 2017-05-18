@@ -24,8 +24,6 @@ class LandmarkObject
     Uint8 r = 0x00;
     Uint8 g = 0x99;
     Uint8 b = 0xFF;
-	
-	protected :
     
     // coordinates
     Sint16 _xCenterPixel;

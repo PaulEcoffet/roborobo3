@@ -800,45 +800,23 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
         
         if ( gNiceRendering ) // + ( gDisplayMode != 2 || gSnapshot...? || gVideoRecording...? )   // !n
         {
-            // Show landmark(s) on the screen
-            for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
-            {
-                if ( gLandmarks[i]->isVisible() )
-                {
-                    gLandmarks[i]->show();
-                }
-            }
-            
             // Show object(s) on the screen
             {
-                // Show object(s) on the screen
+                for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
                 {
                     if ( gPhysicalObjects[i]->isVisible() )
                     {
                         gPhysicalObjects[i]->show();
                     }
                 }
-
-                // Show landmark(s) on the screen
-                for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
+            }
+            
+            // Show landmark(s) on the screen
+            for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
+            {
+                if ( gLandmarks[i]->isVisible() )
                 {
-                    if ( gLandmarks[i]->isVisible() )
-                    {
-                        gLandmarks[i]->show();
-                    }
-                }
-                
-                // Show agent(s) on the screen
-                for ( int i = 0 ; i != gNbOfRobots ; i++ )
-                {
-                    if ( gWorld->isRobotRegistered(i) )
-                        gWorld->getRobot(i)->unregisterRobot(); // remove agent from memory so as to correctly cast sensors (otw: may see itself)
-                    
-                    gWorld->getRobot(i)->show(); // show sensor rays.
-                    
-                    // re-registering agents (post-display)
-                    if ( gWorld->isRobotRegistered(i) )
-                        gWorld->getRobot(i)->registerRobot();
+                    gLandmarks[i]->show();
                 }
             }
             

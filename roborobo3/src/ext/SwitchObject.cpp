@@ -27,10 +27,6 @@ void SwitchObject::step()
     stepPhysicalObject();
 }
 
-void SwitchObject::isPushed( int __idAgent, std::tuple<double, double> __speed ) {
-    
-}
-
 void SwitchObject::isTouched( int __idAgent )
 {
 //    if ( gVerbose && gDisplayMode <= 1)

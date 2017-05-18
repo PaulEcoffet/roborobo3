@@ -18,7 +18,7 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
 	s += out.str();
 	s += "].radius";
 	if ( gProperties.hasProperty( s ) )
-		convertFromString<int>(_radius, gProperties.getProperty( s ), std::dec);
+		convertFromString<double>(_radius, gProperties.getProperty( s ), std::dec);
 	else
     {
         if ( gVerbose )
@@ -30,7 +30,7 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
 	s += out.str();
 	s += "].footprintRadius";
 	if ( gProperties.hasProperty( s ) )
-		convertFromString<int>(_footprintRadius, gProperties.getProperty( s ), std::dec);
+		convertFromString<double>(_footprintRadius, gProperties.getProperty( s ), std::dec);
 	else
     {
         if ( gVerbose )
@@ -39,8 +39,8 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
     }
 
     double x = 0.0, y = 0.0;
-    x = _xReal;
-	y = _yReal;
+    x = getXCenterPixel();
+	y = getYCenterPixel();
     
     int tries = 0;
     bool randomLocation = false;
@@ -62,7 +62,7 @@ CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and 
     
     if ( gVerbose )
     {
-        std::cout << "[INFO] Physical Object #" << getId() << " (of super type CircleObject) positioned at ( "<< std::setw(5) << _xReal << " , " << std::setw(5) << _yReal << " ) -- ";
+        std::cout << "[INFO] Physical Object #" << getId() << " (of super type CircleObject) positioned at ( "<< std::setw(5) << getXCenterPixel() << " , " << std::setw(5) << getYCenterPixel() << " ) -- ";
         if ( randomLocation == false )
             std::cout << "[user-defined position]\n";
         else

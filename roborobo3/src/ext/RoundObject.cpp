@@ -11,10 +11,6 @@ void RoundObject::step()
     stepPhysicalObject();
 }
 
-void RoundObject::isPushed( int __idAgent, std::tuple<double, double> __speed )
-{
-    
-}
 
 void RoundObject::isTouched( int __idAgent )
 {

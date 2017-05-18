@@ -126,7 +126,7 @@ void MonoRobotWorldObserver::resetLandmarks()
         int x, y;
         gProperties.checkAndGetPropertyValue("physicalObject[" + std::to_string(objectId) + "].x", &x, true);
         gProperties.checkAndGetPropertyValue("physicalObject[" + std::to_string(objectId) + "].y", &y, true);
-        gLandmarks[iLand]->setPosition(Point2d(x, y));
+        gLandmarks[iLand]->setCoordinates(x, y);
     }
 }
 

@@ -20,8 +20,8 @@ protected :
     int _id;
     
     int type;
-    
-    // coordinates
+
+    // coordinates (center of object)
     double _xReal;
     double _yReal;
     
@@ -55,14 +55,13 @@ public :
     double getXReal() { return _xReal; }
     double getYReal() { return _yReal; }
     
-    Sint16 getXCenterPixel()
+    Sint16 getXCenterPixel() { return (Sint16)_xReal; }
+    Sint16 getYCenterPixel() { return (Sint16)_yReal; }
+
+    void setCoordinates( double x, double y )
     {
-        return (Sint16)_xReal;
-    }
-    
-    Sint16 getYCenterPixel()
-    {
-        return (Sint16)_yReal;
+        _xReal = x;
+        _yReal = y;
     }
 
     virtual void step() = 0;
@@ -74,8 +73,6 @@ public :
     int findRandomLocation( );
     void resetLocation(); // reset to the starting position if there was one, or pick a new random location
 
-
-    virtual void isPushed( int __idAgent, std::tuple<double, double> __speed ) = 0; // callback
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
     virtual void isWalked( int __idAgent ) = 0; // callback, triggered by agent
     virtual void isPushed( int __id, std::tuple<double, double> __speed ) = 0; // callback, triggered by collision w/ agent/object

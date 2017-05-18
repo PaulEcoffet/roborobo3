@@ -390,6 +390,7 @@
 				E63F18601EAF4717007D2C3A /* monoRobot.properties */,
 				E620379F1E8945BA004B5859 /* movingNS.properties */,
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
+				37753A981ECB295C0039BF21 /* movingobjects.properties */,
 				37A569C11E38AB2100B983FF /* template_vanillaEE.properties */,
 				3705F08B1BC67B7C001A016D /* template_boids.properties */,
 				E64820D01E7A9123005D95AC /* template_moving.properties */,
@@ -835,15 +836,15 @@
 				E64820BD1E79950E005D95AC /* MovingObject.cpp */,
 				37BA27071BC3D014002DF5DC /* SwitchObject.cpp */,
 				E63F185D1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp */,
+				E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */,
+				E64820C11E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp */,
 				3766DF771E29141E0069E44C /* TemplateEEConfigurationLoader.cpp */,
 				3705F0591BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp */,
 				3739761A1BCEAA2F00A007BF /* TemplateRandomwalkConfigurationLoader.cpp */,
 				37C8103F1E28AF1F00A71E6F /* TemplateMedeaConfigurationLoader.cpp */,
 				3705F05B1BC66E21001A016D /* TemplateWanderConfigurationLoader.cpp */,
 				37A9F91A1E28AA7E00006059 /* TemplateVanillaEEConfigurationLoader.cpp */,
-				E64820C11E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp */,
 				E6F09B451E84089200EF24BD /* MovingEEConfigurationLoader.cpp */,
-				E62037AF1E8946DC004B5859 /* MovingNSConfigurationLoader.cpp */,
 			);
 			path = ext;
 			sourceTree = "<group>";
@@ -1030,6 +1031,7 @@
 				376C24541E28BB8800E70850 /* TemplateEEAgentObserver.cpp in Sources */,
 				37BA274A1BC3D014002DF5DC /* Timer.cpp in Sources */,
 				E63F185C1EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp in Sources */,
+				37753A961ECB27EB0039BF21 /* MovableObject.cpp in Sources */,
 				3705F05C1BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp in Sources */,
 				E62037A81E8945E6004B5859 /* MovingNSController.cpp in Sources */,
 				E63F185E1EAF46DC007D2C3A /* MonoRobotConfigurationLoader.cpp in Sources */,
@@ -1211,7 +1213,7 @@
 					roborobo3/include/contrib,
 					roborobo3/include/core,
 					/usr/local/include/,
-					/opt/local/include/,
+					/opt/local/include,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
@@ -1230,7 +1232,7 @@
 					roborobo3/include/contrib,
 					roborobo3/include/core,
 					/usr/local/include/,
-					/opt/local/include/,
+					/opt/local/include,
 				);
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
