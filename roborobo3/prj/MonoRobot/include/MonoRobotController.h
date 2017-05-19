@@ -80,6 +80,7 @@ protected:
     double _movements[MonoRobotSharedData::gMemorySize]; // our total movement recently (see if we're blocked)
     double _fitnesses[MonoRobotSharedData::gMemorySize]; // our recent fitness gains
 	double _efforts[MonoRobotSharedData::gMemorySize]; // how much we tried pushing
+    double _totalEfforts[MonoRobotSharedData::gMemorySize]; // how much everybody tried pushing
     
     // ANN
     double _minValue;
@@ -123,7 +124,7 @@ public:
     
     void increaseFitness( double __delta );
     
-    void wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
+    void wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
     
 };
 

@@ -99,7 +99,7 @@ void MovingObject::step()
 
     move(); //handles movement, and sets _didMove
 
-    double movement = sqrt((oldX-_desiredX)*(oldX-_desiredX) + (oldY-_desiredY)*(oldY-_desiredY));
+//  double movement = sqrt((oldX-_desiredX)*(oldX-_desiredX) + (oldY-_desiredY)*(oldY-_desiredY));
 	int nbRobots = static_cast<int>(_nearbyRobots.size());
     
     if (gStuckMovableObjects) // get back into place!
@@ -107,6 +107,11 @@ void MovingObject::step()
         _xReal = oldX;
         _yReal = oldY;
     }
+    
+    // sum of the norms of the impulses given to the object
+    double totalEffort = 0;
+    for (auto eff: _efforts)
+        totalEffort += eff.second;
 
     for (auto robotID: _nearbyRobots)
     {
@@ -120,7 +125,7 @@ void MovingObject::step()
         }
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
         MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-        ctl->wasNearObject(_id, _didMove, movement, effort, nbRobots);
+        ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
     }
     _nearbyRobots.clear();
     _efforts.clear();
