@@ -91,6 +91,7 @@ void MonoRobotController::step() // handles control decision and evolution (but:
     _nbNearbyRobots = 0;
     _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = 0;
     _efforts[_iteration%MonoRobotSharedData::gMemorySize] = 0;
+    _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = 0;
     
 }
 
@@ -168,11 +169,18 @@ std::vector<double> MonoRobotController::getInputs(){
 //        totalFitness += fitness;
 //    inputs.push_back(totalFitness);
   
-	// how much effort did we contribute?
-	double totalEffort = 0;
+    // what's the total effort given to the object in the last few turns?
+    double totalEffort = 0;
+    for (auto eff: _totalEfforts)
+        totalEffort += eff;
+    inputs.push_back(totalEffort);
+    
+	// how much did we contribute?
+	double effort = 0;
 	for (auto eff: _efforts)
-		totalEffort += eff;
-	inputs.push_back(totalEffort);
+		effort += eff;
+	inputs.push_back(effort);
+    
 
     // are we on the right object?
 //    MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
@@ -368,7 +376,9 @@ void MonoRobotController::setIOcontrollerSize()
     
 //  _nbInputs += 1; // how much fitness did we recently gain?
 
-	_nbInputs += 1; // how much effort did we contribute?
+    _nbInputs += 1; // what's the total effort given to the object?
+    
+    _nbInputs += 1; // how much did we contribute?
     
 //  _nbInputs += 1; // are we on the object that's giving fitness?
     
@@ -416,6 +426,8 @@ void MonoRobotController::initController()
 		fit = 0;
 	for (auto& eff: _efforts)
 		eff = 0;
+    for (auto& totEff: _totalEfforts)
+        totEff = 0;
 }
 
 void MonoRobotController::reset()
@@ -517,7 +529,7 @@ void MonoRobotController::increaseFitness( double __delta )
 }
 
 // called only once per step (experimentally verified)
-void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots )
+void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
 //    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
 //           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
@@ -525,7 +537,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     // add 1 to the number of robots if the fake robot is here
     if (wobs->getFakeRobotObject() == __objectId%4) {
         __nbRobots++;
-        __objectMove *= 2; // assume the other robot pushed just as much as we did
+        __totalEffort *= 2; // assume the other robot pushed just as much as we did
     }
     
     _isNearObject = true;
@@ -533,7 +545,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     _nbNearbyRobots = __nbRobots;
     
     double coeff = 1.0/(1.0+pow(__nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
-    double payoff = coeff * pow(__objectMove, 0.5) - __effort;
+    double payoff = coeff * pow(__totalEffort, 0.5) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
         // Only give fitness if both robots are on the same object and the object is active
@@ -545,6 +557,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         }
 		// but register the effort anyway
 		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
+        _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = __totalEffort;
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }
