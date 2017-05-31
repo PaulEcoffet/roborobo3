@@ -100,39 +100,12 @@ void MonoRobotWorldObserver::reset()
 
 void MonoRobotWorldObserver::resetObjects()
 {
-    _activeObjects[0] = rand()%4;
-    do {
-        _activeObjects[1] = rand()%4;
-    } while (_activeObjects[1] == _activeObjects[0]);
-    
-    if (rand()%2)
-        _fakeRobotObject = _activeObjects[0];
-    else
-        _fakeRobotObject = _activeObjects[1];
-    
     resetLandmarks();
-    
-//    printf("[DEBUG] Active objects: %d and %d\n", _activeObjects[0], _activeObjects[1]);
-//    printf("[DEBUG] Fake robot on object %d\n", _fakeRobotObject);
 }
 
 void MonoRobotWorldObserver::resetLandmarks()
 {
     // put the landmarks in the right position
-    
-    for (int iLand = 0; iLand < gNbOfLandmarks; iLand++)
-    {
-        int objectId = iLand*4 + _fakeRobotObject;
-        int x, y;
-        gProperties.checkAndGetPropertyValue("physicalObject[" + std::to_string(objectId) + "].x", &x, true);
-        gProperties.checkAndGetPropertyValue("physicalObject[" + std::to_string(objectId) + "].y", &y, true);
-        gLandmarks[iLand]->setCoordinates(x, y);
-    }
-}
-
-bool MonoRobotWorldObserver::objectIsActive(int __objectId)
-{
-    return (__objectId%4 == _activeObjects[0] || __objectId%4 == _activeObjects[1]);
 }
 
 void MonoRobotWorldObserver::stepGeneration()
@@ -218,17 +191,6 @@ void MonoRobotWorldObserver::stepGeneration()
 void MonoRobotWorldObserver::step()
 {
     _generationItCount++;
-    
-    // change the fake robot's location
-    if (_generationItCount == MonoRobotSharedData::gEvaluationTime/MonoRobotSharedData::gNumberOfPeriods)
-    {
-        if (_fakeRobotObject == _activeObjects[0])
-            _fakeRobotObject = _activeObjects[1];
-        else
-            _fakeRobotObject = _activeObjects[0];
-        resetLandmarks();
-//        printf("[DEBUG] Fake robot moved to object %d\n", _fakeRobotObject);
-    }
     
     // switch to next generation.
     if( _generationItCount == MonoRobotSharedData::gEvaluationTime )
