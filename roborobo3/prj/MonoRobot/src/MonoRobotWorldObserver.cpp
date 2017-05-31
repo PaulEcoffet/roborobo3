@@ -268,11 +268,11 @@ void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
     double medFit = fitnesses[gNbOfRobots/2];
     double lowQuartFit = fitnesses[gNbOfRobots/4];
     double highQuartFit = fitnesses[3*gNbOfRobots/4];
-    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0)/(double)gNbOfRobots;
+    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)gNbOfRobots;
     double stddevFit = -1;
     for (auto& fitness: fitnesses)
         fitness = (fitness-avgFit)*(fitness-avgFit);
-    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0)/(double)gNbOfRobots, 0.5);
+    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)gNbOfRobots, 0.5);
     
     std::stringstream genLog;
     
