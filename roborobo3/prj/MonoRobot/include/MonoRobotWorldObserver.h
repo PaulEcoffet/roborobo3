@@ -25,9 +25,6 @@ protected:
     
     int _generationCount;
     int _generationItCount;
-    
-    int _activeObjects[2]; // which 2 objects of the 4 are active
-    int _fakeRobotObject; // the object the fake robot is on
 
     std::ofstream _logFile;
     LogManager *_logManager; // Our own little logfile
@@ -42,10 +39,6 @@ public:
     void stepGeneration();
     void resetObjects(); // reset which objects are active, etc.
     void resetLandmarks();
-
-    bool objectIsActive(int __objectId); // tell if an object is active
-    
-    int getFakeRobotObject() { return _fakeRobotObject; }
     
     virtual int getGenerationItCount() { return _generationItCount; }
 

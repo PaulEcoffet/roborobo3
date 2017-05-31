@@ -533,9 +533,8 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
 {
 //    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
 //           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
-    MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
-    // add 1 to the number of robots if the fake robot is here
-    if (wobs->getFakeRobotObject() == __objectId%4) {
+    // add 1 to the number of robots
+    if (true) {
         __nbRobots++;
         __totalEffort *= 2; // assume the other robot pushed just as much as we did
     }
@@ -548,13 +547,9 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     double payoff = coeff * pow(__totalEffort, 0.5) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-        // Only give fitness if both robots are on the same object and the object is active
-        if (__nbRobots >= 2 && wobs->objectIsActive(__objectId))
-        {
 //            printf("[DEBUG] objectMove: %lf, coeff: %lf, effort:%lf, payoff: %lf\n", __objectMove, coeff, __effort, payoff);
-            increaseFitness(payoff);
-			_fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
-        }
+        increaseFitness(payoff);
+        _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
 		// but register the effort anyway
 		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
         _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = __totalEffort;
