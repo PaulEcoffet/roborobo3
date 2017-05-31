@@ -57,3 +57,6 @@ int MonoRobotSharedData::gZoneWidth = -1;
 int MonoRobotSharedData::gZoneHeight = -1;
 int MonoRobotSharedData::gNbLines = -1;
 int MonoRobotSharedData::gNbRows = -1;
+
+double MonoRobotSharedData::gConstantK = 0;
+double MonoRobotSharedData::gConstantA = 0;

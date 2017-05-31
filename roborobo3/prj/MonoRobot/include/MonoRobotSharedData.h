@@ -65,6 +65,11 @@ public:
     static int gZoneHeight;
     static int gNbLines;
     static int gNbRows;
+    
+    // Parameters relative to the payoff function
+    
+    static double gConstantK;
+    static double gConstantA;
         
     // -----
     

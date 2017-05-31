@@ -63,6 +63,9 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     gProperties.checkAndGetPropertyValue("gNbLines", &MonoRobotSharedData::gNbLines, true);
     gProperties.checkAndGetPropertyValue("gNbRows", &MonoRobotSharedData::gNbRows, true);
     
+    gProperties.checkAndGetPropertyValue("gConstantA", &MonoRobotSharedData::gConstantA, true);
+    gProperties.checkAndGetPropertyValue("gConstantK", &MonoRobotSharedData::gConstantK, true);
+    
     // ====
     
     if ( !gRadioNetwork)

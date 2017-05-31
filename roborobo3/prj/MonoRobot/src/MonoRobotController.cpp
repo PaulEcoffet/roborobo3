@@ -536,18 +536,18 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     // add 1 to the number of robots
     if (true) {
         __nbRobots++;
-        __totalEffort *= 2; // assume the other robot pushed just as much as we did
+        __totalEffort = 2*__effort; // assume the other robot pushed just as much as we did
     }
     
     _isNearObject = true;
     _nearbyObjectId = __objectId;
     _nbNearbyRobots = __nbRobots;
     
-    double coeff = 1.0/(1.0+pow(__nbRobots-2, 2)); // \frac{1}{1+(nbRobots-2)^2}
-    double payoff = coeff * pow(__totalEffort, 0.5) - __effort;
+    double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+    double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//            printf("[DEBUG] objectMove: %lf, coeff: %lf, effort:%lf, payoff: %lf\n", __objectMove, coeff, __effort, payoff);
+        printf("%lf %lf\n", __effort, payoff);
         increaseFitness(payoff);
         _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
 		// but register the effort anyway
