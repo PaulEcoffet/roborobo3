@@ -81,6 +81,7 @@ protected:
     double _fitnesses[MonoRobotSharedData::gMemorySize]; // our recent fitness gains
 	double _efforts[MonoRobotSharedData::gMemorySize]; // how much we tried pushing
     double _totalEfforts[MonoRobotSharedData::gMemorySize]; // how much everybody tried pushing
+    int _activeTime; // how much time we've spent interacting with objects, to compute the fitness
     
     // ANN
     double _minValue;
@@ -121,6 +122,8 @@ public:
     void loadNewGenome( genome __newGenome );
     
     virtual double getFitness();
+    
+    int getActiveTime() { return _activeTime; }
     
     void increaseFitness( double __delta );
     
