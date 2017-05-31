@@ -117,7 +117,7 @@ void MonoRobotWorldObserver::stepGeneration()
     // reset their positions and the objects
     
     // Evolution stuff
-    
+        
     double totalFitness = 0;
     std::vector<double> fitnesses(gNbOfRobots);
     std::vector<genome> genomes(gNbOfRobots);
