@@ -419,6 +419,7 @@ void MonoRobotController::initController()
     _isNearObject = false;
     _nbNearbyRobots = 0;
     _activeTime = 0;
+	_lifetimeEffort = 0;
     for (auto& moved: _objectMoves)
         moved = false;
     for (auto& move: _movements)
@@ -539,8 +540,8 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
 //           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
     // add 1 to the number of robots
     if (true) {
-        __nbRobots = 3;
-        __totalEffort = 3*__effort; // assume the other robot pushed just as much as we did
+        __nbRobots = 2;
+        __totalEffort = __effort * __nbRobots; // assume the other robot pushed just as much as we did
     }
     
     _isNearObject = true;
@@ -551,12 +552,14 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Effort %lf payoff %lf\n", __effort, payoff);
+//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(),
+//				gWorld->getIterations()%1000, __effort, payoff);
         increaseFitness(payoff);
         _activeTime++;
         _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
 		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
         _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = __totalEffort;
+		_lifetimeEffort += __effort;
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }

@@ -254,20 +254,28 @@ void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
     // * monitoring: count number of active agents.
     
     std::vector<double> fitnesses(gNbOfRobots);
+	std::vector<int> index(gNbOfRobots);
     
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         MonoRobotController *ctl = dynamic_cast<MonoRobotController*>(gWorld->getRobot(iRobot)->getController());
         fitnesses[iRobot] = ctl->getFitness();
+		index[iRobot] = iRobot;
     }
     
-    std::sort(fitnesses.begin(), fitnesses.end());
-    
-    double minFit = fitnesses[0];
-    double maxFit = fitnesses[gNbOfRobots-1];
-    double medFit = fitnesses[gNbOfRobots/2];
-    double lowQuartFit = fitnesses[gNbOfRobots/4];
-    double highQuartFit = fitnesses[3*gNbOfRobots/4];
+    std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
+
+    MonoRobotController *ctl = dynamic_cast<MonoRobotController*>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
+	double avg = -1;
+	if (ctl->getActiveTime() > 0)
+		avg = ctl->getLifetimeEffort()/(double)ctl->getActiveTime();
+	printf("[DEBUG] Robot %d: fitness %.3lf, average effort %.3lf\n", index[gNbOfRobots-1], fitnesses[index[gNbOfRobots-1]], avg);
+
+    double minFit = fitnesses[index[0]];
+    double maxFit = fitnesses[index[gNbOfRobots-1]];
+    double medFit = fitnesses[index[gNbOfRobots/2]];
+    double lowQuartFit = fitnesses[index[gNbOfRobots/4]];
+    double highQuartFit = fitnesses[index[3*gNbOfRobots/4]];
     double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)gNbOfRobots;
     double stddevFit = -1;
     for (auto& fitness: fitnesses)
