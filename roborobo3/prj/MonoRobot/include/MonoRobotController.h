@@ -95,6 +95,7 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
+	double _lifetimeEffort; // see how much we've pushed on average
     
     void reset();
     
@@ -124,6 +125,8 @@ public:
     virtual double getFitness();
     
     int getActiveTime() { return _activeTime; }
+
+	double getLifetimeEffort() { return _lifetimeEffort; }
     
     void increaseFitness( double __delta );
     
