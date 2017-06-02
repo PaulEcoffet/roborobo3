@@ -532,13 +532,7 @@ void MonoRobotController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
-//           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
-    // add 1 to the number of robots
-    if (true) {
-        __nbRobots = 2;
-        __totalEffort = __effort * __nbRobots; // assume the other robot pushed just as much as we did
-    }
+//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d other robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     _isNearObject = true;
     _nearbyObjectId = __objectId;

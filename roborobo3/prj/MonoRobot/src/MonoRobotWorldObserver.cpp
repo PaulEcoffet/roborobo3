@@ -166,7 +166,7 @@ void MonoRobotWorldObserver::stepGeneration()
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         // super specific stuff here
-        int gridBox = iRobot;
+        int gridBox = iRobot/2;
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
