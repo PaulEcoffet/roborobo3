@@ -266,10 +266,13 @@ void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
     std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
 
     MonoRobotController *ctl = dynamic_cast<MonoRobotController*>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-	double avg = -1;
-	if (ctl->getActiveTime() > 0)
-		avg = ctl->getLifetimeEffort()/(double)ctl->getActiveTime();
-	printf("[DEBUG] Robot %d: fitness %.3lf, average effort %.3lf\n", index[gNbOfRobots-1], fitnesses[index[gNbOfRobots-1]], avg);
+    double avg = -1;
+    std::vector<double> megaEfforts = ctl->getMegaEfforts();
+    double totEff = std::accumulate(megaEfforts.begin(), megaEfforts.end(), 0.0);
+    printf("[DEBUG] Robot %d, lifetime efforts\n", index[gNbOfRobots-1]);
+	if (megaEfforts.size() > 0)
+        avg = totEff/(double)megaEfforts.size();
+	printf("[DEBUG] Total fitness %.3lf, average fitness %.3lf, total effort %.3lf, average effort %.3lf, active time %lu\n", fitnesses[index[gNbOfRobots-1]], fitnesses[index[gNbOfRobots-1]]/megaEfforts.size(), totEff, avg, megaEfforts.size());
 
     double minFit = fitnesses[index[0]];
     double maxFit = fitnesses[index[gNbOfRobots-1]];

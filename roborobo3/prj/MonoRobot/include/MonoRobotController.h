@@ -95,7 +95,7 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
-	double _lifetimeEffort; // see how much we've pushed on average
+    std::vector<double> _megaEfforts; // see how much we've pushed on average
     
     void reset();
     
@@ -126,7 +126,7 @@ public:
     
     int getActiveTime() { return _activeTime; }
 
-	double getLifetimeEffort() { return _lifetimeEffort; }
+    std::vector<double> getMegaEfforts() { return _megaEfforts; }
     
     void increaseFitness( double __delta );
     
