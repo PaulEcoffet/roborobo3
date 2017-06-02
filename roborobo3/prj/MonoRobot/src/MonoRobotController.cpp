@@ -419,7 +419,6 @@ void MonoRobotController::initController()
     _isNearObject = false;
     _nbNearbyRobots = 0;
     _activeTime = 0;
-	_lifetimeEffort = 0;
     for (auto& moved: _objectMoves)
         moved = false;
     for (auto& move: _movements)
@@ -430,6 +429,7 @@ void MonoRobotController::initController()
 		eff = 0;
     for (auto& totEff: _totalEfforts)
         totEff = 0;
+    _megaEfforts.clear();
 }
 
 void MonoRobotController::reset()
@@ -503,11 +503,7 @@ void MonoRobotController::logCurrentState()
 
 double MonoRobotController::getFitness()
 {
-    // return the fitness weighted by active time
-    if (_activeTime > 0)
-        return _wm->_fitnessValue/_activeTime;
-    else
-        return 0;
+    return _wm->_fitnessValue;
 }
 
 /*
@@ -559,7 +555,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
 		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
         _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = __totalEffort;
-		_lifetimeEffort += __effort;
+        _megaEfforts.push_back(__effort);
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }
