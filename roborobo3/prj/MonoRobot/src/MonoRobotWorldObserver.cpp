@@ -122,6 +122,7 @@ void MonoRobotWorldObserver::stepGeneration()
     std::vector<double> fitnesses(gNbOfRobots);
     std::vector<genome> genomes(gNbOfRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
+    std::vector<int> timesPicked(gNbOfRobots);
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
@@ -129,21 +130,51 @@ void MonoRobotWorldObserver::stepGeneration()
         fitnesses[iRobot] = ctl->getFitness();
         totalFitness += ctl->getFitness();
         genomes[iRobot] = ctl->getGenome();
+        timesPicked[iRobot] = 0;
     }
     
-    // O(1) fitness-proportionate selection
+    
+//    // O(1) fitness-proportionate selection
+//    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+//    {
+//        bool done = false;
+//        int pick = -1;
+//        while (done == false) {
+//            pick = rand()%gNbOfRobots;
+//            double draw = ranf()*totalFitness;
+//            if (draw <= fitnesses[pick]) // choose this robot
+//                done = true;
+//        }
+//        newGenomePick[iRobot] = pick;
+//        timesPicked[pick]++;
+//    }
+    
+    // O(n) fitness-proportionate selection
+    // sort fitnesses in decreasing order
+    std::vector<int> fitnessIndex(gNbOfRobots);
+    for (int i = 0; i < gNbOfRobots; i++)
+        fitnessIndex[i] = i;
+    std::sort(fitnessIndex.begin(), fitnessIndex.end(), [&](int i, int j){ return fitnesses[i]>fitnesses[j]; });
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
-        bool done = false;
-        int pick = -1;
-        while (done == false) {
-            pick = rand()%gNbOfRobots;
-            double draw = ranf()*totalFitness;
-            if (draw <= fitnesses[pick]) // choose this robot
-                done = true;
+        double choice = ranf()*totalFitness;
+        double total = 0;
+        int res = 0;
+        for (int i = 0; i < gNbOfRobots; i++) {
+            total += fitnesses[fitnessIndex[i]];
+            if (choice <= total) {
+                res = fitnessIndex[i];
+                break;
+            }
         }
-        newGenomePick[iRobot] = pick;
+        newGenomePick[iRobot] = res;
+        timesPicked[res]++;
     }
+    
+//    // Debug printing
+//    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+//        printf("[DEBUG] Robot %.2d: fitness %.3lf, prob. %.3lf%%, actual %.3lf%%\n", iRobot, fitnesses[iRobot], fitnesses[iRobot]/totalFitness*100.0, (double)timesPicked[iRobot]/(double)gNbOfRobots*100.0);
+//    }
     
     // Environment stuff
     // unregister everyone
@@ -217,36 +248,10 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
-    
-    // * Log at end of each generation
-
-    //if( gWorld->getIterations() % MonoRobotSharedData::gEvaluationTime == 1 || gWorld->getIterations() % MonoRobotSharedData::gEvaluationTime == MonoRobotSharedData::gEvaluationTime-1 ) // beginning(+1) *and* end of generation. ("==1" is required to monitor the outcome of the first iteration)
-    // log at end of generation.
     if( _generationItCount == MonoRobotSharedData::gEvaluationTime - 1)
     {
         monitorPopulation();
     }
-    
-    // * Every N generations, take a video (duration: one generation time)
-    
-/*    if ( MonoRobotSharedData::gSnapshots )
-    {
-        if ( ( gWorld->getIterations() ) % ( MonoRobotSharedData::gEvaluationTime * MonoRobotSharedData::gSnapshotsFrequency ) == 0 )
-        {
-            if ( gVerbose )
-                std::cout << "[START] Video recording: generation #" << (gWorld->getIterations() / MonoRobotSharedData::gEvaluationTime ) << ".\n";
-            gTrajectoryMonitorMode = 0;
-            initTrajectoriesMonitor();
-        }
-        else
-            if ( ( gWorld->getIterations() ) % ( MonoRobotSharedData::gEvaluationTime * MonoRobotSharedData::gSnapshotsFrequency ) == MonoRobotSharedData::gEvaluationTime - 1 )
-            {
-                if ( gVerbose )
-                    std::cout << "[STOP]  Video recording: generation #" << (gWorld->getIterations() / MonoRobotSharedData::gEvaluationTime ) << ".\n";
-                saveTrajectoryImage();
-            }
-    }
-*/
 }
 
 void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
@@ -265,14 +270,14 @@ void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
     
     std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
 
-    MonoRobotController *ctl = dynamic_cast<MonoRobotController*>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-    double avg = -1;
-    std::vector<double> megaEfforts = ctl->getMegaEfforts();
-    double totEff = std::accumulate(megaEfforts.begin(), megaEfforts.end(), 0.0);
-    printf("[DEBUG] Robot %d, lifetime efforts\n", index[gNbOfRobots-1]);
-	if (megaEfforts.size() > 0)
-        avg = totEff/(double)megaEfforts.size();
-	printf("[DEBUG] Total fitness %.3lf, average fitness %.3lf, total effort %.3lf, average effort %.3lf, active time %lu\n", fitnesses[index[gNbOfRobots-1]], fitnesses[index[gNbOfRobots-1]]/megaEfforts.size(), totEff, avg, megaEfforts.size());
+//    MonoRobotController *ctl = dynamic_cast<MonoRobotController*>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
+//    double avg = -1;
+//    std::vector<double> megaEfforts = ctl->getMegaEfforts();
+//    double totEff = std::accumulate(megaEfforts.begin(), megaEfforts.end(), 0.0);
+//    printf("[DEBUG] Robot %d, lifetime efforts\n", index[gNbOfRobots-1]);
+//	if (megaEfforts.size() > 0)
+//        avg = totEff/(double)megaEfforts.size();
+//	printf("[DEBUG] Total fitness %.3lf, average fitness %.3lf, total effort %.3lf, average effort %.3lf, active time %lu\n", fitnesses[index[gNbOfRobots-1]], fitnesses[index[gNbOfRobots-1]]/megaEfforts.size(), totEff, avg, megaEfforts.size());
 
     double minFit = fitnesses[index[0]];
     double maxFit = fitnesses[index[gNbOfRobots-1]];
