@@ -157,24 +157,29 @@ void MonoRobotWorldObserver::stepGeneration()
     std::sort(fitnessIndex.begin(), fitnessIndex.end(), [&](int i, int j){ return fitnesses[i]>fitnesses[j]; });
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
+        printf("Choosing new genome for robot %d\n", iRobot);
         double choice = ranf()*totalFitness;
+        printf("Choice: %lf\n", choice);
         double total = 0;
         int res = 0;
         for (int i = 0; i < gNbOfRobots; i++) {
             total += fitnesses[fitnessIndex[i]];
+            printf("Current fitness: %lf, total: %lf\n", fitnesses[fitnessIndex[i]], total);
             if (choice <= total) {
                 res = fitnessIndex[i];
+                printf("Chose genome %d\n", res);
                 break;
             }
         }
+        printf("\n");
         newGenomePick[iRobot] = res;
         timesPicked[res]++;
     }
     
-//    // Debug printing
-//    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-//        printf("[DEBUG] Robot %.2d: fitness %.3lf, prob. %.3lf%%, actual %.3lf%%\n", iRobot, fitnesses[iRobot], fitnesses[iRobot]/totalFitness*100.0, (double)timesPicked[iRobot]/(double)gNbOfRobots*100.0);
-//    }
+    // Debug printing
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+        printf("[DEBUG] Robot %.2d: fitness %.3lf, prob. %.3lf%%, actual %.3lf%%\n", iRobot, fitnesses[iRobot], fitnesses[iRobot]/totalFitness*100.0, (double)timesPicked[iRobot]/(double)gNbOfRobots*100.0);
+    }
     
     // Environment stuff
     // unregister everyone
