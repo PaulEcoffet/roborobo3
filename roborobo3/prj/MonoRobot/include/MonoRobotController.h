@@ -120,7 +120,7 @@ public:
     
     genome getGenome() { return std::make_pair(_currentGenome, _currentSigma); }
     
-    void loadNewGenome( genome __newGenome );
+    void loadNewGenome( genome __newGenome, bool __mutate );
     
     virtual double getFitness();
     

@@ -51,6 +51,7 @@ double MonoRobotSharedData::gSigma = 0.01; // 0.01 is just some random value.
 constexpr int MonoRobotSharedData::gMemorySize;
 
 int MonoRobotSharedData::gNumberOfPeriods = 2;
+int MonoRobotSharedData::gEvaluationsPerGeneration = 5;
 
 int MonoRobotSharedData::gBorderSize = -1;
 int MonoRobotSharedData::gZoneWidth = -1;

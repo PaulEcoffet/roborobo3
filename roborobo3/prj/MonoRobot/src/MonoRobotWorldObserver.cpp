@@ -76,8 +76,9 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     
     // * iteration and generation counters
     
-    _generationItCount = -1;
-    _generationCount = -1;
+    _evaluationItCount = 0;
+    _generationCount = 0;
+    _evaluationCount = 0;
     
     // * Logfile
     
@@ -111,18 +112,14 @@ void MonoRobotWorldObserver::resetLandmarks()
     // put the landmarks in the right position
 }
 
-void MonoRobotWorldObserver::stepGeneration()
+// Reset the environment, and perform an evaluation step if needed
+void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
 {
-    // Perform an evolution step on robots (give them new genomes and mutate them), and
-    // reset their positions and the objects
-    
-    // Evolution stuff
-        
+    // Save fitness values and genomes before the reset
     double totalFitness = 0;
     std::vector<double> fitnesses(gNbOfRobots);
     std::vector<genome> genomes(gNbOfRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
-    std::vector<int> timesPicked(gNbOfRobots);
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
@@ -130,55 +127,6 @@ void MonoRobotWorldObserver::stepGeneration()
         fitnesses[iRobot] = ctl->getFitness();
         totalFitness += ctl->getFitness();
         genomes[iRobot] = ctl->getGenome();
-        timesPicked[iRobot] = 0;
-    }
-    
-    
-//    // O(1) fitness-proportionate selection
-//    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-//    {
-//        bool done = false;
-//        int pick = -1;
-//        while (done == false) {
-//            pick = rand()%gNbOfRobots;
-//            double draw = ranf()*totalFitness;
-//            if (draw <= fitnesses[pick]) // choose this robot
-//                done = true;
-//        }
-//        newGenomePick[iRobot] = pick;
-//        timesPicked[pick]++;
-//    }
-    
-    // O(n) fitness-proportionate selection
-    // sort fitnesses in decreasing order
-    std::vector<int> fitnessIndex(gNbOfRobots);
-    for (int i = 0; i < gNbOfRobots; i++)
-        fitnessIndex[i] = i;
-    std::sort(fitnessIndex.begin(), fitnessIndex.end(), [&](int i, int j){ return fitnesses[i]>fitnesses[j]; });
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-    {
-        printf("Choosing new genome for robot %d\n", iRobot);
-        double choice = ranf()*totalFitness;
-        printf("Choice: %lf\n", choice);
-        double total = 0;
-        int res = 0;
-        for (int i = 0; i < gNbOfRobots; i++) {
-            total += fitnesses[fitnessIndex[i]];
-            printf("Current fitness: %lf, total: %lf\n", fitnesses[fitnessIndex[i]], total);
-            if (choice <= total) {
-                res = fitnessIndex[i];
-                printf("Chose genome %d\n", res);
-                break;
-            }
-        }
-        printf("\n");
-        newGenomePick[iRobot] = res;
-        timesPicked[res]++;
-    }
-    
-    // Debug printing
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-        printf("[DEBUG] Robot %.2d: fitness %.3lf, prob. %.3lf%%, actual %.3lf%%\n", iRobot, fitnesses[iRobot], fitnesses[iRobot]/totalFitness*100.0, (double)timesPicked[iRobot]/(double)gNbOfRobots*100.0);
     }
     
     // Environment stuff
@@ -214,33 +162,71 @@ void MonoRobotWorldObserver::stepGeneration()
     
     // update genomes (we do it here because Robot::reset() also resets genomes)
     
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    // We're doing several evaluation runs per generation
+    
+    if (__newGeneration)
     {
-        Robot *robot = gWorld->getRobot(iRobot);
-        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-        ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
+        // Create a new generation via selection/mutation
+        
+        // O(1) fitness-proportionate selection
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+        {
+            bool done = false;
+            int pick = -1;
+            while (done == false) {
+                pick = rand()%gNbOfRobots;
+                double draw = ranf()*totalFitness;
+                if (draw <= fitnesses[pick]) // choose this robot
+                    done = true;
+            }
+            newGenomePick[iRobot] = pick;
+        }
+        
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+        {
+            Robot *robot = gWorld->getRobot(iRobot);
+            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+            ctl->loadNewGenome(genomes[newGenomePick[iRobot]], true);
+        }
+    }
+    else // We just need to give each robot their own genome and fitness back
+    {
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+            Robot *robot = gWorld->getRobot(iRobot);
+            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+            ctl->loadNewGenome(genomes[iRobot], false);
+            ctl->increaseFitness(fitnesses[iRobot]);
+        }
     }
     
     // Reset the environment parameters
-    
     resetObjects();
-
 }
 
 void MonoRobotWorldObserver::step()
 {
-    _generationItCount++;
-    
     // switch to next generation.
-    if( _generationItCount == MonoRobotSharedData::gEvaluationTime )
+    if( _evaluationItCount == MonoRobotSharedData::gEvaluationTime - 1 )
     {
-        stepGeneration();
+        if (_evaluationCount == MonoRobotSharedData::gEvaluationsPerGeneration - 1)
+        {
+            monitorPopulation();
+            stepEvaluation(true);
+            _evaluationCount = 0;
+            _generationCount++;
+        }
+        else
+        {
+            stepEvaluation(false);
+            _evaluationCount++;
+        }
         // update iterations and generations counters
-        _generationItCount = 0;
-        _generationCount++;
+        _evaluationItCount = 0;
     }
-    
-    updateMonitoring();
+    else
+    {
+        _evaluationItCount++;
+    }
     
     updateEnvironment();
 }
@@ -253,7 +239,7 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
-    if( _generationItCount == MonoRobotSharedData::gEvaluationTime - 1)
+    if( _evaluationItCount == MonoRobotSharedData::gEvaluationTime - 1)
     {
         monitorPopulation();
     }

@@ -58,6 +58,7 @@ public:
 	static constexpr int gMemorySize = 20;
     
     static int gNumberOfPeriods;
+    static int gEvaluationsPerGeneration;
     
     // Parameters relative to the grid
     static int gBorderSize;
