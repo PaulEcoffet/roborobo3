@@ -24,7 +24,8 @@ protected:
     virtual void monitorPopulation( bool localVerbose = true );
     
     int _generationCount;
-    int _generationItCount;
+    int _evaluationCount;
+    int _evaluationItCount;
 
     std::ofstream _logFile;
     LogManager *_logManager; // Our own little logfile
@@ -36,11 +37,11 @@ public:
     
     virtual void reset();
     virtual void step();
-    void stepGeneration();
+    void stepEvaluation( bool __newGeneration );
     void resetObjects(); // reset which objects are active, etc.
     void resetLandmarks();
     
-    virtual int getGenerationItCount() { return _generationItCount; }
+    virtual int getGenerationItCount() { return _evaluationItCount; }
 
 };
 

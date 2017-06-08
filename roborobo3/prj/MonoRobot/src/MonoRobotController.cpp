@@ -467,11 +467,14 @@ void MonoRobotController::mutateSigmaValue()
     }
 }
 
-void MonoRobotController::loadNewGenome( genome __newGenome )
+void MonoRobotController::loadNewGenome( genome __newGenome, bool __mutate )
 {
     _currentGenome = __newGenome.first;
     _currentSigma = __newGenome.second;
-    performVariation();
+    if (__mutate)
+    {
+        performVariation();
+    }
     updatePhenotype();
 }
 
@@ -524,6 +527,9 @@ void MonoRobotController::updateFitness( double __newFitness )
     _wm->_fitnessValue = __newFitness;
 }
 
+
+// Note : fitnesses can decrease when we make a bad deal!
+// Just ensure they remain positive.
 void MonoRobotController::increaseFitness( double __delta )
 {
     updateFitness(_wm->_fitnessValue+__delta);
