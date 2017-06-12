@@ -539,11 +539,19 @@ void MonoRobotController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d other robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     _isNearObject = true;
     _nearbyObjectId = __objectId;
-    _nbNearbyRobots = __nbRobots;
+    
+    // Experiment-specific stuff
+    MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
+    std::vector<int> objectOrder = wobs->getObjectOrder();
+    std::pair<int, double> objectProperties = wobs->getObjectProperties(objectOrder[__objectId%4]);
+    __nbRobots = objectProperties.first;
+    __totalEffort = __effort + objectProperties.second * __effort;
+    
+//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+
     
     double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;

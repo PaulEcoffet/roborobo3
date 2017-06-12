@@ -12,6 +12,7 @@
 
 #include <cfloat>
 #include <random>
+#include <algorithm>
 
 MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( world )
 {
@@ -82,6 +83,20 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     _generationCount = 0;
     _evaluationCount = 0;
     
+    // * Objects
+    
+    for (int i = 0; i < 4; i++)
+        _objectOrder.push_back(i);
+    
+    _objectProperties[0].first = 1;
+    _objectProperties[0].second = 0.0;
+    _objectProperties[1].first = 2;
+    _objectProperties[1].second = 0.5;
+    _objectProperties[2].first = 2;
+    _objectProperties[2].second = 1.0;
+    _objectProperties[3].first = 3;
+    _objectProperties[3].second = 2.0;
+    
     // * Logfile
     
     std::string logFilename = gLogDirectoryname + "/observer.txt";
@@ -99,19 +114,25 @@ MonoRobotWorldObserver::~MonoRobotWorldObserver()
 
 void MonoRobotWorldObserver::reset()
 {
-    // * Active objects and fake robot
-    
     resetObjects();
 }
 
 void MonoRobotWorldObserver::resetObjects()
 {
+    // Generate a new random permutation
+    std::random_shuffle(_objectOrder.begin(), _objectOrder.end());
+    
     resetLandmarks();
 }
 
 void MonoRobotWorldObserver::resetLandmarks()
 {
-    // put the landmarks in the right position
+    // give landmarks the color that goes with the object
+    for (int iLandmark = 0; iLandmark < gNbOfLandmarks; iLandmark++)
+    {
+        int k = _objectOrder[iLandmark%4];
+        gLandmarks[iLandmark]->setColor(_landmarkColors[k][0], _landmarkColors[k][1], _landmarkColors[k][2]);
+    }
 }
 
 // Reset the environment, and perform an evolution step if it's time
@@ -152,7 +173,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         // super specific stuff here
-        int gridBox = iRobot/2;
+        int gridBox = iRobot;
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
