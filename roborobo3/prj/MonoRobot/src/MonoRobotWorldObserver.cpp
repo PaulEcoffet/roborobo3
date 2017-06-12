@@ -57,6 +57,8 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     
     gProperties.checkAndGetPropertyValue("gSigma",&MonoRobotSharedData::gSigma,false);
     
+    gProperties.checkAndGetPropertyValue("gEvaluationsPerGeneration", &MonoRobotSharedData::gEvaluationsPerGeneration, false);
+    
     gProperties.checkAndGetPropertyValue("gBorderSize", &MonoRobotSharedData::gBorderSize, true);
     gProperties.checkAndGetPropertyValue("gZoneHeight", &MonoRobotSharedData::gZoneHeight, true);
     gProperties.checkAndGetPropertyValue("gZoneWidth", &MonoRobotSharedData::gZoneWidth, true);
@@ -112,7 +114,7 @@ void MonoRobotWorldObserver::resetLandmarks()
     // put the landmarks in the right position
 }
 
-// Reset the environment, and perform an evaluation step if needed
+// Reset the environment, and perform an evolution step if it's time
 void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
 {
     // Save fitness values and genomes before the reset

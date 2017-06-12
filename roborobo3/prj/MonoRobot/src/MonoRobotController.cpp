@@ -286,6 +286,7 @@ void MonoRobotController::performVariation()
 {
     if ( MonoRobotSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
+        printf("[DEBUG] Mutated robot %d\n", _wm->getId());
         switch ( MonoRobotSharedData::gMutationOperator )
         {
             case 0:
@@ -557,4 +558,14 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         _megaEfforts.push_back(__effort);
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
+}
+
+
+void MonoRobotController::dumpGenome()
+{
+    printf("Robot %d it %d: ", _wm->getId(), gWorld->getIterations());
+    printf("%lf,", _currentSigma);
+    for (auto& v: _currentGenome)
+        printf("%lf,", v);
+    printf("\n");
 }
