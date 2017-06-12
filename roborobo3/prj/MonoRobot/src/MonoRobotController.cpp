@@ -286,7 +286,6 @@ void MonoRobotController::performVariation()
 {
     if ( MonoRobotSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
-        printf("[DEBUG] Mutated robot %d\n", _wm->getId());
         switch ( MonoRobotSharedData::gMutationOperator )
         {
             case 0:
@@ -550,14 +549,14 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     __nbRobots = objectProperties.first;
     __totalEffort = __effort + objectProperties.second * __effort;
     
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+//  printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
 
     
     double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+//      printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
         increaseFitness(payoff);
         _activeTime++;
         _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
