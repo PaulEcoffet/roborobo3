@@ -542,13 +542,6 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     _isNearObject = true;
     _nearbyObjectId = __objectId;
     
-    // Experiment-specific stuff
-    MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
-    std::vector<int> objectOrder = wobs->getObjectOrder();
-    std::pair<int, double> objectProperties = wobs->getObjectProperties(objectOrder[__objectId%4]);
-    __nbRobots = objectProperties.first;
-    __totalEffort = __effort + objectProperties.second * __effort;
-    
 //  printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
 
     
