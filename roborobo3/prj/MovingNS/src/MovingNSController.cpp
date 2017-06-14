@@ -62,13 +62,7 @@ MovingNSController::~MovingNSController()
 
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-
-	// If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
-	if (_isNearObject == false)
-		_objectMoves[_iteration%MovingNSSharedData::gMemorySize] = false;
     
-    _movements[_iteration%MovingNSSharedData::gMemorySize] = fabs(_wm->_actualTranslationalValue); // might be negative
-
     _iteration++;
     
     // * step controller
@@ -77,8 +71,10 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 
     // Update state variables
     
-    _isNearObject = false;
 	_nbNearbyRobots = 0;
+    _efforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
+    _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
+
 
 }
 
@@ -90,39 +86,8 @@ void MovingNSController::step() // handles control decision and evolution (but: 
 // ################ ######################## ################
 
 
-std::vector<double> MovingNSController::getInputs(){
-    
-    
-    // WHAT FOLLOWS IS AN EXAMPLE OF LOADING A NN-CONTROLER WITH A FULL-FLEDGE SENSORY INPUT INFORMATION
-    // Rewrite to match your own extended input scheme, if needed.
-    // Note that you may tune it on/off using gExtendedSensoryInputs defined in the properties file.
-    // When modifying this code, dont forget to update the initialization in the reset() method
-    // Example:
-    //      - you may want to distinguish between robot's groups (if more than 1)
-    //      - you may want to restrict the number of objects that can be identified (if not all possible objects are in use)
-    //      - you may want to compress inputs (e.g. binary encoding instead of one-input-per-object-type.
-    //      - (...)
-    //
-    // In the following, sensory inputs for each sensor are ordered (and filled in) as follow:
-    // - N range sensors
-    //      - distance to obstacle (max if nothing)
-    //      IF extendedInputs is True:
-    //          - [0...N_physicalobjecttypes] Is it an object of type i? (0: no, 1: yes) -- type: 0 (round), 1 (energy item), 2 (gate), 3 (switch), ...? (cf. PhysicalObjectFactory)
-    //          - is it a robot? (1 or 0)
-    //          - is it from the same group? (1 or 0)
-    //          - relative orientation wrt. current robot (relative orientation or 0 if not a robot)
-    //          - is it a wall? (ie. a non-distinguishible something) (1 or 0)
-    // - floor sensor, red value
-    // - floor sensor, green value
-    // - floor sensor, blue value
-    // - relative direction to the closest landmark
-    // - distance to the closest landmark
-    // - normalized energy level (if any)
-    //
-    // => number of sensory inputs: N * rangeSensors + 6, with rangeSensors varying from 1 to many, if extended sensory inputs are on.
-    
-
-    
+std::vector<double> MovingNSController::getInputs()
+{
     std::vector<double> inputs;
     
     // distance sensors
@@ -134,60 +99,15 @@ std::vector<double> MovingNSController::getInputs(){
         {
             int objectId = _wm->getObjectIdFromCameraSensor(i);
             
-            // input: physical object? which type?
-            if ( PhysicalObject::isInstanceOf(objectId) )
-            {
-                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-                for ( int i = 0 ; i != nbOfTypes ; i++ )
-                {
-                    if ( i == gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset]->getType() )
-                        inputs.push_back( 1 ); // match
-                    else
-                        inputs.push_back( 0 );
-                }
-            }
-            else
-            {
-                // not a physical object. But: should still fill in the inputs (with zeroes)
-                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-                for ( int i = 0 ; i != nbOfTypes ; i++ )
-                {
-                    inputs.push_back( 0 );
-                }
-            }
-            
-            // input: another agent? If yes: same group?
+            // input: another robot? If yes: same group?
             if ( Agent::isInstanceOf(objectId) )
             {
-                // this is an agent
+                // this is a robot
                 inputs.push_back( 1 );
-                
-                // same group?
-                if ( gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->getGroupId() == _wm->getGroupId() )
-                {
-                    inputs.push_back( 1 ); // match: same group
-                }
-                else
-                {
-                    inputs.push_back( 0 ); // not the same group
-                }
-                
-                // relative orientation? (ie. angle difference wrt. current agent)
-                double srcOrientation = _wm->_agentAbsoluteOrientation;
-                double tgtOrientation = gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->_agentAbsoluteOrientation;
-                double delta_orientation = - ( srcOrientation - tgtOrientation );
-                if ( delta_orientation >= 180.0 )
-                    delta_orientation = - ( 360.0 - delta_orientation );
-                else
-                    if ( delta_orientation <= -180.0 )
-                        delta_orientation = - ( - 360.0 - delta_orientation );
-                inputs.push_back( delta_orientation/180.0 );
             }
             else
             {
-                inputs.push_back( 0 ); // not an agent...
-                inputs.push_back( 0 ); // ...therefore no match wrt. group.
-                inputs.push_back( 0 ); // ...and no orientation.
+                inputs.push_back( 0 ); // not a robot...
             }
             
             // input: wall or empty?
@@ -203,42 +123,22 @@ std::vector<double> MovingNSController::getInputs(){
     inputs.push_back( (double)_wm->getGroundSensor_redValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
-    
-    // landmark (closest landmark)
-    if ( gNbOfLandmarks > 0 )
-    {
-        _wm->updateLandmarkSensor(); // update with closest landmark
-        inputs.push_back( _wm->getLandmarkDirectionAngleValue() );
-        inputs.push_back( _wm->getLandmarkDistanceValue() );
-    }
-    
-    
-    // energy level
-    if ( gEnergyLevel )
-    {
-        inputs.push_back( _wm->getEnergyLevel() / gEnergyMax );
-    }
-    
-	// are we near an object?
-	if ( _isNearObject )
-		inputs.push_back(1);
-	else
-		inputs.push_back(0);
 
 	// how many robots around?
 	inputs.push_back(_nbNearbyRobots);
 
-	int nbMoves = 0;
-	for (auto moved: _objectMoves)
-		if (moved)
-			nbMoves++;
-//	inputs.push_back(nbMoves);
+    // what's the total effort given to the object in the last few turns?
+    double totalEffort = 0;
+    for (auto eff: _totalEfforts)
+        totalEffort += eff;
+    inputs.push_back(totalEffort);
     
-    double totalMovement = 0;
-    for (auto move: _movements)
-        totalMovement += move;
-    inputs.push_back(totalMovement);
-    
+    // how much did we contribute?
+    double effort = 0;
+    for (auto eff: _efforts)
+        effort += eff;
+    inputs.push_back(effort);
+
     return inputs;
 }
 
@@ -399,29 +299,20 @@ void MovingNSController::setIOcontrollerSize()
     
     if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
     {
-        _nbInputs = ( PhysicalObjectFactory::getNbOfTypes()+3+1 ) * _wm->_cameraSensorsNb; // nbOfTypes + ( isItAnAgent? + isItSameGroupId? + agentAngleDifference?) + isItAWall?
+        _nbInputs = ( 1+1 ) * _wm->_cameraSensorsNb; //  ( isItAnAgent?) + isItAWall?
     }
     
     _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
-    if ( gEnergyLevel )
-        _nbInputs += 1; // incl. energy level
-    if ( gNbOfLandmarks > 0 )
-        _nbInputs += 2; // incl. landmark (angle,dist)
     
-	_nbInputs += 1; // near an object?
-	
-	_nbInputs += 1; // how many robots around?
-
-//	_nbInputs += 1; // did the object move recently?
+    _nbInputs += 1; // how many robots around?
     
-    _nbInputs += 1; // how much did we recently move?
-
+    _nbInputs += 1; // what's the total effort given to the object?
+    
+    _nbInputs += 1; // how much did we contribute?
+    
     // wrt outputs
     
     _nbOutputs = 2;
-    
-    if ( MovingNSSharedData::gEnergyRequestOutput )
-        _nbOutputs += 1; // incl. energy request
 }
 
 void MovingNSController::initController()
@@ -450,12 +341,11 @@ void MovingNSController::initController()
     updatePhenotype();
 
 	// state variables
-	_isNearObject = false;
 	_nbNearbyRobots = 0;
-    for (auto& moved: _objectMoves)
-		moved = false;
-    for (auto& move: _movements)
-        move = 0;
+    for (auto& eff: _efforts)
+        eff = 0;
+    for (auto& totEff: _totalEfforts)
+        totEff = 0;
 }
 
 void MovingNSController::reset()
@@ -467,11 +357,11 @@ void MovingNSController::reset()
 
 void MovingNSController::mutateSigmaValue()
 {
-    float dice = float(rand()%100) / 100.0;
+    float dice = ranf();
     
     if ( dice <= MovingNSSharedData::gProbaMutation )
     {
-        dice = float(rand() %100) / 100.0;
+        dice = ranf();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + MovingNSSharedData::gUpdateSigmaStep ); // increase sigma
@@ -556,14 +446,19 @@ void MovingNSController::increaseFitness( double __delta )
 }
 
 // called only once per step (experimentally verified)
-void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots )
+void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near object %d, which moved (%s) by %lf, and contributed %lf, with %d other robots around\n",
-//           _wm->getId(), __objectId, __objectDidMove?"yes":"no", __objectMove, __effort, __nbRobots);
-    _isNearObject = true;
-	_nbNearbyRobots = __nbRobots;
-    double gain = __objectMove;
-    if (__objectDidMove)
-        increaseFitness(gain);
-	_objectMoves[_iteration%MovingNSSharedData::gMemorySize] = __objectDidMove;
+//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+    
+    
+    double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+    double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
+    
+    if (__objectDidMove || gStuckMovableObjects) {
+//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+        increaseFitness(payoff);
+        _efforts[_iteration%MovingNSSharedData::gMemorySize] = __effort;
+        _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = __totalEffort;
+    }
+
 }
