@@ -71,8 +71,8 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     // * iteration and generation counters
     
-    _generationItCount = -1;
-    _generationCount = -1;
+    _generationItCount = 0;
+    _generationCount = 0;
     
     // * Logfile
     
@@ -94,84 +94,87 @@ void MovingNSWorldObserver::reset()
     
 }
 
+// Reset the environment, and perform an evolution step
+void MovingNSWorldObserver::stepEvaluation()
+{
+    // Save fitness values and genomes before the reset
+    double totalFitness = 0;
+    std::vector<double> fitnesses(gNbOfRobots);
+    std::vector<genome> genomes(gNbOfRobots);
+    std::vector<int> newGenomePick(gNbOfRobots);
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        Robot *robot = gWorld->getRobot(iRobot);
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+        fitnesses[iRobot] = ctl->getFitness();
+        totalFitness += ctl->getFitness();
+        genomes[iRobot] = ctl->getGenome();
+    }
+    
+    // Environment stuff
+    // unregister everyone
+    for (auto object: gPhysicalObjects) {
+        object->unregisterObject();
+    }
+    
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+        Robot *robot = gWorld->getRobot(iRobot);
+        robot->unregisterRobot();
+    }
+    // register objects first because they might have fixed locations, whereas robots move anyway
+    for (auto object: gPhysicalObjects)
+    {
+        object->resetLocation();
+        object->registerObject();
+    }
+    
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+        Robot *robot = gWorld->getRobot(iRobot);
+        robot->reset();
+    }
+    
+    
+    // update genomes (we do it here because Robot::reset() also resets genomes)
+    // Create a new generation via selection/mutation
+    
+    // O(1) fitness-proportionate selection
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        bool done = false;
+        int pick = -1;
+        while (done == false) {
+            pick = rand()%gNbOfRobots;
+            double draw = ranf()*totalFitness;
+            if (draw <= fitnesses[pick]) // choose this robot
+                done = true;
+        }
+        newGenomePick[iRobot] = pick;
+    }
+    
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        Robot *robot = gWorld->getRobot(iRobot);
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+        ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
+    }
+}
+
 void MovingNSWorldObserver::step()
 {
-    _generationItCount++;
- 
     // switch to next generation.
-    if( _generationItCount == MovingNSSharedData::gEvaluationTime )
+    if( _generationItCount == MovingNSSharedData::gEvaluationTime - 1 )
     {
-        // Perform an evolution step on robots (give them new genomes and mutate them), and
-        // reset their positions and the objects
-        
-        // Evolution stuff
-        
-        double totalFitness = 0;
-        std::vector<double> fitnesses(gNbOfRobots);
-        std::vector<genome> genomes(gNbOfRobots);
-		std::vector<int> newGenomePick(gNbOfRobots);
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-        {
-            Robot *robot = gWorld->getRobot(iRobot);
-            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-            fitnesses[iRobot] = ctl->getFitness();
-            totalFitness += ctl->getFitness();
-            genomes[iRobot] = ctl->getGenome();
-        }
-			
-        // O(1) fitness-proportionate selection
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-        {
-            bool done = false;
-            int pick = -1;
-            while (done == false) {
-                pick = rand()%gNbOfRobots;
-                double draw = ranf()*totalFitness;
-                if (draw <= fitnesses[pick]) // choose this robot
-                    done = true;
-            }
-            newGenomePick[iRobot] = pick;
-        }
-        
-        // Environment stuff
-        
-        for (auto object: gPhysicalObjects) {
-            object->unregisterObject();
-        }
-        
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->unregisterRobot();
-        }
-        
-        for (auto object: gPhysicalObjects)
-        {
-            object->resetLocation();
-            object->registerObject();
-        }
-
-        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-            Robot *robot = gWorld->getRobot(iRobot);
-            robot->reset();
-            robot->registerRobot();
-        }
-        
-		// update genomes (we do it here because Robot::reset() also resets genomes)
-		
-		for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-		{
-            Robot *robot = gWorld->getRobot(iRobot);
-            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-			ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
-		}
-        
-        // update iterations and generations counters
-        _generationItCount = 0;
+        monitorPopulation();
+        stepEvaluation();
         _generationCount++;
+        _generationItCount = 0;
+    }
+    else
+    {
+        _generationItCount++;
     }
     
     updateMonitoring();
-    
     updateEnvironment();
 }
 
@@ -183,34 +186,11 @@ void MovingNSWorldObserver::updateEnvironment()
 
 void MovingNSWorldObserver::updateMonitoring()
 {
-    // * Log at end of each generation
-
-    //if( gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == 1 || gWorld->getIterations() % MovingNSSharedData::gEvaluationTime == MovingNSSharedData::gEvaluationTime-1 ) // beginning(+1) *and* end of generation. ("==1" is required to monitor the outcome of the first iteration)
-    // log at end of generation.
-    if( _generationItCount == MovingNSSharedData::gEvaluationTime - 1)
+    if ( (_generationCount+1) % MovingNSSharedData::gGenerationVideo == 0)
     {
-        monitorPopulation();
+        std::string name = "gen_" + std::to_string(_generationCount);
+        saveCustomScreenshot(name);
     }
-    
-    // * Every N generations, take a video (duration: one generation time)
-    
-    if ( MovingNSSharedData::gSnapshots )
-    {
-        if ( ( gWorld->getIterations() ) % ( MovingNSSharedData::gEvaluationTime * MovingNSSharedData::gSnapshotsFrequency ) == 0 )
-        {
-            if ( gVerbose )
-                std::cout << "[START] Video recording: generation #" << (gWorld->getIterations() / MovingNSSharedData::gEvaluationTime ) << ".\n";
-            gTrajectoryMonitorMode = 0;
-            initTrajectoriesMonitor();
-        }
-        else
-            if ( ( gWorld->getIterations() ) % ( MovingNSSharedData::gEvaluationTime * MovingNSSharedData::gSnapshotsFrequency ) == MovingNSSharedData::gEvaluationTime - 1 )
-            {
-                if ( gVerbose )
-                    std::cout << "[STOP]  Video recording: generation #" << (gWorld->getIterations() / MovingNSSharedData::gEvaluationTime ) << ".\n";
-                saveTrajectoryImage();
-            }
-	}
 }
 
 void MovingNSWorldObserver::monitorPopulation( bool localVerbose )

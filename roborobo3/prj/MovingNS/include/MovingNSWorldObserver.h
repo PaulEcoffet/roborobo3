@@ -35,6 +35,7 @@ public:
     
     virtual void reset();
     virtual void step();
+    void stepEvaluation();
     
     virtual int getGenerationItCount() { return _generationItCount; }
 

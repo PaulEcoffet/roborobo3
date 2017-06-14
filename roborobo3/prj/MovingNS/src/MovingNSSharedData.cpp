@@ -53,3 +53,5 @@ constexpr int MovingNSSharedData::gMemorySize;
 double MovingNSSharedData::gConstantK = 0;
 double MovingNSSharedData::gConstantA = 0;
 
+int MovingNSSharedData::gGenerationVideo = 5000;
+
