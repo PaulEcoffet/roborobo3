@@ -109,9 +109,10 @@ void MovingObject::step()
     }
     
     // sum of the norms of the impulses given to the object
+    /* In this experiment, we say that each robot that helped gave us a 1 */
     double totalEffort = 0;
     for (auto eff: _efforts)
-        totalEffort += eff.second;
+        totalEffort += 1.0;
 
     for (auto robotID: _nearbyRobots)
     {
@@ -121,7 +122,7 @@ void MovingObject::step()
         double effort = 0;
         if (_efforts.count(robotID+gRobotIndexStartOffset) > 0)
         {
-            effort = _efforts.find(robotID+gRobotIndexStartOffset)->second;
+            effort = 1.0;
         }
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());

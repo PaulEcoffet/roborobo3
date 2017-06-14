@@ -387,8 +387,8 @@
 		3705F0891BC67B7C001A016D /* config */ = {
 			isa = PBXGroup;
 			children = (
-				E63F18601EAF4717007D2C3A /* monoRobot.properties */,
 				E620379F1E8945BA004B5859 /* movingNS.properties */,
+				E63F18601EAF4717007D2C3A /* monoRobot.properties */,
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
 				37753A981ECB295C0039BF21 /* movingobjects.properties */,
 				37A569C11E38AB2100B983FF /* template_vanillaEE.properties */,
@@ -737,8 +737,8 @@
 			isa = PBXGroup;
 			children = (
 				37BA26D61BC3D014002DF5DC /* readme.txt */,
-				E63F184E1EAF4693007D2C3A /* MonoRobot */,
 				E62037A01E8945C4004B5859 /* MovingNS */,
+				E63F184E1EAF4693007D2C3A /* MonoRobot */,
 				E6F09B331E84081400EF24BD /* MovingEE */,
 				E64820C41E799BBD005D95AC /* TemplateMoving */,
 				3766DF671E29125D0069E44C /* TemplateVanillaEE */,
