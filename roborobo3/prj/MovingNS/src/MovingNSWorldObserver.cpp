@@ -57,6 +57,10 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     gProperties.checkAndGetPropertyValue("gSigma",&MovingNSSharedData::gSigma,false);
     
+    gProperties.checkAndGetPropertyValue("gConstantA", &MovingNSSharedData::gConstantA, true);
+    gProperties.checkAndGetPropertyValue("gConstantK", &MovingNSSharedData::gConstantK, true);
+
+    
     // ====
     
     if ( !gRadioNetwork)
@@ -139,18 +143,19 @@ void MovingNSWorldObserver::step()
             Robot *robot = gWorld->getRobot(iRobot);
             robot->unregisterRobot();
         }
+        
+        for (auto object: gPhysicalObjects)
+        {
+            object->resetLocation();
+            object->registerObject();
+        }
+
         for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
             Robot *robot = gWorld->getRobot(iRobot);
             robot->reset();
             robot->registerRobot();
         }
         
-        for (auto object: gPhysicalObjects)
-        {
-            object->findRandomLocation();
-            object->registerObject();
-        }
-
 		// update genomes (we do it here because Robot::reset() also resets genomes)
 		
 		for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
@@ -213,20 +218,22 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     // * monitoring: count number of active agents.
     
     std::vector<double> fitnesses(gNbOfRobots);
+    std::vector<int> index(gNbOfRobots);
     
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(iRobot)->getController());
         fitnesses[iRobot] = ctl->getFitness();
+        index[iRobot] = iRobot;
     }
     
-    std::sort(fitnesses.begin(), fitnesses.end());
+    std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
     
-    double minFit = fitnesses[0];
-    double maxFit = fitnesses[gNbOfRobots-1];
-    double medFit = fitnesses[gNbOfRobots/2];
-    double lowQuartFit = fitnesses[gNbOfRobots/4];
-    double highQuartFit = fitnesses[3*gNbOfRobots/4];
+    double minFit = fitnesses[index[0]];
+    double maxFit = fitnesses[index[gNbOfRobots-1]];
+    double medFit = fitnesses[index[gNbOfRobots/2]];
+    double lowQuartFit = fitnesses[index[gNbOfRobots/4]];
+    double highQuartFit = fitnesses[index[3*gNbOfRobots/4]];
     double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)gNbOfRobots;
     double stddevFit = -1;
     for (auto& fitness: fitnesses)
@@ -251,10 +258,9 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
-        
-    // Logging, population-level: alive
-//    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(gNbOfRobots) + "\n";
-//    gLogManager->write(sLog);
-//    gLogManager->flush();
     
+    // Logging, population-level: alive
+    //    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(gNbOfRobots) + "\n";
+    //    gLogManager->write(sLog);
+    //    gLogManager->flush();
 }

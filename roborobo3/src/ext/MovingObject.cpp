@@ -124,7 +124,7 @@ void MovingObject::step()
             effort = _efforts.find(robotID+gRobotIndexStartOffset)->second;
         }
         // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
-        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
         ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
     }
     _nearbyRobots.clear();

@@ -73,11 +73,10 @@ protected:
     
     // other neural network inputs
     
-    bool _isNearObject; // are we near an object
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
-	bool _objectMoves[MovingNSSharedData::gMemorySize]; // the number of times the object we're near moved recently
-    
-    double _movements[MovingNSSharedData::gMemorySize]; // our total movement recently (see if we're blocked)
+    double _efforts[MovingNSSharedData::gMemorySize]; // how much we tried pushing
+    double _totalEfforts[MovingNSSharedData::gMemorySize]; // how much everybody tried pushing
+
     
     // ANN
     double _minValue;
@@ -121,7 +120,7 @@ public:
     
     void increaseFitness( double __delta );
     
-    void wasNearObject( int __objectId, bool __objectDidMove, double __objectMove, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
+    void wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
     
 };
 
