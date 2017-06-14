@@ -57,6 +57,9 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     gProperties.checkAndGetPropertyValue("gSigma",&MovingNSSharedData::gSigma,false);
     
+    
+    gProperties.checkAndGetPropertyValue("gGenerationVideo", &MovingNSSharedData::gGenerationVideo, false);
+    
     gProperties.checkAndGetPropertyValue("gConstantA", &MovingNSSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &MovingNSSharedData::gConstantK, true);
 
