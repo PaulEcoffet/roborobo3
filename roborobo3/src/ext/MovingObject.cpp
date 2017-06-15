@@ -6,7 +6,9 @@
 
 #include "../prj/MovingNS/include/MovingNSController.h"
 #include "../prj/MonoRobot/include/MonoRobotController.h"
+#include "../prj/SingleGenome/include/SingleGenomeController.h"
 #include "../prj/TemplateMoving/include/TemplateMovingController.h"
+
 
 
 #include <iomanip>
@@ -124,9 +126,23 @@ void MovingObject::step()
         {
             effort = 0.5;
         }
-        // See ConfigurationLoader.cpp for a way to dynamically adjust to which project we're running
-        MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-        ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+        std::string projectName = gProperties.getProperty("ConfigurationLoaderObjectName");
+        
+        if (projectName == "MovingNSConfigurationLoader")
+        {
+            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+        }
+        else if (projectName == "MonoRobotConfigurationLoader")
+        {
+            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+        }
+        else if (projectName == "SingleGenomeConfigurationLoader")
+        {
+            SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+        }
     }
     _nearbyRobots.clear();
     _efforts.clear();
