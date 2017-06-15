@@ -9,6 +9,7 @@
 #include "Config/MovingEEConfigurationLoader.h"
 #include "Config/MovingNSConfigurationLoader.h"
 #include "Config/MonoRobotConfigurationLoader.h"
+#include "Config/SingleGenomeConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -86,6 +87,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "MonoRobotConfigurationLoader" )
 	{
 		return new MonoRobotConfigurationLoader();
+	}
+#endif
+#if defined PRJ_SINGLEGENOME || !defined MODULAR
+	else if (configurationLoaderObjectName == "SingleGenomeConfigurationLoader" )
+	{
+		return new SingleGenomeConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
