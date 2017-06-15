@@ -36,7 +36,10 @@ prefix = "./logs/"
 for i in range(nbrep):
 	print "[INFO] Starting replicate #",i
 	
-	dirname = prefix + suffix + "_" + str(i).zfill(len(str(nbrep)))
+        if nbrep > 1:
+	    dirname = prefix + suffix + "_" + str(i).zfill(len(str(nbrep)))
+        else:
+            dirname = prefix + suffix
 	
 	createdir(dirname)
 	
