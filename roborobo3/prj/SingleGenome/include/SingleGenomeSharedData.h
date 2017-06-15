@@ -8,6 +8,8 @@
 #ifndef SINGLEGENOMESHAREDDATA_H
 #define SINGLEGENOMESHAREDDATA_H
 
+#include <string>
+
 class SingleGenomeSharedData {
     
 public:
@@ -63,6 +65,8 @@ public:
     
     static double gConstantK;
     static double gConstantA;
+    
+    static std::string gGenomeFilename;
 
         
     // -----

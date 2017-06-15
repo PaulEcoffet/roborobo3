@@ -55,3 +55,5 @@ double SingleGenomeSharedData::gConstantA = 0;
 
 int SingleGenomeSharedData::gGenerationVideo = 5000;
 
+std::string SingleGenomeSharedData::gGenomeFilename = "";
+
