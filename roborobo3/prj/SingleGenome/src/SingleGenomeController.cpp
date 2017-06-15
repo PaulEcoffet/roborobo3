@@ -324,18 +324,38 @@ void SingleGenomeController::initController()
     
     createNN();
 
-    unsigned int const nbGene = computeRequiredNumberOfWeights();
+    unsigned int const nbGenes = computeRequiredNumberOfWeights();
     
     if ( gVerbose )
         std::cout << std::flush ;
     
     _currentGenome.clear();
     
-    // Intialize genome
+    // Read the genome from a file
     
-    for ( unsigned int i = 0 ; i != nbGene ; i++ )
-    {
-        _currentGenome.push_back((double)(rand()%SingleGenomeSharedData::gNeuronWeightRange)/(SingleGenomeSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
+    std::ifstream genomeFile("config/"+SingleGenomeSharedData::gGenomeFilename);
+    if (genomeFile.fail()) {
+        printf("[CRITICAL] Could not read genome file. Exiting.\n");
+        exit(-1);
+    } else {
+        genomeFile >> _currentSigma;
+        int nbGenesFiles;
+        genomeFile >> nbGenesFiles;
+        if (nbGenes != nbGenesFiles) {
+            printf("[CRITICAL] Number of genes in the file doesn't match expected. Exiting\n");
+            exit(-1);
+        }
+        for (int i = 0; i < nbGenes; i++) {
+            double v;
+            genomeFile >> v;
+            _currentGenome.push_back(v);
+        }
+    }
+    if (_wm->getId() == 0) {
+        printf("[DEBUG] Sigma: %lf, genome: ", _currentSigma);
+        for (auto v: _currentGenome)
+            printf("%lf ", v);
+        printf("\n");
     }
     
     updatePhenotype();

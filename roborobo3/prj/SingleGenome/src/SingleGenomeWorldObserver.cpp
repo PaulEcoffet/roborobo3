@@ -62,6 +62,8 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
+    
+    gProperties.checkAndGetPropertyValue("gGenomeFilename", &SingleGenomeSharedData::gGenomeFilename, true);
 
     
     // ====
