@@ -77,19 +77,26 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     _generationItCount = 0;
     _generationCount = 0;
     
-    // * Logfile
+    // * Logfiles
     
-    std::string logFilename = gLogDirectoryname + "/observer.txt";
-    _logFile.open(logFilename.c_str());
-    _logManager = new LogManager();
-    _logManager->setLogFile(_logFile);
-    _logManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
-    _logManager->flush();
+    std::string statsLogFilename = gLogDirectoryname + "/observer.txt";
+    _statsLogFile.open(statsLogFilename);
+    _statsLogManager = new LogManager();
+    _statsLogManager->setLogFile(_statsLogFile);
+    _statsLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
+    _statsLogManager->flush();
+    
+    std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
+    _genomeLogFile.open(genomeLogFilename);
+    _genomeLogManager = new LogManager();
+    _genomeLogManager->setLogFile(_genomeLogFile);
+    
 }
 
 MovingNSWorldObserver::~MovingNSWorldObserver()
 {
-    _logFile.close();
+    _statsLogFile.close();
+    _genomeLogFile.close();
 }
 
 void MovingNSWorldObserver::reset()
@@ -236,14 +243,23 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     genLog << highQuartFit << "\t";
     genLog << stddevFit << "\n";
     
-    _logManager->write(genLog.str());
-    _logManager->flush();
+    _statsLogManager->write(genLog.str());
+    _statsLogManager->flush();
+    
+    // log the best genome of each generation
+    MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
+    genome best = ctl->getGenome();
+    std::stringstream bestGenome;
+    bestGenome << _generationCount << " ";
+    bestGenome << best.second << " "; // sigma
+    bestGenome << best.first.size() << " "; // number of genes (NN connections)
+    for (int i = 0; i < best.first.size(); i++)
+        bestGenome << best.first[i] << " ";
+    bestGenome << "\n";
+    _genomeLogManager->write(bestGenome.str());
+    _genomeLogManager->flush();
     
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
     
-    // Logging, population-level: alive
-    //    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(gNbOfRobots) + "\n";
-    //    gLogManager->write(sLog);
-    //    gLogManager->flush();
 }
