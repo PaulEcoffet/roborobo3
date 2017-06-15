@@ -26,8 +26,10 @@ protected:
     int _generationCount;
     int _generationItCount;
     
-    std::ofstream _logFile;
-    LogManager *_logManager; // Our own little logfile
+    std::ofstream _statsLogFile;
+    std::ofstream _genomeLogFile;
+    LogManager *_statsLogManager;
+    LogManager *_genomeLogManager;
     
 public:
     MovingNSWorldObserver(World *world);
