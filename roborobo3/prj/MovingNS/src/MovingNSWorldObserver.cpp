@@ -58,7 +58,7 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     gProperties.checkAndGetPropertyValue("gSigma",&MovingNSSharedData::gSigma,false);
     
     
-    gProperties.checkAndGetPropertyValue("gGenerationVideo", &MovingNSSharedData::gGenerationVideo, false);
+    gProperties.checkAndGetPropertyValue("gGenerationLog", &MovingNSSharedData::gGenerationLog, false);
     
     gProperties.checkAndGetPropertyValue("gConstantA", &MovingNSSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &MovingNSSharedData::gConstantK, true);
@@ -196,7 +196,7 @@ void MovingNSWorldObserver::updateEnvironment()
 
 void MovingNSWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % MovingNSSharedData::gGenerationVideo == 0)
+    if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
         saveCustomScreenshot(name);
@@ -246,18 +246,21 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     _statsLogManager->write(genLog.str());
     _statsLogManager->flush();
     
-    // log the best genome of each generation
-    MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-    genome best = ctl->getGenome();
-    std::stringstream bestGenome;
-    bestGenome << _generationCount << " ";
-    bestGenome << best.second << " "; // sigma
-    bestGenome << best.first.size() << " "; // number of genes (NN connections)
-    for (int i = 0; i < best.first.size(); i++)
-        bestGenome << best.first[i] << " ";
-    bestGenome << "\n";
-    _genomeLogManager->write(bestGenome.str());
-    _genomeLogManager->flush();
+    // log the best genome of each detailed generation
+    if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
+    {
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
+        genome best = ctl->getGenome();
+        std::stringstream bestGenome;
+        bestGenome << _generationCount << " ";
+        bestGenome << best.second << " "; // sigma
+        bestGenome << best.first.size() << " "; // number of genes (NN connections)
+        for (int i = 0; i < best.first.size(); i++)
+            bestGenome << best.first[i] << " ";
+        bestGenome << "\n";
+        _genomeLogManager->write(bestGenome.str());
+        _genomeLogManager->flush();
+    }
     
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
