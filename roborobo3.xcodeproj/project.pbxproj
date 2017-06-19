@@ -95,6 +95,11 @@
 		E6F09B421E84087100EF24BD /* MovingEESharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B3E1E84087100EF24BD /* MovingEESharedData.cpp */; };
 		E6F09B431E84087100EF24BD /* MovingEEWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B3F1E84087100EF24BD /* MovingEEWorldObserver.cpp */; };
 		E6F09B461E84089200EF24BD /* MovingEEConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F09B451E84089200EF24BD /* MovingEEConfigurationLoader.cpp */; };
+		E6F859E61EF2B9D800CAC3E1 /* SingleGenomeAgentObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F859E21EF2B9D800CAC3E1 /* SingleGenomeAgentObserver.cpp */; };
+		E6F859E71EF2B9D800CAC3E1 /* SingleGenomeController.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F859E31EF2B9D800CAC3E1 /* SingleGenomeController.cpp */; };
+		E6F859E81EF2B9D800CAC3E1 /* SingleGenomeSharedData.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F859E41EF2B9D800CAC3E1 /* SingleGenomeSharedData.cpp */; };
+		E6F859E91EF2B9D800CAC3E1 /* SingleGenomeWorldObserver.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F859E51EF2B9D800CAC3E1 /* SingleGenomeWorldObserver.cpp */; };
+		E6F859ED1EF2BA1900CAC3E1 /* SingleGenomeConfigurationLoader.cpp in Sources */ = {isa = PBXBuildFile; fileRef = E6F859EC1EF2BA1900CAC3E1 /* SingleGenomeConfigurationLoader.cpp */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -307,6 +312,17 @@
 		E6F09B441E84088000EF24BD /* MovingEEConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MovingEEConfigurationLoader.h; sourceTree = "<group>"; };
 		E6F09B451E84089200EF24BD /* MovingEEConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = MovingEEConfigurationLoader.cpp; sourceTree = "<group>"; };
 		E6F09B471E8408BE00EF24BD /* movingEE.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = movingEE.properties; sourceTree = "<group>"; };
+		E6F859DE1EF2B9CD00CAC3E1 /* SingleGenomeAgentObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleGenomeAgentObserver.h; path = SingleGenome/include/SingleGenomeAgentObserver.h; sourceTree = "<group>"; };
+		E6F859DF1EF2B9CD00CAC3E1 /* SingleGenomeController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleGenomeController.h; path = SingleGenome/include/SingleGenomeController.h; sourceTree = "<group>"; };
+		E6F859E01EF2B9CD00CAC3E1 /* SingleGenomeSharedData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleGenomeSharedData.h; path = SingleGenome/include/SingleGenomeSharedData.h; sourceTree = "<group>"; };
+		E6F859E11EF2B9CD00CAC3E1 /* SingleGenomeWorldObserver.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = SingleGenomeWorldObserver.h; path = SingleGenome/include/SingleGenomeWorldObserver.h; sourceTree = "<group>"; };
+		E6F859E21EF2B9D800CAC3E1 /* SingleGenomeAgentObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleGenomeAgentObserver.cpp; path = SingleGenome/src/SingleGenomeAgentObserver.cpp; sourceTree = "<group>"; };
+		E6F859E31EF2B9D800CAC3E1 /* SingleGenomeController.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleGenomeController.cpp; path = SingleGenome/src/SingleGenomeController.cpp; sourceTree = "<group>"; };
+		E6F859E41EF2B9D800CAC3E1 /* SingleGenomeSharedData.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleGenomeSharedData.cpp; path = SingleGenome/src/SingleGenomeSharedData.cpp; sourceTree = "<group>"; };
+		E6F859E51EF2B9D800CAC3E1 /* SingleGenomeWorldObserver.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = SingleGenomeWorldObserver.cpp; path = SingleGenome/src/SingleGenomeWorldObserver.cpp; sourceTree = "<group>"; };
+		E6F859EA1EF2B9E600CAC3E1 /* SingleGenomeConfigurationLoader.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SingleGenomeConfigurationLoader.h; sourceTree = "<group>"; };
+		E6F859EB1EF2B9FB00CAC3E1 /* singleGenome.properties */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = singleGenome.properties; sourceTree = "<group>"; };
+		E6F859EC1EF2BA1900CAC3E1 /* SingleGenomeConfigurationLoader.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SingleGenomeConfigurationLoader.cpp; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -387,6 +403,7 @@
 		3705F0891BC67B7C001A016D /* config */ = {
 			isa = PBXGroup;
 			children = (
+				E6F859EB1EF2B9FB00CAC3E1 /* singleGenome.properties */,
 				E620379F1E8945BA004B5859 /* movingNS.properties */,
 				E63F18601EAF4717007D2C3A /* monoRobot.properties */,
 				3705F08A1BC67B7C001A016D /* benchmark.properties */,
@@ -703,6 +720,7 @@
 		37BA26591BC3D014002DF5DC /* Config */ = {
 			isa = PBXGroup;
 			children = (
+				E6F859EA1EF2B9E600CAC3E1 /* SingleGenomeConfigurationLoader.h */,
 				E63F185F1EAF46EF007D2C3A /* MonoRobotConfigurationLoader.h */,
 				E6F09B441E84088000EF24BD /* MovingEEConfigurationLoader.h */,
 				3766DF761E2914160069E44C /* TemplateEEConfigurationLoader.h */,
@@ -737,6 +755,7 @@
 			isa = PBXGroup;
 			children = (
 				37BA26D61BC3D014002DF5DC /* readme.txt */,
+				E6F859DB1EF2B9AD00CAC3E1 /* SingleGenome */,
 				E62037A01E8945C4004B5859 /* MovingNS */,
 				E63F184E1EAF4693007D2C3A /* MonoRobot */,
 				E6F09B331E84081400EF24BD /* MovingEE */,
@@ -826,6 +845,7 @@
 		37BA26FB1BC3D014002DF5DC /* ext */ = {
 			isa = PBXGroup;
 			children = (
+				E6F859EC1EF2BA1900CAC3E1 /* SingleGenomeConfigurationLoader.cpp */,
 				37BA26FE1BC3D014002DF5DC /* ConfigurationLoader.cpp */,
 				37BA27001BC3D014002DF5DC /* EnergyItem.cpp */,
 				37BA27011BC3D014002DF5DC /* GateObject.cpp */,
@@ -971,6 +991,37 @@
 			name = include;
 			sourceTree = "<group>";
 		};
+		E6F859DB1EF2B9AD00CAC3E1 /* SingleGenome */ = {
+			isa = PBXGroup;
+			children = (
+				E6F859DD1EF2B9C000CAC3E1 /* include */,
+				E6F859DC1EF2B9BC00CAC3E1 /* src */,
+			);
+			name = SingleGenome;
+			sourceTree = "<group>";
+		};
+		E6F859DC1EF2B9BC00CAC3E1 /* src */ = {
+			isa = PBXGroup;
+			children = (
+				E6F859E21EF2B9D800CAC3E1 /* SingleGenomeAgentObserver.cpp */,
+				E6F859E31EF2B9D800CAC3E1 /* SingleGenomeController.cpp */,
+				E6F859E41EF2B9D800CAC3E1 /* SingleGenomeSharedData.cpp */,
+				E6F859E51EF2B9D800CAC3E1 /* SingleGenomeWorldObserver.cpp */,
+			);
+			name = src;
+			sourceTree = "<group>";
+		};
+		E6F859DD1EF2B9C000CAC3E1 /* include */ = {
+			isa = PBXGroup;
+			children = (
+				E6F859DE1EF2B9CD00CAC3E1 /* SingleGenomeAgentObserver.h */,
+				E6F859DF1EF2B9CD00CAC3E1 /* SingleGenomeController.h */,
+				E6F859E01EF2B9CD00CAC3E1 /* SingleGenomeSharedData.h */,
+				E6F859E11EF2B9CD00CAC3E1 /* SingleGenomeWorldObserver.h */,
+			);
+			name = include;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -1031,6 +1082,7 @@
 				376C24541E28BB8800E70850 /* TemplateEEAgentObserver.cpp in Sources */,
 				37BA274A1BC3D014002DF5DC /* Timer.cpp in Sources */,
 				E63F185C1EAF46C2007D2C3A /* MonoRobotWorldObserver.cpp in Sources */,
+				E6F859E71EF2B9D800CAC3E1 /* SingleGenomeController.cpp in Sources */,
 				37753A961ECB27EB0039BF21 /* MovableObject.cpp in Sources */,
 				3705F05C1BC66E21001A016D /* TemplateBoidsConfigurationLoader.cpp in Sources */,
 				E62037A81E8945E6004B5859 /* MovingNSController.cpp in Sources */,
@@ -1070,6 +1122,7 @@
 				37BA273E1BC3D014002DF5DC /* Geometry.cpp in Sources */,
 				3705F07F1BC66E3B001A016D /* TemplateBoidsController.cpp in Sources */,
 				E63F185B1EAF46C2007D2C3A /* MonoRobotSharedData.cpp in Sources */,
+				E6F859E81EF2B9D800CAC3E1 /* SingleGenomeSharedData.cpp in Sources */,
 				37BA27561BC3D014002DF5DC /* PhysicalObjectFactory.cpp in Sources */,
 				E6F09B411E84087100EF24BD /* MovingEEController.cpp in Sources */,
 				37BA27411BC3D014002DF5DC /* LogManager.cpp in Sources */,
@@ -1080,6 +1133,7 @@
 				3705F0871BC66E3B001A016D /* TemplateWanderController.cpp in Sources */,
 				37BA27401BC3D014002DF5DC /* InspectorAgent.cpp in Sources */,
 				37BA274C1BC3D014002DF5DC /* WorldModel.cpp in Sources */,
+				E6F859E61EF2B9D800CAC3E1 /* SingleGenomeAgentObserver.cpp in Sources */,
 				3705F0801BC66E3B001A016D /* TemplateBoidsSharedData.cpp in Sources */,
 				37BA27441BC3D014002DF5DC /* Observer.cpp in Sources */,
 				3705F05E1BC66E21001A016D /* TemplateWanderConfigurationLoader.cpp in Sources */,
@@ -1087,6 +1141,7 @@
 				376C24661E28BBA800E70850 /* TemplateMedeaWorldObserver.cpp in Sources */,
 				E6F09B431E84087100EF24BD /* MovingEEWorldObserver.cpp in Sources */,
 				3766DF731E29125D0069E44C /* TemplateVanillaEEController.cpp in Sources */,
+				E6F859E91EF2B9D800CAC3E1 /* SingleGenomeWorldObserver.cpp in Sources */,
 				37BA27351BC3D014002DF5DC /* ReservoirNeuralNetwork.cpp in Sources */,
 				E64820C21E799A7A005D95AC /* TemplateMovingConfigurationLoader.cpp in Sources */,
 				E64820CB1E799BCF005D95AC /* TemplateMovingAgentObserver.cpp in Sources */,
@@ -1107,6 +1162,7 @@
 				37BA272F1BC3D014002DF5DC /* Elman.cpp in Sources */,
 				37BA27481BC3D014002DF5DC /* RobotWorldModel.cpp in Sources */,
 				37BA27421BC3D014002DF5DC /* main.cpp in Sources */,
+				E6F859ED1EF2BA1900CAC3E1 /* SingleGenomeConfigurationLoader.cpp in Sources */,
 				376C24631E28BBA800E70850 /* TemplateMedeaAgentObserver.cpp in Sources */,
 				37BA27451BC3D014002DF5DC /* PhysicalObject.cpp in Sources */,
 				37BA273F1BC3D014002DF5DC /* Graphics.cpp in Sources */,
