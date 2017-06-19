@@ -132,19 +132,21 @@ void PhysicalObject::init()
     setCoordinates( x, y );
 }
 
-int PhysicalObject::findRandomLocation( )
+int PhysicalObject::findRandomLocation()
+{
+    return findRandomLocation(gPhysicalObjectsInitAreaX, gPhysicalObjectsInitAreaWidth+gPhysicalObjectsInitAreaX, gPhysicalObjectsInitAreaY, gPhysicalObjectsInitAreaHeight+gPhysicalObjectsInitAreaY);
+}
+
+int PhysicalObject::findRandomLocation( int __xMin, int __xMax, int __yMin, int __yMax)
 {
     double x = 0.0, y = 0.0;
     
     int tries = 0;
     
     do {
-        x = ( rand() % ( gPhysicalObjectsInitAreaWidth  ) ) + gPhysicalObjectsInitAreaX;
-        y = ( rand() % ( gPhysicalObjectsInitAreaHeight ) ) + gPhysicalObjectsInitAreaY;
-        
-        //x = (rand() % (gAreaWidth-20)) + 10;  // deprecated
-        //y = (rand() % (gAreaHeight-20)) + 10; // deprecated
-        
+        x = rand() % (__xMax - __xMin) + __xMin;
+        y = rand() % (__yMax - __yMin) + __yMin;
+                
         setCoordinates( x, y );
         
         tries++;

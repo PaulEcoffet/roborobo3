@@ -70,7 +70,8 @@ public :
     virtual bool canRegister() = 0; // test if register object is possible (use both shape or footprints)
     virtual void registerObject() = 0; // register object in the world (write images)
     virtual void unregisterObject() = 0; // unregister object in the world (write blank pixels)
-    int findRandomLocation( );
+    int findRandomLocation();
+    int findRandomLocation( int __xMin, int __xMax, int __yMin, int __yMax ); // find a random location within a specific area
     void resetLocation(); // reset to the starting position if there was one, or pick a new random location
 
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
