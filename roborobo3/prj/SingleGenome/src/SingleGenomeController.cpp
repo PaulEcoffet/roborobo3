@@ -351,12 +351,6 @@ void SingleGenomeController::initController()
             _currentGenome.push_back(v);
         }
     }
-    if (_wm->getId() == 0) {
-        printf("[DEBUG] Sigma: %lf, genome: ", _currentSigma);
-        for (auto v: _currentGenome)
-            printf("%lf ", v);
-        printf("\n");
-    }
     
     updatePhenotype();
 
