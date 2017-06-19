@@ -57,9 +57,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gSigma",&SingleGenomeSharedData::gSigma,false);
     
-    
-    gProperties.checkAndGetPropertyValue("gGenerationVideo", &SingleGenomeSharedData::gGenerationVideo, false);
-    
+        
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
     
@@ -88,17 +86,11 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     _statsLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     _statsLogManager->flush();
     
-    std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
-    _genomeLogFile.open(genomeLogFilename);
-    _genomeLogManager = new LogManager();
-    _genomeLogManager->setLogFile(_genomeLogFile);
-    
 }
 
 SingleGenomeWorldObserver::~SingleGenomeWorldObserver()
 {
     _statsLogFile.close();
-    _genomeLogFile.close();
 }
 
 void SingleGenomeWorldObserver::reset()
@@ -198,11 +190,8 @@ void SingleGenomeWorldObserver::updateEnvironment()
 
 void SingleGenomeWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % SingleGenomeSharedData::gGenerationVideo == 0)
-    {
-        std::string name = "gen_" + std::to_string(_generationCount);
-        saveCustomScreenshot(name);
-    }
+    std::string name = "gen_" + std::to_string(_generationCount);
+    saveCustomScreenshot(name);
 }
 
 void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )
@@ -247,19 +236,6 @@ void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )
     
     _statsLogManager->write(genLog.str());
     _statsLogManager->flush();
-    
-    // log the best genome of each generation
-    SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-    genome best = ctl->getGenome();
-    std::stringstream bestGenome;
-    bestGenome << _generationCount << " ";
-    bestGenome << best.second << " "; // sigma
-    bestGenome << best.first.size() << " "; // number of genes (NN connections)
-    for (int i = 0; i < best.first.size(); i++)
-        bestGenome << best.first[i] << " ";
-    bestGenome << "\n";
-    _genomeLogManager->write(bestGenome.str());
-    _genomeLogManager->flush();
     
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/SingleGenomeSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";

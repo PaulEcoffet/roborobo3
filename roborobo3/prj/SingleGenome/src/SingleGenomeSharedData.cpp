@@ -53,7 +53,5 @@ constexpr int SingleGenomeSharedData::gMemorySize;
 double SingleGenomeSharedData::gConstantK = 0;
 double SingleGenomeSharedData::gConstantA = 0;
 
-int SingleGenomeSharedData::gGenerationVideo = 5000;
-
 std::string SingleGenomeSharedData::gGenomeFilename = "";
 
