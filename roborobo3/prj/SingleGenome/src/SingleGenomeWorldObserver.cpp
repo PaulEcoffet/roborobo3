@@ -57,9 +57,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gSigma",&SingleGenomeSharedData::gSigma,false);
     
-    
-    gProperties.checkAndGetPropertyValue("gGenerationVideo", &SingleGenomeSharedData::gGenerationVideo, false);
-    
+        
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
     
@@ -198,11 +196,7 @@ void SingleGenomeWorldObserver::updateEnvironment()
 
 void SingleGenomeWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % SingleGenomeSharedData::gGenerationVideo == 0)
-    {
-        std::string name = "gen_" + std::to_string(_generationCount);
-        saveCustomScreenshot(name);
-    }
+
 }
 
 void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )
