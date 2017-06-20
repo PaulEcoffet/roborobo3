@@ -229,6 +229,12 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
 
 void MonoRobotWorldObserver::step()
 {
+    // Reset objects a few times per generation
+    if ((_evaluationItCount+1)%(MonoRobotSharedData::gEvaluationTime/MonoRobotSharedData::gNumberOfPeriods) == 0)
+    {
+        resetObjects();
+    }
+    
     // switch to next generation.
     if( _evaluationItCount == MonoRobotSharedData::gEvaluationTime - 1 )
     {
