@@ -60,6 +60,9 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     
     gProperties.checkAndGetPropertyValue("gEvaluationsPerGeneration", &MonoRobotSharedData::gEvaluationsPerGeneration, false);
     
+    gProperties.checkAndGetPropertyValue("gGenerationLog", &MonoRobotSharedData::gGenerationLog, false);
+
+    
     gProperties.checkAndGetPropertyValue("gBorderSize", &MonoRobotSharedData::gBorderSize, true);
     gProperties.checkAndGetPropertyValue("gZoneHeight", &MonoRobotSharedData::gZoneHeight, true);
     gProperties.checkAndGetPropertyValue("gZoneWidth", &MonoRobotSharedData::gZoneWidth, true);
@@ -270,6 +273,7 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
+    printf("genlog: %d, gen: %d\n", MonoRobotSharedData::gGenerationLog, _generationCount);
     if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
