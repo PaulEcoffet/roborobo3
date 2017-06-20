@@ -105,12 +105,21 @@ void MonoRobotWorldObserver::reset()
 
 void MonoRobotWorldObserver::resetObjects()
 {
+    _activeObjects[0] = rand()%5;
+    do {
+        _activeObjects[1] = rand()%5;
+    } while (_activeObjects[1] == _activeObjects[0]);
     resetLandmarks();
 }
 
 void MonoRobotWorldObserver::resetLandmarks()
 {
     
+}
+
+bool MonoRobotWorldObserver::isActive( int __objectId )
+{
+    return (__objectId%5 ==  _activeObjects[0]) || (__objectId%5 == _activeObjects[1]);
 }
 
 // Reset the environment, and perform an evolution step if it's time

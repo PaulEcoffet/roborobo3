@@ -545,11 +545,18 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
 //  printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
 
     
-    double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
-    double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
+//  double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+//  double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
+    double payoff = 0;
     
-    if (__objectDidMove || gStuckMovableObjects) {
-//      printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+    if (__objectDidMove || (gStuckMovableObjects && __effort > 0.01)) {
+        MonoRobotWorldObserver *wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
+        if (wobs->isActive(__objectId))
+            payoff = 1;
+        else
+            payoff = 0;
+        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+
         increaseFitness(payoff);
         _activeTime++;
         _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
