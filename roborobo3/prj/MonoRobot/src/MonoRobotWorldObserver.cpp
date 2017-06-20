@@ -114,7 +114,13 @@ void MonoRobotWorldObserver::resetObjects()
 
 void MonoRobotWorldObserver::resetLandmarks()
 {
-    
+    for (int iLand = 0; iLand < gNbOfLandmarks; iLand++)
+    {
+        int objectId = 5*(iLand/2) + _activeObjects[iLand%2];
+        int x = gPhysicalObjects[objectId]->getXCenterPixel();
+        int y = gPhysicalObjects[objectId]->getYCenterPixel();
+        gLandmarks[iLand]->setCoordinates(x, y);
+    }
 }
 
 bool MonoRobotWorldObserver::isActive( int __objectId )

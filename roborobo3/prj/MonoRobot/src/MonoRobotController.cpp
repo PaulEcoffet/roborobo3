@@ -555,7 +555,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
             payoff = 1;
         else
             payoff = 0;
-        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
 
         increaseFitness(payoff);
         _activeTime++;
