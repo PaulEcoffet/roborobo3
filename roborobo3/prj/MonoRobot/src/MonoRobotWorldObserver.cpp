@@ -273,6 +273,11 @@ void MonoRobotWorldObserver::updateMonitoring()
     {
         monitorPopulation();
     }
+    if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
+    {
+        std::string name = "gen_" + std::to_string(_generationCount);
+        saveCustomScreenshot(name);
+    }
 }
 
 void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
