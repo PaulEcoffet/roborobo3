@@ -273,7 +273,6 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
-    printf("genlog: %d, gen: %d\n", MonoRobotSharedData::gGenerationLog, _generationCount);
     if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
