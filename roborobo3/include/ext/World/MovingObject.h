@@ -43,7 +43,8 @@ public:
 	void show();
     
     bool canRegister(); // can we register at current position
-    bool canRegister( Sint16 __x, Sint16 __y ); // can we register the object at that position
+    bool canRegisterStatic( Sint16 __x, Sint16 __y ); // can we register the object at that position (we're trying to create it there)
+    bool canRegisterDynamic( Sint16 __x, Sint16 __y ); // we're trying to move there
 
 	void step();
     void move(); // physically move

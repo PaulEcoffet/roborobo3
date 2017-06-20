@@ -70,7 +70,7 @@ void MovingObject::move() {
                 unregisterObject();
                 hide();
                 
-                if (canRegister(newX, newY))
+                if (canRegisterDynamic(newX, newY))
                 {
                     _xReal = _desiredX;
                     _yReal = _desiredY;
@@ -149,7 +149,7 @@ void MovingObject::step()
     stepPhysicalObject();
 }
 
-bool MovingObject::canRegister( Sint16 __x, Sint16 __y )
+bool MovingObject::canRegisterDynamic( Sint16 __x, Sint16 __y )
 {
     // test shape
     for (Sint16 xColor = __x - _radius ; xColor < __x + _radius ; xColor++)
@@ -182,9 +182,48 @@ bool MovingObject::canRegister( Sint16 __x, Sint16 __y )
     return true;
 }
 
+bool MovingObject::canRegisterStatic(Sint16 __x, Sint16 __y)
+{
+    // test shape
+    for (Sint16 xColor = __x - _radius ; xColor < __x + _radius ; xColor++)
+    {
+        for (Sint16 yColor = __y - _radius ; yColor < __y + _radius; yColor ++)
+        {
+            if ( pow (xColor-__x,2) + pow (yColor - __y,2) < _radius*_radius )
+            {
+                Uint32 pixel = getPixel32_secured( gEnvironmentImage, xColor, yColor);
+                if ( pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) {
+                    return false; // collision!
+                }
+            }
+        }
+    }
+    
+    //  test footprint (pixels from both ground image and environment image must be empty)
+    for (Sint16 xColor = __x - _footprintRadius ; xColor < __x + _footprintRadius ; xColor++)
+    {
+        for (Sint16 yColor = __y - _footprintRadius ; yColor < __y + Sint16 (_footprintRadius); yColor ++)
+        {
+            if ( pow(xColor-__x,2) + pow(yColor - __y,2) < _footprintRadius*_footprintRadius )
+            {
+                Uint32 pixelFootprint = getPixel32_secured( gFootprintImage, xColor, yColor);
+                Uint32 pixelEnvironment = getPixel32_secured( gEnvironmentImage, xColor, yColor);
+                if (
+                    pixelEnvironment != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ||
+                    ( gFootprintImage_restoreOriginal == true  && pixelFootprint != getPixel32_secured( gFootprintImageBackup, xColor, yColor ) ) || // case: ground as initialized or rewritten (i.e. white)
+                    ( gFootprintImage_restoreOriginal == false && pixelFootprint != SDL_MapRGBA( gFootprintImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) // case: only white ground
+                    )
+                    return false; // collision!
+            }
+        }
+    }
+    
+    return true;
+}
+
 bool MovingObject::canRegister()
 {
-    return canRegister(getXCenterPixel(), getYCenterPixel());
+    return canRegisterStatic(getXCenterPixel(), getYCenterPixel());
 }
 
 void MovingObject::show() {

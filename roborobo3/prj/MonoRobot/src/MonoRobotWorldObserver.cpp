@@ -141,9 +141,17 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         robot->unregisterRobot();
     }
     // register objects first because they might have fixed locations, whereas robots move anyway
-    for (auto object: gPhysicalObjects)
+    for (int iObject = 0; iObject < gNbOfPhysicalObjects; iObject++)
     {
-        object->resetLocation();
+        PhysicalObject *object = gPhysicalObjects[iObject];
+        int gridBox = iObject/5; // 5 objects per box
+        int line = gridBox/MonoRobotSharedData::gNbRows;
+        int row = gridBox%MonoRobotSharedData::gNbRows;
+        int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
+        int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
+        int xMax = xMin + MonoRobotSharedData::gZoneWidth - 6*gPhysicalObjectDefaultRadius;
+        int yMax = yMin + MonoRobotSharedData::gZoneHeight - 6*gPhysicalObjectDefaultRadius;
+        object->findRandomLocation(xMin, xMax, yMin, yMax);
         object->registerObject();
     }
     
@@ -151,7 +159,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         // super specific stuff here
-        int gridBox = iRobot/3;
+        int gridBox = iRobot; // 1 robot per box
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
