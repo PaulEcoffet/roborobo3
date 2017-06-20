@@ -259,6 +259,7 @@ void MonoRobotWorldObserver::step()
     }
     
     updateEnvironment();
+	updateMonitoring();
 }
 
 
@@ -269,10 +270,6 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
-    if( _evaluationItCount == MonoRobotSharedData::gEvaluationTime - 1)
-    {
-        monitorPopulation();
-    }
     if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
