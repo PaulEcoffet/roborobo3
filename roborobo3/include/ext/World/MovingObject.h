@@ -52,6 +52,7 @@ public:
 	void isTouched( int __idAgent ); // callback, triggered by agent
 	void isWalked( int __idAgent ); // callback, triggered by agent
 
+    int getNbNearbyRobots() { return (int)_nearbyRobots.size(); }
 };
 
 #endif

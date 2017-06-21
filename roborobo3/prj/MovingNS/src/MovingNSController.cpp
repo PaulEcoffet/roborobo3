@@ -16,6 +16,8 @@
 #include <neuralnetworks/Perceptron.h>
 #include <neuralnetworks/Elman.h>
 
+#include "World/MovingObject.h"
+
 using namespace Neural;
 
 MovingNSController::MovingNSController( RobotWorldModel *wm )
@@ -90,31 +92,46 @@ std::vector<double> MovingNSController::getInputs()
 {
     std::vector<double> inputs;
     
+    
     // distance sensors
-    for(int i  = 0; i < _wm->_cameraSensorsNb; i++)
+    for(int i = 0; i < _wm->_cameraSensorsNb; i++)
     {
         inputs.push_back( _wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i) );
         
         if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
         {
-            int objectId = _wm->getObjectIdFromCameraSensor(i);
+            int entityId = _wm->getObjectIdFromCameraSensor(i);
             
-            // input: another robot? If yes: same group?
-            if ( Agent::isInstanceOf(objectId) )
+            if (Agent::isInstanceOf(entityId)) // it's a robot
             {
-                // this is a robot
-                inputs.push_back( 1 );
+                inputs.push_back(1); // a robot
+                inputs.push_back(0); // not a wall
+                inputs.push_back(0); // not an object
+                inputs.push_back(-1); // no other robots around
             }
-            else
+            else if (entityId == 0) // it's a wall
             {
-                inputs.push_back( 0 ); // not a robot...
+                inputs.push_back(0); // not a robot
+                inputs.push_back(1); // a wall
+                inputs.push_back(0); // not an object
+                inputs.push_back(-1); // no robots around
+            }
+            else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
+            {
+                MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
+                inputs.push_back(0); // not a robot
+                inputs.push_back(0); // not a wall
+                inputs.push_back(1); // an object
+                inputs.push_back(obj->getNbNearbyRobots()); // some other robots around
+            }
+            else // found nothing
+            {
+                inputs.push_back(0); // not a robot
+                inputs.push_back(0); // not a wall
+                inputs.push_back(0); // not an object
+                inputs.push_back(-1); // no robots around
             }
             
-            // input: wall or empty?
-            if ( objectId >= 0 && objectId < gPhysicalObjectIndexStartOffset ) // not empty, but cannot be identified: this is a wall.
-                inputs.push_back( 1 );
-            else
-                inputs.push_back( 0 ); // nothing. (objectId=-1)
         }
     }
     
@@ -297,9 +314,9 @@ void MovingNSController::setIOcontrollerSize()
     
     _nbInputs = 0;
     
-    if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
+    if ( gExtendedSensoryInputs )
     {
-        _nbInputs = ( 1+1 ) * _wm->_cameraSensorsNb; //  ( isItAnAgent?) + isItAWall?
+        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
     }
     
     _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
