@@ -114,7 +114,10 @@ void MovingObject::step()
     /* In this experiment, we say that each robot that helped gave us a 1 */
     double totalEffort = 0;
     for (auto eff: _efforts)
-        totalEffort += eff.second;
+	{
+//        totalEffort += eff.second;
+		totalEffort += 1.0; // fix cooperation levels at 1
+	}
 
     for (auto robotID: _nearbyRobots)
     {
@@ -124,7 +127,8 @@ void MovingObject::step()
         double effort = 0;
         if (_efforts.count(robotID+gRobotIndexStartOffset) > 0)
         {
-            effort = _efforts[robotID+gRobotIndexStartOffset];
+//            effort = _efforts[robotID+gRobotIndexStartOffset];
+			effort = 1.0;
         }
         std::string projectName = gProperties.getProperty("ConfigurationLoaderObjectName");
         
