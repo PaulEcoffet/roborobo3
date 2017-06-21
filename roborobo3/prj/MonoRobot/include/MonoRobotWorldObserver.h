@@ -27,8 +27,11 @@ protected:
     int _evaluationCount;
     int _evaluationItCount;
     
-    std::ofstream _logFile;
-    LogManager *_logManager; // Our own little logfile
+    std::ofstream _statsLogFile;
+    LogManager *_statsLogManager; // Our own little logfile
+    std::ofstream _genomeLogFile;
+    LogManager *_genomeLogManager;
+
     
 public:
     MonoRobotWorldObserver(World *world);
