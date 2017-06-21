@@ -108,27 +108,12 @@ void MonoRobotWorldObserver::reset()
 
 void MonoRobotWorldObserver::resetObjects()
 {
-    _activeObjects[0] = rand()%5;
-    do {
-        _activeObjects[1] = rand()%5;
-    } while (_activeObjects[1] == _activeObjects[0]);
     resetLandmarks();
 }
 
 void MonoRobotWorldObserver::resetLandmarks()
 {
-    for (int iLand = 0; iLand < gNbOfLandmarks; iLand++)
-    {
-        int objectId = 5*(iLand/2) + _activeObjects[iLand%2];
-        int x = gPhysicalObjects[objectId]->getXCenterPixel();
-        int y = gPhysicalObjects[objectId]->getYCenterPixel();
-        gLandmarks[iLand]->setCoordinates(x, y);
-    }
-}
 
-bool MonoRobotWorldObserver::isActive( int __objectId )
-{
-    return (__objectId%5 ==  _activeObjects[0]) || (__objectId%5 == _activeObjects[1]);
 }
 
 // Reset the environment, and perform an evolution step if it's time
@@ -177,7 +162,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         // super specific stuff here
-        int gridBox = iRobot; // 1 robot per box
+        int gridBox = iRobot/2; // 2 robots per box
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);

@@ -27,8 +27,6 @@ protected:
     int _evaluationCount;
     int _evaluationItCount;
     
-    int _activeObjects[2];
-    
     std::ofstream _logFile;
     LogManager *_logManager; // Our own little logfile
     
@@ -42,8 +40,6 @@ public:
     void stepEvaluation( bool __newGeneration );
     void resetObjects(); // reset which objects are active, etc.
     void resetLandmarks();
-    
-    bool isActive( int __objectId );
     
     virtual int getGenerationItCount() { return _evaluationItCount; }
     
