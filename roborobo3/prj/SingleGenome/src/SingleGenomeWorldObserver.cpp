@@ -190,8 +190,11 @@ void SingleGenomeWorldObserver::updateEnvironment()
 
 void SingleGenomeWorldObserver::updateMonitoring()
 {
-    std::string name = "gen_" + std::to_string(_generationCount);
-    saveCustomScreenshot(name);
+    if ( (_generationCount+1) % SingleGenomeSharedData::gGenerationLog == 0)
+    {
+        std::string name = "gen_" + std::to_string(_generationCount);
+        saveCustomScreenshot(name);
+    }
 }
 
 void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )

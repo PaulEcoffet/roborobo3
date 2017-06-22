@@ -53,5 +53,6 @@ constexpr int SingleGenomeSharedData::gMemorySize;
 double SingleGenomeSharedData::gConstantK = 0;
 double SingleGenomeSharedData::gConstantA = 0;
 
-std::string SingleGenomeSharedData::gGenomeFilename = "";
+int SingleGenomeSharedData::gGenerationLog = 5000;
 
+std::string SingleGenomeSharedData::gGenomeFilename = "";

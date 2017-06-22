@@ -58,7 +58,9 @@ public:
     static double gSigma;
 
 	static constexpr int gMemorySize = 20;
-        
+    
+    static int gGenerationLog;
+    
     // Parameters relative to the payoff function
     
     static double gConstantK;
