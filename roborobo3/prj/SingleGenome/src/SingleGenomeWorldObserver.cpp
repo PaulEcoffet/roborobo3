@@ -57,7 +57,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gSigma",&SingleGenomeSharedData::gSigma,false);
     
-    gProperties.checkAndGetPropertyValue("gGenerationLog", &MovingNSSharedData::gGenerationLog, false);    
+    gProperties.checkAndGetPropertyValue("gGenerationLog", &SingleGenomeSharedData::gGenerationLog, false);
         
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
