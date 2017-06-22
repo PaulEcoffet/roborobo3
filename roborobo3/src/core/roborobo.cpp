@@ -60,6 +60,8 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "Utilities/Misc.h"
 
+#include "MovingNS/include/MovingNSController.h"
+
 #include "Config/GlobalConfigurationLoader.h"
 
 /* **************************
@@ -437,7 +439,14 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
 	}
 
 	if ( gDisplayMode == 0 || gDisplayMode == 1 )	
-	{				
+	{
+        if ( keyboardStates[ SDL_SCANCODE_U ] ) // dump the genome of the target robot
+        {
+            Robot *robot = gWorld->getRobot(gRobotIndexFocus);
+            MovingNSController *ctl = static_cast<MovingNSController *>(robot->getController());
+            ctl->dumpGenome();
+            SDL_Delay(PAUSE_COMMAND);
+        }
 		if ( keyboardStates[ SDL_SCANCODE_P ] )
 		{
 			SDL_Delay(PAUSE_COMMAND); // 200ms delay

@@ -479,3 +479,13 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     }
 
 }
+
+void MovingNSController::dumpGenome()
+{
+    std::cout <<"Dumping genome of robot #" << _wm->getId() << std::endl;
+    std::cout << _currentSigma << " ";
+    std::cout << _currentGenome.size() << " ";
+    for (auto gene: _currentGenome)
+        std::cout << gene << " ";
+    std::cout << std::endl;
+}
