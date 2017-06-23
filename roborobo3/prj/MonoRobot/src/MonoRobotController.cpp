@@ -197,26 +197,6 @@ std::vector<double> MonoRobotController::getInputs(){
 		effort += eff;
 	inputs.push_back(effort);
     
-
-    // are we on the right object?
-//    MonoRobotWorldObserver* wobs = static_cast<MonoRobotWorldObserver *>(gWorld->getWorldObserver());
-//    int period = MonoRobotSharedData::gNumberOfPeriods*wobs->getGenerationItCount()/MonoRobotSharedData::gEvaluationTime;
-//    if ( _isNearObject)
-//    {
-//        if (_nearbyObjectId == (period+wobs->getStartObjectOffset())%2)
-//        {
-//            printf("[DEBUG] Right object!\n");
-//            inputs.push_back(1);
-//        }
-//        else
-//        {
-//            printf("[DEBUG] Wrong object!\n");
-//            inputs.push_back(0);
-//        }
-//    }
-//    else
-//        inputs.push_back(0);
-    
     return inputs;
 }
 
@@ -395,8 +375,6 @@ void MonoRobotController::setIOcontrollerSize()
     _nbInputs += 1; // what's the total effort given to the object?
     
     _nbInputs += 1; // how much did we contribute?
-    
-//  _nbInputs += 1; // are we on the object that's giving fitness?
     
     // wrt outputs
     
@@ -580,7 +558,7 @@ void MonoRobotController::dumpGenome()
 {
     printf("Robot %d it %d: ", _wm->getId(), gWorld->getIterations());
     printf("%lf,", _currentSigma);
-    for (auto& v: _currentGenome)
-        printf("%lf,", v);
+    for (auto v: _currentGenome)
+        printf("%lf ", v);
     printf("\n");
 }
