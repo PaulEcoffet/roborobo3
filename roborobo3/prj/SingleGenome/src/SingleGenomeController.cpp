@@ -106,14 +106,14 @@ std::vector<double> SingleGenomeController::getInputs()
                 inputs.push_back(1); // a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(0); // not an object
-                inputs.push_back(-1); // no other robots around
+                inputs.push_back(0); // no other robots around
             }
             else if (entityId == 0) // it's a wall
             {
                 inputs.push_back(0); // not a robot
                 inputs.push_back(1); // a wall
                 inputs.push_back(0); // not an object
-                inputs.push_back(-1); // no robots around
+                inputs.push_back(0); // no robots around
             }
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
@@ -128,7 +128,7 @@ std::vector<double> SingleGenomeController::getInputs()
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(0); // not an object
-                inputs.push_back(-1); // no robots around
+                inputs.push_back(0); // no robots around
             }
             
         }
