@@ -73,8 +73,8 @@ void SingleGenomeController::step() // handles control decision and evolution (b
     
     // Coloring
     
-    if (_isNearObject == false)
-        _wm->setRobotLED_colorValues(0, 0, 255);
+    if (_isNearObject == false) // blue
+        _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
 
     // Update state variables
     
@@ -486,9 +486,9 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
 //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     if (__effort > 0) // Green LED
-        _wm->setRobotLED_colorValues(50, 205, 50);
+        _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
     else // Red LED
-        _wm->setRobotLED_colorValues(255, 0, 0);
+        _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     
     _isNearObject = true;
     
