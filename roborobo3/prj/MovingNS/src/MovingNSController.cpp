@@ -64,20 +64,24 @@ MovingNSController::~MovingNSController()
 
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-    
     _iteration++;
     
     // * step controller
 
     stepController();
+    
+    // Coloring
+    
+    if (_isNearObject == false)
+        _wm->setRobotLED_colorValues(0, 0, 255);
 
     // Update state variables
     
 	_nbNearbyRobots = 0;
     _efforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
     _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
-
-
+    _isNearObject = false;
+    
 }
 
 
@@ -467,6 +471,12 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
 {
 //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
+    if (__effort > 0) // Green LED
+        _wm->setRobotLED_colorValues(50, 205, 50);
+    else // Red LED
+        _wm->setRobotLED_colorValues(255, 0, 0);
+    
+    _isNearObject = true;
     
     double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
