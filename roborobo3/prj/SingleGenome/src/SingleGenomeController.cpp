@@ -70,13 +70,18 @@ void SingleGenomeController::step() // handles control decision and evolution (b
     // * step controller
 
     stepController();
+    
+    // Coloring
+    
+    if (_isNearObject == false)
+        _wm->setRobotLED_colorValues(0, 0, 255);
 
     // Update state variables
     
 	_nbNearbyRobots = 0;
     _efforts[_iteration%SingleGenomeSharedData::gMemorySize] = 0;
     _totalEfforts[_iteration%SingleGenomeSharedData::gMemorySize] = 0;
-
+    _isNearObject = false;
 
 }
 
@@ -479,6 +484,13 @@ void SingleGenomeController::increaseFitness( double __delta )
 void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
 //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+    
+    if (__effort > 0) // Green LED
+        _wm->setRobotLED_colorValues(50, 205, 50);
+    else // Red LED
+        _wm->setRobotLED_colorValues(255, 0, 0);
+    
+    _isNearObject = true;
     
     double coeff = SingleGenomeSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, SingleGenomeSharedData::gConstantA) - __effort;

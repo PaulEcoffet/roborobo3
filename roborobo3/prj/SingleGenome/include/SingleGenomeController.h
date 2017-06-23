@@ -77,6 +77,9 @@ protected:
     double _efforts[SingleGenomeSharedData::gMemorySize]; // how much we tried pushing
     double _totalEfforts[SingleGenomeSharedData::gMemorySize]; // how much everybody tried pushing
 
+    // for the LED coloring
+    
+    bool _isNearObject;
     
     // ANN
     double _minValue;
