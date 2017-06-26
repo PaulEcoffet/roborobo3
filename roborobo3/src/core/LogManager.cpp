@@ -7,42 +7,33 @@
 #include "RoboroboMain/roborobo.h"
 
 
-LogManager::LogManager(std::ofstream __logFile)
+LogManager::LogManager(std::string __logFilename)
 {
-    logFile = &__logFile;
-	buffer = "";
+    logFile.open(__logFilename);
+    if(!logFile) {
+        std::cout << "[CRITICAL] Cannot open log file " << __logFilename << "." << std::endl << std::endl;
+        exit(-1);
+    }
+
 }
 
 LogManager::LogManager()
 {
-    logFile = &gLogFile;
-    buffer = "";
+    std::cout << "[CRITICAL] Missing file name in LogManager(). Exiting." << std::endl << std::endl;
+    exit(-1);
 }
 
 LogManager::~LogManager()
 {
+    logFile.close();
 }
 
 void LogManager::write(std::string str)
 {
-    buffer += str;
+    logFile << str;
 }
 
 void LogManager::flush()
 {
-    if ( ! buffer.empty() )
-    {
-        (*logFile) << buffer << std::flush;
-        buffer.clear();
-    }
-}
-
-LogManager* LogManager::make_DefaultLogManager()
-{
-    return new LogManager();
-}
-
-void LogManager::setLogFile ( std::ofstream &__logFile )
-{
-    logFile = &__logFile;
+    logFile.flush();
 }

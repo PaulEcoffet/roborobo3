@@ -26,8 +26,6 @@ protected:
     int _generationCount;
     int _generationItCount;
     
-    std::ofstream _statsLogFile;
-    std::ofstream _genomeLogFile;
     LogManager *_statsLogManager;
     LogManager *_genomeLogManager;
     
