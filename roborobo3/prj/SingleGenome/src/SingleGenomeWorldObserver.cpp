@@ -81,9 +81,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     // * Logfiles
     
     std::string statsLogFilename = gLogDirectoryname + "/observer.txt";
-    _statsLogFile.open(statsLogFilename);
-    _statsLogManager = new LogManager();
-    _statsLogManager->setLogFile(_statsLogFile);
+    _statsLogManager = new LogManager(statsLogFilename);
     _statsLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     _statsLogManager->flush();
     
@@ -91,7 +89,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
 
 SingleGenomeWorldObserver::~SingleGenomeWorldObserver()
 {
-    _statsLogFile.close();
+    delete _statsLogManager;
 }
 
 void SingleGenomeWorldObserver::reset()

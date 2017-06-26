@@ -27,9 +27,7 @@ protected:
     int _evaluationCount;
     int _evaluationItCount;
     
-    std::ofstream _statsLogFile;
     LogManager *_statsLogManager; // Our own little logfile
-    std::ofstream _genomeLogFile;
     LogManager *_genomeLogManager;
 
     

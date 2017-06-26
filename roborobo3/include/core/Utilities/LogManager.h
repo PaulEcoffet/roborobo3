@@ -19,8 +19,7 @@
     (2) optionally: gLogManager.flush() -- note that this command is called automatically after each evaluation.
  
  OPTION 2:
-    You can create as many new LogManager as you want. By default they will write in the same file as gLogManager. Here is how to change this:
- 
+    You can create as many new LogManager as you want. You must provide a file name and it will create and write into a new file.
         std::string filename = "logs/test.txt";
         std::ofstream file;
  
@@ -51,19 +50,14 @@ class LogManager {
 
 private:
 
-	std::string buffer;
-    std::ofstream *logFile;  // LogManager does not open/close. Assume it is handled elsewhere.
+    std::ofstream logFile;  // LogManager opens and closes its logfile
 
 public:
 
     LogManager();
-	LogManager(std::ofstream __logFile);
-	virtual ~LogManager();
+	LogManager(std::string __logFilename);
+    ~LogManager();
 
-    static LogManager* make_DefaultLogManager(); //(std::ofstream __logFile);
-
-    void setLogFile ( std::ofstream &__logFile );
-    
 	void write(std::string str);
     void flush();
 };

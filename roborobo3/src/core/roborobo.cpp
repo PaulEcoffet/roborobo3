@@ -949,30 +949,34 @@ void initLogging()
 	if(!gLogFile) { 
 		std::cout << "[CRITICAL] Cannot open log file " << gLogFullFilename << "." << std::endl << std::endl;
 		exit(-1);
-	} 
+	}
+    
+    std::stringstream initText;
 
-	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	gLogFile << "# LOG DATA " << std::endl;
-	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	gLogFile << "#" << std::endl;
-	gLogFile << "# =-= Roborobo^3 " << std::endl;
-	gLogFile << "# =-= Official version tag    : " << gVersion << std::endl;
-	gLogFile << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
-	gLogFile << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
-	gLogFile << "#" << std::endl;
-	gLogFile << "# Loaded time stamp           : " << gStartTime << std::endl;
-    gLogFile << "# process ID                  : " << getpidAsReadableString() << std::endl;
-	gLogFile << "#" << std::endl;
+	initText << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	initText << "# LOG DATA " << std::endl;
+	initText << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	initText << "#" << std::endl;
+	initText << "# =-= Roborobo^3 " << std::endl;
+	initText << "# =-= Official version tag    : " << gVersion << std::endl;
+	initText << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
+	initText << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
+	initText << "#" << std::endl;
+	initText << "# Loaded time stamp           : " << gStartTime << std::endl;
+    initText << "# process ID                  : " << getpidAsReadableString() << std::endl;
+	initText << "#" << std::endl;
 
-	//gLogFile << "# log comment      : " << gLogCommentText << std::endl; 
+	//initText << "# log comment      : " << gLogCommentText << std::endl; 
 
-    gLogManager = LogManager::make_DefaultLogManager(); // it is recommended (though not forced) to use gLogManager instead of gLogFile.
+    gLogManager = new LogManager(gLogFullFilename); // it is recommended (though not forced) to use gLogManager instead of gLogFile.
+    
+    gLogManager->write(initText.str());
 }
 
 
 void stopLogging()
 {
-	gLogFile.close();
+    delete gLogManager;
 }
 
 
@@ -2027,7 +2031,7 @@ void initRoborobo()
 	// * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
 	
 	srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
-	gLogFile << "# random seed             : " << gRandomSeed << std::endl; 
+    gLogManager->write("# random seed             : " + std::to_string(gRandomSeed) + "\n");
 
 	gWorld = new World();
 
@@ -2107,20 +2111,23 @@ void closeRoborobo()
     int days = hours/24;
     hours = hours - (days*24);
     
-    gLogFile << "# Started: " << gStartTime << std::endl;
-    gLogFile << "# Stopped: " << gStopTime << std::endl;
-    gLogFile << "# Elapsed: ";
+    std::stringstream closeText;
+    
+    closeText << "# Started: " << gStartTime << std::endl;
+    closeText << "# Stopped: " << gStopTime << std::endl;
+    closeText << "# Elapsed: ";
     if ( days > 0 )
-        gLogFile << days << " day(s), ";
+        closeText << days << " day(s), ";
     if ( hours > 0 )
-        gLogFile << hours << " hour(s), ";
+        closeText << hours << " hour(s), ";
     if ( minutes > 0 )
-        gLogFile << minutes << " minutes(s), ";
-    gLogFile <<  seconds << " second";
+        closeText << minutes << " minutes(s), ";
+    closeText <<  seconds << " second";
     if ( seconds > 1 )
-        gLogFile << "s";
-    gLogFile << "." << std::endl;
+        closeText << "s";
+    closeText << "." << std::endl;
 
+    gLogManager->write(closeText.str());
     
 	stopLogging();
 	clean_up();

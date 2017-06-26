@@ -88,24 +88,20 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     
     // * Logfile
     
-    std::string logFilename = gLogDirectoryname + "/observer.txt";
-    _statsLogFile.open(logFilename.c_str());
-    _statsLogManager = new LogManager();
-    _statsLogManager->setLogFile(_statsLogFile);
+    std::string statsLogFilename = gLogDirectoryname + "/observer.txt";
+    _statsLogManager = new LogManager(statsLogFilename);
     _statsLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     _statsLogManager->flush();
     
     std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
-    _genomeLogFile.open(genomeLogFilename);
-    _genomeLogManager = new LogManager();
-    _genomeLogManager->setLogFile(_genomeLogFile);
+    _genomeLogManager = new LogManager(genomeLogFilename);
 
 }
 
 MonoRobotWorldObserver::~MonoRobotWorldObserver()
 {
-    _statsLogFile.close();
-    _genomeLogFile.close();
+    delete _statsLogManager;
+    delete _genomeLogManager;
 }
 
 void MonoRobotWorldObserver::reset()
