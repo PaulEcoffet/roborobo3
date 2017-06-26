@@ -266,12 +266,13 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     // cooperation statistics
     std::stringstream stats;
     stats << std::setprecision(5);
+    stats << std::setfill('0');
     double avgObject = 0, avgCoop = 0;
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         MovingNSController *ctl = static_cast<MovingNSController *>(gWorld->getRobot(iRobot)->getController());
-        stats << _generationCount << " ";
-        stats << ((double)ctl->getObjectTime()) / (double)MovingNSSharedData::gEvaluationTime << " ";
+        stats << std::setw(5) << _generationCount << "\t";
+        stats << ((double)ctl->getObjectTime()) / (double)MovingNSSharedData::gEvaluationTime << "\t";
         stats << ((double)ctl->getCoopTime()) / (double)MovingNSSharedData::gEvaluationTime << std::endl;
         avgObject += ctl->getObjectTime();
         avgCoop += ctl->getCoopTime();
@@ -283,7 +284,7 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
 
     
-    printf("Average time on objects: %lf%%, average cooperation: %lf%%\n", 100*avgObject/(MovingNSSharedData::gEvaluationTime*gNbOfRobots), 100*avgCoop/(MovingNSSharedData::gEvaluationTime*gNbOfRobots));
+    printf("Average time on objects: %lf%%, average cooperation time: %lf%%\n", 100*avgObject/(MovingNSSharedData::gEvaluationTime*gNbOfRobots), 100*avgCoop/(MovingNSSharedData::gEvaluationTime*gNbOfRobots));
 
     
 }
