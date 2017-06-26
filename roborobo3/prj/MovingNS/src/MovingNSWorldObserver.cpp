@@ -57,6 +57,7 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     gProperties.checkAndGetPropertyValue("gSigma",&MovingNSSharedData::gSigma,false);
     
+    gProperties.checkAndGetPropertyValue("gTotalEffort", &MovingNSSharedData::gTotalEffort, false);
     
     gProperties.checkAndGetPropertyValue("gGenerationLog", &MovingNSSharedData::gGenerationLog, false);
     
