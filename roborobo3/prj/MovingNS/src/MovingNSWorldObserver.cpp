@@ -246,9 +246,9 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     _statsLogManager->write(genLog.str());
     _statsLogManager->flush();
     
-    // log the best genome of each detailed generation
     if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
     {
+        // log the best genome of each detailed generation
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
         genome best = ctl->getGenome();
         std::stringstream bestGenome;
@@ -261,8 +261,18 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
         _genomeLogManager->write(bestGenome.str());
         _genomeLogManager->flush();
     }
-    
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
+
+    // cooperation statistics
+    double avgObject = 0, avgCoop = 0;
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        MovingNSController *ctl = static_cast<MovingNSController *>(gWorld->getRobot(iRobot)->getController());
+        avgObject += ctl->getObjectTime();
+        avgCoop += ctl->getCoopTime();
+    }
+    printf("Average time on objects: %lf%%, average cooperation: %lf%%\n", 100*avgObject/(MovingNSSharedData::gEvaluationTime*gNbOfRobots), 100*avgCoop/(MovingNSSharedData::gEvaluationTime*gNbOfRobots));
+
     
 }
