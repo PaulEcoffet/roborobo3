@@ -26,8 +26,9 @@ protected:
     int _generationCount;
     int _generationItCount;
     
-    LogManager *_statsLogManager;
+    LogManager *_fitnessLogManager;
     LogManager *_genomeLogManager;
+    LogManager *_statsLogManager;
     
 public:
     MovingNSWorldObserver(World *world);
