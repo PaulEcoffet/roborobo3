@@ -367,6 +367,8 @@ void MovingNSController::initController()
         eff = 0;
     for (auto& totEff: _totalEfforts)
         totEff = 0;
+    _coopTime = 0;
+    _objectTime = 0;
 }
 
 void MovingNSController::reset()
@@ -477,6 +479,9 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     
     _isNearObject = true;
+    _objectTime++;
+    if (__effort > 0)
+        _coopTime++;
     
     double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
