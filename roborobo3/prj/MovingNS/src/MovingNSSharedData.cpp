@@ -39,9 +39,6 @@ int MovingNSSharedData::gSelectionMethod = 0; // default: random selection
 int MovingNSSharedData::gNotListeningStateDelay = 0;    // -1: infinite ; 0: no delay ; >0: delay
 int MovingNSSharedData::gListeningStateDelay = -1;      // -1: infinite ; 0: no delay ; >0: delay (ignored if gNotListeningStateDelay=-1)
 
-bool MovingNSSharedData::gLogGenome = false;
-bool MovingNSSharedData::gLogGenomeSnapshot = false;
-
 double MovingNSSharedData::gIndividualMutationRate = 1.0;
 
 int MovingNSSharedData::gMutationOperator = 1; // 0: uniform, 1: gaussian
@@ -50,8 +47,12 @@ double MovingNSSharedData::gSigma = 0.01; // 0.01 is just some random value.
 
 constexpr int MovingNSSharedData::gMemorySize;
 
-double MovingNSSharedData::gConstantK = 0;
-double MovingNSSharedData::gConstantA = 0;
+bool MovingNSSharedData::gTotalEffort = true;
 
 int MovingNSSharedData::gGenerationLog = 5000;
+bool MovingNSSharedData::gLogGenome = false;
+bool MovingNSSharedData::gLogGenomeSnapshot = false;
+
+double MovingNSSharedData::gConstantK = 0;
+double MovingNSSharedData::gConstantA = 0;
 

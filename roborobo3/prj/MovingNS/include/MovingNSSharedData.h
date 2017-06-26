@@ -46,9 +46,6 @@ public:
     static int gNotListeningStateDelay; // -1: infinite ; 0: no delay ; >0: delay
     static int gListeningStateDelay;    // -1: infinite ; 0: no delay ; >0: delay (ignored if gNotListeningStateDelay=-1)
     
-    static bool gLogGenome;
-    static bool gLogGenomeSnapshot;   // log only if it%gEvaluationTime*gSnapshotsFrequency=0
-    
     static double gIndividualMutationRate;
     
     static int gMutationOperator;
@@ -57,7 +54,13 @@ public:
 
 	static constexpr int gMemorySize = 20;
     
+    static bool gTotalEffort; // add total effort as an input to the NN
+    
     static int gGenerationLog; // take videos every Nth generation
+    static bool gLogGenome;
+    static bool gLogGenomeSnapshot;   // log only if it%gEvaluationTime*gSnapshotsFrequency=0
+
+    
     
     // Parameters relative to the payoff function
     

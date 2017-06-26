@@ -148,11 +148,14 @@ std::vector<double> MovingNSController::getInputs()
 	// how many robots around?
 	inputs.push_back(_nbNearbyRobots);
 
-    // what's the total effort given to the object in the last few turns?
-    double totalEffort = 0;
-    for (auto eff: _totalEfforts)
-        totalEffort += eff;
-    inputs.push_back(totalEffort);
+    if (MovingNSSharedData::gTotalEffort)
+    {
+        // what's the total effort given to the object in the last few turns?
+        double totalEffort = 0;
+        for (auto eff: _totalEfforts)
+            totalEffort += eff;
+        inputs.push_back(totalEffort);
+    }
     
     // how much did we contribute?
     double effort = 0;
@@ -327,7 +330,8 @@ void MovingNSController::setIOcontrollerSize()
     
     _nbInputs += 1; // how many robots around?
     
-    _nbInputs += 1; // what's the total effort given to the object?
+    if (MovingNSSharedData::gTotalEffort)
+        _nbInputs += 1; // what's the total effort given to the object?
     
     _nbInputs += 1; // how much did we contribute?
     
