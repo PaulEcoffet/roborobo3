@@ -83,13 +83,13 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
     _fitnessLogManager = new LogManager(fitnessLogFilename);
     _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
-    _fitnessLogManager->flush();
     
     std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
     _genomeLogManager = new LogManager(genomeLogFilename);
     
     std::string statsLogFilename = gLogDirectoryname + "/stats.txt";
     _statsLogManager = new LogManager(statsLogFilename);
+    _statsLogManager->write("Generation\tObject\tCoop\n");
     
 }
 
@@ -284,7 +284,7 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
 
     
-    printf("Average time on objects: %lf%%, average cooperation time: %lf%%\n", 100*avgObject/(MovingNSSharedData::gEvaluationTime*gNbOfRobots), 100*avgCoop/(MovingNSSharedData::gEvaluationTime*gNbOfRobots));
+    printf("Average time on objects: %.3lf%%, average cooperation time: %.3lf%%\n", 100*avgObject/(MovingNSSharedData::gEvaluationTime*gNbOfRobots), 100*avgCoop/(MovingNSSharedData::gEvaluationTime*gNbOfRobots));
 
     
 }
