@@ -24,7 +24,7 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
 {
     _wm = wm;
     
-    nn = NULL;
+    _movementNN = NULL;
     
     // evolutionary engine
     
@@ -58,8 +58,8 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
 MovingNSController::~MovingNSController()
 {
     _parameters.clear();
-    delete nn;
-    nn = NULL;
+    delete _movementNN;
+    _movementNN = NULL;
 }
 
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
@@ -171,26 +171,21 @@ void MovingNSController::stepController()
 
     // ---- compute and read out ----
     
-    nn->setWeights(_parameters); // set-up NN
+    _movementNN->setWeights(_parameters); // set-up NN
     
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
     
-    nn->setInputs(inputs);
+    _movementNN->setInputs(inputs);
     
-    nn->step();
+    _movementNN->step();
     
-    std::vector<double> outputs = nn->readOut();
+    std::vector<double> outputs = _movementNN->readOut();
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
     _wm->_desiredTranslationalValue = outputs[0];
     _wm->_desiredRotationalVelocity = outputs[1];
-    
-    if ( MovingNSSharedData::gEnergyRequestOutput )
-    {
-        _wm->setEnergyRequestValue(outputs[2]);
-    }
-    
+
     // normalize to motor interval values
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
@@ -202,27 +197,27 @@ void MovingNSController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( nn != NULL ) // useless: delete will anyway check if nn is NULL or not.
-        delete nn;
+    if ( _movementNN != NULL ) // useless: delete will anyway check if nn is NULL or not.
+        delete _movementNN;
     
     switch ( MovingNSSharedData::gControllerType )
     {
         case 0:
         {
             // MLP
-            nn = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _movementNN = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         case 1:
         {
             // PERCEPTRON
-            nn = new Perceptron(_parameters, _nbInputs, _nbOutputs);
+            _movementNN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
             break;
         }
         case 2:
         {
             // ELMAN
-            nn = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _movementNN = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         default: // default: no controller
@@ -234,7 +229,7 @@ void MovingNSController::createNN()
 
 unsigned int MovingNSController::computeRequiredNumberOfWeights()
 {
-    unsigned int res = nn->getRequiredNumberOfWeights();
+    unsigned int res = _movementNN->getRequiredNumberOfWeights();
     return res;
 }
 
