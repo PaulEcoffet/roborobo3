@@ -21,9 +21,6 @@
 
 using namespace Neural;
 
-typedef std::pair<std::vector<double>, double> genome;
-
-
 class SingleGenomeController : public Controller
 {
 protected:
@@ -105,6 +102,8 @@ protected:
 
     
 public:
+    
+    typedef std::pair<std::vector<double>, double> genome;
     
     SingleGenomeController(RobotWorldModel *wm);
     ~SingleGenomeController();

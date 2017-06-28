@@ -111,7 +111,7 @@ void MovingNSWorldObserver::stepEvaluation()
     // Save fitness values and genomes before the reset
     double totalFitness = 0;
     std::vector<double> fitnesses(gNbOfRobots);
-    std::vector<genome> genomes(gNbOfRobots);
+    std::vector<MovingNSController::genome> genomes(gNbOfRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
@@ -251,14 +251,18 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     {
         // log the best genome of each detailed generation
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-        genome best = ctl->getGenome();
+        MovingNSController::genome best = ctl->getGenome();
         std::stringstream bestGenome;
         bestGenome << _generationCount << " ";
-        bestGenome << best.second << " "; // sigma
-        bestGenome << best.first.size() << " "; // number of genes (NN connections)
-        for (int i = 0; i < best.first.size(); i++)
-            bestGenome << best.first[i] << " ";
-        bestGenome << "\n";
+        bestGenome << best.second << " ";
+        for (int iNN = 0; iNN < 2; iNN++)
+        {
+            bestGenome << best.first[iNN].size() << " ";
+            for (auto gene: best.first[iNN])
+                bestGenome << gene << " ";
+        }
+        std::cout << std::endl;
+
         _genomeLogManager->write(bestGenome.str());
         _genomeLogManager->flush();
     }

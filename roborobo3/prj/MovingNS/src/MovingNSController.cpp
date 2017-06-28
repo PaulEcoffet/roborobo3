@@ -24,7 +24,8 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
 {
     _wm = wm;
     
-    _movementNN = NULL;
+    _movementNN = nullptr;
+    _coopNN = nullptr;
     
     // evolutionary engine
     
@@ -57,7 +58,8 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
 
 MovingNSController::~MovingNSController()
 {
-    _parameters.clear();
+    for (auto& params: _parameters)
+        params.clear();
     delete _movementNN;
     _movementNN = NULL;
 }
@@ -171,21 +173,25 @@ void MovingNSController::stepController()
 
     // ---- compute and read out ----
     
-    _movementNN->setWeights(_parameters); // set-up NN
+    _movementNN->setWeights(_parameters[0]); // set-up NN
+    _coopNN->setWeights(_parameters[1]);
     
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
     
     _movementNN->setInputs(inputs);
+    _coopNN->setInputs(inputs);
     
     _movementNN->step();
+    _coopNN->step();
     
-    std::vector<double> outputs = _movementNN->readOut();
+    std::vector<double> movementOutputs = _movementNN->readOut();
+    std::vector<double> coopOutput = _coopNN->readOut();
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
-    _wm->_desiredTranslationalValue = outputs[0];
-    _wm->_desiredRotationalVelocity = outputs[1];
-
+    _wm->_desiredTranslationalValue = movementOutputs[0];
+    _wm->_desiredRotationalVelocity = movementOutputs[1];
+    
     // normalize to motor interval values
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
@@ -197,27 +203,34 @@ void MovingNSController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( _movementNN != NULL ) // useless: delete will anyway check if nn is NULL or not.
+    if ( _movementNN != nullptr )
         delete _movementNN;
+    
+    if (_coopNN != nullptr)
+        delete _coopNN;
     
     switch ( MovingNSSharedData::gControllerType )
     {
         case 0:
         {
             // MLP
-            _movementNN = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _movementNN = new MLP(_parameters[0], _nbInputs, _nbOutputs[0], *(_nbNeuronsPerHiddenLayer));
+            _coopNN = new MLP(_parameters[1], _nbInputs, _nbOutputs[1], *(_nbNeuronsPerHiddenLayer));
             break;
         }
         case 1:
         {
             // PERCEPTRON
-            _movementNN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
+            _movementNN = new Perceptron(_parameters[0], _nbInputs, _nbOutputs[0]);
+            _coopNN = new Perceptron(_parameters[1], _nbInputs, _nbOutputs[1]);
+
             break;
         }
         case 2:
         {
             // ELMAN
-            _movementNN = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _movementNN = new Elman(_parameters[0], _nbInputs, _nbOutputs[0], *(_nbNeuronsPerHiddenLayer));
+            _coopNN = new Elman(_parameters[1], _nbInputs, _nbOutputs[1], *(_nbNeuronsPerHiddenLayer));
             break;
         }
         default: // default: no controller
@@ -227,10 +240,12 @@ void MovingNSController::createNN()
 }
 
 
-unsigned int MovingNSController::computeRequiredNumberOfWeights()
+unsigned int MovingNSController::computeRequiredNumberOfWeights(int __NN)
 {
-    unsigned int res = _movementNN->getRequiredNumberOfWeights();
-    return res;
+    if (__NN == 0)
+        return _movementNN->getRequiredNumberOfWeights();
+    else
+        return _coopNN->getRequiredNumberOfWeights();
 }
 
 // ################ ######################## ################
@@ -266,46 +281,50 @@ void MovingNSController::mutateGaussian(float sigma) // mutate within bounds.
 {
     _currentSigma = sigma;
     
-    for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
-    {
-        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
-        // bouncing upper/lower bounds
-        if ( value < _minValue )
+    for (int iNN = 0; iNN < 2; iNN++) {
+        for (unsigned int i = 0 ; i != _currentGenome[iNN].size() ; i++ )
         {
-            double range = _maxValue - _minValue;
-            double overflow = - ( (double)value - _minValue );
-            overflow = overflow - 2*range * (int)( overflow / (2*range) );
-            if ( overflow < range )
-                value = _minValue + overflow;
-            else // overflow btw range and range*2
-                value = _minValue + range - (overflow-range);
+            double value = _currentGenome[iNN][i] + getGaussianRand(0,_currentSigma);
+            // bouncing upper/lower bounds
+            if ( value < _minValue )
+            {
+                double range = _maxValue - _minValue;
+                double overflow = - ( (double)value - _minValue );
+                overflow = overflow - 2*range * (int)( overflow / (2*range) );
+                if ( overflow < range )
+                    value = _minValue + overflow;
+                else // overflow btw range and range*2
+                    value = _minValue + range - (overflow-range);
+            }
+            else if ( value > _maxValue )
+            {
+                double range = _maxValue - _minValue;
+                double overflow = (double)value - _maxValue;
+                overflow = overflow - 2*range * (int)( overflow / (2*range) );
+                if ( overflow < range )
+                    value = _maxValue - overflow;
+                else // overflow btw range and range*2
+                    value = _maxValue - range + (overflow-range);
+            }
+            
+            _currentGenome[iNN][i] = value;
         }
-        else if ( value > _maxValue )
-        {
-            double range = _maxValue - _minValue;
-            double overflow = (double)value - _maxValue;
-            overflow = overflow - 2*range * (int)( overflow / (2*range) );
-            if ( overflow < range )
-                value = _maxValue - overflow;
-            else // overflow btw range and range*2
-                value = _maxValue - range + (overflow-range);
-        }
-        
-        _currentGenome[i] = value;
     }
-    
 }
 
 
 void MovingNSController::mutateUniform() // mutate within bounds.
 {
-    for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
+    for (int iNN = 0; iNN < 2; iNN++)
     {
-        float randomValue = float(rand()%100) / 100.0; // in [0,1[
-        double range = _maxValue - _minValue;
-        double value = randomValue * range + _minValue;
-        
-        _currentGenome[i] = value;
+        for (unsigned int i = 0 ; i != _currentGenome[iNN].size() ; i++ )
+        {
+            float randomValue = float(rand()%100) / 100.0; // in [0,1[
+            double range = _maxValue - _minValue;
+            double value = randomValue * range + _minValue;
+            
+            _currentGenome[iNN][i] = value;
+        }
     }
 }
 
@@ -332,7 +351,8 @@ void MovingNSController::setIOcontrollerSize()
     
     // wrt outputs
     
-    _nbOutputs = 2;
+    _nbOutputs[0] = 2; // 2 outputs for movement
+    _nbOutputs[1] = 1; // 1 output for cooperation
 }
 
 void MovingNSController::initController()
@@ -344,18 +364,22 @@ void MovingNSController::initController()
     
     createNN();
 
-    unsigned int const nbGene = computeRequiredNumberOfWeights();
+    int nbGene[2];
+    for (int iNN = 0; iNN < 2; iNN++)
+        nbGene[iNN] = computeRequiredNumberOfWeights(iNN);
     
     if ( gVerbose )
         std::cout << std::flush ;
     
-    _currentGenome.clear();
+    for (auto& gen: _currentGenome)
+        gen.clear();
     
-    // Intialize genome
-    
-    for ( unsigned int i = 0 ; i != nbGene ; i++ )
-    {
-        _currentGenome.push_back((double)(rand()%MovingNSSharedData::gNeuronWeightRange)/(MovingNSSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
+    // Intialize genomes
+    for (int iNN = 0; iNN < 2; iNN++) {
+        for ( unsigned int i = 0 ; i != nbGene[iNN] ; i++ )
+        {
+            _currentGenome[iNN].push_back((double)(rand()%MovingNSSharedData::gNeuronWeightRange)/(MovingNSSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
+        }
     }
     
     updatePhenotype();
@@ -407,15 +431,17 @@ void MovingNSController::mutateSigmaValue()
 
 void MovingNSController::loadNewGenome( genome __newGenome )
 {
-    _currentGenome = __newGenome.first;
+    for (int iNN = 0; iNN < 2; iNN++)
+        _currentGenome[iNN] = __newGenome.first[iNN];
     _currentSigma = __newGenome.second;
     performVariation();
     updatePhenotype();
 }
 
 void MovingNSController::updatePhenotype() {
-    // could be more complicated!
-    _parameters = _currentGenome;
+
+    for (int iNN = 0; iNN < 2; iNN++)
+        _parameters[iNN] = _currentGenome[iNN];
 }
 
 void MovingNSController::logCurrentState()
@@ -498,8 +524,11 @@ void MovingNSController::dumpGenome()
 {
     std::cout <<"Dumping genome of robot #" << _wm->getId() << std::endl;
     std::cout << _currentSigma << " ";
-    std::cout << _currentGenome.size() << " ";
-    for (auto gene: _currentGenome)
-        std::cout << gene << " ";
+    for (int iNN = 0; iNN < 2; iNN++)
+    {
+        std::cout << _currentGenome[iNN].size() << " ";
+        for (auto gene: _currentGenome[iNN])
+            std::cout << gene << " ";
+    }
     std::cout << std::endl;
 }
