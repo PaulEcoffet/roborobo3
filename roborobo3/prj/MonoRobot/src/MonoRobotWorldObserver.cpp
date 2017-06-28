@@ -125,7 +125,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
     // Save fitness values and genomes before the reset
     double totalFitness = 0;
     std::vector<double> fitnesses(gNbOfRobots);
-    std::vector<genome> genomes(gNbOfRobots);
+    std::vector<MonoRobotController::genome> genomes(gNbOfRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
@@ -324,7 +324,7 @@ void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
     if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
     {
         MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-        genome best = ctl->getGenome();
+        MonoRobotController::genome best = ctl->getGenome();
         std::stringstream bestGenome;
         bestGenome << _generationCount << " ";
         bestGenome << best.second << " "; // sigma

@@ -21,9 +21,6 @@
 
 using namespace Neural;
 
-typedef std::pair<std::vector<double>, double> genome;
-
-
 class MonoRobotController : public Controller
 {
 protected:
@@ -108,6 +105,8 @@ protected:
 
     
 public:
+    
+    typedef std::pair<std::vector<double>, double> genome;
     
     MonoRobotController(RobotWorldModel *wm);
     ~MonoRobotController();

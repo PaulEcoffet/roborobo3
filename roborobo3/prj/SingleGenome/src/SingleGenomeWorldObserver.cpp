@@ -103,7 +103,7 @@ void SingleGenomeWorldObserver::stepEvaluation()
     // Save fitness values and genomes before the reset
     double totalFitness = 0;
     std::vector<double> fitnesses(gNbOfRobots);
-    std::vector<genome> genomes(gNbOfRobots);
+    std::vector<SingleGenomeController::genome> genomes(gNbOfRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
