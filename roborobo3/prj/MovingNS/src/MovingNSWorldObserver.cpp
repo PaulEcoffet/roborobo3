@@ -258,7 +258,7 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
             bestGenome << best.first.size() << " ";
             for (auto gene: best.first)
                 bestGenome << gene << " ";
-        std::cout << std::endl;
+        std::cout << "\n";
 
         _genomeLogManager->write(bestGenome.str());
         _genomeLogManager->flush();
