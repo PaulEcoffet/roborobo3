@@ -24,8 +24,7 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
 {
     _wm = wm;
     
-    _movementNN = nullptr;
-    _coopNN = nullptr;
+    _NN = nullptr;
     
     // evolutionary engine
     
@@ -43,7 +42,7 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
     _isListening = true;
     _notListeningDelay = MovingNSSharedData::gNotListeningStateDelay;
     _listeningDelay = MovingNSSharedData::gListeningStateDelay;
-        
+    
     if ( gEnergyLevel )
         _wm->setEnergyLevel(gEnergyInit);
     
@@ -58,10 +57,9 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
 
 MovingNSController::~MovingNSController()
 {
-    for (auto& params: _parameters)
-        params.clear();
-    delete _movementNN;
-    _movementNN = NULL;
+    _parameters.clear();
+    delete _NN;
+    _NN = nullptr;
 }
 
 void MovingNSController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
@@ -69,17 +67,17 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     _iteration++;
     
     // * step controller
-
+    
     stepController();
     
     // Coloring
     
     if (_isNearObject == false) // blue
         _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
-
+    
     // Update state variables
     
-	_nbNearbyRobots = 0;
+    _nbNearbyRobots = 0;
     _efforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
     _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
     _isNearObject = false;
@@ -146,10 +144,10 @@ std::vector<double> MovingNSController::getInputs()
     inputs.push_back( (double)_wm->getGroundSensor_redValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
-
-	// how many robots around?
-	inputs.push_back(_nbNearbyRobots);
-
+    
+    // how many robots around?
+    inputs.push_back(_nbNearbyRobots);
+    
     if (MovingNSSharedData::gTotalEffort)
     {
         // what's the total effort given to the object in the last few turns?
@@ -164,39 +162,35 @@ std::vector<double> MovingNSController::getInputs()
     for (auto eff: _efforts)
         effort += eff;
     inputs.push_back(effort);
-
+    
     return inputs;
 }
 
 void MovingNSController::stepController()
 {
-
+    
     // ---- compute and read out ----
     
-    _movementNN->setWeights(_parameters[0]); // set-up NN
-    _coopNN->setWeights(_parameters[1]);
+    _NN->setWeights(_parameters); // set-up NN
     
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
     
-    _movementNN->setInputs(inputs);
-    _coopNN->setInputs(inputs);
+    _NN->setInputs(inputs);
     
-    _movementNN->step();
-    _coopNN->step();
+    _NN->step();
     
-    std::vector<double> movementOutputs = _movementNN->readOut();
-    std::vector<double> coopOutputs = _coopNN->readOut();
+    std::vector<double> outputs = _NN->readOut();
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
-    _wm->_desiredTranslationalValue = movementOutputs[0];
-    _wm->_desiredRotationalVelocity = movementOutputs[1];
+    _wm->_desiredTranslationalValue = outputs[0];
+    _wm->_desiredRotationalVelocity = outputs[1];
     
     // normalize to motor interval values
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
     
-    _wm->_cooperationLevel = (coopOutputs[0]+1.0); // in [0, 2]
+    _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
     
 }
 
@@ -205,34 +199,28 @@ void MovingNSController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( _movementNN != nullptr )
-        delete _movementNN;
-    
-    if (_coopNN != nullptr)
-        delete _coopNN;
+    if ( _NN != nullptr )
+        delete _NN;
     
     switch ( MovingNSSharedData::gControllerType )
     {
         case 0:
         {
             // MLP
-            _movementNN = new MLP(_parameters[0], _nbInputs, _nbOutputs[0], *(_nbNeuronsPerHiddenLayer));
-            _coopNN = new MLP(_parameters[1], _nbInputs, _nbOutputs[1], *(_nbNeuronsPerHiddenLayer));
+            _NN = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         case 1:
         {
             // PERCEPTRON
-            _movementNN = new Perceptron(_parameters[0], _nbInputs, _nbOutputs[0]);
-            _coopNN = new Perceptron(_parameters[1], _nbInputs, _nbOutputs[1]);
-
+            _NN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
+            
             break;
         }
         case 2:
         {
             // ELMAN
-            _movementNN = new Elman(_parameters[0], _nbInputs, _nbOutputs[0], *(_nbNeuronsPerHiddenLayer));
-            _coopNN = new Elman(_parameters[1], _nbInputs, _nbOutputs[1], *(_nbNeuronsPerHiddenLayer));
+            _NN = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         default: // default: no controller
@@ -242,12 +230,9 @@ void MovingNSController::createNN()
 }
 
 
-unsigned int MovingNSController::computeRequiredNumberOfWeights(int __NN)
+unsigned int MovingNSController::computeRequiredNumberOfWeights()
 {
-    if (__NN == 0)
-        return _movementNN->getRequiredNumberOfWeights();
-    else
-        return _coopNN->getRequiredNumberOfWeights();
+    return _NN->getRequiredNumberOfWeights();
 }
 
 // ################ ######################## ################
@@ -283,50 +268,45 @@ void MovingNSController::mutateGaussian(float sigma) // mutate within bounds.
 {
     _currentSigma = sigma;
     
-    for (int iNN = 0; iNN < 2; iNN++) {
-        for (unsigned int i = 0 ; i != _currentGenome[iNN].size() ; i++ )
+    for (unsigned int i = 0 ; i < _currentGenome.size() ; i++ )
+    {
+        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
+        // bouncing upper/lower bounds
+        if ( value < _minValue )
         {
-            double value = _currentGenome[iNN][i] + getGaussianRand(0,_currentSigma);
-            // bouncing upper/lower bounds
-            if ( value < _minValue )
-            {
-                double range = _maxValue - _minValue;
-                double overflow = - ( (double)value - _minValue );
-                overflow = overflow - 2*range * (int)( overflow / (2*range) );
-                if ( overflow < range )
-                    value = _minValue + overflow;
-                else // overflow btw range and range*2
-                    value = _minValue + range - (overflow-range);
-            }
-            else if ( value > _maxValue )
-            {
-                double range = _maxValue - _minValue;
-                double overflow = (double)value - _maxValue;
-                overflow = overflow - 2*range * (int)( overflow / (2*range) );
-                if ( overflow < range )
-                    value = _maxValue - overflow;
-                else // overflow btw range and range*2
-                    value = _maxValue - range + (overflow-range);
-            }
-            
-            _currentGenome[iNN][i] = value;
+            double range = _maxValue - _minValue;
+            double overflow = - ( (double)value - _minValue );
+            overflow = overflow - 2*range * (int)( overflow / (2*range) );
+            if ( overflow < range )
+                value = _minValue + overflow;
+            else // overflow btw range and range*2
+                value = _minValue + range - (overflow-range);
         }
+        else if ( value > _maxValue )
+        {
+            double range = _maxValue - _minValue;
+            double overflow = (double)value - _maxValue;
+            overflow = overflow - 2*range * (int)( overflow / (2*range) );
+            if ( overflow < range )
+                value = _maxValue - overflow;
+            else // overflow btw range and range*2
+                value = _maxValue - range + (overflow-range);
+        }
+        
+        _currentGenome[i] = value;
     }
 }
 
 
 void MovingNSController::mutateUniform() // mutate within bounds.
 {
-    for (int iNN = 0; iNN < 2; iNN++)
+    for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        for (unsigned int i = 0 ; i != _currentGenome[iNN].size() ; i++ )
-        {
-            float randomValue = float(rand()%100) / 100.0; // in [0,1[
-            double range = _maxValue - _minValue;
-            double value = randomValue * range + _minValue;
-            
-            _currentGenome[iNN][i] = value;
-        }
+        float randomValue = float(rand()%100) / 100.0; // in [0,1[
+        double range = _maxValue - _minValue;
+        double value = randomValue * range + _minValue;
+        
+        _currentGenome[i] = value;
     }
 }
 
@@ -353,8 +333,7 @@ void MovingNSController::setIOcontrollerSize()
     
     // wrt outputs
     
-    _nbOutputs[0] = 2; // 2 outputs for movement
-    _nbOutputs[1] = 1; // 1 output for cooperation
+    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
 }
 
 void MovingNSController::initController()
@@ -365,29 +344,24 @@ void MovingNSController::initController()
         (*_nbNeuronsPerHiddenLayer)[i] = MovingNSSharedData::gNbNeuronsPerHiddenLayer;
     
     createNN();
-
-    int nbGene[2];
-    for (int iNN = 0; iNN < 2; iNN++)
-        nbGene[iNN] = computeRequiredNumberOfWeights(iNN);
+    
+    int nbGenes = computeRequiredNumberOfWeights();
     
     if ( gVerbose )
         std::cout << std::flush ;
     
-    for (auto& gen: _currentGenome)
-        gen.clear();
+    _currentGenome.clear();
     
     // Intialize genomes
-    for (int iNN = 0; iNN < 2; iNN++) {
-        for ( unsigned int i = 0 ; i != nbGene[iNN] ; i++ )
-        {
-            _currentGenome[iNN].push_back((double)(rand()%MovingNSSharedData::gNeuronWeightRange)/(MovingNSSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
-        }
+    for ( unsigned int i = 0 ; i < nbGenes; i++ )
+    {
+        _currentGenome.push_back((ranf()*2.0)-1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
-
-	// state variables
-	_nbNearbyRobots = 0;
+    
+    // state variables
+    _nbNearbyRobots = 0;
     for (auto& eff: _efforts)
         eff = 0;
     for (auto& totEff: _totalEfforts)
@@ -433,17 +407,16 @@ void MovingNSController::mutateSigmaValue()
 
 void MovingNSController::loadNewGenome( genome __newGenome )
 {
-    for (int iNN = 0; iNN < 2; iNN++)
-        _currentGenome[iNN] = __newGenome.first[iNN];
+    _currentGenome = __newGenome.first;
     _currentSigma = __newGenome.second;
     performVariation();
     updatePhenotype();
 }
 
-void MovingNSController::updatePhenotype() {
-
-    for (int iNN = 0; iNN < 2; iNN++)
-        _parameters[iNN] = _currentGenome[iNN];
+void MovingNSController::updatePhenotype()
+{
+    // could be more complicated!
+    _parameters = _currentGenome;
 }
 
 void MovingNSController::logCurrentState()
@@ -460,7 +433,7 @@ void MovingNSController::logCurrentState()
     ",dist," + std::to_string( getEuclideanDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
     ",sumOfDist," + std::to_string( _dSumTravelled ) +
     ",groupId," + std::to_string(_wm->getGroupId()) +
-    ",fitnessValue," + std::to_string(_wm->_fitnessValue) + 
+    ",fitnessValue," + std::to_string(_wm->_fitnessValue) +
     "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
@@ -482,11 +455,11 @@ void MovingNSController::resetFitness()
 
 void MovingNSController::updateFitness( double __newFitness )
 {
-	if (__newFitness < 0)
-	{
-		updateFitness(0);
-		return;
-	}
+    if (__newFitness < 0)
+    {
+        updateFitness(0);
+        return;
+    }
     _wm->_fitnessValue = __newFitness;
 }
 
@@ -498,7 +471,7 @@ void MovingNSController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+    //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     if (__effort > 0) // Green LED
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
@@ -514,23 +487,19 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
- //       printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+        //       printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
         increaseFitness(payoff);
         _efforts[_iteration%MovingNSSharedData::gMemorySize] = __effort;
         _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = __totalEffort;
     }
-
+    
 }
 
 void MovingNSController::dumpGenome()
 {
     std::cout <<"Dumping genome of robot #" << _wm->getId() << std::endl;
     std::cout << _currentSigma << " ";
-    for (int iNN = 0; iNN < 2; iNN++)
-    {
-        std::cout << _currentGenome[iNN].size() << " ";
-        for (auto gene: _currentGenome[iNN])
-            std::cout << gene << " ";
-    }
+    for (auto gene: _currentGenome)
+        std::cout << gene << " ";
     std::cout << std::endl;
 }

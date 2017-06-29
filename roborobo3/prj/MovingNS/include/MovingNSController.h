@@ -31,12 +31,11 @@ protected:
     int _notListeningDelay;
     int _listeningDelay;
         
-    std::vector<double> _parameters[2]; // 0: movement, 1: coop
+    std::vector<double> _parameters; // 0: movement, 1: coop
     std::string _nnType;
     std::vector<int> _nbHiddenNeuronsPerLayer;
     std::vector<int> _nbBiasNeuronsPerLayer;
-    NeuralNetwork* _movementNN;
-    NeuralNetwork* _coopNN;
+    NeuralNetwork* _NN;
     
     void createNN();
     
@@ -60,13 +59,13 @@ protected:
     
     void updatePhenotype(); // updates the neural network when the genome is changed
     
-    unsigned int computeRequiredNumberOfWeights(int __NN);
+    unsigned int computeRequiredNumberOfWeights();
     
     //        void setAliveStatus( bool isAlive ) { _isAlive = isAlive; }
             
     // current genome
     
-    std::vector<double> _currentGenome[2]; // movement, coop
+    std::vector<double> _currentGenome; // movement, coop
     float _currentSigma;
     
     // other neural network inputs
@@ -83,7 +82,7 @@ protected:
     double _minValue;
     double _maxValue;
     unsigned int _nbInputs;
-    unsigned int _nbOutputs[2];
+    unsigned int _nbOutputs;
     unsigned int _nbHiddenLayers;
     std::vector<unsigned int>* _nbNeuronsPerHiddenLayer;
     
@@ -106,7 +105,7 @@ protected:
     
 public:
     
-    typedef std::pair<std::vector<double>*, double> genome; // movementParams, coopParams, sigma
+    typedef std::pair<std::vector<double>, double> genome; // movementParams, coopParams, sigma
     
     MovingNSController(RobotWorldModel *wm);
     ~MovingNSController();
