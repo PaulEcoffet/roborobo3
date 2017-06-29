@@ -196,7 +196,7 @@ void MovingNSController::stepController()
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
     
-    _wm->_cooperationLevel = (coopOutputs[0]+1.0)/2.0;
+    _wm->_cooperationLevel = (coopOutputs[0]+1.0); // in [0, 2]
     
 }
 
@@ -498,7 +498,7 @@ void MovingNSController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-    printf("[DEBUG] Robot %d was near object %d, own cooperation %lf, total cooperation %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     if (__effort > 0) // Green LED
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
@@ -514,7 +514,7 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+ //       printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
         increaseFitness(payoff);
         _efforts[_iteration%MovingNSSharedData::gMemorySize] = __effort;
         _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = __totalEffort;

@@ -233,10 +233,12 @@ void MovingObject::show() {
     CircleObject::show();
 }
 
+// Here, the robot ID has the gRobotStartOffset added because we might be pushed by either robots or other objects
 void MovingObject::isPushed( int __idAgent, std::tuple<double, double> __speed )
 {
     if (_impulses.count(__idAgent) == 0) {
         _impulses.insert(std::pair<int, std::tuple<double, double>>(__idAgent, __speed));
+        _nearbyRobots.insert(__idAgent-gRobotIndexStartOffset);
     }
 }
 
@@ -247,5 +249,5 @@ void MovingObject::isTouched( int __idAgent )
 
 void MovingObject::isWalked( int __idAgent )
 {
-    _nearbyRobots.insert(__idAgent);
+//    _nearbyRobots.insert(__idAgent);
 }
