@@ -91,6 +91,10 @@ public:
     double _maxRotationalDeltaValue;		// default: gMaxRotationalSpeed (ie. instantenous)
     double _maxTranslationalDeltaValue;		// default: gMaxTranslationalSpeed (ie. instantenous)
     
+    // cooperation level
+    
+    double _cooperationLevel; // [0, 1)
+    
     // description and values of sensors
     int _cameraSensorsNb;
     int _groundSensorValue[3]; // r,g,b

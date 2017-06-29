@@ -53,7 +53,7 @@ void MovingObject::move() {
             double impY = (vx*ux+vy*uy)*uy/sqnorm;
             impXtot += impX;
             impYtot += impY;
-            _efforts.insert(std::pair<int, double>(imp.first, sqrt(impX*impX+impY*impY)));
+            _efforts.insert(std::pair<int, double>(imp.first, vr)); // vr is here in fact the cooperation level (and vtheta as well)
         }
         
         _desiredLinearSpeed = sqrt(impXtot*impXtot + impYtot*impYtot);
@@ -115,8 +115,7 @@ void MovingObject::step()
     double totalEffort = 0;
     for (auto eff: _efforts)
 	{
-//        totalEffort += eff.second;
-		totalEffort += 0.25; // fix cooperation levels at 0.25
+        totalEffort += eff.second;
 	}
 
     for (auto robotID: _nearbyRobots)
@@ -127,8 +126,7 @@ void MovingObject::step()
         double effort = 0;
         if (_efforts.count(robotID+gRobotIndexStartOffset) > 0)
         {
-//            effort = _efforts[robotID+gRobotIndexStartOffset];
-			effort = 0.25;
+            effort = _efforts[robotID+gRobotIndexStartOffset];
         }
         std::string projectName = gProperties.getProperty("ConfigurationLoaderObjectName");
         

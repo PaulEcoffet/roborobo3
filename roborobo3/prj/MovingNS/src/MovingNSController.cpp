@@ -185,7 +185,7 @@ void MovingNSController::stepController()
     _coopNN->step();
     
     std::vector<double> movementOutputs = _movementNN->readOut();
-    std::vector<double> coopOutput = _coopNN->readOut();
+    std::vector<double> coopOutputs = _coopNN->readOut();
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
@@ -195,6 +195,8 @@ void MovingNSController::stepController()
     // normalize to motor interval values
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
+    
+    _wm->_cooperationLevel = (coopOutputs[0]+1.0)/2.0;
     
 }
 
@@ -496,7 +498,7 @@ void MovingNSController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+    printf("[DEBUG] Robot %d was near object %d, own cooperation %lf, total cooperation %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     if (__effort > 0) // Green LED
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
