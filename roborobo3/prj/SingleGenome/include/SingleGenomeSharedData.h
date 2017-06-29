@@ -59,6 +59,8 @@ public:
 
 	static constexpr int gMemorySize = 20;
     
+    static bool gTotalEffort;
+    
     static int gGenerationLog;
     
     // Parameters relative to the payoff function

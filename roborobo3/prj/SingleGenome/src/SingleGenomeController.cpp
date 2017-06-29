@@ -24,7 +24,7 @@ SingleGenomeController::SingleGenomeController( RobotWorldModel *wm )
 {
     _wm = wm;
     
-    nn = NULL;
+    _NN = nullptr;
     
     // evolutionary engine
     
@@ -58,8 +58,8 @@ SingleGenomeController::SingleGenomeController( RobotWorldModel *wm )
 SingleGenomeController::~SingleGenomeController()
 {
     _parameters.clear();
-    delete nn;
-    nn = NULL;
+    delete _NN;
+    _NN = nullptr;
 }
 
 void SingleGenomeController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
@@ -148,11 +148,14 @@ std::vector<double> SingleGenomeController::getInputs()
 	// how many robots around?
 	inputs.push_back(_nbNearbyRobots);
 
-    // what's the total effort given to the object in the last few turns?
-    double totalEffort = 0;
-    for (auto eff: _totalEfforts)
-        totalEffort += eff;
-    inputs.push_back(totalEffort);
+    if (SingleGenomeSharedData::gTotalEffort)
+    {
+        // what's the total effort given to the object in the last few turns?
+        double totalEffort = 0;
+        for (auto eff: _totalEfforts)
+            totalEffort += eff;
+        inputs.push_back(totalEffort);
+    }
     
     // how much did we contribute?
     double effort = 0;
@@ -168,15 +171,15 @@ void SingleGenomeController::stepController()
 
     // ---- compute and read out ----
     
-    nn->setWeights(_parameters); // set-up NN
+    _NN->setWeights(_parameters); // set-up NN
     
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
     
-    nn->setInputs(inputs);
+    _NN->setInputs(inputs);
     
-    nn->step();
+    _NN->step();
     
-    std::vector<double> outputs = nn->readOut();
+    std::vector<double> outputs = _NN->readOut();
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
@@ -192,6 +195,8 @@ void SingleGenomeController::stepController()
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
     
+    _wm->_cooperationLevel = outputs[2] + 1.0; // in [0, 2]
+    
 }
 
 
@@ -199,27 +204,27 @@ void SingleGenomeController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( nn != NULL ) // useless: delete will anyway check if nn is NULL or not.
-        delete nn;
+    if ( _NN != NULL ) // useless: delete will anyway check if nn is NULL or not.
+        delete _NN;
     
     switch ( SingleGenomeSharedData::gControllerType )
     {
         case 0:
         {
             // MLP
-            nn = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _NN = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         case 1:
         {
             // PERCEPTRON
-            nn = new Perceptron(_parameters, _nbInputs, _nbOutputs);
+            _NN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
             break;
         }
         case 2:
         {
             // ELMAN
-            nn = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _NN = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         default: // default: no controller
@@ -231,7 +236,7 @@ void SingleGenomeController::createNN()
 
 unsigned int SingleGenomeController::computeRequiredNumberOfWeights()
 {
-    unsigned int res = nn->getRequiredNumberOfWeights();
+    unsigned int res = _NN->getRequiredNumberOfWeights();
     return res;
 }
 
@@ -327,13 +332,14 @@ void SingleGenomeController::setIOcontrollerSize()
     
     _nbInputs += 1; // how many robots around?
     
-    _nbInputs += 1; // what's the total effort given to the object?
+    if (SingleGenomeSharedData::gTotalEffort)
+        _nbInputs += 1; // what's the total effort given to the object?
     
     _nbInputs += 1; // how much did we contribute?
     
     // wrt outputs
     
-    _nbOutputs = 2;
+    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
 }
 
 void SingleGenomeController::initController()
@@ -348,7 +354,7 @@ void SingleGenomeController::initController()
     unsigned int const nbGenes = computeRequiredNumberOfWeights();
     
     if ( gVerbose )
-        std::cout << std::flush ;
+        std::cout << std::flush;
     
     _currentGenome.clear();
     
