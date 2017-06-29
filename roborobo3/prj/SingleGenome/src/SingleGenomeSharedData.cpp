@@ -50,6 +50,8 @@ double SingleGenomeSharedData::gSigma = 0.01; // 0.01 is just some random value.
 
 constexpr int SingleGenomeSharedData::gMemorySize;
 
+bool SingleGenomeSharedData::gTotalEffort = true;
+
 double SingleGenomeSharedData::gConstantK = 0;
 double SingleGenomeSharedData::gConstantA = 0;
 
