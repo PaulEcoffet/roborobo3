@@ -689,7 +689,7 @@ bool Robot::isCollision()
                             if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // this is a physical object
                             {
                                 targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
+                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_cooperationLevel, _wm->_cooperationLevel));
                             }
                             collision = true;
                         }
