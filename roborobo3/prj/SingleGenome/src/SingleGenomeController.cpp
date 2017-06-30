@@ -372,10 +372,11 @@ void SingleGenomeController::initController()
         exit(-1);
     } else {
         genomeFile >> _currentSigma;
-        int nbGenesFiles;
-        genomeFile >> nbGenesFiles;
-        if (nbGenes != nbGenesFiles) {
-            printf("[CRITICAL] Number of genes in the file doesn't match expected. Exiting\n");
+        int nbGenesFile;
+        genomeFile >> nbGenesFile;
+        if (nbGenes != nbGenesFile) {
+            printf("[CRITICAL] Number of genes in the file doesn't match expected. Exiting.\n");
+            printf("Expected: %d, actual: %d\n", nbGenes, nbGenesFile);
             exit(-1);
         }
         for (int i = 0; i < nbGenes; i++) {
