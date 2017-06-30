@@ -90,7 +90,6 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
-    int _coopTime;
     int _objectTime;
     
     void reset();
@@ -117,8 +116,6 @@ public:
     bool isListening() { return _isListening; }
     
     genome getGenome() { return std::make_pair(_currentGenome, _currentSigma); }
-    
-    int getCoopTime() { return _coopTime; }
     
     int getObjectTime() { return _objectTime; }
     
