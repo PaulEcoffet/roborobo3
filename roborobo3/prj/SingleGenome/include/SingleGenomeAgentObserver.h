@@ -17,12 +17,14 @@
 
 class SingleGenomeAgentObserver : public AgentObserver
 {
-	public:
-		SingleGenomeAgentObserver(RobotWorldModel *wm);
-		~SingleGenomeAgentObserver();
+public:
+    SingleGenomeAgentObserver(RobotWorldModel *wm);
+    ~SingleGenomeAgentObserver();
 
-		virtual void reset();
-		virtual void step();
+    virtual void reset();
+    virtual void step();
+    
+    void logStats();
 
 };
 

@@ -42,3 +42,17 @@ void SingleGenomeAgentObserver::step()
     }
     
 }
+void SingleGenomeAgentObserver::logStats()
+{
+    SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
+    LogManager* coopLogManager = wobs->getCoopLogManager();
+    std::stringstream coopStats;
+    SingleGenomeController *ctl = static_cast<SingleGenomeController *>(gWorld->getRobot(_wm->getId())->getController());
+    coopStats << wobs->getGenerationCount() << "\t";
+    coopStats << gWorld->getIterations() << "\t";
+    coopStats << _wm->getId() << "\t";
+    coopStats << ctl->getNbRobots() << "\t";
+    coopStats << ctl->getCooperationLevel() << "\n";
+    coopLogManager->write(coopStats.str());
+}
+

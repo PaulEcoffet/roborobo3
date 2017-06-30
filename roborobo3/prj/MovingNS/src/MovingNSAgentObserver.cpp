@@ -42,3 +42,14 @@ void MovingNSAgentObserver::step()
     }
     
 }
+
+void MovingNSAgentObserver::logStats()
+{
+    MovingNSWorldObserver *wobs = static_cast<MovingNSWorldObserver *>(gWorld->getWorldObserver());
+    MovingNSController *ctl = static_cast<MovingNSController *>(gWorld->getRobot(_wm->getId())->getController());
+    std::cout << wobs->getGenerationCount() << "\t";
+    std::cout << gWorld->getIterations() << "\t";
+    std::cout << _wm->getId() << "\t";
+    std::cout << ctl->getNbRobots() << "\t";
+    std::cout << ctl->getCooperationLevel() << "\n";
+}
