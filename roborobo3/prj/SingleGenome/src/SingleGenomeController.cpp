@@ -132,7 +132,7 @@ std::vector<double> SingleGenomeController::getInputs()
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
-                inputs.push_back(obj->getNbNearbyRobots()); // some other robots around
+                inputs.push_back(obj->getNbNearbyRobots()+SingleGenomeSharedData::gFakeRobotsPerObject); // some other robots around
             }
             else // found nothing
             {
@@ -497,12 +497,16 @@ void SingleGenomeController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
-    
     if (__effort > 0) // Green LED
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
     else // Red LED
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
+    
+    // Fake object / effort setup
+    __nbRobots += SingleGenomeSharedData::gFakeRobotsPerObject;
+    __totalEffort += SingleGenomeSharedData::gFakeTotalEffort;
+    
+    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     _isNearObject = true;
     _nbNearbyRobots = __nbRobots;

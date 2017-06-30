@@ -61,12 +61,16 @@ public:
     
     static bool gTotalEffort;
     
-    static int gGenerationLog;
+    static int gFakeRobotsPerObject;
+    static double gFakeTotalEffort;
     
     // Parameters relative to the payoff function
     
     static double gConstantK;
     static double gConstantA;
+
+    
+    static int gGenerationLog;
     
     static std::string gGenomeFilename;
 
