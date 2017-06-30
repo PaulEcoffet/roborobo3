@@ -52,6 +52,10 @@ constexpr int SingleGenomeSharedData::gMemorySize;
 
 bool SingleGenomeSharedData::gTotalEffort = true;
 
+int SingleGenomeSharedData::gFakeRobotsPerObject = 0;
+double SingleGenomeSharedData::gFakeTotalEffort = 0;
+
+
 double SingleGenomeSharedData::gConstantK = 0;
 double SingleGenomeSharedData::gConstantA = 0;
 
