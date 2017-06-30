@@ -172,10 +172,6 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     //    outcome: among many iterations, the effect of ordering is reduced.
     //    This means that roborobo is turn-based, with stochastic update ordering within one turn
     
-    // * update world level observer
-    
-    _worldObserver->step();
-    
     // * update physical object, if any (in random order)
     
     int shuffledObjectIndex[gNbOfPhysicalObjects];
@@ -233,6 +229,10 @@ void World::updateWorld(const Uint8 *__keyboardStates)
         gRobots[shuffledRobotIndex[i]]->registerRobot();
         gRobotsRegistry[shuffledRobotIndex[i]]=true;
     }
+    
+    // * update world level observer
+    
+    _worldObserver->step();
     
     gLogManager->flush();
     

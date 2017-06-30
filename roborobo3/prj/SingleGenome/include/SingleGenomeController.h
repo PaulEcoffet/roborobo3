@@ -90,6 +90,7 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
+    int _objectTime;
     
     void reset();
     
@@ -119,6 +120,10 @@ public:
     void loadNewGenome( genome __newGenome );
     
     virtual double getFitness();
+    
+    int getNbRobots() { return _nbNearbyRobots; }
+    
+    double getCooperationLevel() { return _wm->_cooperationLevel; }
     
     void increaseFitness( double __delta );
     

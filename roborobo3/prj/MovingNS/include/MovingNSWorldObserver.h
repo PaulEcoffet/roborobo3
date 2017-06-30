@@ -28,7 +28,6 @@ protected:
     
     LogManager *_fitnessLogManager;
     LogManager *_genomeLogManager;
-    LogManager *_statsLogManager;
     
 public:
     MovingNSWorldObserver(World *world);
@@ -39,7 +38,8 @@ public:
     void stepEvaluation();
     
     virtual int getGenerationItCount() { return _generationItCount; }
-
+    
+    int getGenerationCount() { return _generationCount; }
 };
 
 #endif

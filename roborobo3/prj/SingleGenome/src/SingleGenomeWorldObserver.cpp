@@ -80,16 +80,20 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     // * Logfiles
     
-    std::string statsLogFilename = gLogDirectoryname + "/observer.txt";
-    _statsLogManager = new LogManager(statsLogFilename);
-    _statsLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
-    _statsLogManager->flush();
+    std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
+    _fitnessLogManager = new LogManager(fitnessLogFilename);
+    _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
+    _fitnessLogManager->flush();
     
+    std::string coopLogFilename = gLogDirectoryname + "/coop_stats.txt";
+    _coopLogManager = new LogManager(coopLogFilename);
+    _coopLogManager->write("Gen\tIter\tID\tnbRob\tCoop\n");
 }
 
 SingleGenomeWorldObserver::~SingleGenomeWorldObserver()
 {
-    delete _statsLogManager;
+    delete _fitnessLogManager;
+    delete _coopLogManager;
 }
 
 void SingleGenomeWorldObserver::reset()
@@ -236,8 +240,8 @@ void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )
     genLog << highQuartFit << "\t";
     genLog << stddevFit << "\n";
     
-    _statsLogManager->write(genLog.str());
-    _statsLogManager->flush();
+    _fitnessLogManager->write(genLog.str());
+    _fitnessLogManager->flush();
     
     // display lightweight logs for easy-parsing
     std::cout << "log," << (gWorld->getIterations()/SingleGenomeSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";

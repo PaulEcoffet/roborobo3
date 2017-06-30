@@ -74,7 +74,7 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     
     if (_isNearObject == false) // blue
         _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
-    
+        
     // Update state variables
     
     _nbNearbyRobots = 0;
@@ -478,6 +478,7 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     
     _isNearObject = true;
+    _nbNearbyRobots = __nbRobots;
     _objectTime++;
     
     double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}

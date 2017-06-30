@@ -26,8 +26,9 @@ protected:
     int _generationCount;
     int _generationItCount;
     
-    LogManager *_statsLogManager;
+    LogManager *_fitnessLogManager;
     LogManager *_genomeLogManager;
+    LogManager *_coopLogManager;
     
 public:
     SingleGenomeWorldObserver(World *world);
@@ -37,8 +38,11 @@ public:
     virtual void step();
     void stepEvaluation();
     
+    LogManager *getCoopLogManager() { return _coopLogManager; }
+    
     virtual int getGenerationItCount() { return _generationItCount; }
 
+    int getGenerationCount() { return _generationCount; }
 };
 
 #endif

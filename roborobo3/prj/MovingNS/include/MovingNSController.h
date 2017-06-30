@@ -123,6 +123,10 @@ public:
     
     virtual double getFitness();
     
+    int getNbRobots() { return _nbNearbyRobots; }
+    
+    double getCooperationLevel() { return _wm->_cooperationLevel; }
+    
     void increaseFitness( double __delta );
     
     void wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
