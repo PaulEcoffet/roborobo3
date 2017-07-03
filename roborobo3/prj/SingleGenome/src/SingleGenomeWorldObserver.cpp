@@ -57,6 +57,8 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gSigma",&SingleGenomeSharedData::gSigma,false);
     
+    gProperties.checkAndGetPropertyValue("gTotalEffort", &SingleGenomeSharedData::gTotalEffort, true);
+    
     gProperties.checkAndGetPropertyValue("gGenerationLog", &SingleGenomeSharedData::gGenerationLog, false);
     
     gProperties.checkAndGetPropertyValue("gFakeRobotsPerObject", &SingleGenomeSharedData::gFakeRobotsPerObject, false);
