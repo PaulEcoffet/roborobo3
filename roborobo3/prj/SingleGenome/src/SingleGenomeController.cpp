@@ -366,9 +366,10 @@ void SingleGenomeController::initController()
     
     // Read the genome from a file
     
-    std::ifstream genomeFile("config/"+SingleGenomeSharedData::gGenomeFilename);
+    std::string filename = "config/"+SingleGenomeSharedData::gGenomeFilename;
+    std::ifstream genomeFile(filename);
     if (genomeFile.fail()) {
-        printf("[CRITICAL] Could not read genome file. Exiting.\n");
+        printf("[CRITICAL] Could not read genome file (%s). Exiting.\n", filename.c_str());
         exit(-1);
     } else {
         genomeFile >> _currentSigma;
