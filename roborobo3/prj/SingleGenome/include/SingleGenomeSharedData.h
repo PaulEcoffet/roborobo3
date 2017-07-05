@@ -62,7 +62,9 @@ public:
     static bool gTotalEffort;
     
     static int gFakeRobotsPerObject;
-    static double gFakeTotalEffort;
+    static double gFakeCoopValue;
+    static int gFakeCoopSteps;
+    static int gNbReplicas;
     
     // Parameters relative to the payoff function
     
@@ -71,6 +73,7 @@ public:
 
     
     static int gGenerationLog;
+    static bool gTakeVideo;
     
     static std::string gGenomeFilename;
 

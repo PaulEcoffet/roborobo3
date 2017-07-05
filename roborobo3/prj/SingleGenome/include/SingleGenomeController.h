@@ -129,6 +129,8 @@ public:
     
     void wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots ); // callback from the object whose footprint we're on, telling us how much it moved
     
+    void dumpGenome();
+    
 };
 
 

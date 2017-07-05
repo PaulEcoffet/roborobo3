@@ -60,9 +60,10 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     gProperties.checkAndGetPropertyValue("gTotalEffort", &SingleGenomeSharedData::gTotalEffort, true);
     
     gProperties.checkAndGetPropertyValue("gGenerationLog", &SingleGenomeSharedData::gGenerationLog, false);
+    gProperties.checkAndGetPropertyValue("gTakeVideo", &SingleGenomeSharedData::gTakeVideo, false);
     
     gProperties.checkAndGetPropertyValue("gFakeRobotsPerObject", &SingleGenomeSharedData::gFakeRobotsPerObject, false);
-    gProperties.checkAndGetPropertyValue("gFakeTotalEffort", &SingleGenomeSharedData::gFakeTotalEffort, false);
+    gProperties.checkAndGetPropertyValue("gFakeCoopValue", &SingleGenomeSharedData::gFakeCoopValue, false);
         
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
@@ -78,11 +79,6 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
         exit(-1);
     }
     
-    // * iteration and generation counters
-    
-    _generationItCount = 0;
-    _generationCount = 0;
-    
     // * Logfiles
     
     std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
@@ -92,7 +88,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     std::string coopLogFilename = gLogDirectoryname + "/coop_stats.txt";
     _coopLogManager = new LogManager(coopLogFilename);
-    _coopLogManager->write("Gen\tIter\tID\tnbRob\tCoop\n");
+    _coopLogManager->write("ID\tfakeRob\tfakeCoop\tRep\tIter\tnbRob\tCoop\n");
 }
 
 SingleGenomeWorldObserver::~SingleGenomeWorldObserver()
@@ -103,26 +99,67 @@ SingleGenomeWorldObserver::~SingleGenomeWorldObserver()
 
 void SingleGenomeWorldObserver::reset()
 {
+    // * Load all the genomes that we are going to use
     
+    std::string filename = "config/"+SingleGenomeSharedData::gGenomeFilename;
+    std::ifstream genomeFile(filename);
+    if (genomeFile.fail())
+    {
+        printf("[CRITICAL] Could not read genome file (%s). Exiting.\n", filename.c_str());
+        exit(-1);
+    }
+    
+    int nbGenomes;
+    genomeFile >> nbGenomes;
+    for (int iGenome = 0; iGenome < nbGenomes; iGenome++)
+    {
+        SingleGenomeController::genome gen;
+        genomeFile >> gen.second; // sigma value
+        int nbGenes;
+        genomeFile >> nbGenes;
+        // Note: we can't test that the genome has the right number of genes here
+        for (int iGene = 0; iGene < nbGenes; iGene++) {
+            double v;
+            genomeFile >> v;
+            gen.first.push_back(v);
+        }
+        _genomes.push_back(gen);
+    }
+    
+    // Fill the fake coop values
+    for (int i = 0; i < SingleGenomeSharedData::gFakeCoopSteps; i++)
+        _fakeCoopValues.push_back(((double)i)/((double)(SingleGenomeSharedData::gFakeCoopSteps-1))*SingleGenomeSharedData::gFakeCoopValue);
+    
+    // * iteration and generation counters
+    
+    _generationItCount = 0;
+    _generationCount = 0;
+    
+    gMaxIt = SingleGenomeSharedData::gEvaluationTime * nbGenomes * SingleGenomeSharedData::gNbReplicas * SingleGenomeSharedData::gFakeCoopSteps * (SingleGenomeSharedData::gFakeRobotsPerObject +1);
+    
+    // Parameter values
+    _genome = 0;
+    _replica = 0;
+    _fakeCoop = 0;
+    _nbFakeRobots = 0;
+    loadGenomes();
+
 }
 
-// Reset the environment, and perform an evolution step
-void SingleGenomeWorldObserver::stepEvaluation()
+void SingleGenomeWorldObserver::loadGenomes()
 {
-    // Save fitness values and genomes before the reset
-    double totalFitness = 0;
-    std::vector<double> fitnesses(gNbOfRobots);
-    std::vector<SingleGenomeController::genome> genomes(gNbOfRobots);
-    std::vector<int> newGenomePick(gNbOfRobots);
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    printf("Loading genome %d in the robots...\n", _genome);
+    for (int iRobot = 0; iRobot < gInitialNumberOfRobots; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
         SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
-        fitnesses[iRobot] = ctl->getFitness();
-        totalFitness += ctl->getFitness();
-        genomes[iRobot] = ctl->getGenome();
+        ctl->loadNewGenome(_genomes[_genome]);
     }
-    
+}
+
+// Reset everything and perform the next evaluation run
+void SingleGenomeWorldObserver::stepEvaluation()
+{
     // Environment stuff
     // unregister everyone
     for (auto object: gPhysicalObjects) {
@@ -145,34 +182,37 @@ void SingleGenomeWorldObserver::stepEvaluation()
         robot->reset();
     }
     
-    
-    // update genomes (we do it here because Robot::reset() also resets genomes)
-    // Create a new generation via selection/mutation
-    
-    // O(1) fitness-proportionate selection
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    // move on to the:
+    // -next genome if we're done with the current one
+    // -next set of parameters if we're done with the current one
+    // -next replica otherwise
+    // We have a "-1" each time because we run another step afterwards
+    if (_replica < SingleGenomeSharedData::gNbReplicas-1)
     {
-        bool done = false;
-        int pick = -1;
-        while (done == false) {
-            pick = rand()%gNbOfRobots;
-            double draw = ranf()*totalFitness;
-            if (draw <= fitnesses[pick]) // choose this robot
-                done = true;
-        }
-        newGenomePick[iRobot] = pick;
+        _replica++;
+        return;
     }
-    
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    _replica = 0;
+    if (_nbFakeRobots <= SingleGenomeSharedData::gFakeRobotsPerObject-1) // include the last value
     {
-        Robot *robot = gWorld->getRobot(iRobot);
-        SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
-        ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
+        _nbFakeRobots++;
+        return;
     }
+    _nbFakeRobots = 0;
+    if (_fakeCoop < SingleGenomeSharedData::gFakeCoopSteps-1)
+    {
+        _fakeCoop++;
+        return;
+    }
+    _fakeCoop = 0;
+    
+    _genome++; // we've done all the parameters, switch to next genome
+    loadGenomes();
 }
 
 void SingleGenomeWorldObserver::step()
 {
+//    printf("Genome %d replica %d fakeRobots %d fakeCoop %d iter %d\n", _genome, _replica, _nbFakeRobots, _fakeCoop, _generationItCount);
     // switch to next generation.
     if( _generationItCount == SingleGenomeSharedData::gEvaluationTime - 1 )
     {
@@ -198,7 +238,7 @@ void SingleGenomeWorldObserver::updateEnvironment()
 
 void SingleGenomeWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % SingleGenomeSharedData::gGenerationLog == 0)
+    if (SingleGenomeSharedData::gTakeVideo)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
         saveCustomScreenshot(name);

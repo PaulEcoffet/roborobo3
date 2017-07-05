@@ -71,37 +71,12 @@ void SingleGenomeController::initController()
     
     createNN();
     
-    unsigned int const nbGenes = computeRequiredNumberOfWeights();
-    
     if ( gVerbose )
         std::cout << std::flush;
     
     _currentGenome.clear();
     
-    // Read the genome from a file
-    
-    std::string filename = "config/"+SingleGenomeSharedData::gGenomeFilename;
-    std::ifstream genomeFile(filename);
-    if (genomeFile.fail()) {
-        printf("[CRITICAL] Could not read genome file (%s). Exiting.\n", filename.c_str());
-        exit(-1);
-    } else {
-        genomeFile >> _currentSigma;
-        int nbGenesFile;
-        genomeFile >> nbGenesFile;
-        if (nbGenes != nbGenesFile) {
-            printf("[CRITICAL] Number of genes in the file doesn't match expected. Exiting.\n");
-            printf("Expected: %d, actual: %d\n", nbGenes, nbGenesFile);
-            exit(-1);
-        }
-        for (int i = 0; i < nbGenes; i++) {
-            double v;
-            genomeFile >> v;
-            _currentGenome.push_back(v);
-        }
-    }
-    
-    updatePhenotype();
+    // We'll get our genome from the WorldObserver
     
     // state variables
     _nbNearbyRobots = 0;
@@ -492,10 +467,11 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     
     // Fake object / effort setup
-    __nbRobots += SingleGenomeSharedData::gFakeRobotsPerObject;
-    __totalEffort += SingleGenomeSharedData::gFakeTotalEffort;
+    SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
+    __nbRobots += wobs->getNbFakeRobots();
+    __totalEffort += wobs->getNbFakeRobots()*wobs->getFakeCoop();
     
-    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
     _isNearObject = true;
     _nbNearbyRobots = __nbRobots;
@@ -511,4 +487,14 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
         _totalEfforts[_iteration%SingleGenomeSharedData::gMemorySize] = __totalEffort;
     }
 
+}
+
+void SingleGenomeController::dumpGenome()
+{
+    std::cout <<"Dumping genome of robot #" << _wm->getId() << std::endl;
+    std::cout << _currentSigma << " ";
+    std::cout << _currentGenome.size() << " ";
+    for (auto gene: _currentGenome)
+        std::cout << gene << " ";
+    std::cout << std::endl;
 }
