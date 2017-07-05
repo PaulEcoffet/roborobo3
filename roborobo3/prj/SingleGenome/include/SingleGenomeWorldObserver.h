@@ -13,6 +13,9 @@
 #include "Observers/WorldObserver.h"
 #include "WorldModels/RobotWorldModel.h"
 #include "SingleGenome/include/SingleGenomeSharedData.h"
+#include "SingleGenome/include/SingleGenomeController.h"
+
+#include <vector>
 
 //class World;
 
@@ -23,12 +26,21 @@ protected:
     virtual void updateMonitoring();
     virtual void monitorPopulation( bool localVerbose = true );
     
+    void stepEvaluation();
+    void loadGenomes();
+    
     int _generationCount;
     int _generationItCount;
     
     LogManager *_fitnessLogManager;
-    LogManager *_genomeLogManager;
     LogManager *_coopLogManager;
+    
+    std::vector<SingleGenomeController::genome> _genomes;
+    std::vector<double> _fakeCoopValues;
+    int _nbFakeRobots;
+    int _fakeCoop;
+    int _replica;
+    int _genome;
     
 public:
     SingleGenomeWorldObserver(World *world);
@@ -36,13 +48,16 @@ public:
     
     virtual void reset();
     virtual void step();
-    void stepEvaluation();
     
     LogManager *getCoopLogManager() { return _coopLogManager; }
     
     virtual int getGenerationItCount() { return _generationItCount; }
 
     int getGenerationCount() { return _generationCount; }
+    
+    int getNbFakeRobots() { return _nbFakeRobots; }
+    
+    double getFakeCoop() { return _fakeCoopValues[_fakeCoop]; }
 };
 
 #endif

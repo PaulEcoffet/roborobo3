@@ -52,13 +52,15 @@ constexpr int SingleGenomeSharedData::gMemorySize;
 
 bool SingleGenomeSharedData::gTotalEffort = true;
 
-int SingleGenomeSharedData::gFakeRobotsPerObject = 0;
-double SingleGenomeSharedData::gFakeTotalEffort = 0;
-
+int SingleGenomeSharedData::gFakeRobotsPerObject = 0; // maximum number of ...
+double SingleGenomeSharedData::gFakeCoopValue = 0; // maximum value of ...
+int SingleGenomeSharedData::gFakeCoopSteps = 30; // how many values do we want to sample
+int SingleGenomeSharedData::gNbReplicas = 10;
 
 double SingleGenomeSharedData::gConstantK = 0;
 double SingleGenomeSharedData::gConstantA = 0;
 
 int SingleGenomeSharedData::gGenerationLog = 5000;
+bool SingleGenomeSharedData::gTakeVideo = false;
 
 std::string SingleGenomeSharedData::gGenomeFilename = "";
