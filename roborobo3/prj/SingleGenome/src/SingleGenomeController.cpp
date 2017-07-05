@@ -62,6 +62,87 @@ SingleGenomeController::~SingleGenomeController()
     _NN = nullptr;
 }
 
+void SingleGenomeController::initController()
+{
+    _nbHiddenLayers = SingleGenomeSharedData::gNbHiddenLayers;
+    _nbNeuronsPerHiddenLayer = new std::vector<unsigned int>(_nbHiddenLayers);
+    for(unsigned int i = 0; i < _nbHiddenLayers; i++)
+        (*_nbNeuronsPerHiddenLayer)[i] = SingleGenomeSharedData::gNbNeuronsPerHiddenLayer;
+    
+    createNN();
+    
+    unsigned int const nbGenes = computeRequiredNumberOfWeights();
+    
+    if ( gVerbose )
+        std::cout << std::flush;
+    
+    _currentGenome.clear();
+    
+    // Read the genome from a file
+    
+    std::string filename = "config/"+SingleGenomeSharedData::gGenomeFilename;
+    std::ifstream genomeFile(filename);
+    if (genomeFile.fail()) {
+        printf("[CRITICAL] Could not read genome file (%s). Exiting.\n", filename.c_str());
+        exit(-1);
+    } else {
+        genomeFile >> _currentSigma;
+        int nbGenesFile;
+        genomeFile >> nbGenesFile;
+        if (nbGenes != nbGenesFile) {
+            printf("[CRITICAL] Number of genes in the file doesn't match expected. Exiting.\n");
+            printf("Expected: %d, actual: %d\n", nbGenes, nbGenesFile);
+            exit(-1);
+        }
+        for (int i = 0; i < nbGenes; i++) {
+            double v;
+            genomeFile >> v;
+            _currentGenome.push_back(v);
+        }
+    }
+    
+    updatePhenotype();
+    
+    // state variables
+    _nbNearbyRobots = 0;
+    for (auto& eff: _efforts)
+        eff = 0;
+    for (auto& totEff: _totalEfforts)
+        totEff = 0;
+    _objectTime = 0;
+}
+
+void SingleGenomeController::setIOcontrollerSize()
+{
+    // wrt inputs
+    
+    _nbInputs = 0;
+    
+    if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
+    {
+        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
+    }
+    
+    _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
+    
+    _nbInputs += 1; // how many robots around?
+    
+    if (SingleGenomeSharedData::gTotalEffort)
+        _nbInputs += 1; // what's the total effort given to the object?
+    
+    _nbInputs += 1; // how much did we contribute?
+    
+    // wrt outputs
+    
+    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
+}
+
+void SingleGenomeController::reset()
+{
+    initController();
+    resetFitness();
+}
+
 void SingleGenomeController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
     
@@ -90,13 +171,6 @@ void SingleGenomeController::step() // handles control decision and evolution (b
     _isNearObject = false;
 
 }
-
-
-// ################ ######################## ################
-// ################ ######################## ################
-// ################ BEHAVIOUR METHOD(S)      ################
-// ################ ######################## ################
-// ################ ######################## ################
 
 
 std::vector<double> SingleGenomeController::getInputs()
@@ -322,89 +396,6 @@ void SingleGenomeController::mutateUniform() // mutate within bounds.
     }
 }
 
-
-void SingleGenomeController::setIOcontrollerSize()
-{
-    // wrt inputs
-    
-    _nbInputs = 0;
-    
-    if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
-    {
-        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
-    }
-    
-    _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
-    
-    _nbInputs += 1; // how many robots around?
-    
-    if (SingleGenomeSharedData::gTotalEffort)
-        _nbInputs += 1; // what's the total effort given to the object?
-    
-    _nbInputs += 1; // how much did we contribute?
-    
-    // wrt outputs
-    
-    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
-}
-
-void SingleGenomeController::initController()
-{
-    _nbHiddenLayers = SingleGenomeSharedData::gNbHiddenLayers;
-    _nbNeuronsPerHiddenLayer = new std::vector<unsigned int>(_nbHiddenLayers);
-    for(unsigned int i = 0; i < _nbHiddenLayers; i++)
-        (*_nbNeuronsPerHiddenLayer)[i] = SingleGenomeSharedData::gNbNeuronsPerHiddenLayer;
-    
-    createNN();
-
-    unsigned int const nbGenes = computeRequiredNumberOfWeights();
-    
-    if ( gVerbose )
-        std::cout << std::flush;
-    
-    _currentGenome.clear();
-    
-    // Read the genome from a file
-    
-    std::string filename = "config/"+SingleGenomeSharedData::gGenomeFilename;
-    std::ifstream genomeFile(filename);
-    if (genomeFile.fail()) {
-        printf("[CRITICAL] Could not read genome file (%s). Exiting.\n", filename.c_str());
-        exit(-1);
-    } else {
-        genomeFile >> _currentSigma;
-        int nbGenesFile;
-        genomeFile >> nbGenesFile;
-        if (nbGenes != nbGenesFile) {
-            printf("[CRITICAL] Number of genes in the file doesn't match expected. Exiting.\n");
-            printf("Expected: %d, actual: %d\n", nbGenes, nbGenesFile);
-            exit(-1);
-        }
-        for (int i = 0; i < nbGenes; i++) {
-            double v;
-            genomeFile >> v;
-            _currentGenome.push_back(v);
-        }
-    }
-    
-    updatePhenotype();
-
-	// state variables
-	_nbNearbyRobots = 0;
-    for (auto& eff: _efforts)
-        eff = 0;
-    for (auto& totEff: _totalEfforts)
-        totEff = 0;
-    _objectTime = 0;
-}
-
-void SingleGenomeController::reset()
-{
-    initController();
-    resetFitness();
-}
-
-
 void SingleGenomeController::mutateSigmaValue()
 {
     float dice = ranf();
@@ -472,9 +463,6 @@ double SingleGenomeController::getFitness()
     return _wm->_fitnessValue;
 }
 
-/*
- * note: resetFitness is first called by the Controller's constructor.
- */
 void SingleGenomeController::resetFitness()
 {
     updateFitness(0);
