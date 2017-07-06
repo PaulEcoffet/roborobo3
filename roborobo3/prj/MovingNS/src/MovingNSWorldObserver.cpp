@@ -244,18 +244,21 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     
     if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
     {
-        // log the best genome of each detailed generation
-        MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-        MovingNSController::genome best = ctl->getGenome();
-        std::stringstream bestGenome;
-        bestGenome << _generationCount << " ";
-        bestGenome << best.second << " ";
-            bestGenome << best.first.size() << " ";
-            for (auto gene: best.first)
-                bestGenome << gene << " ";
-        std::cout << "\n";
-
-        _genomeLogManager->write(bestGenome.str());
+        // log all genomes of each detailed generation
+        std::stringstream genomes;
+        genomes << _generationCount << " ";
+        genomes << gNbOfRobots << "\n";
+        for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+        {
+            MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
+            MovingNSController::genome gen = ctl->getGenome();
+            genomes << gen.second << " ";
+            genomes << gen.first.size() << " ";
+            for (auto gene: gen.first)
+                genomes << gene << " ";
+            genomes << "\n\n";
+        }
+        _genomeLogManager->write(genomes.str());
         _genomeLogManager->flush();
     }
     
