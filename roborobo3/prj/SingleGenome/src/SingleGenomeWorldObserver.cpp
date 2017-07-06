@@ -64,7 +64,9 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gFakeRobotsPerObject", &SingleGenomeSharedData::gFakeRobotsPerObject, false);
     gProperties.checkAndGetPropertyValue("gFakeCoopValue", &SingleGenomeSharedData::gFakeCoopValue, false);
-        
+    gProperties.checkAndGetPropertyValue("gFakeCoopSteps", &SingleGenomeSharedData::gFakeCoopSteps, false);
+    gProperties.checkAndGetPropertyValue("gNbReplicas", &SingleGenomeSharedData::gNbReplicas, false);
+
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
     
@@ -85,10 +87,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     _fitnessLogManager = new LogManager(fitnessLogFilename);
     _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     _fitnessLogManager->flush();
-    
-    std::string coopLogFilename = gLogDirectoryname + "/coop_stats.txt";
-    _coopLogManager = new LogManager(coopLogFilename);
-    _coopLogManager->write("Genome\tfkeRob\tfkeCoop\tRep\tIter\tID\tnbRob\tCoop\n");
+    _coopLogManager = nullptr; // we'll use different files for each genome
 }
 
 SingleGenomeWorldObserver::~SingleGenomeWorldObserver()
@@ -127,6 +126,7 @@ void SingleGenomeWorldObserver::reset()
     }
     
     // Fill the fake coop values
+    
     for (int i = 0; i < SingleGenomeSharedData::gFakeCoopSteps; i++)
         _fakeCoopValues.push_back(((double)i)/((double)(SingleGenomeSharedData::gFakeCoopSteps-1))*SingleGenomeSharedData::gFakeCoopValue);
     
@@ -138,6 +138,7 @@ void SingleGenomeWorldObserver::reset()
     gMaxIt = SingleGenomeSharedData::gEvaluationTime * nbGenomes * SingleGenomeSharedData::gNbReplicas * SingleGenomeSharedData::gFakeCoopSteps * (SingleGenomeSharedData::gFakeRobotsPerObject +1);
     
     // Parameter values
+    
     _genome = 0;
     _replica = 0;
     _fakeCoop = 0;
@@ -154,6 +155,13 @@ void SingleGenomeWorldObserver::loadGenomes()
         SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
         ctl->loadNewGenome(_genomes[_genome]);
     }
+    
+    // Open a new log file
+    std::string coopLogFilename = gLogDirectoryname + "/coop_stats_" + std::to_string(_genome) + ".txt";
+    if (_coopLogManager != nullptr)
+        delete _coopLogManager;
+    _coopLogManager = new LogManager(coopLogFilename);
+    _coopLogManager->write("fkeRob\tfkeCoop\tRep\tIter\tID\tnbRob\tCoop\n");
 }
 
 // Reset everything and perform the next evaluation run
@@ -162,6 +170,14 @@ void SingleGenomeWorldObserver::stepEvaluation()
 	printf("Genome %d fakeCoop %.2d fakeRobots %d rep %d done!\n", _genome, _fakeCoop, _nbFakeRobots, _replica);
     // Environment stuff
     // unregister everyone
+    
+    // Sanity check: when everything is done, stop here
+    // Remember: we're being called at the end of each step
+    if (gWorld->getIterations() == gMaxIt-1)
+    {
+        return;
+    }
+    
     for (auto object: gPhysicalObjects) {
         object->unregisterObject();
     }

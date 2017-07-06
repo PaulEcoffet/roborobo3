@@ -49,8 +49,8 @@ void SingleGenomeAgentObserver::logStats()
     LogManager* coopLogManager = wobs->getCoopLogManager();
     std::stringstream coopStats;
     coopStats << std::setprecision(4);
-    //genome    fakeRob fakeCoop    Rep Iter    ID  nbRob   Coop
-    coopStats << wobs->getGenome() << "\t";
+    // There's one log file per different genome so we don't need to log it
+    //fakeRob fakeCoop    Rep Iter    ID  nbRob   Coop
     coopStats << wobs->getNbFakeRobots() << "\t";
     coopStats << wobs->getFakeCoop() << "\t";
     coopStats << wobs->getReplica() << "\t";
