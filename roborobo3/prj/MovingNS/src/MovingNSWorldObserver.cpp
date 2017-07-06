@@ -48,9 +48,6 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     gProperties.checkAndGetPropertyValue("gNotListeningStateDelay",&MovingNSSharedData::gNotListeningStateDelay,true);
     gProperties.checkAndGetPropertyValue("gListeningStateDelay",&MovingNSSharedData::gListeningStateDelay,true);
     
-    gProperties.checkAndGetPropertyValue("gLogGenome",&MovingNSSharedData::gLogGenome,false);
-    gProperties.checkAndGetPropertyValue("gLogGenomeSnapshot",&MovingNSSharedData::gLogGenomeSnapshot,false);
-    
     gProperties.checkAndGetPropertyValue("gIndividualMutationRate",&MovingNSSharedData::gIndividualMutationRate,false);
 
     gProperties.checkAndGetPropertyValue("gMutationOperator",&MovingNSSharedData::gMutationOperator,false);
@@ -60,6 +57,9 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     gProperties.checkAndGetPropertyValue("gTotalEffort", &MovingNSSharedData::gTotalEffort, false);
     
     gProperties.checkAndGetPropertyValue("gGenerationLog", &MovingNSSharedData::gGenerationLog, false);
+    gProperties.checkAndGetPropertyValue("gTakeVideo", &MovingNSSharedData::gTakeVideo, false);
+    gProperties.checkAndGetPropertyValue("gLogGenome",&MovingNSSharedData::gLogGenome,false);
+    gProperties.checkAndGetPropertyValue("gLogGenomeSnapshot",&MovingNSSharedData::gLogGenomeSnapshot,false);
     
     gProperties.checkAndGetPropertyValue("gConstantA", &MovingNSSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &MovingNSSharedData::gConstantK, true);
@@ -192,7 +192,7 @@ void MovingNSWorldObserver::updateEnvironment()
 
 void MovingNSWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
+    if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0 && MovingNSSharedData::gTakeVideo)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
         saveCustomScreenshot(name);

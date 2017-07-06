@@ -50,6 +50,7 @@ constexpr int MovingNSSharedData::gMemorySize;
 bool MovingNSSharedData::gTotalEffort = true;
 
 int MovingNSSharedData::gGenerationLog = 5000;
+bool MovingNSSharedData::gTakeVideo = false;
 bool MovingNSSharedData::gLogGenome = false;
 bool MovingNSSharedData::gLogGenomeSnapshot = false;
 
