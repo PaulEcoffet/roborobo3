@@ -45,10 +45,15 @@ void SingleGenomeAgentObserver::step()
 void SingleGenomeAgentObserver::logStats()
 {
     SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
+    SingleGenomeController *ctl = static_cast<SingleGenomeController *>(gWorld->getRobot(_wm->getId())->getController());
     LogManager* coopLogManager = wobs->getCoopLogManager();
     std::stringstream coopStats;
-    SingleGenomeController *ctl = static_cast<SingleGenomeController *>(gWorld->getRobot(_wm->getId())->getController());
-    coopStats << wobs->getGenerationCount() << "\t";
+    coopStats << std::setprecision(4);
+    //genome    fakeRob fakeCoop    Rep Iter    ID  nbRob   Coop
+    coopStats << wobs->getGenome() << "\t";
+    coopStats << wobs->getNbFakeRobots() << "\t";
+    coopStats << wobs->getFakeCoop() << "\t";
+    coopStats << wobs->getReplica() << "\t";
     coopStats << gWorld->getIterations() << "\t";
     coopStats << _wm->getId() << "\t";
     coopStats << ctl->getNbRobots() << "\t";

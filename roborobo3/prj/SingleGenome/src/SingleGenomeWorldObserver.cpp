@@ -88,7 +88,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     std::string coopLogFilename = gLogDirectoryname + "/coop_stats.txt";
     _coopLogManager = new LogManager(coopLogFilename);
-    _coopLogManager->write("ID\tfakeRob\tfakeCoop\tRep\tIter\tnbRob\tCoop\n");
+    _coopLogManager->write("Genome\tfkeRob\tfkeCoop\tRep\tIter\tID\tnbRob\tCoop\n");
 }
 
 SingleGenomeWorldObserver::~SingleGenomeWorldObserver()

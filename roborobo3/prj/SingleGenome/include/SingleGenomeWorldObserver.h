@@ -51,13 +51,12 @@ public:
     
     LogManager *getCoopLogManager() { return _coopLogManager; }
     
-    virtual int getGenerationItCount() { return _generationItCount; }
-
+    int getGenerationItCount() { return _generationItCount; }
     int getGenerationCount() { return _generationCount; }
-    
     int getNbFakeRobots() { return _nbFakeRobots; }
-    
     double getFakeCoop() { return _fakeCoopValues[_fakeCoop]; }
+    int getGenome() { return _genome; }
+    int getReplica() { return _replica; }
 };
 
 #endif
