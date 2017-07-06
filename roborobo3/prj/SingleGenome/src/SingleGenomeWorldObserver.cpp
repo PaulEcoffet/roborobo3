@@ -148,7 +148,6 @@ void SingleGenomeWorldObserver::reset()
 
 void SingleGenomeWorldObserver::loadGenomes()
 {
-    printf("Loading genome %d in the robots...\n", _genome);
     for (int iRobot = 0; iRobot < gInitialNumberOfRobots; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
@@ -160,6 +159,7 @@ void SingleGenomeWorldObserver::loadGenomes()
 // Reset everything and perform the next evaluation run
 void SingleGenomeWorldObserver::stepEvaluation()
 {
+	printf("Genome %d fakeCoop %.2d fakeRobots %d rep %d done!\n", _genome, _fakeCoop, _nbFakeRobots, _replica);
     // Environment stuff
     // unregister everyone
     for (auto object: gPhysicalObjects) {
@@ -206,7 +206,7 @@ void SingleGenomeWorldObserver::stepEvaluation()
     }
     _fakeCoop = 0;
     
-    _genome++; // we've done all the parameters, switch to next genome
+    _genome++; // we've done all the parameters, move on to the next genome
     loadGenomes();
 }
 
@@ -289,6 +289,6 @@ void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )
     _fitnessLogManager->flush();
     
     // display lightweight logs for easy-parsing
-    std::cout << "log," << (gWorld->getIterations()/SingleGenomeSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
+    //std::cout << "log," << (gWorld->getIterations()/SingleGenomeSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
     
 }

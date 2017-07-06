@@ -54,7 +54,7 @@ void SingleGenomeAgentObserver::logStats()
     coopStats << wobs->getNbFakeRobots() << "\t";
     coopStats << wobs->getFakeCoop() << "\t";
     coopStats << wobs->getReplica() << "\t";
-    coopStats << gWorld->getIterations() << "\t";
+    coopStats << wobs->getGenerationItCount() << "\t";
     coopStats << _wm->getId() << "\t";
     coopStats << ctl->getNbRobots() << "\t";
     coopStats << ctl->getCooperationLevel() << "\n";
