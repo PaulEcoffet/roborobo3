@@ -164,10 +164,11 @@ void SingleGenomeWorldObserver::loadGenome()
     ctl->loadNewGenome(_genomes[_genome]);
     
     // Open a new log file for that genome
-    std::string coopLogFilename = gLogDirectoryname + "/coop_stats_" + std::to_string(_genome) + ".txt";
+    std::stringstream coopLogFilename;
+    coopLogFilename << gLogDirectoryname << "/coop_stats_" << std::setfill('0') << std::setw(2) << _genome << ".txt";
     if (_coopLogManager != nullptr)
         delete _coopLogManager;
-    _coopLogManager = new LogManager(coopLogFilename);
+    _coopLogManager = new LogManager(coopLogFilename.str());
     _coopLogManager->write("fkeRob\tfkeCoop\tRep\tIter\tnbRob\tCoop\n");
     
     // Put the genome in the general log manager
