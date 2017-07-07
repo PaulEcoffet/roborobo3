@@ -65,6 +65,7 @@ public:
     static double gFakeCoopValue;
     static int gFakeCoopSteps;
     static int gNbReplicas;
+    static bool gOnlyOneRobot; // make sure there's 1 robot
     
     // Parameters relative to the payoff function
     

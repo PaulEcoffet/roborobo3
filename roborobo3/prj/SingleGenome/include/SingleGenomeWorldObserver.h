@@ -27,7 +27,7 @@ protected:
     virtual void monitorPopulation( bool localVerbose = true );
     
     void stepEvaluation();
-    void loadGenomes();
+    void loadGenome();
     
     int _generationCount;
     int _generationItCount;

@@ -59,13 +59,14 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     gProperties.checkAndGetPropertyValue("gTotalEffort", &SingleGenomeSharedData::gTotalEffort, true);
     
-    gProperties.checkAndGetPropertyValue("gGenerationLog", &SingleGenomeSharedData::gGenerationLog, false);
+//  gProperties.checkAndGetPropertyValue("gGenerationLog", &SingleGenomeSharedData::gGenerationLog, false);
     gProperties.checkAndGetPropertyValue("gTakeVideo", &SingleGenomeSharedData::gTakeVideo, false);
     
     gProperties.checkAndGetPropertyValue("gFakeRobotsPerObject", &SingleGenomeSharedData::gFakeRobotsPerObject, false);
     gProperties.checkAndGetPropertyValue("gFakeCoopValue", &SingleGenomeSharedData::gFakeCoopValue, false);
     gProperties.checkAndGetPropertyValue("gFakeCoopSteps", &SingleGenomeSharedData::gFakeCoopSteps, false);
     gProperties.checkAndGetPropertyValue("gNbReplicas", &SingleGenomeSharedData::gNbReplicas, false);
+    gProperties.checkAndGetPropertyValue("gOnlyOneRobot", &SingleGenomeSharedData::gOnlyOneRobot, false);
 
     gProperties.checkAndGetPropertyValue("gConstantA", &SingleGenomeSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &SingleGenomeSharedData::gConstantK, true);
@@ -77,7 +78,15 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     if ( !gRadioNetwork)
     {
-        std::cout << "Error : gRadioNetwork must be true." << std::endl;
+        std::cout << "Error: gRadioNetwork must be true." << std::endl;
+        exit(-1);
+    }
+    
+    // There should be only 1 robot in the simulation
+    
+    if (SingleGenomeSharedData::gOnlyOneRobot == true && gInitialNumberOfRobots != 1)
+    {
+        std::cout << "Error: gInitialNumberOfRobots (" << gInitialNumberOfRobots << ") should be equal to 1. Exiting.\n\n";
         exit(-1);
     }
     
@@ -143,25 +152,33 @@ void SingleGenomeWorldObserver::reset()
     _replica = 0;
     _fakeCoop = 0;
     _nbFakeRobots = 0;
-    loadGenomes();
+    loadGenome();
 
 }
 
-void SingleGenomeWorldObserver::loadGenomes()
+void SingleGenomeWorldObserver::loadGenome()
 {
-    for (int iRobot = 0; iRobot < gInitialNumberOfRobots; iRobot++)
-    {
-        Robot *robot = gWorld->getRobot(iRobot);
-        SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
-        ctl->loadNewGenome(_genomes[_genome]);
-    }
+    // There's only 1 robot so its index is 0
+    Robot *robot = gWorld->getRobot(0);
+    SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
+    ctl->loadNewGenome(_genomes[_genome]);
     
-    // Open a new log file
+    // Open a new log file for that genome
     std::string coopLogFilename = gLogDirectoryname + "/coop_stats_" + std::to_string(_genome) + ".txt";
     if (_coopLogManager != nullptr)
         delete _coopLogManager;
     _coopLogManager = new LogManager(coopLogFilename);
-    _coopLogManager->write("fkeRob\tfkeCoop\tRep\tIter\tID\tnbRob\tCoop\n");
+    _coopLogManager->write("fkeRob\tfkeCoop\tRep\tIter\tnbRob\tCoop\n");
+    
+    // Put the genome in the general log manager
+    std::stringstream log;
+    log << "# Genome #" << _genome << "\n";
+    log << _genomes[_genome].second << " ";
+    log << _genomes[_genome].first.size() << " ";
+    for (auto gene: _genomes[_genome].first)
+        log << gene << " ";
+    log << "\n";
+    gLogManager->write(log.str());
 }
 
 // Reset everything and perform the next evaluation run
@@ -223,7 +240,7 @@ void SingleGenomeWorldObserver::stepEvaluation()
     _fakeCoop = 0;
     
     _genome++; // we've done all the parameters, move on to the next genome
-    loadGenomes();
+    loadGenome();
 }
 
 void SingleGenomeWorldObserver::step()
