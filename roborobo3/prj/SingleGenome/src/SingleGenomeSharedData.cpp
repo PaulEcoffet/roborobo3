@@ -56,6 +56,7 @@ int SingleGenomeSharedData::gFakeRobotsPerObject = 0; // maximum number of ...
 double SingleGenomeSharedData::gFakeCoopValue = 0; // maximum value of ...
 int SingleGenomeSharedData::gFakeCoopSteps = 30; // how many values do we want to sample
 int SingleGenomeSharedData::gNbReplicas = 10;
+bool SingleGenomeSharedData::gOnlyOneRobot = true;
 
 double SingleGenomeSharedData::gConstantK = 0;
 double SingleGenomeSharedData::gConstantA = 0;
