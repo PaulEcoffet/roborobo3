@@ -169,7 +169,7 @@ void SingleGenomeWorldObserver::loadGenome()
     if (_coopLogManager != nullptr)
         delete _coopLogManager;
     _coopLogManager = new LogManager(coopLogFilename.str());
-    _coopLogManager->write("fkeRob\tfkeCoop\tRep\tIter\tnbRob\tCoop\n");
+    _coopLogManager->write("fkeCoop\tfkeRob\tRep\tIter\tnbRob\tCoop\n");
     
     // Put the genome in the general log manager
     std::stringstream log;
