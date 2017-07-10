@@ -401,6 +401,12 @@ void SingleGenomeController::mutateSigmaValue()
 
 void SingleGenomeController::loadNewGenome( genome __newGenome )
 {
+	// Check that we get a genome with the right size!
+	if (__newGenome.first.size() != _NN->getRequiredNumberOfWeights())
+	{
+		printf("[CRITICAL] Trying to load a genome with the wrong size (expected %d weights, got %lu).\nExiting.\n\n", _NN->getRequiredNumberOfWeights(), __newGenome.first.size());
+		exit(-1);
+	}
     _currentGenome = __newGenome.first;
     _currentSigma = __newGenome.second;
     performVariation();
