@@ -244,7 +244,7 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     
     if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
     {
-        // log all genomes of each detailed generation, by increasing fitness
+        // log all genomes of each detailed generation, by decreasing fitness
         std::stringstream genomes;
         genomes << _generationCount << " ";
         genomes << gNbOfRobots << "\n";
