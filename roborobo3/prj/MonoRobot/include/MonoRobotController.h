@@ -35,7 +35,7 @@ protected:
     std::string _nnType;
     std::vector<int> _nbHiddenNeuronsPerLayer;
     std::vector<int> _nbBiasNeuronsPerLayer;
-    NeuralNetwork* nn;
+    NeuralNetwork* _NN;
     
     void createNN();
     
@@ -92,7 +92,6 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
-    std::vector<double> _megaEfforts; // see how much we've pushed on average
     
     void reset();
     
@@ -124,8 +123,6 @@ public:
     virtual double getFitness();
     
     int getActiveTime() { return _activeTime; }
-
-    std::vector<double> getMegaEfforts() { return _megaEfforts; }
     
     void increaseFitness( double __delta );
     

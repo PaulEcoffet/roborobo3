@@ -291,8 +291,7 @@ void SingleGenomeController::createNN()
 
 unsigned int SingleGenomeController::computeRequiredNumberOfWeights()
 {
-    unsigned int res = _NN->getRequiredNumberOfWeights();
-    return res;
+    return _NN->getRequiredNumberOfWeights();
 }
 
 // ################ ######################## ################
