@@ -24,7 +24,7 @@ MonoRobotController::MonoRobotController( RobotWorldModel *wm )
 {
     _wm = wm;
     
-    nn = NULL;
+    _NN = nullptr;
     
     // evolutionary engine
     
@@ -58,23 +58,84 @@ MonoRobotController::MonoRobotController( RobotWorldModel *wm )
 MonoRobotController::~MonoRobotController()
 {
     _parameters.clear();
-    delete nn;
-    nn = NULL;
+    delete _NN;
+    _NN = nullptr;
+}
+
+void MonoRobotController::initController()
+{
+    _nbHiddenLayers = MonoRobotSharedData::gNbHiddenLayers;
+    _nbNeuronsPerHiddenLayer = new std::vector<unsigned int>(_nbHiddenLayers);
+    for(unsigned int i = 0; i < _nbHiddenLayers; i++)
+        (*_nbNeuronsPerHiddenLayer)[i] = MonoRobotSharedData::gNbNeuronsPerHiddenLayer;
+    
+    createNN();
+    
+    unsigned int const nbGene = computeRequiredNumberOfWeights();
+    
+    if ( gVerbose )
+        std::cout << std::flush ;
+    
+    _currentGenome.clear();
+    
+    // Intialize genome
+    
+    for ( unsigned int i = 0 ; i != nbGene ; i++ )
+    {
+        _currentGenome.push_back((double)(rand()%MonoRobotSharedData::gNeuronWeightRange)/(MonoRobotSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
+    }
+    
+    updatePhenotype();
+    
+    // state variables
+    _isNearObject = false;
+    _nbNearbyRobots = 0;
+    _activeTime = 0;
+    for (auto& moved: _objectMoves)
+        moved = false;
+    for (auto& move: _movements)
+        move = 0;
+    for (auto& fit: _fitnesses)
+        fit = 0;
+    for (auto& eff: _efforts)
+        eff = 0;
+    for (auto& totEff: _totalEfforts)
+        totEff = 0;
+}
+
+void MonoRobotController::setIOcontrollerSize()
+{
+    // wrt inputs
+    
+    _nbInputs = 0;
+    
+    if ( gExtendedSensoryInputs )
+    {
+        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
+    }
+    
+    _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
+    
+    _nbInputs += 1; // how many robots around?
+    
+    if (MonoRobotSharedData::gTotalEffort)
+        _nbInputs += 1; // what's the total effort given to the object?
+    
+    _nbInputs += 1; // how much did we contribute?
+    
+    // wrt outputs
+    
+    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
+}
+
+void MonoRobotController::reset()
+{
+    initController();
+    resetFitness();
 }
 
 void MonoRobotController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-/*    if (_wm->_id == 0) {
-        printf("[DEBUG] iteration %d dumping recent fitnesses:\t", gWorld->getIterations());
-        for (auto fit: _fitnesses)
-            printf("%.1lf ", fit);
-        printf("\n");
-        printf("[DEBUG] iteration %d dumping recent efforts:\t", gWorld->getIterations());
-        for (auto eff: _efforts)
-            printf("%.1lf ", eff);
-        printf("\n");
-    }
-*/    
     // If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
     if (_isNearObject == false)
         _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = false;
@@ -97,16 +158,8 @@ void MonoRobotController::step() // handles control decision and evolution (but:
     
 }
 
-
-// ################ ######################## ################
-// ################ ######################## ################
-// ################ BEHAVIOUR METHOD(S)      ################
-// ################ ######################## ################
-// ################ ######################## ################
-
-
-std::vector<double> MonoRobotController::getInputs(){
-    
+std::vector<double> MonoRobotController::getInputs()
+{
     std::vector<double> inputs;
     
     // distance sensors
@@ -157,45 +210,23 @@ std::vector<double> MonoRobotController::getInputs(){
     inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
     
-    // are we near an object?
-    //	if ( _isNearObject )
-    //		inputs.push_back(1);
-    //	else
-    //		inputs.push_back(0);
-    
     // how many robots around?
     inputs.push_back(_nbNearbyRobots);
     
-    // did the object recently move?
-//    int nbMoves = 0;
-//    for (auto moved: _objectMoves)
-//        if (moved)
-//            nbMoves++;
-//    inputs.push_back(nbMoves);
+    if (MonoRobotSharedData::gTotalEffort)
+    {
+        // what's the total effort given to the object in the last few turns?
+        double totalEffort = 0;
+        for (auto eff: _totalEfforts)
+            totalEffort += eff;
+        inputs.push_back(totalEffort);
+    }
     
-    // how much did we recently move?
-//    double totalMovement = 0;
-//    for (auto move: _movements)
-//        totalMovement += move;
-//    inputs.push_back(totalMovement);
-    
-    // how much fitness did we recently gain?
-//    double totalFitness = 0;
-//    for (auto fitness: _fitnesses)
-//        totalFitness += fitness;
-//    inputs.push_back(totalFitness);
-  
-    // what's the total effort given to the object in the last few turns?
-    double totalEffort = 0;
-    for (auto eff: _totalEfforts)
-        totalEffort += eff;
-    inputs.push_back(totalEffort);
-    
-	// how much did we contribute?
-	double effort = 0;
-	for (auto eff: _efforts)
-		effort += eff;
-	inputs.push_back(effort);
+    // how much did we contribute?
+    double effort = 0;
+    for (auto eff: _efforts)
+        effort += eff;
+    inputs.push_back(effort);
     
     return inputs;
 }
@@ -205,29 +236,26 @@ void MonoRobotController::stepController()
     
     // ---- compute and read out ----
     
-    nn->setWeights(_parameters); // set-up NN
+    _NN->setWeights(_parameters); // set-up NN
     
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
     
-    nn->setInputs(inputs);
+    _NN->setInputs(inputs);
     
-    nn->step();
+    _NN->step();
     
-    std::vector<double> outputs = nn->readOut();
+    std::vector<double> outputs = _NN->readOut();
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
     _wm->_desiredTranslationalValue = outputs[0];
     _wm->_desiredRotationalVelocity = outputs[1];
     
-    if ( MonoRobotSharedData::gEnergyRequestOutput )
-    {
-        _wm->setEnergyRequestValue(outputs[2]);
-    }
-    
     // normalize to motor interval values
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
+    
+    _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
     
 }
 
@@ -236,27 +264,27 @@ void MonoRobotController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( nn != NULL ) // useless: delete will anyway check if nn is NULL or not.
-        delete nn;
+    if ( _NN != nullptr ) // useless: delete will anyway check if nn is NULL or not.
+        delete _NN;
     
     switch ( MonoRobotSharedData::gControllerType )
     {
         case 0:
         {
             // MLP
-            nn = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _NN = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         case 1:
         {
             // PERCEPTRON
-            nn = new Perceptron(_parameters, _nbInputs, _nbOutputs);
+            _NN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
             break;
         }
         case 2:
         {
             // ELMAN
-            nn = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
+            _NN = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         default: // default: no controller
@@ -268,8 +296,7 @@ void MonoRobotController::createNN()
 
 unsigned int MonoRobotController::computeRequiredNumberOfWeights()
 {
-    unsigned int res = nn->getRequiredNumberOfWeights();
-    return res;
+    return _NN->getRequiredNumberOfWeights();
 }
 
 // ################ ######################## ################
@@ -347,91 +374,6 @@ void MonoRobotController::mutateUniform() // mutate within bounds.
         _currentGenome[i] = value;
     }
 }
-
-
-void MonoRobotController::setIOcontrollerSize()
-{
-    // wrt inputs
-    
-    _nbInputs = 0;
-    
-    if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
-    {
-        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
-    }
-    
-    _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
-    
-//	_nbInputs += 1; // are we near an object?
-    
-    _nbInputs += 1; // how many robots around?
-    
-//	_nbInputs += 1; // did the object recently move?
-    
-//  _nbInputs += 1; // how much did we recently move?
-    
-//  _nbInputs += 1; // how much fitness did we recently gain?
-
-    _nbInputs += 1; // what's the total effort given to the object?
-    
-    _nbInputs += 1; // how much did we contribute?
-    
-    // wrt outputs
-    
-    _nbOutputs = 2;
-    
-    if ( MonoRobotSharedData::gEnergyRequestOutput )
-        _nbOutputs += 1; // incl. energy request
-}
-
-void MonoRobotController::initController()
-{
-    _nbHiddenLayers = MonoRobotSharedData::gNbHiddenLayers;
-    _nbNeuronsPerHiddenLayer = new std::vector<unsigned int>(_nbHiddenLayers);
-    for(unsigned int i = 0; i < _nbHiddenLayers; i++)
-        (*_nbNeuronsPerHiddenLayer)[i] = MonoRobotSharedData::gNbNeuronsPerHiddenLayer;
-    
-    createNN();
-    
-    unsigned int const nbGene = computeRequiredNumberOfWeights();
-    
-    if ( gVerbose )
-        std::cout << std::flush ;
-    
-    _currentGenome.clear();
-    
-    // Intialize genome
-    
-    for ( unsigned int i = 0 ; i != nbGene ; i++ )
-    {
-        _currentGenome.push_back((double)(rand()%MonoRobotSharedData::gNeuronWeightRange)/(MonoRobotSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
-    }
-    
-    updatePhenotype();
-    
-    // state variables
-    _isNearObject = false;
-    _nbNearbyRobots = 0;
-    _activeTime = 0;
-    for (auto& moved: _objectMoves)
-        moved = false;
-    for (auto& move: _movements)
-        move = 0;
-	for (auto& fit: _fitnesses)
-		fit = 0;
-	for (auto& eff: _efforts)
-		eff = 0;
-    for (auto& totEff: _totalEfforts)
-        totEff = 0;
-    _megaEfforts.clear();
-}
-
-void MonoRobotController::reset()
-{
-    initController();
-    resetFitness();
-}
-
 
 void MonoRobotController::mutateSigmaValue()
 {
@@ -548,7 +490,6 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
         _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
 		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
         _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = __totalEffort;
-        _megaEfforts.push_back(__effort);
     }
     _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
 }

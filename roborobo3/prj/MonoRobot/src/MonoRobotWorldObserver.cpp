@@ -62,6 +62,7 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     
     gProperties.checkAndGetPropertyValue("gGenerationLog", &MonoRobotSharedData::gGenerationLog, false);
 
+    gProperties.checkAndGetPropertyValue("gTotalEffort", &MonoRobotSharedData::gTotalEffort, false);
     
     gProperties.checkAndGetPropertyValue("gBorderSize", &MonoRobotSharedData::gBorderSize, true);
     gProperties.checkAndGetPropertyValue("gZoneHeight", &MonoRobotSharedData::gZoneHeight, true);

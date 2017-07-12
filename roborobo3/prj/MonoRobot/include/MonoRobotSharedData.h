@@ -59,6 +59,8 @@ public:
     
     static int gGenerationLog; // take videos every Nth generation
     
+    static bool gTotalEffort;
+    
     static int gNumberOfPeriods;
     static int gEvaluationsPerGeneration;
     
