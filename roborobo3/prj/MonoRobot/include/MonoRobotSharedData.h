@@ -58,6 +58,7 @@ public:
 	static constexpr int gMemorySize = 20;
     
     static int gGenerationLog; // take videos every Nth generation
+    static bool gTakeVideo;
     
     static bool gTotalEffort;
     
