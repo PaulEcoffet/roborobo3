@@ -53,6 +53,7 @@ constexpr int MonoRobotSharedData::gMemorySize;
 bool MonoRobotSharedData::gTotalEffort = true;
 
 int MonoRobotSharedData::gGenerationLog = 1000;
+bool MonoRobotSharedData::gTakeVideo = true;
 
 int MonoRobotSharedData::gNumberOfPeriods = 3;
 int MonoRobotSharedData::gEvaluationsPerGeneration = 5;

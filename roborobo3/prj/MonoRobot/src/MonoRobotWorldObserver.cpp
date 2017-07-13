@@ -61,6 +61,7 @@ MonoRobotWorldObserver::MonoRobotWorldObserver( World* world ) : WorldObserver( 
     gProperties.checkAndGetPropertyValue("gEvaluationsPerGeneration", &MonoRobotSharedData::gEvaluationsPerGeneration, false);
     
     gProperties.checkAndGetPropertyValue("gGenerationLog", &MonoRobotSharedData::gGenerationLog, false);
+    gProperties.checkAndGetPropertyValue("gTakeVideo", &MonoRobotSharedData::gTakeVideo, false);
 
     gProperties.checkAndGetPropertyValue("gTotalEffort", &MonoRobotSharedData::gTotalEffort, false);
     
@@ -151,7 +152,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
     for (int iObject = 0; iObject < gNbOfPhysicalObjects; iObject++)
     {
         PhysicalObject *object = gPhysicalObjects[iObject];
-        int gridBox = iObject/5; // 5 objects per box
+        int gridBox = iObject/8; // 8 objects per box
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
@@ -166,7 +167,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         // super specific stuff here
-        int gridBox = iRobot/2; // 2 robots per box
+        int gridBox = iRobot; // 1 robot per box
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
@@ -262,7 +263,7 @@ void MonoRobotWorldObserver::updateEnvironment()
 
 void MonoRobotWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
+    if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0 && MonoRobotSharedData::gTakeVideo)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
         saveCustomScreenshot(name);
@@ -324,16 +325,21 @@ void MonoRobotWorldObserver::monitorPopulation( bool localVerbose )
     // log the best genome of each detailed generation
     if ( (_generationCount+1) % MonoRobotSharedData::gGenerationLog == 0)
     {
-        MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(gWorld->getRobot(index[gNbOfRobots-1])->getController());
-        MonoRobotController::genome best = ctl->getGenome();
-        std::stringstream bestGenome;
-        bestGenome << _generationCount << " ";
-        bestGenome << best.second << " "; // sigma
-        bestGenome << best.first.size() << " "; // number of genes (NN connections)
-        for (int i = 0; i < best.first.size(); i++)
-            bestGenome << best.first[i] << " ";
-        bestGenome << "\n";
-        _genomeLogManager->write(bestGenome.str());
+        // log all genomes of each detailed generation, by decreasing fitness
+        std::stringstream genomes;
+        genomes << _generationCount << " ";
+        genomes << gNbOfRobots << "\n";
+        for (int iRobot = gNbOfRobots-1; iRobot >= 0; iRobot--)
+        {
+            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(gWorld->getRobot(index[iRobot])->getController());
+            MonoRobotController::genome gen = ctl->getGenome();
+            genomes << gen.second << " ";
+            genomes << gen.first.size() << " ";
+            for (auto gene: gen.first)
+                genomes << gene << " ";
+            genomes << "\n\n";
+        }
+        _genomeLogManager->write(genomes.str());
         _genomeLogManager->flush();
     }
 
