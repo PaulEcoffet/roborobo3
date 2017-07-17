@@ -49,15 +49,27 @@ void SingleGenomeAgentObserver::logStats()
     LogManager* coopLogManager = wobs->getCoopLogManager();
     std::stringstream coopStats;
     coopStats << std::setprecision(4);
-    // There's one log file per genome so we don't need to log it
-    // There's only one robot in the simulation so we don't need its ID
-    //fkeCoop   fakeRob     Rep     Iter    nbRob   Coop
-    coopStats << wobs->getFakeCoop() << "\t";
-    coopStats << wobs->getNbFakeRobots() << "\t";
-    coopStats << wobs->getReplica() << "\t";
-    coopStats << wobs->getGenerationItCount() << "\t";
-    coopStats << ctl->getNbRobots() << "\t";
-    coopStats << ctl->getCooperationLevel() << "\n";
+    if (SingleGenomeSharedData::gOnlyOneRobot)
+    {
+        // There's only one robot in the simulation so we don't need its ID
+        //fkeCoop   fakeRob     Rep     Iter    nbRob   Coop
+        coopStats << wobs->getFakeCoop() << "\t";
+        coopStats << wobs->getNbFakeRobots() << "\t";
+        coopStats << wobs->getReplica() << "\t";
+        coopStats << wobs->getGenerationItCount() << "\t";
+        coopStats << ctl->getNbRobots() << "\t";
+        coopStats << ctl->getCooperationLevel() << "\n";
+
+    }
+    else
+    {
+        //Rep         idRob   Iter    nbRob   Coop\n");
+        coopStats << wobs->getReplica() << "\t";
+        coopStats << _wm->getId() << "\t";
+        coopStats << wobs->getGenerationItCount() << "\t";
+        coopStats << ctl->getNbRobots() << "\t";
+        coopStats << ctl->getCooperationLevel() << "\n";
+    }
     coopLogManager->write(coopStats.str());
 }
 

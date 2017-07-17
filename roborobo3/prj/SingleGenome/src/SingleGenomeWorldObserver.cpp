@@ -82,7 +82,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
         exit(-1);
     }
     
-    // There should be only 1 robot in the simulation
+    // Make sure there's only one robot if we want to
     
     if (SingleGenomeSharedData::gOnlyOneRobot == true && gInitialNumberOfRobots != 1)
     {
@@ -94,7 +94,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
     _fitnessLogManager = new LogManager(fitnessLogFilename);
-    _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
+    _fitnessLogManager->write("Gen\tPop\tMinFit\tMaxFit\tAvgFit\tQ1Fit\tQ2Fit\tQ3Fit\tStdDev\n");
     _fitnessLogManager->flush();
     _coopLogManager = nullptr; // we'll use different files for each genome
 }
@@ -135,9 +135,15 @@ void SingleGenomeWorldObserver::reset()
     }
     
     // Fill the fake coop values
-    
-    for (int i = 0; i < SingleGenomeSharedData::gFakeCoopSteps; i++)
-        _fakeCoopValues.push_back(((double)i)/((double)(SingleGenomeSharedData::gFakeCoopSteps-1))*SingleGenomeSharedData::gFakeCoopValue);
+    if (SingleGenomeSharedData::gFakeCoopSteps > 1)
+    {
+        for (int i = 0; i < SingleGenomeSharedData::gFakeCoopSteps; i++)
+            _fakeCoopValues.push_back(((double)i)/((double)(SingleGenomeSharedData::gFakeCoopSteps-1))*SingleGenomeSharedData::gFakeCoopValue);
+    }
+    else
+    {
+        _fakeCoopValues.push_back(0);
+    }
     
     // * iteration and generation counters
     
@@ -158,10 +164,13 @@ void SingleGenomeWorldObserver::reset()
 
 void SingleGenomeWorldObserver::loadGenome()
 {
-    // There's only 1 robot so its index is 0
-    Robot *robot = gWorld->getRobot(0);
-    SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
-    ctl->loadNewGenome(_genomes[_genome]);
+    // We have gNbOfRobots clones of the current genome
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        Robot *robot = gWorld->getRobot(iRobot);
+        SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
+        ctl->loadNewGenome(_genomes[_genome]);
+    }
     
     // Open a new log file for that genome
     std::stringstream coopLogFilename;
@@ -169,8 +178,12 @@ void SingleGenomeWorldObserver::loadGenome()
     if (_coopLogManager != nullptr)
         delete _coopLogManager;
     _coopLogManager = new LogManager(coopLogFilename.str());
-    _coopLogManager->write("fkeCoop\tfkeRob\tRep\tIter\tnbRob\tCoop\n");
     
+    // Record different things if we're doing one or several clones per genome
+    if (SingleGenomeSharedData::gOnlyOneRobot)
+        _coopLogManager->write("fkeCoop\tfkeRob\tRep\tIter\tnbRob\tCoop\n");
+    else
+        _coopLogManager->write("Rep\tidRob\tIter\tnbRob\tCoop\n");
     // Put the genome in the general log manager
     std::stringstream log;
     log << "# Genome #" << _genome << "\n";
