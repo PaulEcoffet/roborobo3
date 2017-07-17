@@ -94,7 +94,7 @@ SingleGenomeWorldObserver::SingleGenomeWorldObserver( World* world ) : WorldObse
     
     std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
     _fitnessLogManager = new LogManager(fitnessLogFilename);
-    _fitnessLogManager->write("Gen\tPop\tMinFit\tMaxFit\tAvgFit\tQ1Fit\tQ2Fit\tQ3Fit\tStdDev\n");
+    _fitnessLogManager->write("Gen\tRep\tMinFit\tMaxFit\tAvgFit\tQ1Fit\tQ2Fit\tQ3Fit\tStdDev\n");
     _fitnessLogManager->flush();
     _coopLogManager = nullptr; // we'll use different files for each genome
 }
@@ -325,8 +325,8 @@ void SingleGenomeWorldObserver::monitorPopulation( bool localVerbose )
     std::stringstream genLog;
     
     genLog << std::setprecision(5);
-    genLog << _generationCount+1 << "\t";
-    genLog << gNbOfRobots << "\t";
+    genLog << _genome << "\t";
+    genLog << _replica << "\t";
     genLog << minFit << "\t";
     genLog << maxFit << "\t";
     genLog << avgFit << "\t";
