@@ -198,7 +198,10 @@ void SingleGenomeWorldObserver::loadGenome()
 // Reset everything and perform the next evaluation run
 void SingleGenomeWorldObserver::stepEvaluation()
 {
-	printf("Genome %d fakeCoop %.2d fakeRobots %d rep %d done!\n", _genome, _fakeCoop, _nbFakeRobots, _replica);
+    if (SingleGenomeSharedData::gOnlyOneRobot)
+        printf("Genome %d fakeCoop %.2d fakeRobots %d rep %d done!\n", _genome, _fakeCoop, _nbFakeRobots, _replica);
+    else
+        printf("Genome %d rep %d done!\n", _genome, _replica);
     // Environment stuff
     // unregister everyone
     
