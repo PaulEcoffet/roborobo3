@@ -483,11 +483,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     
 //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
     
-    double coeff = 0;
-    if (__nbRobots == 1) // we're alone
-        coeff = MonoRobotSharedData::gConstantK * sqrt(2.0);
-    else
-        coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+    double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || (gStuckMovableObjects)) {
