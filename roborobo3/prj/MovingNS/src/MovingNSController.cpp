@@ -481,11 +481,7 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     _nbNearbyRobots = __nbRobots;
     _objectTime++;
     
-    double coeff = 0;
-    if (__nbRobots == 1) // we're alone
-        coeff = MovingNSSharedData::gConstantK * sqrt(2.0);
-    else
-        coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+    double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
