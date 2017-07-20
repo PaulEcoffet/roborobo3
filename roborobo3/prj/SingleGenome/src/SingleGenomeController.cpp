@@ -482,7 +482,11 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
     _nbNearbyRobots = __nbRobots;
     _objectTime++;
     
-    double coeff = SingleGenomeSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+    double coeff = 0;
+    if (__nbRobots == 1) // we're alone
+        coeff = SingleGenomeSharedData::gConstantK * sqrt(2.0);
+    else
+        coeff = SingleGenomeSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, SingleGenomeSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
