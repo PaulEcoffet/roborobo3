@@ -123,6 +123,7 @@ std::vector<double> MovingNSController::getInputs()
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
                 MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
+//                printf("Iteration %d: robot %d seeing %d robots on object %d from sensor %d\n", gWorld->getIterations(), _wm->getId(), obj->getNbNearbyRobots(), obj->getId(), i);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object

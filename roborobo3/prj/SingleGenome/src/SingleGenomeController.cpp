@@ -151,6 +151,7 @@ void SingleGenomeController::step() // handles control decision and evolution (b
 std::vector<double> SingleGenomeController::getInputs()
 {
     std::vector<double> inputs;
+    SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
     
     // distance sensors
     for(int i = 0; i < _wm->_cameraSensorsNb; i++)
@@ -177,11 +178,12 @@ std::vector<double> SingleGenomeController::getInputs()
             }
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
+                // We want to see from afar how many robots are on the object so we can choose whether to go there
                 MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
-                inputs.push_back(obj->getNbNearbyRobots()+SingleGenomeSharedData::gFakeRobotsPerObject); // some other robots around
+                inputs.push_back(obj->getNbNearbyRobots()+wobs->getNbFakeRobots()); // some other robots around
             }
             else // found nothing
             {
