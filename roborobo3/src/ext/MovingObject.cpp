@@ -97,12 +97,13 @@ void MovingObject::move() {
 
 void MovingObject::step()
 {
+//    printf("Iteration %d: running step() of object %d with %lu robots around\n", gWorld->getIterations(), _id, _nearbyRobots.size());
     double oldX = _xReal, oldY = _yReal;
 
     move(); //handles movement, and sets _didMove
 
 //  double movement = sqrt((oldX-_desiredX)*(oldX-_desiredX) + (oldY-_desiredY)*(oldY-_desiredY));
-	int nbRobots = static_cast<int>(_nearbyRobots.size());
+	_nbNearbyRobots = static_cast<int>(_nearbyRobots.size());
     
     if (gStuckMovableObjects) // get back into place!
     {
@@ -133,17 +134,17 @@ void MovingObject::step()
         if (projectName == "MovingNSConfigurationLoader")
         {
             MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
         }
         else if (projectName == "MonoRobotConfigurationLoader")
         {
             MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
         }
         else if (projectName == "SingleGenomeConfigurationLoader")
         {
             SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, nbRobots);
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
         }
     }
     _nearbyRobots.clear();

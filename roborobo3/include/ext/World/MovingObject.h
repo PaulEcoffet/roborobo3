@@ -18,6 +18,8 @@ private:
     
     std::set<int> _nearbyRobots; // robots that are in the footprint in this iteration
     
+    int _nbNearbyRobots; // keep this when we clear _nearbyRobots
+    
     // the impulses given to the object by nearby robots in the current time step, or other objects in the former
     std::map<int, std::tuple<double, double>> _impulses;
     std::map<int, double> _efforts; // remember how much each robot actually pushed us
@@ -52,7 +54,7 @@ public:
 	void isTouched( int __idAgent ); // callback, triggered by agent
 	void isWalked( int __idAgent ); // callback, triggered by agent
 
-    int getNbNearbyRobots() { return (int)_nearbyRobots.size(); }
+    int getNbNearbyRobots() { return _nbNearbyRobots; }
 };
 
 #endif
