@@ -68,7 +68,7 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     
     // Clean up the memory if we're not on an object
     
-    if (_nbNearbyRobots == 0)
+    if (_isNearObject == false)
     {
         for (auto& eff: _efforts)
             eff = 0;
@@ -87,7 +87,6 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     
     _nbNearbyRobots = 0;
     _efforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
-    _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = 0;
     _isNearObject = false;
     
 }
@@ -131,7 +130,7 @@ std::vector<double> MovingNSController::getInputs()
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
                 MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
-//                printf("Iteration %d: robot %d seeing %d robots on object %d from sensor %d\n", gWorld->getIterations(), _wm->getId(), obj->getNbNearbyRobots(), obj->getId(), i);
+//                printf("Robot %d (it %d): seeing %d robots on object %d from sensor %d\n", _wm->getId(), gWorld->getIterations(), obj->getNbNearbyRobots(), obj->getId(), i);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
@@ -159,11 +158,13 @@ std::vector<double> MovingNSController::getInputs()
     
     if (MovingNSSharedData::gTotalEffort)
     {
-        // what's the total effort given to the object in the last few turns?
-        double totalEffort = 0;
-        for (auto eff: _totalEfforts)
-            totalEffort += eff;
-        inputs.push_back(totalEffort);
+        if (_isNearObject == true)
+        {
+            MovingObject *obj = static_cast<MovingObject *>(gPhysicalObjects[_lastObject]);
+            inputs.push_back(obj->getRecentTotalEffort());
+        }
+        else
+            inputs.push_back(0);
     }
     
     // how much did we contribute?
@@ -171,6 +172,14 @@ std::vector<double> MovingNSController::getInputs()
     for (auto eff: _efforts)
         effort += eff;
     inputs.push_back(effort);
+    
+//    if (_lastObject != -1)
+//    {
+//        MovingObject *lastObj = static_cast<MovingObject *>(gPhysicalObjects[_lastObject]);
+//        
+//        printf("Robot %d (it %d) NN inputs: %d robot(s) around, isNearObject: %s, last object %d, totalEffortObject %lf, our effort %lf\n", _wm->getId(), gWorld->getIterations(), _nbNearbyRobots, _isNearObject?"yes":"no", _lastObject, lastObj->getRecentTotalEffort(), effort);
+//        
+//    }
     
     return inputs;
 }
@@ -371,10 +380,10 @@ void MovingNSController::initController()
     
     // state variables
     _nbNearbyRobots = 0;
+    _isNearObject = false;
+    _lastObject = -1;
     for (auto& eff: _efforts)
         eff = 0;
-    for (auto& totEff: _totalEfforts)
-        totEff = 0;
     _objectTime = 0;
 }
 
@@ -479,7 +488,7 @@ void MovingNSController::increaseFitness( double __delta )
 // called only once per step (experimentally verified)
 void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
-    //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+//        printf("Robot %d (it %d): near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, __nbRobots);
     
     if (__effort > 0) // Green LED
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
@@ -488,6 +497,7 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     
     _isNearObject = true;
     _nbNearbyRobots = __nbRobots;
+    _lastObject = __objectId;
     _objectTime++;
     
     double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
@@ -497,7 +507,6 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
         //       printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
         increaseFitness(payoff);
         _efforts[_iteration%MovingNSSharedData::gMemorySize] = __effort;
-        _totalEfforts[_iteration%MovingNSSharedData::gMemorySize] = __totalEffort;
     }
     
 }

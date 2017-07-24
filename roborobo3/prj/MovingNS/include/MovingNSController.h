@@ -71,8 +71,8 @@ protected:
     // other neural network inputs
     
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
+    int _lastObject; // the last (or current) object
     double _efforts[MovingNSSharedData::gMemorySize]; // how much we tried pushing
-    double _totalEfforts[MovingNSSharedData::gMemorySize]; // how much everybody tried pushing
 
     // for the LED coloring
     
