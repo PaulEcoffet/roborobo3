@@ -80,11 +80,10 @@ void SingleGenomeController::initController()
     
     // state variables
     _nbNearbyRobots = 0;
+    _isNearObject = false;
+    _lastObject = -1;
     for (auto& eff: _efforts)
         eff = 0;
-    for (auto& totEff: _totalEfforts)
-        totEff = 0;
-    _objectTime = 0;
 }
 
 void SingleGenomeController::setIOcontrollerSize()
@@ -123,6 +122,14 @@ void SingleGenomeController::step() // handles control decision and evolution (b
     
     _iteration++;
     
+    // Clean up the memory if we're not on an object
+    
+    if (_isNearObject == false)
+    {
+        for (auto& eff: _efforts)
+            eff = 0;
+    }
+    
     // * step controller
 
     stepController();
@@ -142,7 +149,6 @@ void SingleGenomeController::step() // handles control decision and evolution (b
     
 	_nbNearbyRobots = 0;
     _efforts[_iteration%SingleGenomeSharedData::gMemorySize] = 0;
-    _totalEfforts[_iteration%SingleGenomeSharedData::gMemorySize] = 0;
     _isNearObject = false;
 
 }
@@ -161,9 +167,11 @@ std::vector<double> SingleGenomeController::getInputs()
         if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
         {
             int entityId = _wm->getObjectIdFromCameraSensor(i);
+//            printf("Robot %d (it %d): sensor %.2d is looking at ", _wm->getId(), gWorld->getIterations(), i);
             
             if (Agent::isInstanceOf(entityId)) // it's a robot
             {
+//                printf("a robot\n");
                 inputs.push_back(1); // a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(0); // not an object
@@ -171,6 +179,7 @@ std::vector<double> SingleGenomeController::getInputs()
             }
             else if (entityId == 0) // it's a wall
             {
+//                printf("a wall\n");
                 inputs.push_back(0); // not a robot
                 inputs.push_back(1); // a wall
                 inputs.push_back(0); // not an object
@@ -180,6 +189,7 @@ std::vector<double> SingleGenomeController::getInputs()
             {
                 // We want to see from afar how many robots are on the object so we can choose whether to go there
                 MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
+//                printf("object %d with %d robots on it\n", obj->getId(), obj->getNbNearbyRobots()+wobs->getNbFakeRobots());
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
@@ -187,6 +197,7 @@ std::vector<double> SingleGenomeController::getInputs()
             }
             else // found nothing
             {
+//                printf("nothing\n");
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(0); // not an object
@@ -207,11 +218,13 @@ std::vector<double> SingleGenomeController::getInputs()
 
     if (SingleGenomeSharedData::gTotalEffort)
     {
-        // what's the total effort given to the object in the last few turns?
-        double totalEffort = 0;
-        for (auto eff: _totalEfforts)
-            totalEffort += eff;
-        inputs.push_back(totalEffort);
+        if (_isNearObject == true)
+        {
+            MovingObject *obj = static_cast<MovingObject *>(gPhysicalObjects[_lastObject]);
+            inputs.push_back(obj->getRecentTotalEffort());
+        }
+        else
+            inputs.push_back(0);
     }
     
     // how much did we contribute?
@@ -219,7 +232,13 @@ std::vector<double> SingleGenomeController::getInputs()
     for (auto eff: _efforts)
         effort += eff;
     inputs.push_back(effort);
-
+    
+//    if (_lastObject != -1)
+//    {
+//        MovingObject *lastObj = static_cast<MovingObject *>(gPhysicalObjects[_lastObject]);
+//    
+//        printf("Robot %d (it %d) NN inputs: %d robot(s) around, isNearObject: %s, last object %d, totalEffortObject %lf, our effort %lf\n", _wm->getId(), gWorld->getIterations(), _nbNearbyRobots, _isNearObject?"yes":"no", _lastObject, lastObj->getRecentTotalEffort(), effort);
+//    }
     return inputs;
 }
 
@@ -478,20 +497,19 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
     __nbRobots += wobs->getNbFakeRobots();
     __totalEffort += wobs->getNbFakeRobots()*wobs->getFakeCoop();
     
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+//    printf("[DEBUG] Robot %d (it %d): near object %d, own effort %lf, total effort %lf, fake coop %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, wobs->getFakeCoop(), __nbRobots);
     
     _isNearObject = true;
     _nbNearbyRobots = __nbRobots;
-    _objectTime++;
+    _lastObject = __objectId;
     
     double coeff = SingleGenomeSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, SingleGenomeSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
         increaseFitness(payoff);
         _efforts[_iteration%SingleGenomeSharedData::gMemorySize] = __effort;
-        _totalEfforts[_iteration%SingleGenomeSharedData::gMemorySize] = __totalEffort;
     }
 
 }
