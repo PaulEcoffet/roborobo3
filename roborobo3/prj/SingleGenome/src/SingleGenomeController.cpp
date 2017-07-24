@@ -123,6 +123,14 @@ void SingleGenomeController::step() // handles control decision and evolution (b
     
     _iteration++;
     
+    // Clean up the memory if we're not on an object
+    
+    if (_nbNearbyRobots == 0)
+    {
+        for (auto& eff: _efforts)
+            eff = 0;
+    }
+    
     // * step controller
 
     stepController();

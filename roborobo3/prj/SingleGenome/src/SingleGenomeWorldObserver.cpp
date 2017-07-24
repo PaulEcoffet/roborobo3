@@ -199,7 +199,7 @@ void SingleGenomeWorldObserver::loadGenome()
 void SingleGenomeWorldObserver::stepEvaluation()
 {
     if (SingleGenomeSharedData::gOnlyOneRobot)
-        printf("Genome %d fakeCoop %.2d fakeRobots %d rep %d done!\n", _genome, _fakeCoop, _nbFakeRobots, _replica);
+        printf("Genome %d fakeCoop %.2d (%.2lf) fakeRobots %d rep %.2d done!\n", _genome, _fakeCoop, _fakeCoopValues[_fakeCoop], _nbFakeRobots, _replica);
     else
         printf("Genome %d rep %d done!\n", _genome, _replica);
     // Environment stuff
