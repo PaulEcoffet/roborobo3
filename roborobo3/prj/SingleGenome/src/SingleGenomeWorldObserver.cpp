@@ -9,6 +9,7 @@
 #include "SingleGenome/include/SingleGenomeController.h"
 #include "World/World.h"
 #include "Utilities/Misc.h"
+#include "World/MovingObject.h"
 
 #include <cfloat>
 #include <random>
@@ -199,7 +200,7 @@ void SingleGenomeWorldObserver::loadGenome()
 void SingleGenomeWorldObserver::stepEvaluation()
 {
     if (SingleGenomeSharedData::gOnlyOneRobot)
-        printf("Genome %d fakeCoop %.2d fakeRobots %d rep %d done!\n", _genome, _fakeCoop, _nbFakeRobots, _replica);
+        printf("Genome %d fakeCoop %.2d (%.2lf) fakeRobots %d rep %.2d done!\n", _genome, _fakeCoop, _fakeCoopValues[_fakeCoop], _nbFakeRobots, _replica);
     else
         printf("Genome %d rep %d done!\n", _genome, _replica);
     // Environment stuff
@@ -221,10 +222,11 @@ void SingleGenomeWorldObserver::stepEvaluation()
         robot->unregisterRobot();
     }
     // register objects first because they might have fixed locations, whereas robots move anyway
-    for (auto object: gPhysicalObjects)
+    for (int iObj = 0; iObj < gNbOfPhysicalObjects; iObj++)
     {
-        object->resetLocation();
-        object->registerObject();
+        MovingObject *obj = static_cast<MovingObject *>(gPhysicalObjects[iObj]);
+        obj->reset();
+        obj->registerObject();
     }
     
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {

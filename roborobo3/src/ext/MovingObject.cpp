@@ -16,6 +16,15 @@
 MovingObject::MovingObject( int __id ) : CircleObject ( __id )
 {
     setType(5);
+    for (auto& totEff: _totalEfforts)
+        totEff = 0;
+}
+
+void MovingObject::reset()
+{
+    for (auto& totEff: _totalEfforts)
+        totEff = 0;
+    resetLocation();
 }
 
 void MovingObject::move() {
@@ -112,13 +121,15 @@ void MovingObject::step()
     }
     
     // sum of the norms of the impulses given to the object
-    /* In this experiment, we say that each robot that helped gave us a 1 */
     double totalEffort = 0;
     for (auto eff: _efforts)
 	{
         totalEffort += eff.second;
 	}
 
+    // remember the total effort of the current iteration
+    _totalEfforts[gWorld->getIterations()%_memorySize] = totalEffort;
+    
     for (auto robotID: _nearbyRobots)
     {
         Robot *robot = gWorld->getRobot(robotID);
@@ -232,6 +243,14 @@ bool MovingObject::canRegister()
 void MovingObject::show() {
     //	printf("Displaying moving object #%d\n", _id);
     CircleObject::show();
+}
+
+double MovingObject::getRecentTotalEffort()
+{
+    double res = 0;
+    for (auto totEff: _totalEfforts)
+        res += totEff;
+    return res;
 }
 
 // Here, the robot ID has the gRobotStartOffset added because we might be pushed by either robots or other objects

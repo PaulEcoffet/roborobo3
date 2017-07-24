@@ -24,6 +24,11 @@ private:
     std::map<int, std::tuple<double, double>> _impulses;
     std::map<int, double> _efforts; // remember how much each robot actually pushed us
     
+    static constexpr int _memorySize = 20;
+    
+    // remember the total efforts given to the object in the last few turns
+    double _totalEfforts[_memorySize];
+    
     // the speed we expect to move at after computing collisions, which we need to be able to tell other objects
     // in polar coordinates
     double _desiredSpeedOrientation;
@@ -44,17 +49,23 @@ public:
 
 	void show();
     
+    void reset();
+    
+    void step();
+    void move(); // physically move
+    
     bool canRegister(); // can we register at current position
     bool canRegisterStatic( Sint16 __x, Sint16 __y ); // can we register the object at that position (we're trying to create it there)
     bool canRegisterDynamic( Sint16 __x, Sint16 __y ); // we're trying to move there
 
-	void step();
-    void move(); // physically move
+    double getRecentTotalEffort();
+    
     void isPushed( int __idAgent, std::tuple<double, double> __speed ); // callback
 	void isTouched( int __idAgent ); // callback, triggered by agent
 	void isWalked( int __idAgent ); // callback, triggered by agent
 
     int getNbNearbyRobots() { return _nbNearbyRobots; }
+    
 };
 
 #endif
