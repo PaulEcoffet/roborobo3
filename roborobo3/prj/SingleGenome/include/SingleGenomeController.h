@@ -71,8 +71,8 @@ protected:
     // other neural network inputs
     
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
+    int _lastObject; // the last object we were on
     double _efforts[SingleGenomeSharedData::gMemorySize]; // how much we tried pushing
-    double _totalEfforts[SingleGenomeSharedData::gMemorySize]; // how much everybody tried pushing
 
     // for the LED coloring
     
@@ -90,7 +90,6 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
-    int _objectTime;
     
     void reset();
     

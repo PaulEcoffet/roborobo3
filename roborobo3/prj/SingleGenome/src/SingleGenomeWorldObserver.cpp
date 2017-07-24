@@ -9,6 +9,7 @@
 #include "SingleGenome/include/SingleGenomeController.h"
 #include "World/World.h"
 #include "Utilities/Misc.h"
+#include "World/MovingObject.h"
 
 #include <cfloat>
 #include <random>
@@ -221,10 +222,11 @@ void SingleGenomeWorldObserver::stepEvaluation()
         robot->unregisterRobot();
     }
     // register objects first because they might have fixed locations, whereas robots move anyway
-    for (auto object: gPhysicalObjects)
+    for (int iObj = 0; iObj < gNbOfPhysicalObjects; iObj++)
     {
-        object->resetLocation();
-        object->registerObject();
+        MovingObject *obj = static_cast<MovingObject *>(gPhysicalObjects[iObj]);
+        obj->reset();
+        obj->registerObject();
     }
     
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
