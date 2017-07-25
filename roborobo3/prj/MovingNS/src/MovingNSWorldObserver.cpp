@@ -110,7 +110,8 @@ void MovingNSWorldObserver::stepEvaluation()
     std::vector<double> fitnesses(gNbOfRobots);
     std::vector<MovingNSController::genome> genomes(gNbOfRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    // don't consider the last 10 robots (they have fixed cooperation levels)
+    for (int iRobot = 0; iRobot < gNbOfRobots-10; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
@@ -146,6 +147,10 @@ void MovingNSWorldObserver::stepEvaluation()
     // Create a new generation via selection/mutation
     
     // O(1) fitness-proportionate selection
+    // Give everyone a new genome, including the fixed-coop robots
+    int nbPicks[50];
+    for (int i = 0; i < 50; i++)
+        nbPicks[i] = 0;
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         bool done = false;
@@ -153,18 +158,24 @@ void MovingNSWorldObserver::stepEvaluation()
         while (done == false) {
             pick = rand()%gNbOfRobots;
             double draw = ranf()*totalFitness;
-            if (draw <= fitnesses[pick]) // choose this robot
+            if (draw <= fitnesses[pick] && pick < 40) // choose this robot
+            {
                 done = true;
+                nbPicks[pick]++;
+            }
         }
         newGenomePick[iRobot] = pick;
     }
     
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
+//        printf("New genome of robot %d: %d\n", iRobot, newGenomePick[iRobot]);
         Robot *robot = gWorld->getRobot(iRobot);
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
         ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
     }
+//    for (int iRobot = 0; iRobot < 40; iRobot++)
+//        printf("Robot %d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
 }
 
 void MovingNSWorldObserver::step()
