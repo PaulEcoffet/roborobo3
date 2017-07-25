@@ -206,7 +206,11 @@ void MovingNSController::stepController()
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
     
-    _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
+    // Introduce fixed cooperation levels for robots 40 to 49
+    if (_wm->getId() < 40)
+        _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
+    else
+        _wm->_cooperationLevel = (_wm->getId()-40)/10.0 * MovingNSSharedData::gFakeCoopValue;
     
 }
 

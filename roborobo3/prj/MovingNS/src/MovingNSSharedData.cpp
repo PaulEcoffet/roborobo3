@@ -49,6 +49,9 @@ int MovingNSSharedData::gMemorySize = 20;
 
 bool MovingNSSharedData::gTotalEffort = true;
 
+double MovingNSSharedData::gFakeCoopValue = 2.0; // maximum value of ...
+
+
 int MovingNSSharedData::gGenerationLog = 5000;
 bool MovingNSSharedData::gTakeVideo = false;
 bool MovingNSSharedData::gLogGenome = false;
