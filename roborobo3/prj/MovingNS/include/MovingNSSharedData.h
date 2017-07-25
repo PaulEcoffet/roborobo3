@@ -57,6 +57,7 @@ public:
     static bool gTotalEffort; // add total effort as an input to the NN
     
     static double gFakeCoopValue;
+    static int gNbFakeRobots;
     
     static int gGenerationLog; // take videos and log genomes every Nth generation
     static bool gTakeVideo; // take videos or not?

@@ -107,11 +107,12 @@ void MovingNSWorldObserver::stepEvaluation()
 {
     // Save fitness values and genomes before the reset
     double totalFitness = 0;
-    std::vector<double> fitnesses(gNbOfRobots);
-    std::vector<MovingNSController::genome> genomes(gNbOfRobots);
+    int nbTrueRobots = gNbOfRobots - MovingNSSharedData::gNbFakeRobots;
+    std::vector<double> fitnesses(nbTrueRobots);
+    std::vector<MovingNSController::genome> genomes(nbTrueRobots);
     std::vector<int> newGenomePick(gNbOfRobots);
-    // don't consider the last 10 robots (they have fixed cooperation levels)
-    for (int iRobot = 0; iRobot < gNbOfRobots-10; iRobot++)
+    // don't consider the last gNbFakeRobots robots (they have fixed cooperation levels)
+    for (int iRobot = 0; iRobot < nbTrueRobots; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
         MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
@@ -148,8 +149,8 @@ void MovingNSWorldObserver::stepEvaluation()
     
     // O(1) fitness-proportionate selection
     // Give everyone a new genome, including the fixed-coop robots
-    int nbPicks[50];
-    for (int i = 0; i < 50; i++)
+    std::vector<int> nbPicks(gNbOfRobots);
+    for (int i = 0; i < gNbOfRobots; i++)
         nbPicks[i] = 0;
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
@@ -158,7 +159,7 @@ void MovingNSWorldObserver::stepEvaluation()
         while (done == false) {
             pick = rand()%gNbOfRobots;
             double draw = ranf()*totalFitness;
-            if (draw <= fitnesses[pick] && pick < 40) // choose this robot
+            if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
             {
                 done = true;
                 nbPicks[pick]++;
@@ -175,7 +176,7 @@ void MovingNSWorldObserver::stepEvaluation()
         ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
     }
 //    for (int iRobot = 0; iRobot < 40; iRobot++)
-//        printf("Robot %d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
+//        printf("Robot %.2d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
 }
 
 void MovingNSWorldObserver::step()
@@ -216,10 +217,12 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
 {
     // * monitoring: count number of active agents.
     
-    std::vector<double> fitnesses(gNbOfRobots);
-    std::vector<int> index(gNbOfRobots);
+    int nbTrueRobots = gNbOfRobots - MovingNSSharedData::gNbFakeRobots;
     
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    std::vector<double> fitnesses(nbTrueRobots);
+    std::vector<int> index(nbTrueRobots);
+    
+    for (int iRobot = 0; iRobot < nbTrueRobots; iRobot++)
     {
         MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(iRobot)->getController());
         fitnesses[iRobot] = ctl->getFitness();
@@ -228,22 +231,26 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     
     std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
     
+//    printf("Robots sorted by decreasing fitness\n");
+//    for (int i = 0; i < nbTrueRobots; i++)
+//        printf("Robot #%.2d is %.2d with %.2lf\n", i, index[nbTrueRobots-i-1], fitnesses[index[nbTrueRobots-i-1]]);
+    
     double minFit = fitnesses[index[0]];
-    double maxFit = fitnesses[index[gNbOfRobots-1]];
-    double medFit = fitnesses[index[gNbOfRobots/2]];
-    double lowQuartFit = fitnesses[index[gNbOfRobots/4]];
-    double highQuartFit = fitnesses[index[3*gNbOfRobots/4]];
-    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)gNbOfRobots;
+    double maxFit = fitnesses[index[nbTrueRobots-1]];
+    double medFit = fitnesses[index[nbTrueRobots/2]];
+    double lowQuartFit = fitnesses[index[nbTrueRobots/4]];
+    double highQuartFit = fitnesses[index[3*nbTrueRobots/4]];
+    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)nbTrueRobots;
     double stddevFit = -1;
     for (auto& fitness: fitnesses)
         fitness = (fitness-avgFit)*(fitness-avgFit);
-    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)gNbOfRobots, 0.5);
+    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)nbTrueRobots, 0.5);
     
     std::stringstream genLog;
     
     genLog << std::setprecision(5);
     genLog << _generationCount+1 << "\t";
-    genLog << gNbOfRobots << "\t";
+    genLog << nbTrueRobots << "\t";
     genLog << minFit << "\t";
     genLog << maxFit << "\t";
     genLog << avgFit << "\t";
@@ -260,8 +267,8 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
         // log all genomes of each detailed generation, by decreasing fitness
         std::stringstream genomes;
         genomes << _generationCount << " ";
-        genomes << gNbOfRobots << "\n";
-        for (int iRobot = gNbOfRobots-1; iRobot >= 0; iRobot--)
+        genomes << nbTrueRobots << "\n";
+        for (int iRobot = nbTrueRobots-1; iRobot >= 0; iRobot--)
         {
             MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[iRobot])->getController());
             MovingNSController::genome gen = ctl->getGenome();
