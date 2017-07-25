@@ -18,6 +18,7 @@
 
 #include <iomanip>
 #include <utility>
+#include <deque>
 
 using namespace Neural;
 
@@ -71,8 +72,8 @@ protected:
     // other neural network inputs
     
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
-    int _lastObject; // the last object we were on
-    double _efforts[SingleGenomeSharedData::gMemorySize]; // how much we tried pushing
+    std::deque<double> _efforts; // average of how much we pushed
+    std::deque<double> _totalEfforts; // average of how much everyone pushed
 
     // for the LED coloring
     

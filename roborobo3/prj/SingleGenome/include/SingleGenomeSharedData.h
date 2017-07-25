@@ -57,7 +57,7 @@ public:
     
     static double gSigma;
 
-	static constexpr int gMemorySize = 20;
+	static int gMemorySize;
     
     static bool gTotalEffort;
     
