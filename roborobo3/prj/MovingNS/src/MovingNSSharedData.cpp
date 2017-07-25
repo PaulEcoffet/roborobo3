@@ -45,7 +45,7 @@ int MovingNSSharedData::gMutationOperator = 1; // 0: uniform, 1: gaussian
 
 double MovingNSSharedData::gSigma = 0.01; // 0.01 is just some random value.
 
-constexpr int MovingNSSharedData::gMemorySize;
+int MovingNSSharedData::gMemorySize = 20;
 
 bool MovingNSSharedData::gTotalEffort = true;
 

@@ -18,6 +18,7 @@
 
 #include <iomanip>
 #include <utility>
+#include <deque>
 
 using namespace Neural;
 
@@ -71,8 +72,8 @@ protected:
     // other neural network inputs
     
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
-    int _lastObject; // the last (or current) object
-    double _efforts[MovingNSSharedData::gMemorySize]; // how much we tried pushing
+    std::deque<double> _efforts; // average of how much we pushed
+    std::deque<double> _totalEfforts; // average of how much everyone pushed
 
     // for the LED coloring
     
@@ -90,7 +91,6 @@ protected:
     double _Xinit;
     double _Yinit;
     double _dSumTravelled;
-    int _objectTime;
     
     void reset();
     
@@ -116,8 +116,6 @@ public:
     bool isListening() { return _isListening; }
     
     genome getGenome() { return std::make_pair(_currentGenome, _currentSigma); }
-    
-    int getObjectTime() { return _objectTime; }
     
     void loadNewGenome( genome __newGenome );
     
