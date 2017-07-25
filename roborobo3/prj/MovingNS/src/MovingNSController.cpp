@@ -51,7 +51,10 @@ MovingNSController::MovingNSController( RobotWorldModel *wm )
     
     reset(); // resetFitness() is called in reset()
     
-    _wm->setRobotLED_colorValues(255, 0, 0);
+    if (_wm->getId() < gNbOfRobots - MovingNSSharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
+        _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
+    else // Red LED because we're a fake robot
+        _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     
 }
 
@@ -79,10 +82,13 @@ void MovingNSController::step() // handles control decision and evolution (but: 
     stepController();
     
     // Coloring
+    if (_isNearObject == false) {
+        if (_wm->getId() < gNbOfRobots - MovingNSSharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
+            _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
+        else // Red LED because we're a fake robot
+            _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
+    }
     
-    if (_isNearObject == false) // blue
-        _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
-        
     // Update state variables
     
     _nbNearbyRobots = 0;
@@ -491,9 +497,9 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
 {
 //    printf("Robot %d (it %d): near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, __nbRobots);
     
-    if (__effort > 0) // Green LED
+    if (_wm->getId() < gNbOfRobots - MovingNSSharedData::gNbFakeRobots) // Green LED because we're a true robot (and active)
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
-    else // Red LED
+    else // Red LED because we're a fake robot
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     
     _isNearObject = true;
