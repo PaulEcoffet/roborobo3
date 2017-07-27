@@ -59,6 +59,9 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     gProperties.checkAndGetPropertyValue("gFakeCoopValue", &MovingNSSharedData::gFakeCoopValue, false);
     gProperties.checkAndGetPropertyValue("gNbFakeRobots", &MovingNSSharedData::gNbFakeRobots, false);
     
+    gProperties.checkAndGetPropertyValue("gFixedEffort", &MovingNSSharedData::gFixedEffort, false);
+    gProperties.checkAndGetPropertyValue("gFixedEffortValue", &MovingNSSharedData::gFixedEffortValue, false);
+    
     gProperties.checkAndGetPropertyValue("gGenerationLog", &MovingNSSharedData::gGenerationLog, false);
     gProperties.checkAndGetPropertyValue("gTakeVideo", &MovingNSSharedData::gTakeVideo, false);
     gProperties.checkAndGetPropertyValue("gLogGenome",&MovingNSSharedData::gLogGenome,false);

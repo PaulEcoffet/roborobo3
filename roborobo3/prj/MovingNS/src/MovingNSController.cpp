@@ -212,13 +212,22 @@ void MovingNSController::stepController()
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
     
-    // Introduce fixed cooperation levels for robots 40 to 49
-    int nbTrueRobots = gNbOfRobots - MovingNSSharedData::gNbFakeRobots;
-    if (_wm->getId() < nbTrueRobots)
-        _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
-    else
-        _wm->_cooperationLevel = (double)(_wm->getId()-nbTrueRobots)/(double)MovingNSSharedData::gNbFakeRobots * (double)MovingNSSharedData::gFakeCoopValue;
     
+    // Effort value
+    if (MovingNSSharedData::gFixedEffort)
+    {
+        //Introduce a fixed level of cooperation for all robots so we focus on choosing the optimal number of partners
+        _wm->_cooperationLevel = MovingNSSharedData::gFixedEffortValue;
+    }
+    else
+    {
+        // Introduce fixed cooperation levels for the last gNbFakeRobots robots
+        int nbTrueRobots = gNbOfRobots - MovingNSSharedData::gNbFakeRobots;
+        if (_wm->getId() < nbTrueRobots)
+            _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
+        else
+            _wm->_cooperationLevel = (double)(_wm->getId()-nbTrueRobots)/(double)MovingNSSharedData::gNbFakeRobots * (double)MovingNSSharedData::gFakeCoopValue;
+    }
 }
 
 
@@ -509,7 +518,7 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
         increaseFitness(payoff);
         _efforts.push_back(__effort);
         if (_efforts.size() >= MovingNSSharedData::gMemorySize)
