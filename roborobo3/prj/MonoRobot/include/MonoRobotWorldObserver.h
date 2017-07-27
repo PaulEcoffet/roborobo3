@@ -29,6 +29,7 @@ protected:
     
     LogManager *_statsLogManager; // Our own little logfile
     LogManager *_genomeLogManager;
+    LogManager *_effortLogManager; // log effort values for each iteration and each robot so we can see if they converge to the ESS
 
     
 public:
