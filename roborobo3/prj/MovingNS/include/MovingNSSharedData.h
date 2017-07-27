@@ -59,6 +59,9 @@ public:
     static double gFakeCoopValue;
     static int gNbFakeRobots;
     
+    static bool gFixedEffort;
+    static double gFixedEffortValue;
+    
     static int gGenerationLog; // take videos and log genomes every Nth generation
     static bool gTakeVideo; // take videos or not?
     static bool gLogGenome;

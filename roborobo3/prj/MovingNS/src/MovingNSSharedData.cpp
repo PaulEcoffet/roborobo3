@@ -52,6 +52,9 @@ bool MovingNSSharedData::gTotalEffort = true;
 double MovingNSSharedData::gFakeCoopValue = 2.0; // maximum value of ...
 int MovingNSSharedData::gNbFakeRobots = 10; // number of fixed-coop robots in the pop
 
+bool MovingNSSharedData::gFixedEffort = false;
+double MovingNSSharedData::gFixedEffortValue = 0.25;
+
 int MovingNSSharedData::gGenerationLog = 5000;
 bool MovingNSSharedData::gTakeVideo = false;
 bool MovingNSSharedData::gLogGenome = false;
