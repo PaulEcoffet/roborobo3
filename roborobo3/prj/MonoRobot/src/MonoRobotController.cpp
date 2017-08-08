@@ -474,14 +474,15 @@ void MonoRobotController::increaseFitness( double __delta )
 void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
 {
     
-    _isNearObject = true;
-    _nearbyObjectId = __objectId;
-    
     // Experiment-specific: 1 fake robot that contributes 0.25*(objectID%8)
     __nbRobots += 1;
     __totalEffort += 0.25*((double)(__objectId%8));
     
 //    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+    
+    _isNearObject = true;
+    _nearbyObjectId = __objectId;
+    _nbNearbyRobots = __nbRobots;
     
     double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
