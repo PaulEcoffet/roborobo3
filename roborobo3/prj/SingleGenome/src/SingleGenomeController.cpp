@@ -184,12 +184,12 @@ std::vector<double> SingleGenomeController::getInputs()
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
                 MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
-                int nbNearbyRobots = obj->getNbNearbyRobots()+wobs->getNbFakeRobots();
-//                printf("Robot %d (it %d): seeing %d robots on object %d from sensor %d\n", _wm->getId(), gWorld->getIterations(), nbNearbyRobots, obj->getId(), i);
+                int nbDistantRobots = obj->getNbNearbyRobots()+wobs->getNbFakeRobots();
+//                printf("Robot %d (it %d): seeing %d robots on object %d from sensor %d\n", _wm->getId(), gWorld->getIterations(), nbDistantRobots, obj->getId(), i);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
-                inputs.push_back(nbNearbyRobots); // some other robots around
+                inputs.push_back(nbDistantRobots); // some other robots around
             }
             else // found nothing
             {
