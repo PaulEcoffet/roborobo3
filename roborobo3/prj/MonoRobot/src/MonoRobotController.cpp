@@ -191,7 +191,7 @@ std::vector<double> MonoRobotController::getInputs()
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
-                inputs.push_back(obj->getNbNearbyRobots()); // some other robots around
+                inputs.push_back(obj->getNbNearbyRobots()+1); // some other robots around (+ the fake robot, specific)
             }
             else // found nothing
             {
