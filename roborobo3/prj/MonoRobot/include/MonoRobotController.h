@@ -18,6 +18,7 @@
 
 #include <iomanip>
 #include <utility>
+#include <deque>
 
 using namespace Neural;
 
@@ -73,12 +74,8 @@ protected:
     bool _isNearObject; // are we near an object
     int _nearbyObjectId; // the ID of the object nearby
 	int _nbNearbyRobots; // number of robots on the footprint of the same object as us
-	bool _objectMoves[MonoRobotSharedData::gMemorySize]; // the number of times the object we're near moved recently
-    double _movements[MonoRobotSharedData::gMemorySize]; // our total movement recently (see if we're blocked)
-    double _fitnesses[MonoRobotSharedData::gMemorySize]; // our recent fitness gains
-	double _efforts[MonoRobotSharedData::gMemorySize]; // how much we tried pushing
-    double _totalEfforts[MonoRobotSharedData::gMemorySize]; // how much everybody tried pushing
-    int _activeTime; // how much time we've spent interacting with objects, to compute the fitness
+    std::deque<double> _efforts; // average of how much we pushed
+    std::deque<double> _totalEfforts; // average of how much everyone pushed
     
     // ANN
     double _minValue;
@@ -121,8 +118,6 @@ public:
     void loadNewGenome( genome __newGenome, bool __mutate );
     
     virtual double getFitness();
-    
-    int getActiveTime() { return _activeTime; }
     
     double getCooperationLevel() { return _wm->_cooperationLevel; }
     

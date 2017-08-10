@@ -156,14 +156,14 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
     for (int iObject = 0; iObject < gNbOfPhysicalObjects; iObject++)
     {
         PhysicalObject *object = gPhysicalObjects[iObject];
-//        int gridBox = iObject; // 1 object per box
-//        int line = gridBox/MonoRobotSharedData::gNbRows;
-//        int row = gridBox%MonoRobotSharedData::gNbRows;
-//        int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
-//        int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
-//        int xMax = xMin + MonoRobotSharedData::gZoneWidth - 6*gPhysicalObjectDefaultRadius;
-//        int yMax = yMin + MonoRobotSharedData::gZoneHeight - 6*gPhysicalObjectDefaultRadius;
-//        object->findRandomLocation(xMin, xMax, yMin, yMax);
+        int gridBox = iObject/8; // 8 objects per box
+        int line = gridBox/MonoRobotSharedData::gNbRows;
+        int row = gridBox%MonoRobotSharedData::gNbRows;
+        int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
+        int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
+        int xMax = xMin + MonoRobotSharedData::gZoneWidth - 6*gPhysicalObjectDefaultRadius;
+        int yMax = yMin + MonoRobotSharedData::gZoneHeight - 6*gPhysicalObjectDefaultRadius;
+        object->findRandomLocation(xMin, xMax, yMin, yMax);
         object->registerObject();
     }
     
@@ -171,7 +171,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         // super specific stuff here
-        int gridBox = iRobot/2; // 2 robots per box
+        int gridBox = iRobot; // 1 robot per box
         int line = gridBox/MonoRobotSharedData::gNbRows;
         int row = gridBox%MonoRobotSharedData::gNbRows;
         int xMin = MonoRobotSharedData::gBorderSize + row * (MonoRobotSharedData::gZoneWidth + MonoRobotSharedData::gBorderSize);
