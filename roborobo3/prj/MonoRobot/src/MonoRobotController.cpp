@@ -90,17 +90,8 @@ void MonoRobotController::initController()
     // state variables
     _isNearObject = false;
     _nbNearbyRobots = 0;
-    _activeTime = 0;
-    for (auto& moved: _objectMoves)
-        moved = false;
-    for (auto& move: _movements)
-        move = 0;
-    for (auto& fit: _fitnesses)
-        fit = 0;
-    for (auto& eff: _efforts)
-        eff = 0;
-    for (auto& totEff: _totalEfforts)
-        totEff = 0;
+    _efforts.clear();
+    _totalEfforts.clear();
 }
 
 void MonoRobotController::setIOcontrollerSize()
@@ -136,13 +127,16 @@ void MonoRobotController::reset()
 
 void MonoRobotController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-    // If we aren't near an object, write that down (if we were, it's done in the wasNearObject() method)
-    if (_isNearObject == false)
-        _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = false;
-    
-    _movements[_iteration%MonoRobotSharedData::gMemorySize] = fabs(_wm->_actualTranslationalValue); // might be negative
     
     _iteration++;
+    
+    // Clean up the memory if we're not on an object
+    
+    if (_isNearObject == false)
+    {
+        _efforts.clear();
+        _totalEfforts.clear();
+    }
     
     // * step controller
     
@@ -152,9 +146,6 @@ void MonoRobotController::step() // handles control decision and evolution (but:
     
     _isNearObject = false;
     _nbNearbyRobots = 0;
-    _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = 0;
-    _efforts[_iteration%MonoRobotSharedData::gMemorySize] = 0;
-    _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = 0;
     
 }
 
@@ -188,10 +179,12 @@ std::vector<double> MonoRobotController::getInputs()
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
                 MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
+                int nbDistantRobots = obj->getNbNearbyRobots()+1; //fake robot
+//                printf("Robot %d (it %d): seeing %d robots on object %d from sensor %d\n", _wm->getId(), gWorld->getIterations(), nbDistantRobots, obj->getId(), i);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
                 inputs.push_back(1); // an object
-                inputs.push_back(obj->getNbNearbyRobots()+1); // some other robots around (+ the fake robot, specific)
+                inputs.push_back(nbDistantRobots); // some other robots around (+ the fake robot, specific)
             }
             else // found nothing
             {
@@ -213,20 +206,25 @@ std::vector<double> MonoRobotController::getInputs()
     // how many robots around?
     inputs.push_back(_nbNearbyRobots);
     
+    double avgTotalEffort = 0;
     if (MonoRobotSharedData::gTotalEffort)
     {
-        // what's the total effort given to the object in the last few turns?
-        double totalEffort = 0;
-        for (auto eff: _totalEfforts)
-            totalEffort += eff;
-        inputs.push_back(totalEffort);
+        if (_isNearObject == true)
+        {
+            // the average total effort over the last gMemorySize (at most) turns we were on the object
+            for (auto totEff: _totalEfforts)
+                avgTotalEffort += totEff;
+        }
+        inputs.push_back(avgTotalEffort);
     }
     
-    // how much did we contribute?
-    double effort = 0;
+    // how much did we contribute recently?
+    double avgEffort = 0;
     for (auto eff: _efforts)
-        effort += eff;
-    inputs.push_back(effort);
+        avgEffort += eff;
+    inputs.push_back(avgEffort);
+    
+//    printf("Robot %d (it %d) NN: nbNearby %d, avgTotalEffort %lf, avgEffort %lf, isNearObject: %s\n", _wm->getId(), gWorld->getIterations(), _nbNearbyRobots, avgTotalEffort, avgEffort, _isNearObject?"yes":"no");
     
     return inputs;
 }
@@ -255,7 +253,7 @@ void MonoRobotController::stepController()
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
     
-    _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
+    _wm->_cooperationLevel = outputs[2] + 1.0; // in [0, 2]
 }
 
 
@@ -463,7 +461,7 @@ void MonoRobotController::updateFitness( double __newFitness )
 }
 
 
-// Note : fitnesses can decrease when we make a bad deal!
+// Note: fitnesses can decrease when we make a bad deal!
 // Just ensure they remain positive.
 void MonoRobotController::increaseFitness( double __delta )
 {
@@ -478,7 +476,7 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     __nbRobots += 1;
     __totalEffort += 0.25*((double)(__objectId%8));
     
-//    printf("[DEBUG] Robot %d was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), __objectId, __effort, __totalEffort, __nbRobots);
+//    printf("[DEBUG] Robot %d (it %d) was near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, __nbRobots);
     
     _isNearObject = true;
     _nearbyObjectId = __objectId;
@@ -487,15 +485,17 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
     
-    if (__objectDidMove || (gStuckMovableObjects)) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations()%1000, __effort, payoff);
+    if (__objectDidMove || gStuckMovableObjects) {
+//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
         increaseFitness(payoff);
-        _activeTime++;
-        _fitnesses[_iteration%MonoRobotSharedData::gMemorySize] = payoff;
-		_efforts[_iteration%MonoRobotSharedData::gMemorySize] = __effort;
-        _totalEfforts[_iteration%MonoRobotSharedData::gMemorySize] = __totalEffort;
+        _efforts.push_back(__effort);
+        if (_efforts.size() >= MonoRobotSharedData::gMemorySize)
+            _efforts.pop_front();
     }
-    _objectMoves[_iteration%MonoRobotSharedData::gMemorySize] = __objectDidMove;
+    _totalEfforts.push_back(__totalEffort);
+    if (_totalEfforts.size() >= MonoRobotSharedData::gMemorySize)
+        _totalEfforts.pop_front();
+
 }
 
 

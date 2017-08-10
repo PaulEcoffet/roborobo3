@@ -48,7 +48,7 @@ int MonoRobotSharedData::gMutationOperator = 1; // 0: uniform, 1: gaussian
 
 double MonoRobotSharedData::gSigma = 0.01; // 0.01 is just some random value.
 
-constexpr int MonoRobotSharedData::gMemorySize;
+int MonoRobotSharedData::gMemorySize = 20;
 
 bool MonoRobotSharedData::gTotalEffort = true;
 
