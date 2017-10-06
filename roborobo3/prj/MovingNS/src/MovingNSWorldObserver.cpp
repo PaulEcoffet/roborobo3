@@ -86,13 +86,16 @@ MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( wo
     
     // * Logfiles
     
-    std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
+    time_t now = time(NULL);
+	char chartime[19] = "";
+	strftime (chartime, 19,"%Y%m%d_%Hh%Mm%Ss", localtime(&now));
+	std::string stime = chartime;
+    std::string fitnessLogFilename = gLogDirectoryname + "/" + stime + "_observer.txt";
     _fitnessLogManager = new LogManager(fitnessLogFilename);
     _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     
-    std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
+    std::string genomeLogFilename = gLogDirectoryname + "/" + stime + "_genome.txt";
     _genomeLogManager = new LogManager(genomeLogFilename);
-        
 }
 
 MovingNSWorldObserver::~MovingNSWorldObserver()
