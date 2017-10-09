@@ -142,7 +142,7 @@ void MovingObject::step()
         }
         std::string projectName = gProperties.getProperty("ConfigurationLoaderObjectName");
         
-        if (projectName == "MovingNSConfigurationLoader")
+        if (projectName == "MovingNSConfigurationLoader" || projectName == "CoopOpportunity2MaxConfigurationLoader")
         {
             MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
             ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);

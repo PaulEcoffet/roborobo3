@@ -10,6 +10,7 @@
 #include "Config/MovingNSConfigurationLoader.h"
 #include "Config/MonoRobotConfigurationLoader.h"
 #include "Config/SingleGenomeConfigurationLoader.h"
+#include "Config/CoopOpportunity2MaxConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -93,6 +94,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "SingleGenomeConfigurationLoader" )
 	{
 		return new SingleGenomeConfigurationLoader();
+	}
+#endif
+#if defined PRJ_COOPOPPORTUNITY2MAX || !defined MODULAR
+	else if (configurationLoaderObjectName == "CoopOpportunity2MaxConfigurationLoader" )
+	{
+		return new CoopOpportunity2MaxConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
