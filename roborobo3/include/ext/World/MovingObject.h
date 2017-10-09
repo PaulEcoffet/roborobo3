@@ -14,7 +14,7 @@
 class MovingObject : public CircleObject
 {
     
-private:
+protected:
     
     std::set<int> _nearbyRobots; // robots that are in the footprint in this iteration
     
@@ -51,7 +51,7 @@ public:
     
     void reset();
     
-    void step();
+    virtual void step();
     void move(); // physically move
     
     bool canRegister(); // can we register at current position

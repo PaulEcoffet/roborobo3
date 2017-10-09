@@ -7,7 +7,7 @@
 #include "World/MovableObject.h"
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
-
+#include "CoopOpportunity2Max/include/MovingObject2Max.h"
 
 int PhysicalObjectFactory::_nextId = 0;
 
@@ -60,12 +60,17 @@ void PhysicalObjectFactory::makeObject( int type )
                 std::cout << "[INFO] Movable Object created (type = " << type << ").\n";
             gPhysicalObjects.push_back( new MovableObject(id) );
             break;
-        // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         case 5:
             if ( gVerbose )
                 std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
             gPhysicalObjects.push_back( new MovingObject(id) );
             break;
+        case 6:
+        	if (gVerbose)
+        		std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
+            gPhysicalObjects.push_back( new MovingObject2Max(id));
+            break;
+		// case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;
             exit(-1);
@@ -74,7 +79,7 @@ void PhysicalObjectFactory::makeObject( int type )
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 5;
+    return 6;
 }
 
 
