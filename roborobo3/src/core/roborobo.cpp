@@ -947,7 +947,9 @@ void initLogging()
 	gLogFile.open(gLogFullFilename.c_str());//, std::ofstream::out | std::ofstream::app);
 	
 	if(!gLogFile) { 
-		std::cout << "[CRITICAL] Cannot open log file " << gLogFullFilename << "." << std::endl << std::endl;
+		
+        std::cout << "[CRITICAL] Cannot open log file " << gLogFullFilename << "." << std::endl << std::endl;
+        std::cout << "Error: " << strerror(errno) << std::endl;
 		exit(-1);
 	}
     

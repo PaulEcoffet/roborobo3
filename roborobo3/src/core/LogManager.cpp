@@ -12,6 +12,7 @@ LogManager::LogManager(std::string __logFilename)
     logFile.open(__logFilename);
     if(!logFile) {
         std::cout << "[CRITICAL] Cannot open log file " << __logFilename << "." << std::endl << std::endl;
+        std::cout << "Error: " << strerror(errno) << std::endl;
         exit(-1);
     }
 
