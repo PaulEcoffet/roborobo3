@@ -8,6 +8,7 @@
 #include "../prj/MonoRobot/include/MonoRobotController.h"
 #include "../prj/SingleGenome/include/SingleGenomeController.h"
 #include "../prj/TemplateMoving/include/TemplateMovingController.h"
+#include "../prj/CoopOpportunity2Max/include/CoopOpportunity2MaxController.h"
 
 
 
@@ -142,7 +143,7 @@ void MovingObject::step()
         }
         std::string projectName = gProperties.getProperty("ConfigurationLoaderObjectName");
         
-        if (projectName == "MovingNSConfigurationLoader" || projectName == "CoopOpportunity2MaxConfigurationLoader")
+        if (projectName == "MovingNSConfigurationLoader")
         {
             MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
             ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
@@ -156,6 +157,12 @@ void MovingObject::step()
         {
             SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
             ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
+        }
+        else if (projectName == "CoopOpportunity2MaxConfigurationLoader")
+        {
+            CoopOpportunity2MaxController *ctl = dynamic_cast<CoopOpportunity2MaxController *>(robot->getController());
+            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
+            
         }
     }
     _nearbyRobots.clear();

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C5C519A2-F0DA-489E-8614-D1071B7A7E8F</string>
+	<key>IDESourceControlProjectName</key>
+	<string>roborobo3</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>7597C5FB98D6DFF32C676788B3B516CD54D9D8EF</key>
+		<string>https://github.com/PaulEcoffet/roborobo3.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>roborobo3.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>7597C5FB98D6DFF32C676788B3B516CD54D9D8EF</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>https://github.com/PaulEcoffet/roborobo3.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>7597C5FB98D6DFF32C676788B3B516CD54D9D8EF</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>7597C5FB98D6DFF32C676788B3B516CD54D9D8EF</string>
+			<key>IDESourceControlWCCName</key>
+			<string>roborobo3</string>
+		</dict>
+	</array>
+</dict>
+</plist>
