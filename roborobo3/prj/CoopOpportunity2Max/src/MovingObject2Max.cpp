@@ -30,29 +30,36 @@ void MovingObject2Max::isPushed(int __idAgent, std::tuple<double, double> __spee
 {
 	if (_nearbyRobots.size() == 2 && _nearbyRobots.count(__idAgent - gRobotIndexStartOffset) == 0)
 	{
-		std::cout << _id <<": Already too much robots!, no room for " << __idAgent - gRobotIndexStartOffset << "\n";
-		std::cout << "current robots: ";
-		for (auto prevrob : _nearbyRobots)
-		{
-			std::cout << prevrob << " ";
-		}
-		std::cout << "prev robots: ";
-		for (auto prevrob : _prevNearbyRobots)
-		{
-			std::cout << prevrob << " ";
-		}
-		std::cout << "\n";
+		if (gVerbose) {
+            std::cout << _id << ": Already too much robots!, no room for " << __idAgent - gRobotIndexStartOffset
+                      << "\n";
+            std::cout << "current robots: ";
+        }
+        if (gVerbose) {
+            for (auto prevrob : _nearbyRobots) {
+                std::cout << prevrob << " ";
+            }
+            std::cout << "prev robots: ";
+            for (auto prevrob : _prevNearbyRobots) {
+                std::cout << prevrob << " ";
+            }
+            std::cout << "\n";
+        }
 		if (_prevNearbyRobots.count(__idAgent - gRobotIndexStartOffset) > 0) // This robot was here at the previous step
 		{
-			std::cout << __idAgent - gRobotIndexStartOffset << " was already there last turn\n";
-			// We make room for this pre-existing robot.
+            if (gVerbose) {
+                std::cout << __idAgent - gRobotIndexStartOffset << " was already there last turn\n";
+            }
+            // We make room for this pre-existing robot.
 			for (auto i = _nearbyRobots.begin(); i != _nearbyRobots.end(); i++)
 			{
 				auto nearby_robot = *i;
 				if (_prevNearbyRobots.count(nearby_robot) == 0)
 				{
-					std::cout << nearby_robot << " was not here before, kicking him!\n";
-					_nearbyRobots.erase(i);
+                    if (gVerbose) {
+                        std::cout << nearby_robot << " was not here before, kicking him!\n";
+                    }
+                    _nearbyRobots.erase(i);
 					_impulses.erase(nearby_robot);
 					break;
 				}
