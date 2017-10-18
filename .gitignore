@@ -16,3 +16,10 @@ cmake_install.cmake
 install_manifest.txt
 compile_commands.json
 CTestTestfile.cmake
+
+
+# Clion specific
+
+roborobo3-build/
+roborobo3/.idea/
+roborobo3/cmake-build-debug/
