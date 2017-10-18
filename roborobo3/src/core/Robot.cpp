@@ -947,3 +947,8 @@ int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
 //    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
     return tries;
 }
+
+std::string Robot::inspect()
+{
+	return _controller->inspect();
+}

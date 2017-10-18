@@ -613,10 +613,22 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
 					}
 					else
 					{
-						std::cout << inspectorSensorValue;
+						std::cout << "Detected id: " << inspectorSensorValue << std::endl;
 						if ( inspectorSensorValue >= (Uint32)gRobotIndexStartOffset )
-						  std::cout << " (agent #" << inspectorSensorValue - gRobotIndexStartOffset << ")";
-						std::cout << std::endl; 
+						{
+							std::cout << "Information from agent #" << inspectorSensorValue - gRobotIndexStartOffset << std::endl;
+							Robot* robot = gWorld->getRobot(inspectorSensorValue - gRobotIndexStartOffset);
+							std::cout << robot->inspect() << std::endl;
+						}
+						else if (inspectorSensorValue >= (Uint32) gPhysicalObjectIndexStartOffset
+								 && inspectorSensorValue < (Uint32) (gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects))
+						{
+							int iObj = inspectorSensorValue - gPhysicalObjectIndexStartOffset;
+							std::cout << "Information from Physical object #" << iObj << std::endl;
+							PhysicalObject *physicalObject = gPhysicalObjects[iObj];
+							std::cout << physicalObject->inspect() << std::endl;
+						}
+						std::cout << std::endl;
 					}
 
 					// virtual floor sensor
