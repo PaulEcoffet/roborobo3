@@ -1,3 +1,4 @@
+#include <CoopFixed2/include/CoopFixed2OpportunityObj.h>
 #include "World/PhysicalObjectFactory.h"
 #include "World/RoundObject.h"
 #include "World/EnergyItem.h"
@@ -7,32 +8,32 @@
 #include "World/MovableObject.h"
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
-#include "CoopOpportunity2Max/include/MovingObject2Max.h"
+#include "CoopOpportunity2Max/include/CoopOpportunity2MaxMovingObject2Max.h"
 
 int PhysicalObjectFactory::_nextId = 0;
 
 void PhysicalObjectFactory::makeObject( int type )
 {
     int id = PhysicalObjectFactory::getNextId();
-    
-	std::string s = "";
-	std::stringstream out;
-	out << id;
-    
+
+    std::string s = "";
+    std::stringstream out;
+    out << id;
+
     s = "physicalObject[";
-	s += out.str();
-	s += "].type";
-	if ( gProperties.hasProperty( s ) )
-	{
-		convertFromString<int>(type, gProperties.getProperty( s ), std::dec);
-	}
-	else
-	{
+    s += out.str();
+    s += "].type";
+    if ( gProperties.hasProperty( s ) )
+    {
+        convertFromString<int>(type, gProperties.getProperty( s ), std::dec);
+    }
+    else
+    {
         if ( gVerbose )
             std::cerr << "[MISSING] PhysicalObjectFactory: object #" << id << ", type is missing. Assume type "<< gPhysicalObjectDefaultType << "." << std::endl;
         type = gPhysicalObjectDefaultType;
-	}
-    
+    }
+
     switch ( type )
     {
         case 0:
@@ -66,11 +67,16 @@ void PhysicalObjectFactory::makeObject( int type )
             gPhysicalObjects.push_back( new MovingObject(id) );
             break;
         case 6:
-        	if (gVerbose)
-        		std::cout << "[INFO] Moving Object created (type = " << type << ").\n";
-            gPhysicalObjects.push_back( new MovingObject2Max(id));
+            if (gVerbose)
+                std::cout << "[INFO] Moving Object 2 max created (type = " << type << ").\n";
+            gPhysicalObjects.push_back( new CoopOpportunity2MaxMovingObject2Max(id));
             break;
-		// case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
+        case 7:
+            if (gVerbose)
+                std::cout << "[INFO] Coop Opportunity 2 Fixed created (type = 7).\n";
+            gPhysicalObjects.push_back( new CoopFixed2OpportunityObj(id));
+            break;
+        // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;
             exit(-1);
@@ -79,7 +85,7 @@ void PhysicalObjectFactory::makeObject( int type )
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 6;
+    return 7;
 }
 
 
