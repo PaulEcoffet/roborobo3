@@ -5,28 +5,28 @@
  *      Author: Paul Ecoffet
  */
 
-#include "CoopOpportunity2Max/include/MovingObject2Max.h"
+#include "CoopOpportunity2Max/include/CoopOpportunity2MaxMovingObject2Max.h"
 #include "CoopOpportunity2Max/include/CoopOpportunity2MaxSharedData.h"
 #include "RoboroboMain/roborobo.h"
 
 
-MovingObject2Max::MovingObject2Max(int __id): MovingObject(__id)
+CoopOpportunity2MaxMovingObject2Max::CoopOpportunity2MaxMovingObject2Max(int __id): MovingObject(__id)
 {
 	setType(6);
 
 }
 
-MovingObject2Max::~MovingObject2Max() {
+CoopOpportunity2MaxMovingObject2Max::~CoopOpportunity2MaxMovingObject2Max() {
 }
 
-void MovingObject2Max::step()
+void CoopOpportunity2MaxMovingObject2Max::step()
 {
 	_prevNearbyRobots.clear();
 	_prevNearbyRobots.insert(_nearbyRobots.begin(), _nearbyRobots.end());
 	MovingObject::step();
 }
 
-void MovingObject2Max::isPushed(int __idAgent, std::tuple<double, double> __speed)
+void CoopOpportunity2MaxMovingObject2Max::isPushed(int __idAgent, std::tuple<double, double> __speed)
 {
 	if (_nearbyRobots.size() == 2 && _nearbyRobots.count(__idAgent - gRobotIndexStartOffset) == 0)
 	{
