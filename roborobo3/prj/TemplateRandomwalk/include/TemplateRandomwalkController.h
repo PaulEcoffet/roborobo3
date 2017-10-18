@@ -25,6 +25,8 @@ class TemplateRandomwalkController : public Controller
 		void step();
     
         void monitorSensoryInformation();
+    
+        std::string inspect( );
 };
 
 
