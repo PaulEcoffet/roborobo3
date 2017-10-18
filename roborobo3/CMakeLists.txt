@@ -3,6 +3,9 @@ project(roborobo3)
 
 set(CMAKE_CXX_STANDARD 11)
 
+# Set Mode with debug
+set(CMAKE_BUILD_TYPE Debug)
+
 set(SOURCE_FILES
         include/contrib/neuralnetworks/Elman.h
         include/contrib/neuralnetworks/LayeredNeuralNetwork.h
@@ -64,12 +67,12 @@ set(SOURCE_FILES
         prj/CoopOpportunity2Max/include/CoopOpportunity2MaxController.h
         prj/CoopOpportunity2Max/include/CoopOpportunity2MaxSharedData.h
         prj/CoopOpportunity2Max/include/CoopOpportunity2MaxWorldObserver.h
-        prj/CoopOpportunity2Max/include/MovingObject2Max.h
+        prj/CoopOpportunity2Max/include/CoopOpportunity2MaxMovingObject2Max.h
         prj/CoopOpportunity2Max/src/CoopOpportunity2MaxAgentObserver.cpp
         prj/CoopOpportunity2Max/src/CoopOpportunity2MaxController.cpp
         prj/CoopOpportunity2Max/src/CoopOpportunity2MaxSharedData.cpp
         prj/CoopOpportunity2Max/src/CoopOpportunity2MaxWorldObserver.cpp
-        prj/CoopOpportunity2Max/src/MovingObject2Max.cpp
+        prj/CoopOpportunity2Max/src/CoopOpportunity2MaxMovingObject2Max.cpp
         prj/MonoRobot/include/MonoRobotAgentObserver.h
         prj/MonoRobot/include/MonoRobotController.h
         prj/MonoRobot/include/MonoRobotSharedData.h
@@ -202,7 +205,19 @@ set(SOURCE_FILES
         src/ext/TemplateMovingConfigurationLoader.cpp
         src/ext/TemplateRandomwalkConfigurationLoader.cpp
         src/ext/TemplateVanillaEEConfigurationLoader.cpp
-        src/ext/TemplateWanderConfigurationLoader.cpp)
+        src/ext/TemplateWanderConfigurationLoader.cpp
+        src/ext/CoopFixed2ConfigurationLoader.cpp
+        prj/CoopFixed2/include/CoopFixed2AgentObserver.h
+        prj/CoopFixed2/include/CoopFixed2Controller.h
+        prj/CoopFixed2/include/CoopFixed2OpportunityObj.h
+        prj/CoopFixed2/include/CoopFixed2WorldObserver.h
+        prj/CoopFixed2/include/CoopFixed2SharedData.h
+        prj/CoopFixed2/src/CoopFixed2AgentObserver.cpp
+        prj/CoopFixed2/src/CoopFixed2Controller.cpp
+        prj/CoopFixed2/src/CoopFixed2OpportunityObj.cpp
+        prj/CoopFixed2/src/CoopFixed2SharedData.cpp
+        prj/CoopFixed2/src/CoopFixed2WorldObserver.cpp
+        )
 
 include_directories(include)
 include_directories(include/contrib)
