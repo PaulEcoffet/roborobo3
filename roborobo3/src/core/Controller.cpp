@@ -23,3 +23,9 @@ Controller::~Controller()
 {
 	// nothing to do.
 }
+
+std::string Controller::inspect()
+{
+    return std::string("The inspect method has not been override by your controller.\n"
+                       "Override the inspect method in your controller to display useful information.\n");
+}

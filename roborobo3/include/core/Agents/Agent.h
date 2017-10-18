@@ -41,6 +41,8 @@ class Agent
 		// controller step
 		virtual void stepBehavior() = 0;
 		virtual void stepBehavior(const Uint8* __keyboardStates) = 0;
+
+		virtual std::string inspect();
     
 		void move();
         void show(SDL_Surface *surface = gScreen);

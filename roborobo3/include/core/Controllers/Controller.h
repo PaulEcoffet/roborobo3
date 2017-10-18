@@ -11,6 +11,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+#include <string>
+
 class RobotWorldModel;
 
 class Controller
@@ -28,6 +30,8 @@ class Controller
 		virtual void step() = 0;
     
         RobotWorldModel* getWorldModel() { return _wm; }
+
+    virtual std::string inspect();
 };
 
 

@@ -131,6 +131,12 @@ bool Agent::isInstanceOf ( int index ) // static
         return false;
 }
 
+std::string Agent::inspect()
+{
+    return std::string("Inspect has not been implemented for this Agent.\n"
+                       "Implement it in your subclass.\n");
+}
+
 
 
 

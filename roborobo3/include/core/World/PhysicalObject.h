@@ -88,7 +88,8 @@ public :
     int getType() { return type; }
 
     static bool isInstanceOf ( int index );
-    
+
+    virtual std::string inspect();
 };
 
 #endif

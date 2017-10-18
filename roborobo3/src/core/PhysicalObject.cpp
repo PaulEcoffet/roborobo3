@@ -255,3 +255,9 @@ void PhysicalObject::resetLocation()
     else
         findRandomLocation();
 }
+
+std::string PhysicalObject::inspect()
+{
+    return std::string("The inspect method of this physical object has not not been implemented.\n"
+                       "Implement the inspect method in your Physical object to get useful information.\n");
+}
