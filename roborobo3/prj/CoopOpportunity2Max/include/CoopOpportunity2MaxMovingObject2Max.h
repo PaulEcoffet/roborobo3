@@ -10,10 +10,10 @@
 
 #include "World/MovingObject.h"
 
-class MovingObject2Max: public MovingObject {
+class CoopOpportunity2MaxMovingObject2Max: public MovingObject {
 public:
-	MovingObject2Max(int __id);
-	virtual ~MovingObject2Max();
+	CoopOpportunity2MaxMovingObject2Max(int __id);
+	virtual ~CoopOpportunity2MaxMovingObject2Max();
 
 	/**
 	 * isPushed is override to prevent robots from being more than 2 on an object
