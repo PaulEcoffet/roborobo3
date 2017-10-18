@@ -11,7 +11,8 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include <string>
+
+#include <iostream>
 
 class RobotWorldModel;
 
@@ -30,8 +31,7 @@ class Controller
 		virtual void step() = 0;
     
         RobotWorldModel* getWorldModel() { return _wm; }
-
-    virtual std::string inspect();
+    	virtual std::string inspect( ) { return "Controller::inspect() not implemented.";};
 };
 
 
