@@ -174,6 +174,7 @@ bool gRobotLEDdisplay = true;
 bool gExtendedSensoryInputs = false;
 
 bool gPauseMode = false;
+bool gStepByStep = false;
 bool gInspectorMode = false; // manual control mode -- false: agent-centered ; true: envt centered (ie. if inspector agent exists)
 bool gInspectorAgent = false; // is there an inspector agent? 
 
@@ -362,7 +363,7 @@ void displayHelp()
 		std::cout << "       n : radio network communication on/off" << std::endl;
 		std::cout << "       d : set display mode - (1) default-60-fps; (2) fast; (3) fastest-no-display. (shift+d: inverse)" << std::endl;
 		std::cout << "       v : verbose on/off (console)" << std::endl;
-		std::cout << "       p : pause/freeze simulation (display mode)" << std::endl;
+		std::cout << "       p : pause/freeze simulation (display mode) - use <space> for step-by-step update" << std::endl;
 		std::cout << "       s : slow mode on/off (switch it off if display is off)" << std::endl;
 
 		std::cout << "       x : (\"X-ray mode\") debug display mode on/off" << std::endl;
@@ -452,7 +453,21 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
             ctl->dumpGenome();
             SDL_Delay(PAUSE_COMMAND);
         }
-		if ( keyboardStates[ SDL_SCANCODE_P ] )
+		if ( gStepByStep == true )
+		{
+			gPauseMode = true;
+			gStepByStep = false;
+		}
+
+		if ( gPauseMode == true && keyboardStates[ SDL_SCANCODE_SPACE ] )
+		{
+			SDL_Delay(PAUSE_COMMAND); // 200ms delay
+			gPauseMode = false;
+			gStepByStep = true;
+			std::cout << "step #" << gWorld->getIterations() << std::endl;
+		}
+        
+        if ( keyboardStates[ SDL_SCANCODE_P ] )
 		{
 			SDL_Delay(PAUSE_COMMAND); // 200ms delay
 			gPauseMode = !gPauseMode;
@@ -464,7 +479,7 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
 					std::cout << "pause mode is OFF." << std::endl;
 			}
 		}
-
+        
 		if ( keyboardStates[ SDL_SCANCODE_H ] )
 		{
 			displayHelp();
