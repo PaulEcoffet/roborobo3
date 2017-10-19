@@ -147,6 +147,8 @@ public:
     void setCanMove(bool _canMove);
 
     void wasNearObject(double __totalInvest, double __invest, int __nbRobots);
+
+    std::string inspect() override;
 };
 
 
