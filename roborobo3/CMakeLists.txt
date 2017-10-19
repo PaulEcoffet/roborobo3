@@ -4,7 +4,7 @@ project(roborobo3)
 set(CMAKE_CXX_STANDARD 11)
 
 # Set Mode with debug
-set(CMAKE_BUILD_TYPE Debug)
+# set(CMAKE_BUILD_TYPE Debug)
 
 set(SOURCE_FILES
         include/contrib/neuralnetworks/Elman.h
