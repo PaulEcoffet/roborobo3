@@ -115,6 +115,7 @@ void CoopFixed2Controller::step() // handles control decision and evolution (but
 std::vector<double> CoopFixed2Controller::getInputs()
 {
     std::vector<double> inputs;
+    inputs.reserve(_nbInputs); // Allocate all the needed memory
     
     
     // distance sensors
@@ -401,7 +402,8 @@ void CoopFixed2Controller::initController()
         std::cout << std::flush;
     
     _currentGenome.clear();
-    
+    _currentGenome.reserve(nbGenes);
+
     // Intialize genomes
     for ( unsigned int i = 0 ; i < nbGenes; i++ )
     {
