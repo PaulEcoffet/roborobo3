@@ -553,3 +553,27 @@ void CoopFixed2Controller::dumpGenome()
 void CoopFixed2Controller::setCanMove(bool _canMove) {
     CoopFixed2Controller::_canMove = _canMove;
 }
+
+std::string CoopFixed2Controller::inspect()
+{
+    std::stringstream out;
+    out << "Near object: " << ((_isNearObject)? "True" : "False") << ".\n";
+    if (_isNearObject)
+    {
+        out << std::setprecision(3);
+        out << "\tLast cooperation value: " << _wm->_cooperationLevel << ".\n";
+        out << "\tTotal Effort history: ";
+        for (auto curTotEffort : _totalEfforts)
+        {
+            out << curTotEffort << ", ";
+        }
+        out << ".\n";
+        out << "\tOwn Effort history: ";
+        for (auto curEffort : _efforts)
+        {
+            out << curEffort << ", ";
+        }
+    }
+    out << "Actual fitness: " << getFitness() << "\n";
+    return out.str();
+}
