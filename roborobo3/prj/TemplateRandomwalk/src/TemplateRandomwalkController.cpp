@@ -94,24 +94,10 @@ void TemplateRandomwalkController::monitorSensoryInformation()
         
         std::cout << "=-= Robot #" << _wm->getId() << " : STARTING monitoring sensory information at iteration #" << gWorld->getIterations() << ".\n";
         
-        // Rotational and translational speed, agent orientation wrt. upwards
-        //      - *actual* and *desired* translational/rotational values are very different
-        //          - actual values is what the robot is actually doing (this is measured)
-        //          - desired values are set by the controller (this is set and the hardware controller tries to match it)
-        //          - rational: you may ask for something (e.g. max speed) but physics and electronics may be limited
-        //          - typical example: when going for max speed, the robot cannot instantaneously go at max speed.
-        //      - agent orientation acts as a compass with respect the y-axis, similar to a magnetic compass where north is upward
+        inspect();
         
         double srcOrientation = _wm->_agentAbsoluteOrientation;
         
-        std::cout << "Agent orientation: " << std::setw(4) << srcOrientation << "° wrt North (ie. upwards).\n";
-        
-        std::cout << "Agent desired translational speed: " << _wm->_desiredTranslationalValue << std::endl;
-        std::cout << "Agent desired rotational speed: " << std::setw(4) << _wm->_desiredRotationalVelocity << std::endl;
-        
-        std::cout << "Agent actual translational speed: " << _wm->_actualTranslationalValue << std::endl;
-        std::cout << "Agent actual rotational speed: " << std::setw(4) << _wm->_actualRotationalVelocity << std::endl;
-
         // Landmarks
         //      - landmarks are invisible and intangible object that can act as magnetic point of interest.
         //      - usually used by providing direction and orientation wrt. the robot
@@ -122,7 +108,7 @@ void TemplateRandomwalkController::monitorSensoryInformation()
         {
             // All landmarks (if any)
             
-            for ( size_t i = 0 ; i != gNbOfLandmarks ; i++ )
+            for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
             {
                 Point2d posRobot(_wm->getXReal(),_wm->getYReal());
                 Point2d closestPoint;
@@ -213,6 +199,9 @@ void TemplateRandomwalkController::monitorSensoryInformation()
 
                     std::cout << " touched robot #" << gWorld->getRobot(targetRobotId) << ", at distance " << std::setw(4) << distance << ".\n";
                     
+                    std::cout << "\tTouched robot information:\n";
+                    std::cout << gWorld->getRobot(targetRobotId)->getController()->inspect();
+                    
                     // Distance to target , orientation wrt target, target absolute orientation, target LED values
                     // Distance to target is approximated through sensor ray length before contact.
                     
@@ -258,4 +247,30 @@ void TemplateRandomwalkController::monitorSensoryInformation()
         std::cout << "=-= Robot #" << _wm->getId() << " : STOPPING monitoring sensory information\n";
     }
     
+}
+
+
+std::string TemplateRandomwalkController::inspect( )
+{
+    // Rotational and translational speed, agent orientation wrt. upwards
+    //      - *actual* and *desired* translational/rotational values are very different
+    //          - actual values is what the robot is actually doing (this is measured)
+    //          - desired values are set by the controller (this is set and the hardware controller tries to match it)
+    //          - rational: you may ask for something (e.g. max speed) but physics and electronics may be limited
+    //          - typical example: when going for max speed, the robot cannot instantaneously go at max speed.
+    //      - agent orientation acts as a compass with respect the y-axis, similar to a magnetic compass where north is upward
+    
+    std::string s = "";
+    std::stringstream out;
+    
+    out << "Agent identifier: " << std::setw(4) << _wm->getId() << "\n";
+    out << "Agent orientation: " << std::setw(4) << _wm->_agentAbsoluteOrientation << "° wrt North (ie. upwards).\n";
+    out << "Agent desired translational speed: " << _wm->_desiredTranslationalValue << std::endl;
+    out << "Agent desired rotational speed: " << std::setw(4) << _wm->_desiredRotationalVelocity << std::endl;
+    out << "Agent actual translational speed: " << _wm->_actualTranslationalValue << std::endl;
+    out << "Agent actual rotational speed: " << std::setw(4) << _wm->_actualRotationalVelocity << std::endl;
+    
+    s = out.str();
+    
+    return s;
 }

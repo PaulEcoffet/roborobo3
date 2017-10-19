@@ -161,8 +161,7 @@ void Robot::reset()
 	str_Ycoord += out.str();
 	str_Ycoord += "].y";
     
-    int tries = 0;
-    int maxTries = gLocationFinderMaxNbOfTrials;
+    int tries = 0; // max number of trials: gLocationFinderMaxNbOfTrials
     bool randomPick = true;
 
 	if ( gProperties.hasProperty( str_Xcoord ) == true && gProperties.hasProperty( str_Ycoord ) == true )
@@ -221,11 +220,11 @@ void Robot::reset()
 
 			tries++;
 				
-		} while ( success == false && tries < maxTries );
+		} while ( success == false && tries < gLocationFinderMaxNbOfTrials );
 			
 		if ( tries == gLocationFinderMaxNbOfTrials )
 		{
-            std::cerr << "[CRITICAL] Random initialization of initial position for agent #" << _wm->getId() << " after trying " << maxTries << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
+            std::cerr << "[CRITICAL] Random initialization of initial position for agent #" << _wm->getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
 			exit(-1);
 		}
     }
@@ -668,7 +667,9 @@ bool Robot::isCollision()
 	}
 	else
 	{
-		// * environment objects 
+        //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collision manager.\n";
+        
+		// * environment objects
 		for ( int i = 0 ; i != gRobotWidth ; i++ )
 			for ( int j = 0 ; j != gRobotHeight ; j++ )
 			{
@@ -679,7 +680,7 @@ bool Robot::isCollision()
 					Uint32 pixel = getPixel32( gEnvironmentImage , _x+i , _y+j);
 					if (  pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) )
 					{
-                        if (gMovableObjects)
+                        if (gMovableObjects) // will consider *all* collisions
                         {
                             Uint8 r, g, b;
                             SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
@@ -689,7 +690,10 @@ bool Robot::isCollision()
                             if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // this is a physical object
                             {
                                 targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_cooperationLevel, _wm->_cooperationLevel));
+
+                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
+
+                                //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collides with object #" << targetIndex << ".\n";
                             }
                             collision = true;
                         }
@@ -946,4 +950,9 @@ int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
     }
 //    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
     return tries;
+}
+
+std::string Robot::inspect()
+{
+	return _controller->inspect();
 }
