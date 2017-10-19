@@ -45,8 +45,6 @@ void Agent::show(SDL_Surface *surface) // display on screen -- method may be ove
     apply_surface( _x - gCamera.x, _y - gCamera.y, gRobotDisplayImage, surface );
 }
 
-
-
  /**
     * update the agent position in the environment. Apply simple physics (ie. obstacle collision detection and consequences).
     */
@@ -129,6 +127,12 @@ bool Agent::isInstanceOf ( int index ) // static
         return true;
     else
         return false;
+}
+
+std::string Agent::inspect()
+{
+    return std::string("Inspect has not been implemented for this Agent.\n"
+                       "Implement it in your subclass.\n");
 }
 
 
