@@ -937,44 +937,35 @@ void initLogging()
 {
 	// test log directory.
     
-    /*
+
      
     // notes, 2014-09-02: unfortunatly, boost::filesystem is not a header-only boost library...
     // http://www.boost.org/doc/libs/1_53_0/more/getting_started/windows.html#header-only-libraries
-     
+
+
     boost::filesystem::path dir (gLogDirectoryname);
     try
     {
-		if (boost::filesystem::exists(dir))
-	    {
-			if (boost::filesystem::is_regular_file(dir))
-			{
-	        	std::cout << "[ERROR] directory for logging \"" << dir << "\" already exists, but is a regular file!\n";
-				exit (-1);
-			}
-			else
-				if (!boost::filesystem::is_directory(dir))
-				{
-					// directory does not exist. Create it.
-                    std::cout << "[INFO] directory for logging \"" << dir << "\" did not exist. Creating new directory.\n";
-					boost::filesystem::create_directories(dir);
-				}
-	    }
-	    else
-		{
-			// directory does not exist. Create it.
-            std::cout << "[INFO] directory for logging \"" << dir << "\" did not exist. Creating new directory.\n";
-			boost::filesystem::create_directories(dir);
-		}
-	}
-	catch (const boost::filesystem::filesystem_error& ex)
-	{
-		std::cout << ex.what() << std::endl;
-		exit (-1);
-	}
-     
-    */
-    
+        boost::filesystem::create_directories(dir);
+    }
+    catch (boost::filesystem::filesystem_error e)
+    {
+        std::cerr << "[CRITICAL]" << e.what() << "\n";
+        exit(-1);
+    }
+    assert(boost::filesystem::is_directory(dir));
+
+    boost::filesystem::path screendir (gLogDirectoryname + "/screenshots");
+    try
+    {
+        boost::filesystem::create_directories(screendir);
+    }
+    catch (boost::filesystem::filesystem_error e)
+    {
+        std::cerr << "[CRITICAL]" << e.what() << "\n";
+        exit(-1);
+    }
+    assert(boost::filesystem::is_directory(screendir));
     
     // init log file
     

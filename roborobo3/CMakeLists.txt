@@ -3,9 +3,6 @@ project(roborobo3)
 
 set(CMAKE_CXX_STANDARD 11)
 
-# Set Mode with debug
-# set(CMAKE_BUILD_TYPE Debug)
-
 set(SOURCE_FILES
         include/contrib/neuralnetworks/Elman.h
         include/contrib/neuralnetworks/LayeredNeuralNetwork.h
@@ -233,8 +230,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(Boost COMPONENTS filesystem system REQUIRED)
+
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
 set(SDL2_LIBRARIES "-L${SDL2_LIBDIR}  -lSDL2")
 add_executable(roborobo ${SOURCE_FILES})
-target_link_libraries(roborobo ${SDL2_LIBRARIES} ${SDL2_IMAGE_LIBRARIES})
+target_link_libraries(roborobo
+        ${SDL2_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
+        )
