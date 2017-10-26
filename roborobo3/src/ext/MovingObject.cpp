@@ -107,7 +107,7 @@ void MovingObject::move() {
 
 void MovingObject::step()
 {
-//    printf("Iteration %d: running step() of object %d with %lu robots around\n", gWorld->getIterations(), _id, _nearbyRobots.size());
+//    printf("Iteration %d: running step() of object %d with %lu robots around\n", gWorld->getIterations(), _id, _curNearbyRobots.size());
     double oldX = _xReal, oldY = _yReal;
 
     move(); //handles movement, and sets _didMove
@@ -276,5 +276,5 @@ void MovingObject::isTouched( int __idAgent )
 
 void MovingObject::isWalked( int __idAgent )
 {
-//    _nearbyRobots.insert(__idAgent);
+//    _curNearbyRobots.insert(__idAgent);
 }

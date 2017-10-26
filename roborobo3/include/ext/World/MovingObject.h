@@ -18,7 +18,7 @@ protected:
     
     std::set<int> _nearbyRobots; // robots that are in the footprint in this iteration
     
-    int _nbNearbyRobots; // keep this when we clear _nearbyRobots
+    int _nbNearbyRobots; // keep this when we clear _curNearbyRobots
     
     // the impulses given to the object by nearby robots in the current time step, or other objects in the former
     std::map<int, std::tuple<double, double>> _impulses;

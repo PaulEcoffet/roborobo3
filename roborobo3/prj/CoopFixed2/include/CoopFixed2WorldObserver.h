@@ -50,6 +50,8 @@ public:
     std::set<int> _robotsToTeleport;
 
     void teleportRobots(std::set<int> robotsToTeleport) const;
+
+    void computeOpportunityImpact() const;
 };
 
 #endif

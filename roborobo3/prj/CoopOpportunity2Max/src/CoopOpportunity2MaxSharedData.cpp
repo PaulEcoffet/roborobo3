@@ -31,13 +31,6 @@ int CoopOpportunity2MaxSharedData::gSnapshotsFrequency = 50; // every N generati
 
 int CoopOpportunity2MaxSharedData::gControllerType = -1; // cf. header for description
 
-bool CoopOpportunity2MaxSharedData::gLimitGenomeTransmission = false; // default: do not limit.
-int CoopOpportunity2MaxSharedData::gMaxNbGenomeTransmission = 65535; // default: arbitrarily set to 65535.
-
-int CoopOpportunity2MaxSharedData::gSelectionMethod = 0; // default: random selection
-
-int CoopOpportunity2MaxSharedData::gNotListeningStateDelay = 0;    // -1: infinite ; 0: no delay ; >0: delay
-int CoopOpportunity2MaxSharedData::gListeningStateDelay = -1;      // -1: infinite ; 0: no delay ; >0: delay (ignored if gNotListeningStateDelay=-1)
 
 double CoopOpportunity2MaxSharedData::gIndividualMutationRate = 1.0;
 

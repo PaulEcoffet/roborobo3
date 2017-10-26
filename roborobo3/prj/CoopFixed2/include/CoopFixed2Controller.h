@@ -35,8 +35,6 @@ using namespace Neural;
 class CoopFixed2Controller : public Controller
 {
 protected:
-    int _iteration;
-    int _birthdate; // evaluation when this controller was initialized.
 
     /**
      * Can the robot move or has it its motors blocked?
@@ -55,12 +53,9 @@ protected:
     
     void createNN();
     
-    //bool _isAlive; // agent stand still if not.
+
     
-    void selectRandomGenome();
-    void selectFirstGenome();
-    
-    void mutateGaussian( float sigma );
+    void mutateGaussian( double sigma );
     void mutateUniform();
     
     void mutateSigmaValue();
@@ -71,18 +66,15 @@ protected:
     virtual void initController(); // called by resetRobot
     virtual void stepController();
     
-    void stepEvolution();
-    
+
     void updatePhenotype(); // updates the neural network when the genome is changed
     
     unsigned int computeRequiredNumberOfWeights();
-    
-    //        void setAliveStatus( bool isAlive ) { _isAlive = isAlive; }
-            
+
     // current genome
     
     std::vector<double> _currentGenome; // movement, coop
-    float _currentSigma;
+    double _currentSigma;
     
     // other neural network inputs
     
@@ -101,15 +93,9 @@ protected:
     unsigned int _nbOutputs;
     unsigned int _nbHiddenLayers;
     std::vector<unsigned int>* _nbNeuronsPerHiddenLayer;
-    
-    // logging purpose
-    double _Xinit;
-    double _Yinit;
-    double _dSumTravelled;
-    
-    void reset();
-    
-    virtual void logCurrentState();
+
+    void reset() override;
+
     
     virtual void performVariation();
     
@@ -121,15 +107,11 @@ public:
     
     typedef std::pair<std::vector<double>, double> genome; // movementParams, coopParams, sigma
     
-    CoopFixed2Controller(RobotWorldModel *wm);
-    ~CoopFixed2Controller();
+    explicit CoopFixed2Controller(RobotWorldModel *wm);
+    ~CoopFixed2Controller() override;
     
-    void step();
-    
-    int getBirthdate() { return _birthdate; }
-    
-    bool isListening() { return _isListening; }
-    
+    void step() override;
+
     genome getGenome() { return std::make_pair(_currentGenome, _currentSigma); }
     
     void loadNewGenome( genome __newGenome );
