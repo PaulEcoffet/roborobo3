@@ -41,14 +41,7 @@ CoopOpportunity2MaxWorldObserver::CoopOpportunity2MaxWorldObserver( World* world
     gProperties.checkAndGetPropertyValue("gSnapshotsFrequency",&CoopOpportunity2MaxSharedData::gSnapshotsFrequency,false);
     
     gProperties.checkAndGetPropertyValue("gControllerType",&CoopOpportunity2MaxSharedData::gControllerType,true);
-    
-    gProperties.checkAndGetPropertyValue("gMaxNbGenomeTransmission",&CoopOpportunity2MaxSharedData::gMaxNbGenomeTransmission,true);
-    gProperties.checkAndGetPropertyValue("gLimitGenomeTransmission",&CoopOpportunity2MaxSharedData::gLimitGenomeTransmission,true);
-    gProperties.checkAndGetPropertyValue("gSelectionMethod",&CoopOpportunity2MaxSharedData::gSelectionMethod,true);
-    
-    gProperties.checkAndGetPropertyValue("gNotListeningStateDelay",&CoopOpportunity2MaxSharedData::gNotListeningStateDelay,true);
-    gProperties.checkAndGetPropertyValue("gListeningStateDelay",&CoopOpportunity2MaxSharedData::gListeningStateDelay,true);
-    
+
     gProperties.checkAndGetPropertyValue("gIndividualMutationRate",&CoopOpportunity2MaxSharedData::gIndividualMutationRate,false);
 
     gProperties.checkAndGetPropertyValue("gMutationOperator",&CoopOpportunity2MaxSharedData::gMutationOperator,false);
@@ -86,16 +79,11 @@ CoopOpportunity2MaxWorldObserver::CoopOpportunity2MaxWorldObserver( World* world
     _generationCount = 0;
     
     // * Logfiles
-    
-    time_t now = time(NULL);
-	char chartime[19] = "";
-	strftime (chartime, 19,"%Y%m%d_%Hh%Mm%Ss", localtime(&now));
-	std::string stime = chartime;
-    std::string fitnessLogFilename = gLogDirectoryname + "/" + stime + "_observer.txt";
+    std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
     _fitnessLogManager = new LogManager(fitnessLogFilename);
     _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
     
-    std::string genomeLogFilename = gLogDirectoryname + "/" + stime + "_genome.txt";
+    std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
     _genomeLogManager = new LogManager(genomeLogFilename);
 }
 

@@ -26,12 +26,7 @@ class CoopOpportunity2MaxController : public Controller
 {
 protected:
     int _iteration;
-    int _birthdate; // evaluation when this controller was initialized.
-        
-    bool _isListening;
-    int _notListeningDelay;
-    int _listeningDelay;
-        
+
     std::vector<double> _parameters; // 0: movement, 1: coop
     std::string _nnType;
     std::vector<int> _nbHiddenNeuronsPerLayer;
@@ -39,13 +34,9 @@ protected:
     NeuralNetwork* _NN;
     
     void createNN();
+
     
-    //bool _isAlive; // agent stand still if not.
-    
-    void selectRandomGenome();
-    void selectFirstGenome();
-    
-    void mutateGaussian( float sigma );
+    void mutateGaussian( double sigma );
     void mutateUniform();
     
     void mutateSigmaValue();
@@ -55,9 +46,7 @@ protected:
     
     virtual void initController(); // called by resetRobot
     virtual void stepController();
-    
-    void stepEvolution();
-    
+
     void updatePhenotype(); // updates the neural network when the genome is changed
     
     unsigned int computeRequiredNumberOfWeights();
@@ -67,7 +56,7 @@ protected:
     // current genome
     
     std::vector<double> _currentGenome; // movement, coop
-    float _currentSigma;
+    double _currentSigma;
     
     // other neural network inputs
     
@@ -86,16 +75,11 @@ protected:
     unsigned int _nbOutputs;
     unsigned int _nbHiddenLayers;
     std::vector<unsigned int>* _nbNeuronsPerHiddenLayer;
+
     
-    // logging purpose
-    double _Xinit;
-    double _Yinit;
-    double _dSumTravelled;
+    void reset() override;
     
-    void reset();
-    
-    virtual void logCurrentState();
-    
+
     virtual void performVariation();
     
     virtual void resetFitness();
@@ -109,11 +93,7 @@ public:
     CoopOpportunity2MaxController(RobotWorldModel *wm);
     ~CoopOpportunity2MaxController();
     
-    void step();
-    
-    int getBirthdate() { return _birthdate; }
-    
-    bool isListening() { return _isListening; }
+    void step() override;
     
     genome getGenome() { return std::make_pair(_currentGenome, _currentSigma); }
     

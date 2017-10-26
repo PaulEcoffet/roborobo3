@@ -1,5 +1,5 @@
 /**
- * @author Nicolas Bredeche <nicolas.bredeche@upmc.fr>
+ * @author Théotime Grohens ; Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
  *
  */
 
@@ -28,27 +28,16 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver( World* world ) : WorldObserver
     gProperties.checkAndGetPropertyValue("gProbaMutation",&CoopFixed2SharedData::gProbaMutation,true);
     gProperties.checkAndGetPropertyValue("gUpdateSigmaStep",&CoopFixed2SharedData::gUpdateSigmaStep,true);
     gProperties.checkAndGetPropertyValue("gEvaluationTime",&CoopFixed2SharedData::gEvaluationTime,true);
-    gProperties.checkAndGetPropertyValue("gSynchronization",&CoopFixed2SharedData::gSynchronization,true);
-    
-    gProperties.checkAndGetPropertyValue("gEnergyRequestOutput",&CoopFixed2SharedData::gEnergyRequestOutput,false);
-    
+
     gProperties.checkAndGetPropertyValue("gMonitorPositions",&CoopFixed2SharedData::gMonitorPositions,true);
     
     gProperties.checkAndGetPropertyValue("gNbHiddenLayers",&CoopFixed2SharedData::gNbHiddenLayers,true);
     gProperties.checkAndGetPropertyValue("gNbNeuronsPerHiddenLayer",&CoopFixed2SharedData::gNbNeuronsPerHiddenLayer,true);
-    gProperties.checkAndGetPropertyValue("gNeuronWeightRange",&CoopFixed2SharedData::gNeuronWeightRange,true);
-    
+
     gProperties.checkAndGetPropertyValue("gSnapshots",&CoopFixed2SharedData::gSnapshots,false);
     gProperties.checkAndGetPropertyValue("gSnapshotsFrequency",&CoopFixed2SharedData::gSnapshotsFrequency,false);
     
     gProperties.checkAndGetPropertyValue("gControllerType",&CoopFixed2SharedData::gControllerType,true);
-    
-    gProperties.checkAndGetPropertyValue("gMaxNbGenomeTransmission",&CoopFixed2SharedData::gMaxNbGenomeTransmission,true);
-    gProperties.checkAndGetPropertyValue("gLimitGenomeTransmission",&CoopFixed2SharedData::gLimitGenomeTransmission,true);
-    gProperties.checkAndGetPropertyValue("gSelectionMethod",&CoopFixed2SharedData::gSelectionMethod,true);
-    
-    gProperties.checkAndGetPropertyValue("gNotListeningStateDelay",&CoopFixed2SharedData::gNotListeningStateDelay,true);
-    gProperties.checkAndGetPropertyValue("gListeningStateDelay",&CoopFixed2SharedData::gListeningStateDelay,true);
     
     gProperties.checkAndGetPropertyValue("gIndividualMutationRate",&CoopFixed2SharedData::gIndividualMutationRate,false);
 
@@ -193,6 +182,26 @@ void CoopFixed2WorldObserver::step()
     teleportRobots(_robotsToTeleport);
     _robotsToTeleport.clear();
 
+    computeOpportunityImpact();
+
+    if( _generationItCount == CoopFixed2SharedData::gEvaluationTime - 1 )
+    {
+        monitorPopulation();
+        stepEvaluation();
+        _generationCount++;
+        _generationItCount = 0;
+    }
+    else
+    {
+        _generationItCount++;
+    }
+    
+    updateMonitoring();
+    updateEnvironment();
+}
+
+void CoopFixed2WorldObserver::computeOpportunityImpact() const
+{
     for (auto physicalObj : gPhysicalObjects)
     {
         auto opportunity = dynamic_cast<CoopFixed2OpportunityObj *>(physicalObj);
@@ -225,21 +234,6 @@ void CoopFixed2WorldObserver::step()
         }
         opportunity->clearNearbyRobots();
     }
-
-    if( _generationItCount == CoopFixed2SharedData::gEvaluationTime - 1 )
-    {
-        monitorPopulation();
-        stepEvaluation();
-        _generationCount++;
-        _generationItCount = 0;
-    }
-    else
-    {
-        _generationItCount++;
-    }
-    
-    updateMonitoring();
-    updateEnvironment();
 }
 
 void CoopFixed2WorldObserver::teleportRobots(std::set<int> robotsToTeleport) const

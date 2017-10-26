@@ -1,23 +1,18 @@
 /**
- * @author Nicolas Bredeche <nicolas.bredeche@upmc.fr>
+ * @author Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
  *
  */
 
 #include "CoopFixed2/include/CoopFixed2Controller.h"
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 
-#include "World/World.h"
 #include "Utilities/Misc.h"
-#include <math.h>
-#include <string>
-#include <algorithm>
 
-#include <neuralnetworks/MLP.h>
-#include <neuralnetworks/Perceptron.h>
-#include <neuralnetworks/Elman.h>
-#include <CoopFixed2/include/CoopFixed2OpportunityObj.h>
+#include "neuralnetworks/MLP.h"
+#include "neuralnetworks/Perceptron.h"
+#include "neuralnetworks/Elman.h"
+#include "CoopFixed2/include/CoopFixed2OpportunityObj.h"
 
-#include "World/MovingObject.h"
 
 using namespace Neural;
 
@@ -35,21 +30,9 @@ CoopFixed2Controller::CoopFixed2Controller( RobotWorldModel *wm )
     _currentSigma = CoopFixed2SharedData::gSigmaRef;
     
     // behaviour
-    
-    _iteration = 0;
-    
-    _birthdate = 0;
+
     _canMove = true;
-    
-    _isListening = true;
-    _notListeningDelay = CoopFixed2SharedData::gNotListeningStateDelay;
-    _listeningDelay = CoopFixed2SharedData::gListeningStateDelay;
-    
-    if ( gEnergyLevel )
-        _wm->setEnergyLevel(gEnergyInit);
-    
-    if ( gNbOfLandmarks > 0 )
-        _wm->updateLandmarkSensor(); // wrt closest landmark
+
     
     reset(); // resetFitness() is called in reset()
     
@@ -69,11 +52,9 @@ CoopFixed2Controller::~CoopFixed2Controller()
 
 void CoopFixed2Controller::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-    _iteration++;
-    
     // Clean up the memory if we're not on an object
     
-    if (_isNearObject == false)
+    if (!_isNearObject)
     {
         _efforts.clear();
         _totalEfforts.clear();
@@ -84,7 +65,7 @@ void CoopFixed2Controller::step() // handles control decision and evolution (but
     stepController();
     
     // Coloring
-    if (_isNearObject == false) {
+    if (!_isNearObject) {
         if (_wm->getId() < gNbOfRobots - CoopFixed2SharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
             _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
         else // Red LED because we're a fake robot
@@ -125,7 +106,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
         
         if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
         {
-            int entityId = _wm->getObjectIdFromCameraSensor(i);
+            auto entityId = (int) _wm->getObjectIdFromCameraSensor(i);
             
             if (Agent::isInstanceOf(entityId)) // it's a robot
             {
@@ -168,13 +149,13 @@ std::vector<double> CoopFixed2Controller::getInputs()
     inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
     
     // how many robots around?
-    inputs.push_back((double) _nbNearbyRobots);
+    inputs.push_back(_nbNearbyRobots);
     
     // how did everyone contribute recently?
     if (CoopFixed2SharedData::gTotalEffort)
     {
         double avgTotalEffort = 0;
-        if (_isNearObject == true)
+        if (_isNearObject)
         {
             // the average total effort over the last gMemorySize (at most) turns we were on the object
             for (auto totEff: _totalEfforts)
@@ -186,7 +167,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
     
     // how much did we contribute recently?
     double avgEffort = 0;
-    if (_efforts.size() > 0)
+    if (!_efforts.empty())
     {
         for (auto eff: _efforts)
             avgEffort += eff;
@@ -241,7 +222,7 @@ void CoopFixed2Controller::stepController()
         if (_wm->getId() < nbTrueRobots)
             _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
         else
-            _wm->_cooperationLevel = (double)(_wm->getId()-nbTrueRobots)/(double)CoopFixed2SharedData::gNbFakeRobots * (double)CoopFixed2SharedData::gFakeCoopValue;
+            _wm->_cooperationLevel = (double)(_wm->getId()-nbTrueRobots)/(double)CoopFixed2SharedData::gNbFakeRobots * CoopFixed2SharedData::gFakeCoopValue;
     }
 }
 
@@ -250,27 +231,23 @@ void CoopFixed2Controller::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( _NN != nullptr )
-        delete _NN;
+    delete _NN;
     
     switch ( CoopFixed2SharedData::gControllerType )
     {
         case 0:
         {
-            // MLP
             _NN = new MLP(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
         case 1:
         {
-            // PERCEPTRON
             _NN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
             
             break;
         }
         case 2:
         {
-            // ELMAN
             _NN = new Elman(_parameters, _nbInputs, _nbOutputs, *(_nbNeuronsPerHiddenLayer));
             break;
         }
@@ -315,18 +292,18 @@ void CoopFixed2Controller::performVariation()
     }
 }
 
-void CoopFixed2Controller::mutateGaussian(float sigma) // mutate within bounds.
+void CoopFixed2Controller::mutateGaussian(double sigma) // mutate within bounds.
 {
     _currentSigma = sigma;
     
-    for (unsigned int i = 0 ; i < _currentGenome.size() ; i++ )
+    for (double &curWeight : _currentGenome)
     {
-        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
+        double value = curWeight + getGaussianRand(0,_currentSigma);
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
             double range = _maxValue - _minValue;
-            double overflow = - ( (double)value - _minValue );
+            double overflow = - (value - _minValue );
             overflow = overflow - 2*range * (int)( overflow / (2*range) );
             if ( overflow < range )
                 value = _minValue + overflow;
@@ -336,7 +313,7 @@ void CoopFixed2Controller::mutateGaussian(float sigma) // mutate within bounds.
         else if ( value > _maxValue )
         {
             double range = _maxValue - _minValue;
-            double overflow = (double)value - _maxValue;
+            double overflow = value - _maxValue;
             overflow = overflow - 2*range * (int)( overflow / (2*range) );
             if ( overflow < range )
                 value = _maxValue - overflow;
@@ -344,7 +321,7 @@ void CoopFixed2Controller::mutateGaussian(float sigma) // mutate within bounds.
                 value = _maxValue - range + (overflow-range);
         }
 
-        _currentGenome[i] = value;
+        curWeight = value;
     }
 }
 
@@ -353,7 +330,7 @@ void CoopFixed2Controller::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = float(rand()%100) / 100.0; // in [0,1[
+        float randomValue = float(rand()%100) / 100.f; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -396,7 +373,7 @@ void CoopFixed2Controller::initController()
     
     createNN();
     
-    int nbGenes = computeRequiredNumberOfWeights();
+    unsigned int nbGenes = computeRequiredNumberOfWeights();
     
     if ( gVerbose )
         std::cout << std::flush;
@@ -428,7 +405,7 @@ void CoopFixed2Controller::reset()
 
 void CoopFixed2Controller::mutateSigmaValue()
 {
-    float dice = ranf();
+    double dice = ranf();
     
     if ( dice <= CoopFixed2SharedData::gProbaMutation )
     {
@@ -468,26 +445,6 @@ void CoopFixed2Controller::updatePhenotype()
     _parameters = _currentGenome;
 }
 
-void CoopFixed2Controller::logCurrentState()
-{
-    // Logging
-    std::string sLog = "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) +
-    ",age," + std::to_string(gWorld->getIterations()-_birthdate) +
-    ",energy," +  std::to_string(_wm->getEnergyLevel()) +
-    ",sigma," + std::to_string(_currentSigma) +
-    ",x_init," + std::to_string(_wm->getXReal()) +
-    ",y_init," + std::to_string(_wm->getYReal()) +
-    ",x_current," + std::to_string(_Xinit) +
-    ",y_current," + std::to_string(_Yinit) +
-    ",dist," + std::to_string( getEuclideanDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
-    ",sumOfDist," + std::to_string( _dSumTravelled ) +
-    ",groupId," + std::to_string(_wm->getGroupId()) +
-    ",fitnessValue," + std::to_string(_wm->_fitnessValue) +
-    "\n";
-    gLogManager->write(sLog);
-    gLogManager->flush();
-}
-
 double CoopFixed2Controller::getFitness()
 {
     // nothing to do
@@ -519,8 +476,7 @@ void CoopFixed2Controller::increaseFitness( double __delta )
 
 void CoopFixed2Controller::wasNearObject(double __totalInvest, double __invest, int __nbRobots )
 {
-//    printf("Robot %d (it %d): near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __invest, __totalInvest, __nbRobots);
-    
+
     if (_wm->getId() < gNbOfRobots - CoopFixed2SharedData::gNbFakeRobots) // Green LED because we're a true robot (and active)
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
     else // Red LED because we're a fake robot
@@ -575,7 +531,32 @@ std::string CoopFixed2Controller::inspect()
         {
             out << curEffort << ", ";
         }
+        out << ".\n";
     }
+    std::set<int> seen;
+    for (int i = 0; i < _wm->_cameraSensorsNb; i++)
+    {
+        seen.insert(static_cast<int &&>(_wm->getObjectIdFromCameraSensor(i)));
+    }
+    out << "Seen objects:\n";
+    for (int entityId : seen)
+    {
+        if (entityId == 0)
+        {
+            out << "\tA wall\n";
+        }
+        else if (Agent::isInstanceOf(entityId))
+        {
+            out << "\tAnother agent\n";
+        }
+        else if (entityId >= gPhysicalObjectIndexStartOffset)
+        {
+            out << "\tA cooperation opportunity ";
+            auto coop = dynamic_cast<CoopFixed2OpportunityObj *>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
+        }
+    }
+    out << "next to " << _nbNearbyRobots << " robots.\n";
     out << "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }

@@ -2,7 +2,7 @@
  * CoopFixed2OppotunityObj.cpp
  *
  *  Created on: 9 oct. 2017
- *      Author: Paul Ecoffet
+ *      Author: Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
  */
 
 #include "CoopFixed2/include/CoopFixed2OpportunityObj.h"
@@ -68,15 +68,15 @@ void CoopFixed2OpportunityObj::isPushed( int __idAgent, std::tuple<double, doubl
 
     // We can safely add the robot now. We know the opportunity is not full or the robot was already present there.
     // We don't have to deal with the fact that a robot who was already there last turn will arrive later on.
-    if (_nearbyRobots.size() < 2)
+    if (_curNearbyRobots.size() < 2)
     {
-        _nearbyRobots.insert(indexAgent);
+        _curNearbyRobots.insert(indexAgent);
     }
 }
 
 std::set<int> CoopFixed2OpportunityObj::getNearbyRobots()
 {
-    return _nearbyRobots;
+    return _curNearbyRobots;
 }
 
 int CoopFixed2OpportunityObj::getLockRemainingTime() const
@@ -100,11 +100,29 @@ void CoopFixed2OpportunityObj::decrementLockRemainingTime()
 void CoopFixed2OpportunityObj::clearNearbyRobots()
 {
     _prevNearbyRobots.clear();
-    _prevNearbyRobots.insert(_nearbyRobots.begin(), _nearbyRobots.end());
-    _nearbyRobots.clear();
+    _prevNearbyRobots.insert(_curNearbyRobots.begin(), _curNearbyRobots.end());
+    _curNearbyRobots.clear();
 }
 
 int CoopFixed2OpportunityObj::getNbNearbyRobots()
 {
     return static_cast<int>(_prevNearbyRobots.size());
+}
+
+std::string CoopFixed2OpportunityObj::inspect()
+{
+    std::stringstream out;
+    out << "I had agents previously present: ";
+    for (auto prevAgent: _prevNearbyRobots)
+    {
+        out << prevAgent << ", ";
+    }
+    out << ".\n";
+    out << "I have these agents present:";
+    for (auto prevAgent: _curNearbyRobots)
+    {
+        out << prevAgent << ", ";
+    }
+    out << "\n";
+    return out.str();
 }

@@ -36,13 +36,7 @@ CoopOpportunity2MaxController::CoopOpportunity2MaxController( RobotWorldModel *w
     // behaviour
     
     _iteration = 0;
-    
-    _birthdate = 0;
-    
-    _isListening = true;
-    _notListeningDelay = CoopOpportunity2MaxSharedData::gNotListeningStateDelay;
-    _listeningDelay = CoopOpportunity2MaxSharedData::gListeningStateDelay;
-    
+
     if ( gEnergyLevel )
         _wm->setEnergyLevel(gEnergyInit);
     
@@ -203,12 +197,8 @@ void CoopOpportunity2MaxController::stepController()
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
-    _wm->_desiredTranslationalValue = outputs[0];
-    _wm->_desiredRotationalVelocity = outputs[1];
-    
-    // normalize to motor interval values
-    _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
-    _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
+    _wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
+    _wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
     
     
     // Effort value
@@ -233,8 +223,7 @@ void CoopOpportunity2MaxController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
     
-    if ( _NN != nullptr )
-        delete _NN;
+    delete _NN;
     
     switch ( CoopOpportunity2MaxSharedData::gControllerType )
     {
@@ -277,7 +266,7 @@ unsigned int CoopOpportunity2MaxController::computeRequiredNumberOfWeights()
 
 void CoopOpportunity2MaxController::performVariation()
 {
-    if ( CoopOpportunity2MaxSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( CoopOpportunity2MaxSharedData::gIndividualMutationRate > rand() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( CoopOpportunity2MaxSharedData::gMutationOperator )
         {
@@ -298,13 +287,13 @@ void CoopOpportunity2MaxController::performVariation()
     }
 }
 
-void CoopOpportunity2MaxController::mutateGaussian(float sigma) // mutate within bounds.
+void CoopOpportunity2MaxController::mutateGaussian(double sigma) // mutate within bounds.
 {
     _currentSigma = sigma;
     
-    for (unsigned int i = 0 ; i < _currentGenome.size() ; i++ )
+    for (double &curWeight : _currentGenome)
     {
-        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
+        double value = curWeight + getGaussianRand(0,_currentSigma);
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
@@ -326,8 +315,8 @@ void CoopOpportunity2MaxController::mutateGaussian(float sigma) // mutate within
             else // overflow btw range and range*2
                 value = _maxValue - range + (overflow-range);
         }
-        
-        _currentGenome[i] = value;
+
+        curWeight = value;
     }
 }
 
@@ -389,7 +378,7 @@ void CoopOpportunity2MaxController::initController()
     // Intialize genomes
     for ( unsigned int i = 0 ; i < nbGenes; i++ )
     {
-        _currentGenome.push_back((ranf()*2.0)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((rand()*2.0)-1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
@@ -450,25 +439,6 @@ void CoopOpportunity2MaxController::updatePhenotype()
     _parameters = _currentGenome;
 }
 
-void CoopOpportunity2MaxController::logCurrentState()
-{
-    // Logging
-    std::string sLog = "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) +
-    ",age," + std::to_string(gWorld->getIterations()-_birthdate) +
-    ",energy," +  std::to_string(_wm->getEnergyLevel()) +
-    ",sigma," + std::to_string(_currentSigma) +
-    ",x_init," + std::to_string(_wm->getXReal()) +
-    ",y_init," + std::to_string(_wm->getYReal()) +
-    ",x_current," + std::to_string(_Xinit) +
-    ",y_current," + std::to_string(_Yinit) +
-    ",dist," + std::to_string( getEuclideanDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
-    ",sumOfDist," + std::to_string( _dSumTravelled ) +
-    ",groupId," + std::to_string(_wm->getGroupId()) +
-    ",fitnessValue," + std::to_string(_wm->_fitnessValue) +
-    "\n";
-    gLogManager->write(sLog);
-    gLogManager->flush();
-}
 
 double CoopOpportunity2MaxController::getFitness()
 {
@@ -516,7 +486,6 @@ void CoopOpportunity2MaxController::wasNearObject( int __objectId, bool __object
     double payoff = coeff * pow(__totalEffort, CoopOpportunity2MaxSharedData::gConstantA) - __effort;
     
     if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
         increaseFitness(payoff);
         _efforts.push_back(__effort);
         if (_efforts.size() >= CoopOpportunity2MaxSharedData::gMemorySize)

@@ -220,6 +220,7 @@ std::vector<double> SingleGenomeController::getInputs()
             // the average total effort over the last gMemorySize (at most) turns we were on the object
             for (auto totEff: _totalEfforts)
                 avgTotalEffort += totEff;
+            avgTotalEffort /= _totalEfforts.size();
         }
         inputs.push_back(avgTotalEffort);
     }
@@ -230,6 +231,7 @@ std::vector<double> SingleGenomeController::getInputs()
     {
         for (auto eff: _efforts)
             avgEffort += eff;
+        avgEffort /= _efforts.size();
     }
     inputs.push_back(avgEffort);
 
@@ -253,7 +255,7 @@ void SingleGenomeController::stepController()
     
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
     
-    _wm->_desiredTranslationalValue = outputs[0];
+    _wm->_desiredTranslationalValue = (outputs[0] + 1) * 2;
     _wm->_desiredRotationalVelocity = outputs[1];
     
     if ( SingleGenomeSharedData::gEnergyRequestOutput )
@@ -485,11 +487,12 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
     else // Red LED
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
-    
+
+    __effort = _wm->_cooperationLevel;
     // Fake object / effort setup
     SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
     __nbRobots += wobs->getNbFakeRobots();
-    __totalEffort += wobs->getNbFakeRobots()*wobs->getFakeCoop();
+    __totalEffort = __effort + wobs->getNbFakeRobots()*wobs->getFakeCoop();
     
 //    printf("[DEBUG] Robot %d (it %d): near object %d, own effort %lf, total effort %lf, fake coop %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, wobs->getFakeCoop(), __nbRobots);
     
@@ -521,4 +524,55 @@ void SingleGenomeController::dumpGenome()
     for (auto gene: _currentGenome)
         std::cout << gene << " ";
     std::cout << std::endl;
+}
+
+
+std::string SingleGenomeController::inspect()
+{
+    std::stringstream out;
+    out << "Near object: " << ((_isNearObject)? "True" : "False") << ".\n";
+    if (_isNearObject || true)
+    {
+        out << std::setprecision(3);
+        out << "\tLast cooperation value: " << _wm->_cooperationLevel << ".\n";
+        out << "\tTotal Effort history: ";
+        for (auto curTotEffort : _totalEfforts)
+        {
+            out << curTotEffort << ", ";
+        }
+        out << ".\n";
+        out << "\tOwn Effort history: ";
+        for (auto curEffort : _efforts)
+        {
+            out << curEffort << ", ";
+        }
+        out << ".\n";
+    }
+    std::set<int> seen;
+    for (int i = 0; i < _wm->_cameraSensorsNb; i++)
+    {
+        seen.insert(_wm->getObjectIdFromCameraSensor(i));
+    }
+    out << "Seen objects:\n";
+    for (int entityId : seen)
+    {
+        if (entityId == 0)
+        {
+            out << "\tA wall\n";
+        }
+        else if (Agent::isInstanceOf(entityId))
+        {
+            out << "\tAnother agent\n";
+        }
+        else if (entityId >= gPhysicalObjectIndexStartOffset)
+        {
+            out << "\tA cooperation opportunity ";
+            auto *wobs = dynamic_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
+            auto coop = dynamic_cast<MovingObject *>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            int nbDist = coop->getNbNearbyRobots() + wobs->getNbFakeRobots();
+            out << "with " << nbDist << " robots nearby.\n ";
+        }
+    }
+    out << "Actual fitness: " << getFitness() << "\n";
+    return out.str();
 }
