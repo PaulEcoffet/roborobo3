@@ -399,11 +399,11 @@ void CoopOpportunity2MaxController::reset()
 
 void CoopOpportunity2MaxController::mutateSigmaValue()
 {
-    float dice = ranf();
+    float dice = rand();
     
     if ( dice <= CoopOpportunity2MaxSharedData::gProbaMutation )
     {
-        dice = ranf();
+        dice = rand();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + CoopOpportunity2MaxSharedData::gUpdateSigmaStep ); // increase sigma

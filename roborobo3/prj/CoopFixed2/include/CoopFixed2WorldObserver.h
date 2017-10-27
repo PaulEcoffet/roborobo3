@@ -35,17 +35,19 @@ protected:
     
 public:
     CoopFixed2WorldObserver(World *world);
-    ~CoopFixed2WorldObserver();
-    
-    virtual void reset();
-    virtual void step();
+    virtual ~CoopFixed2WorldObserver();
+
+    void reset() override;
+
+    void step() override;
+
     void stepEvaluation();
     
     virtual int getGenerationItCount() { return _generationItCount; }
     
     int getGenerationCount() { return _generationCount; }
 
-    void addRobotToTeleport(const int i);
+    void addRobotToTeleport(int i);
 
     std::set<int> _robotsToTeleport;
 
