@@ -28,8 +28,6 @@ public:
     static int gNbHiddenLayers; // default: 1
     static int gNbNeuronsPerHiddenLayer; // default: 5
 
-    static bool gSnapshots; // take snapshots
-    static int gSnapshotsFrequency; // every N generations
     
     static int gControllerType; // controller type (0: MLP, 1: Perceptron, 2: Elman)
 
@@ -51,8 +49,6 @@ public:
     
     static int gGenerationLog; // take videos and log genomes every Nth generation
     static bool gTakeVideo; // take videos or not?
-    static bool gLogGenome;
-    static bool gLogGenomeSnapshot;   // log only if it%gEvaluationTime*gSnapshotsFrequency=0
 
     
     

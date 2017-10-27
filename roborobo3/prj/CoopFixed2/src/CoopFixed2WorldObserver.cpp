@@ -33,9 +33,6 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver( World* world ) : WorldObserver
     
     gProperties.checkAndGetPropertyValue("gNbHiddenLayers",&CoopFixed2SharedData::gNbHiddenLayers,true);
     gProperties.checkAndGetPropertyValue("gNbNeuronsPerHiddenLayer",&CoopFixed2SharedData::gNbNeuronsPerHiddenLayer,true);
-
-    gProperties.checkAndGetPropertyValue("gSnapshots",&CoopFixed2SharedData::gSnapshots,false);
-    gProperties.checkAndGetPropertyValue("gSnapshotsFrequency",&CoopFixed2SharedData::gSnapshotsFrequency,false);
     
     gProperties.checkAndGetPropertyValue("gControllerType",&CoopFixed2SharedData::gControllerType,true);
     
@@ -55,9 +52,7 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver( World* world ) : WorldObserver
     
     gProperties.checkAndGetPropertyValue("gGenerationLog", &CoopFixed2SharedData::gGenerationLog, false);
     gProperties.checkAndGetPropertyValue("gTakeVideo", &CoopFixed2SharedData::gTakeVideo, false);
-    gProperties.checkAndGetPropertyValue("gLogGenome",&CoopFixed2SharedData::gLogGenome,false);
-    gProperties.checkAndGetPropertyValue("gLogGenomeSnapshot",&CoopFixed2SharedData::gLogGenomeSnapshot,false);
-    
+
     gProperties.checkAndGetPropertyValue("gConstantA", &CoopFixed2SharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &CoopFixed2SharedData::gConstantK, true);
 
