@@ -40,15 +40,8 @@ protected:
      * Can the robot move or has it its motors blocked?
      */
     bool _canMove;
-
-    bool _isListening;
-    int _notListeningDelay;
-    int _listeningDelay;
         
     std::vector<double> _parameters; // 0: movement, 1: coop
-    std::string _nnType;
-    std::vector<int> _nbHiddenNeuronsPerLayer;
-    std::vector<int> _nbBiasNeuronsPerLayer;
     NeuralNetwork* _NN;
     
     void createNN();

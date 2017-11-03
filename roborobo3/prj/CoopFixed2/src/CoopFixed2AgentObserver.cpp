@@ -13,10 +13,9 @@
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include <string>
 
-CoopFixed2AgentObserver::CoopFixed2AgentObserver( RobotWorldModel *wm )
+CoopFixed2AgentObserver::CoopFixed2AgentObserver( RobotWorldModel *wm ) : AgentObserver(wm)
 {
     _wm = (RobotWorldModel*)wm;
-    
 }
 
 CoopFixed2AgentObserver::~CoopFixed2AgentObserver()

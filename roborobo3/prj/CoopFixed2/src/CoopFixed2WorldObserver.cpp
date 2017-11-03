@@ -29,8 +29,6 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver( World* world ) : WorldObserver
     gProperties.checkAndGetPropertyValue("gUpdateSigmaStep",&CoopFixed2SharedData::gUpdateSigmaStep,true);
     gProperties.checkAndGetPropertyValue("gEvaluationTime",&CoopFixed2SharedData::gEvaluationTime,true);
 
-    gProperties.checkAndGetPropertyValue("gMonitorPositions",&CoopFixed2SharedData::gMonitorPositions,true);
-    
     gProperties.checkAndGetPropertyValue("gNbHiddenLayers",&CoopFixed2SharedData::gNbHiddenLayers,true);
     gProperties.checkAndGetPropertyValue("gNbNeuronsPerHiddenLayer",&CoopFixed2SharedData::gNbNeuronsPerHiddenLayer,true);
     
@@ -227,7 +225,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpact() const
     }
 }
 
-void CoopFixed2WorldObserver::teleportRobots(std::set<int> robotsToTeleport) const
+void CoopFixed2WorldObserver::teleportRobots(std::set<int> const& robotsToTeleport) const
 {
     for (auto robotIndex : robotsToTeleport)
     {

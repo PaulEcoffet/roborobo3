@@ -141,8 +141,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
             
         }
     }
-    
-    
+
     // floor sensor
     inputs.push_back( (double)_wm->getGroundSensor_redValue()/255.0 );
     inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
