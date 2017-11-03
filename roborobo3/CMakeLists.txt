@@ -214,7 +214,20 @@ set(SOURCE_FILES
         prj/CoopFixed2/src/CoopFixed2OpportunityObj.cpp
         prj/CoopFixed2/src/CoopFixed2SharedData.cpp
         prj/CoopFixed2/src/CoopFixed2WorldObserver.cpp
-        )
+        prj/PartnerChoice/src/PartnerChoiceController.cpp
+        prj/PartnerChoice/include/PartnerChoiceController.h
+        prj/PartnerChoice/src/PartnerChoiceAgentObserver.cpp
+        prj/PartnerChoice/include/PartnerChoiceAgentObserver.h
+        prj/PartnerChoice/src/PartnerChoiceWorldObserver.cpp
+        prj/PartnerChoice/include/PartnerChoiceWorldObserver.h
+        prj/PartnerChoice/src/PartnerChoiceSharedData.cpp
+        prj/PartnerChoice/include/PartnerChoiceSharedData.h
+        prj/PartnerChoice/src/PartnerChoiceOpportunity.cpp
+        prj/PartnerChoice/include/PartnerChoiceOpportunity.h
+        prj/PartnerChoice/src/PartnerChoiceWorldModel.cpp
+        prj/PartnerChoice/include/PartnerChoiceWorldModel.h
+        src/ext/PartnerChoiceConfigurationLoader.cpp
+        include/ext/Config/PartnerChoiceConfigurationLoader.h)
 
 include_directories(include)
 include_directories(include/contrib)

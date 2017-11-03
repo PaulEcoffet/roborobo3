@@ -60,6 +60,12 @@ const std::vector<double>& NeuralNetwork::getInputs() const {
 }
 
 void NeuralNetwork::setInputs(std::vector<double>& inputs) {
+	if (inputs.size() != _nbInputs)
+	{
+		std::stringstream out;
+		out << "Wrong number of inputs, expecting " << _nbInputs << ", got " << inputs.size();
+		throw NeuralNetworkException(out.str());
+	}
 	_inputs = inputs;
 	_haveInputsChanged = true;
 }

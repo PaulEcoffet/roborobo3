@@ -1,3 +1,4 @@
+#include <ext/Config/PartnerChoiceConfigurationLoader.h>
 #include "Config/ConfigurationLoader.h"
 #include "Config/TemplateWanderConfigurationLoader.h"
 #include "Config/TemplateBoidsConfigurationLoader.h"
@@ -107,6 +108,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "CoopFixed2ConfigurationLoader" )
 	{
 		return new CoopFixed2ConfigurationLoader();
+	}
+#endif
+#if defined PRJ_PARTNERCHOICE || !defined MODULAR
+	else if (configurationLoaderObjectName == "PartnerChoiceConfigurationLoader" )
+	{
+		return new PartnerChoiceConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

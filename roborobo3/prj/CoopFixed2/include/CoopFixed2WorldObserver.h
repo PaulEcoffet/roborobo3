@@ -35,7 +35,7 @@ protected:
     
 public:
     CoopFixed2WorldObserver(World *world);
-    virtual ~CoopFixed2WorldObserver();
+    ~CoopFixed2WorldObserver() override;
 
     void reset() override;
 
@@ -51,7 +51,7 @@ public:
 
     std::set<int> _robotsToTeleport;
 
-    void teleportRobots(std::set<int> robotsToTeleport) const;
+    void teleportRobots(std::set<int> const& robotsToTeleport) const;
 
     void computeOpportunityImpact() const;
 };
