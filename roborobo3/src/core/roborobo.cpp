@@ -178,7 +178,7 @@ bool gStepByStep = false;
 bool gInspectorMode = false; // manual control mode -- false: agent-centered ; true: envt centered (ie. if inspector agent exists)
 bool gInspectorAgent = false; // is there an inspector agent? 
 
-int gMaxIt = 0; // note: value *must* be defined in the properties file. ("-1" (ie. infinite) is a nice default setting).
+long long gMaxIt = 0; // note: value *must* be defined in the properties file. ("-1" (ie. infinite) is a nice default setting).
 
 int gNbOfLandmarks = 0;
 std::vector<LandmarkObject*> gLandmarks;
@@ -1246,7 +1246,7 @@ bool loadProperties( std::string __propertiesFilename )
 	}
 
 	if ( gProperties.hasProperty("gMaxIt") )
-		convertFromString<int>(gMaxIt, gProperties.getProperty("gMaxIt"), std::dec);
+		convertFromString<long long>(gMaxIt, gProperties.getProperty("gMaxIt"), std::dec);
 	else
 	{
 		std::cerr << "[MISSING] gMaxIt value is missing.\n";
@@ -2071,7 +2071,7 @@ void initRoborobo()
 		initMonitor(true); // add speed monitoring and inspector agent
 }
 
-bool runRoborobo(int __maxIt) // default parameter is -1 (infinite)
+bool runRoborobo(long long __maxIt) // default parameter is -1 (infinite)
 {
 	bool quit = false;
 	int currentIt = 0;

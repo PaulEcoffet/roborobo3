@@ -24,6 +24,11 @@ public:
     static double sigma;
     static int nbEvaluationsPerGeneration;
     static int takeVideoEveryGeneration;
+    static int seeCoopFromDist;
+
+
+    static void initSharedData();
+
 };
 
 
