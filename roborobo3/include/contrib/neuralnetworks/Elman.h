@@ -26,14 +26,9 @@ namespace Neural {
 			/** Values of the hidden layers at the last step */
 			std::vector< std::vector<double> > _lastOutputs;
 
-			/**
-			 * Initialize lastOutputs
-			 */
-			void initLastOutputs();
-
-			/**
-			 * {@InheritDoc}
-			 */
+		/**
+         * {@InheritDoc}
+         */
 			virtual unsigned int computeRequiredNumberOfWeights();
 
 
@@ -76,6 +71,10 @@ namespace Neural {
 			 */
 			static std::string getNNTypeName();
 
+		/**
+* Initialize lastOutputs
+*/
+        void initLastOutputs();
 	};
 
 }

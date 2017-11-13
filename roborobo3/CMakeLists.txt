@@ -15,6 +15,7 @@ set(SOURCE_FILES
         include/contrib/zsu/Properties.h
         include/contrib/zsu/StringUtils.h
         include/contrib/zsu/strip.h
+        include/contrib/json/json.hpp
         include/core/Agents/Agent.h
         include/core/Agents/InspectorAgent.h
         include/core/Agents/Robot.h
@@ -227,7 +228,7 @@ set(SOURCE_FILES
         prj/PartnerChoice/src/PartnerChoiceWorldModel.cpp
         prj/PartnerChoice/include/PartnerChoiceWorldModel.h
         src/ext/PartnerChoiceConfigurationLoader.cpp
-        include/ext/Config/PartnerChoiceConfigurationLoader.h)
+        include/ext/Config/PartnerChoiceConfigurationLoader.h prj/PartnerChoice/src/PartnerChoiceAnalysisWorldObserver.cpp prj/PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h)
 
 include_directories(include)
 include_directories(include/contrib)

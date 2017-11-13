@@ -41,7 +41,7 @@ PartnerChoiceController::PartnerChoiceController(RobotWorldModel* wm)
             std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< PartnerChoiceSharedData::controllerType << "\n";
             exit(-1);
     }
-    m_genome.sigma = PartnerChoiceSharedData::sigma;
+    m_genome.sigma = 0;
     m_genome.weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
 
     for (auto& weight: m_genome.weights)
@@ -54,10 +54,15 @@ PartnerChoiceController::PartnerChoiceController(RobotWorldModel* wm)
 
 void PartnerChoiceController::reset()
 {
+    if (PartnerChoiceSharedData::controllerType == ELMAN_ID)
+        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
 }
 
 void PartnerChoiceController::step()
 {
+    if (not m_wm->isAlive())
+        return;
+
     std::vector<double> inputs = getInputs();
 
     m_nn->setInputs(inputs);
@@ -67,6 +72,8 @@ void PartnerChoiceController::step()
 
     m_wm->_desiredTranslationalValue = (outputs[0] + 1.0)/2.0 * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
+
+
     m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
 }
 
@@ -90,7 +97,7 @@ PartnerChoiceController::~PartnerChoiceController()
 std::vector<double> PartnerChoiceController::getInputs()
 {
     const int WALL_ID = 0;
-    std::vector<double> inputs;
+    std::vector<std::pair<std::string, double>> inputs;
     inputs.reserve(m_nn->getNbInputs());
 
     /*
@@ -99,60 +106,50 @@ std::vector<double> PartnerChoiceController::getInputs()
     for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
     {
         bool isOpportunity = false;
-        int nbNearbyRobots = 0;
+        double seenCoop = 0;
         auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(i));
 
         if (entityId >= gPhysicalObjectIndexStartOffset && entityId < gPhysicalObjectIndexStartOffset+gNbOfPhysicalObjects) // is an Object
         {
             auto * opportunity = dynamic_cast<PartnerChoiceOpportunity*>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
             isOpportunity = true;
-            nbNearbyRobots = opportunity->getNbNearbyRobots();
+            if (PartnerChoiceSharedData::seeCoopFromDist)
+                seenCoop = opportunity->getCoop();
+            else
+                seenCoop = 0;
         }
-        inputs.push_back(m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
-        inputs.push_back(static_cast<double> (Agent::isInstanceOf(entityId)));
-        inputs.push_back(static_cast<double> (entityId == WALL_ID));
-        inputs.push_back(static_cast<double> (isOpportunity));
-        inputs.push_back(static_cast<double> (nbNearbyRobots));
+        inputs.emplace_back(std::string("dist from ") + std::to_string(i) , m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
+        inputs.emplace_back("is agent from " + std::to_string(i), static_cast<double> (Agent::isInstanceOf(entityId)));
+        inputs.emplace_back("is wall from " + std::to_string(i), static_cast<double> (entityId == WALL_ID));
+        inputs.emplace_back("is obj from " + std::to_string(i), static_cast<double> (isOpportunity));
+        inputs.emplace_back("seenCoop from " + std::to_string(i), seenCoop);
     }
 
     /*
      * Opportunity inputs
      */
-    inputs.push_back(static_cast<double>(m_wm->onOpportunity));
-    inputs.push_back(m_wm->meanLastTotalInvest());
-    inputs.push_back(m_wm->meanLastOwnInvest());
+    inputs.emplace_back("on Opp", static_cast<double>(m_wm->onOpportunity));
+    inputs.emplace_back("mean Last Total Invest", m_wm->meanLastTotalInvest());
+    inputs.emplace_back("mean Own Invest", m_wm->meanLastOwnInvest());
 
-    return inputs;
+    /*
+    for (const auto &input : inputs)
+    {
+        std::cout << input.first << " : " << input.second << "\n";
+    }
+    //*/
+
+    std::vector<double> realinputs(inputs.size());
+    std::transform(inputs.begin(), inputs.end(), realinputs.begin(), [](std::pair<std::string, double> a){ return a.second;});
+    return realinputs;
 }
 
 void PartnerChoiceController::loadNewGenome(const genome &newGenome)
 {
     m_genome = newGenome;
     m_nn->setWeights(m_genome.weights);
-}
-
-void PartnerChoiceController::mutateGenome()
-{
-    for (int i = 0; i < m_genome.weights.size(); i++)
-    {
-        // Bouncing random
-        double newVal = getGaussianRand(m_genome.weights[i], m_genome.sigma);
-        if (newVal < PartnerChoiceController::minWeight)
-        {
-            const double range = PartnerChoiceController::maxWeight - PartnerChoiceController::minWeight;
-            double overflow = computeModulo(PartnerChoiceController::minWeight - newVal, range);
-            newVal = PartnerChoiceController::minWeight + overflow;
-        }
-        else if(newVal > PartnerChoiceController::maxWeight)
-        {
-            const double range = PartnerChoiceController::maxWeight - PartnerChoiceController::minWeight;
-            double overflow = computeModulo(newVal - PartnerChoiceController::maxWeight, range);
-            newVal = PartnerChoiceController::maxWeight - overflow;
-        }
-        assert(PartnerChoiceController::minWeight <= newVal && newVal <= PartnerChoiceController::maxWeight);
-        m_genome.weights[i] = newVal;
-    }
-    m_nn->setWeights(m_genome.weights);
+    if (PartnerChoiceSharedData::controllerType == ELMAN_ID)
+        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
 }
 
 unsigned int PartnerChoiceController::getNbInputs() const

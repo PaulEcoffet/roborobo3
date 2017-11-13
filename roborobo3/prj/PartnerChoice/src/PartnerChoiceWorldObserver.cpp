@@ -4,6 +4,8 @@
 
 #include <PartnerChoice/include/PartnerChoiceWorldModel.h>
 #include <core/Utilities/Graphics.h>
+#include <PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h>
+#include <PartnerChoice/include/PartnerChoiceWorldObserver.h>
 #include "core/RoboroboMain/main.h"
 #include "PartnerChoice/include/PartnerChoiceWorldObserver.h"
 #include "PartnerChoice/include/PartnerChoiceController.h"
@@ -17,56 +19,74 @@ PartnerChoiceWorldObserver::PartnerChoiceWorldObserver(World *__world) : WorldOb
     m_curEvalutionIteration = 0;
     m_curEvaluationInGeneration = 0;
     _generationCount = 0;
+    m_curInd = 0;
 
-    initSharedData();
+    std::random_device rd;
+    m_mt = std::mt19937(rd());
+
+    PartnerChoiceSharedData::initSharedData();
 
     // Log files
 
-    std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
+    std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
     m_fitnessLogManager = new LogManager(fitnessLogFilename);
     m_fitnessLogManager->write("gen\tpop\tminfit\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
     std::cout << "gen\tpop\tminfit\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n";
-    std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
-    m_genomeLogManager = new LogManager(genomeLogFilename);
+
+    m_observer = new LogManager(gLogDirectoryname + "/observer.txt");
+    m_observer->write("gen\tind\teval\titer\tonOpp\tcoop\n");
+
+    m_nbIndividuals = 50;
+    gMaxIt = (long long) m_nbIndividuals * (long long)PartnerChoiceSharedData::evaluationTime * (long long)PartnerChoiceSharedData::nbEvaluationsPerGeneration * 2000;
 }
+
 
 PartnerChoiceWorldObserver::~PartnerChoiceWorldObserver()
 {
     delete m_fitnessLogManager;
-    delete m_genomeLogManager;
+    delete m_observer;
 };
 
 void PartnerChoiceWorldObserver::initOpportunities()
 {
     double curCoopVal = 0;
-    double stepCoop = PartnerChoiceSharedData::maxCoop / ((double)PartnerChoiceSharedData::nbCoopStep - 1);
-    int stepEvery = gNbOfPhysicalObjects / PartnerChoiceSharedData::nbCoopStep;
+    double stepCoop = 0;
+    if (PartnerChoiceSharedData::nbCoopStep > 1)
+    {
+        stepCoop = PartnerChoiceSharedData::maxCoop / ((double)PartnerChoiceSharedData::nbCoopStep - 1);
+    }
+    else
+    {
+        curCoopVal = PartnerChoiceSharedData::maxCoop;
+    }
+    int stepEvery = std::ceil(gNbOfPhysicalObjects / PartnerChoiceSharedData::nbCoopStep);
     int i = 0;
     auto physObjList = gPhysicalObjects;
-    std::mt19937 mt(time(0)); // TODO: Ugly
-    std::shuffle(physObjList.begin(), physObjList.end(), mt);
+    std::shuffle(physObjList.begin(), physObjList.end(), m_mt);
     for (auto *physicalObject : physObjList)
     {
         auto *opp = dynamic_cast<PartnerChoiceOpportunity *>(physicalObject);
         opp->setCoopValue(curCoopVal);
-        if (i == stepEvery)
+        if ((i + 1) == stepEvery)
         {
             curCoopVal += stepCoop;
             i = 0;
         }
-        i++;
+        else
+        {
+            i++;
+        }
+
     }
 }
 
 void PartnerChoiceWorldObserver::step()
 {
-    if ((_generationCount + 1) % PartnerChoiceSharedData::takeVideoEveryGeneration == 0)
-    {
-        std::string name = "gen_" + std::to_string(_generationCount);
-        saveCustomScreenshot(name);
-    }
+    monitorPopulation();
     computeOpportunityImpact();
     clearOpportunityNearbyRobots();
+
+    m_curEvalutionIteration++;
 
     if (m_curEvalutionIteration == PartnerChoiceSharedData::evaluationTime)
     {
@@ -74,20 +94,53 @@ void PartnerChoiceWorldObserver::step()
         m_curEvalutionIteration = 0;
         m_curEvaluationInGeneration++;
     }
-    if( m_curEvaluationInGeneration == PartnerChoiceSharedData::nbEvaluationsPerGeneration )
+    if( m_curEvaluationInGeneration == PartnerChoiceSharedData::nbEvaluationsPerGeneration)
+    {
+        m_individuals[m_curInd].fitness = m_world->getRobot(0)->getWorldModel()->_fitnessValue;
+        m_world->getRobot(0)->getWorldModel()->_fitnessValue = 0;
+        m_curInd++;
+        m_curEvaluationInGeneration = 0;
+        if (m_curInd < m_individuals.size())
+        {
+            activateOnlyRobot(m_curInd);
+        }
+    }
+    if (m_curInd == m_individuals.size())
     {
         stepEvaluation();
+        m_curInd = 0;
+        activateOnlyRobot(m_curInd);
         _generationCount++;
-        m_curEvaluationInGeneration = 0;
-        m_curEvalutionIteration = 0;
     }
-    else
+}
+
+void PartnerChoiceWorldObserver::monitorPopulation() const
+{
+    if ((_generationCount + 1) % PartnerChoiceSharedData::takeVideoEveryGeneration == 0 && m_curInd % 25 == 0)
     {
-        m_curEvalutionIteration++;
+        std::string name = "gen_" + std::to_string(_generationCount) + "_ind_" + std::to_string(m_curInd);
+        saveCustomScreenshot(name);
     }
-    if (m_curEvalutionIteration  == PartnerChoiceSharedData::evaluationTime / 2)
+
+    if ((_generationCount + 1) % PartnerChoiceSharedData::takeVideoEveryGeneration == 0)
     {
-        initOpportunities();
+        std::stringstream out;
+        auto *wm = dynamic_cast<PartnerChoiceWorldModel *>(m_world->getRobot(0)->getWorldModel());
+        out << _generationCount << "\t";
+        out << m_curInd << "\t";
+        out << m_curEvaluationInGeneration << "\t";
+        out << m_curEvalutionIteration << "\t";
+        out << wm->onOpportunity << "\t";
+        if (wm->onOpportunity)
+        {
+            out << wm->lastTotalInvest.back() << "\n";
+        }
+        else
+        {
+            out << "0\n";
+        }
+        m_observer->write(out.str());
+
     }
 }
 
@@ -105,12 +158,12 @@ void PartnerChoiceWorldObserver::stepEvaluation()
 
 std::vector<std::pair<int, double>> PartnerChoiceWorldObserver::getSortedFitnesses() const
 {
-    std::vector<std::pair<int, double>> fitnesses(static_cast<unsigned long>(m_world->getNbOfRobots()));
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
+    for (int i = 0; i < m_individuals.size(); i++)
     {
-        auto *ctl = dynamic_cast<PartnerChoiceController *>(m_world->getRobot(i)->getController());
+        const auto &individual = m_individuals[i];
         fitnesses[i].first = i;
-        fitnesses[i].second = ctl->getFitness();
+        fitnesses[i].second = individual.fitness;
     }
     std::sort(fitnesses.begin(), fitnesses.end(),
               [](std::pair<int, double>a, std::pair<int, double>b){return a.second < b.second;});
@@ -143,66 +196,64 @@ void PartnerChoiceWorldObserver::logFitnesses(const std::vector<std::pair<int, d
     out << variance << "\n";
     std::cout << out.str();
     m_fitnessLogManager->write(out.str());
-    m_fitnessLogManager->flush();
 }
 
 void PartnerChoiceWorldObserver::logGenomes(const std::vector<std::pair<int, double>>& sortedFitnesses)
 {
-    std::stringstream outhead;
-    m_genomeLogManager->write("BEGINGROUP\n");
-    outhead << _generationCount << "\n";
-    m_genomeLogManager->write(outhead.str());
     int curRank = static_cast<int>(sortedFitnesses.size());
     for (const auto &elem : sortedFitnesses)
     {
-        std::stringstream out;
-        auto* ctl = dynamic_cast<PartnerChoiceController *>(m_world->getRobot(elem.first)->getController());
-        PartnerChoiceController::genome genome = ctl->getGenome();
-        out << "BEGININD\n";
-        out << "ID=" << elem.first << "\n";
-        out << "RANK=" << curRank << "\n";
-        out << "BEGINGEN\n";
-        out << genome.sigma << "\n";
-        out << genome.weights.size() << "\n";
-        for (const auto& weight : genome.weights)
-        {
-            out << weight << " ";
-        }
-        out << "ENDGEN" << "\n";
-        out << "ENDIND" << "\n";
-        m_genomeLogManager->write(out.str());
+        json curInd;
+
+        PartnerChoiceController::genome genome = m_individuals[elem.first].genome;
+        curInd["id"] = elem.first;
+        curInd["generation"] = _generationCount;
+        curInd["rank"] = curRank;
+        curInd["sigma"] = genome.sigma;
+        curInd["weights"] = genome.weights;
+        m_genomesLogJson.push_back(curInd);
         curRank--;
     }
-    m_genomeLogManager->write("ENDGROUP\n");
-    m_genomeLogManager->flush();
+    std::ofstream genomeLogFile(gLogDirectoryname + "/genome.txt");
+    genomeLogFile << std::setw(4) << m_genomesLogJson << std::endl;
 }
 
 void PartnerChoiceWorldObserver::createNextGeneration(const std::vector<std::pair<int, double>>& fitnesses)
 {
-    std::random_device rd;
-    std::mt19937 mt(rd());
+
     std::vector<double> fitWeights;
     std::transform(fitnesses.begin(), fitnesses.end(), std::back_inserter(fitWeights),
-                   [](const std::pair<int, double>& a){return a.second;});
-    std::discrete_distribution<int> drawParent(fitWeights.begin(), fitWeights.end());
+                   [fitnesses](const std::pair<int, double>& a){return a.second;});
+    //std::discrete_distribution<int> drawParent(fitWeights.begin(), fitWeights.end());
+    std::uniform_int_distribution<int> drawParent(40, 49);
     std::vector<PartnerChoiceController::genome> newGenomes;
-    std::vector<int> nbPicked(fitWeights.size(), 0);
-    newGenomes.reserve(static_cast<unsigned long>(m_world->getNbOfRobots()));
+    std::vector<int> nbDrawn(m_individuals.size(), 0);
+    newGenomes.reserve(m_individuals.size());
 
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    for (int i = 0; i < m_individuals.size() - 10; i++)
     {
-        int parentFitId = drawParent(mt);
+        int parentFitId = drawParent(m_mt);
         int parentId = fitnesses[parentFitId].first;
-        auto *parentCtl = dynamic_cast<PartnerChoiceController *>(m_world->getRobot(parentId)->getController());
-        newGenomes.push_back(parentCtl->getGenome());
-        nbPicked[parentFitId]++;
+        newGenomes.push_back(m_individuals[parentId].genome);
+        nbDrawn[parentFitId]++;
     }
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    for (int i = m_individuals.size() - 10; i < m_individuals.size(); i++)
     {
-        auto *childCtl = dynamic_cast<PartnerChoiceController *>(m_world->getRobot(i)->getController());
-        childCtl->loadNewGenome(newGenomes[i]);
-        childCtl->mutateGenome();
+        int parentId = fitnesses[i].first;
+        newGenomes.push_back(m_individuals[parentId].genome);
     }
+    for (int i = 0; i < m_individuals.size(); i++)
+    {
+        if (i < m_individuals.size() - 10)
+        {
+            m_individuals[i].genome = newGenomes[i].mutate();
+        }
+        else
+        {
+            m_individuals[i].genome = newGenomes[i];
+        }
+    }
+
 }
 
 void PartnerChoiceWorldObserver::resetEnvironment()
@@ -215,16 +266,17 @@ void PartnerChoiceWorldObserver::resetEnvironment()
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
-
+    int i = 0;
     for (auto object: gPhysicalObjects)
     {
-        object->resetLocation();
+        object->findRandomLocation();
         object->registerObject();
     }
 
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
+        robot->registerRobot();
     }
 }
 
@@ -265,23 +317,6 @@ double PartnerChoiceWorldObserver::payoff(const double invest, const double tota
     return res;
 }
 
-void PartnerChoiceWorldObserver::initSharedData()
-{
-    gProperties.checkAndGetPropertyValue("evaluationTime", &PartnerChoiceSharedData::evaluationTime, true);
-    gProperties.checkAndGetPropertyValue("genomeLog", &PartnerChoiceSharedData::genomeLog, true);
-    gProperties.checkAndGetPropertyValue("sigma", &PartnerChoiceSharedData::sigma, true);
-    gProperties.checkAndGetPropertyValue("controllerType", &PartnerChoiceSharedData::controllerType, true);
-    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &PartnerChoiceSharedData::maxTranslationalValue, true);
-    gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &PartnerChoiceSharedData::maxRotationalVelocity, true);
-    gProperties.checkAndGetPropertyValue("nbHiddenLayers", &PartnerChoiceSharedData::nbHiddenLayers, true);
-    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &PartnerChoiceSharedData::nbNeuronsPerHiddenLayer, true);
-    gProperties.checkAndGetPropertyValue("maxCoop", &PartnerChoiceSharedData::maxCoop, true);
-    gProperties.checkAndGetPropertyValue("nbCoopStep", &PartnerChoiceSharedData::nbCoopStep, true);
-    gProperties.checkAndGetPropertyValue("constantA", &PartnerChoiceSharedData::constantA, true);
-    gProperties.checkAndGetPropertyValue("constantK", &PartnerChoiceSharedData::constantK, true);
-    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &PartnerChoiceSharedData::nbEvaluationsPerGeneration, true);
-    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &PartnerChoiceSharedData::takeVideoEveryGeneration, false);
-}
 
 void PartnerChoiceWorldObserver::clearOpportunityNearbyRobots()
 {
@@ -303,6 +338,26 @@ void PartnerChoiceWorldObserver::reset()
     // Init fitness
 
     clearRobotFitnesses();
+
+    // create individuals
+
+    m_individuals.reserve(m_nbIndividuals);
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
+        individual ind{};
+        ind.fitness = 0;
+        PartnerChoiceController::genome gen;
+        gen.sigma = PartnerChoiceSharedData::sigma;
+        gen.weights.resize(dynamic_cast<PartnerChoiceController *>(m_world->getRobot(0)->getController())->getGenome().weights.size());
+        for (auto& weight: gen.weights)
+        {
+            weight = ranf() * 2 - 1;
+        }
+        ind.genome = gen;
+        m_individuals.push_back(ind);
+    }
+
+    activateOnlyRobot(m_curInd);
 }
 
 void PartnerChoiceWorldObserver::clearRobotFitnesses()
@@ -311,5 +366,11 @@ void PartnerChoiceWorldObserver::clearRobotFitnesses()
         auto* ctl = dynamic_cast<PartnerChoiceController*>(gWorld->getRobot(iRobot)->getController());
         ctl->resetFitness();
     }
+}
+
+void PartnerChoiceWorldObserver::activateOnlyRobot(int robotIndex)
+{
+    auto *ctl = dynamic_cast<PartnerChoiceController *>(m_world->getRobot(0)->getController());
+    ctl->loadNewGenome(m_individuals[robotIndex].genome);
 }
 

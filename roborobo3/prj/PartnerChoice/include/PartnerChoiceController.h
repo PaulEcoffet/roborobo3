@@ -10,6 +10,8 @@
 #include "Controllers/Controller.h"
 #include "neuralnetworks/NeuralNetwork.h"
 #include "PartnerChoiceOpportunity.h"
+#include "PartnerChoiceWorldModel.h"
+#include "core/Utilities/Misc.h"
 
 using namespace Neural;
 
@@ -20,7 +22,37 @@ using namespace Neural;
 class PartnerChoiceController : public Controller
 {
 public:
-    typedef struct genome { std::vector<double> weights; double sigma;} genome;
+    typedef struct genome {
+        std::vector<double> weights;
+        double sigma;
+        genome mutate()
+        {
+            genome child{};
+            child.sigma = sigma;
+            child.weights.reserve(weights.size());
+            for (const double &weight : weights)
+            {
+                // Bouncing random
+                double newVal = getGaussianRand(weight, sigma);
+                if (newVal < PartnerChoiceController::minWeight)
+                {
+                    const double range = PartnerChoiceController::maxWeight - PartnerChoiceController::minWeight;
+                    double overflow = computeModulo(PartnerChoiceController::minWeight - newVal, range);
+                    newVal = PartnerChoiceController::minWeight + overflow;
+                }
+                else if (newVal > PartnerChoiceController::maxWeight)
+                {
+                    const double range = PartnerChoiceController::maxWeight - PartnerChoiceController::minWeight;
+                    double overflow = computeModulo(newVal - PartnerChoiceController::maxWeight, range);
+                    newVal = PartnerChoiceController::maxWeight - overflow;
+                }
+                assert(PartnerChoiceController::minWeight <= newVal && newVal <= PartnerChoiceController::maxWeight);
+                child.weights.push_back(newVal);
+            }
+            return child;
+        }
+
+    } genome;
 
     explicit PartnerChoiceController(RobotWorldModel *wm);
     ~PartnerChoiceController() override;

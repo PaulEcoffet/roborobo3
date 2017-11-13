@@ -9,10 +9,19 @@
 #include <core/Observers/WorldObserver.h>
 #include <core/World/World.h>
 #include "core/Utilities/LogManager.h"
+#include "contrib/json/json.hpp"
+#include "PartnerChoiceController.h"
+
+using json = nlohmann::json;
 
 class PartnerChoiceWorldObserver : public WorldObserver
 {
 public:
+    typedef struct {
+        double fitness;
+        PartnerChoiceController::genome genome;
+    } individual;
+
     explicit PartnerChoiceWorldObserver(World *__world);
     ~PartnerChoiceWorldObserver() override;
 
@@ -30,23 +39,33 @@ public:
 protected:
     World *m_world;
     LogManager *m_fitnessLogManager;
-    LogManager *m_genomeLogManager;
+    LogManager* m_observer;
+    json m_genomesLogJson;
 
     int m_curEvalutionIteration;
     int _generationCount;
+
+    std::mt19937 m_mt; // TODO: MUST BE THE SAME FOR THE WHOLE PROGRAM
 
     void initOpportunities();
     void computeOpportunityImpact();
 
     double payoff(const double invest, const double totalInvest) const;
 
-    void initSharedData();
-
     void clearOpportunityNearbyRobots();
 
     void clearRobotFitnesses();
 
     int m_curEvaluationInGeneration;
+    int m_curInd;
+
+    std::vector<individual> m_individuals;
+
+    void activateOnlyRobot(int robotIndex);
+
+    void monitorPopulation() const;
+
+    int m_nbIndividuals;
 };
 
 
