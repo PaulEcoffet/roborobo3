@@ -13,6 +13,7 @@
 #include "Config/SingleGenomeConfigurationLoader.h"
 #include "Config/CoopOpportunity2MaxConfigurationLoader.h"
 #include "Config/CoopFixed2ConfigurationLoader.h"
+#include "Config/PartnerControlConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -114,6 +115,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "PartnerChoiceConfigurationLoader" )
 	{
 		return new PartnerChoiceConfigurationLoader();
+	}
+#endif
+#if defined PRJ_PARTNERCONTROL || !defined MODULAR
+	else if (configurationLoaderObjectName == "PartnerControlConfigurationLoader" )
+	{
+		return new PartnerControlConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

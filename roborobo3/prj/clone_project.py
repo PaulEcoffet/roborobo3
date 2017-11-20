@@ -28,7 +28,7 @@ def copy(source, target):
 # from: http://www.pythoncentral.io
 def copy(source, target):
     try:
-	IGNORE_PATTERNS = ('.svn','CVS','.git','.test')
+        IGNORE_PATTERNS = ('.svn','CVS','.git','.test')
         shutil.copytree(source, target,ignore=shutil.ignore_patterns(*IGNORE_PATTERNS))
     except OSError as e:
         # If the error was caused because the source wasn't a directory
@@ -113,9 +113,9 @@ def cloneProject(source,target):
     print ("\n### Creating new project (\""+target+"\") from previous project (\""+source+"\") ###\n")
 
     if source[-1:] == "/":
-	source = source[:-1]
+        source = source[:-1]
     if target[-1:] == "/":
-	target = target[:-1]
+        target = target[:-1]
     
     copy(source, target)
     
@@ -135,7 +135,7 @@ def cloneProject(source,target):
                 replaceInFile(target+subdir+newname,source,target)
                 print("<roborobo>/prj/"+ target+subdir+newname + " created.")
             else:
-		os.remove(target+subdir+oldname)
+                os.remove(target+subdir+oldname)
                 print("<roborobo>/prj/"+ target+subdir+oldname + " ignored and deleted (unknown type).")        ###  CHANGED!!!
 
     # create (from copy) configuration files in <roborobo>/src/
