@@ -26,9 +26,11 @@ public:
 protected:
     double m_curCoop;
     json m_genomesJson;
+    std::ofstream m_log;
 
     int m_curIterationInRep;
     int m_curRep;
+    int m_onOppTotal = 0;
 
     void monitorPopulation();
 
@@ -37,12 +39,16 @@ protected:
     json::iterator m_genomesIt;
 
     void loadGenome(const std::vector<double> &weights);
+    void computeOpportunityImpact();
+    void clearOpportunityNearbyRobots();
 
     int m_nbIterationPerRep;
     int m_nbRep;
     double m_stepCoop;
 
     void setAllOpportunitiesCoop(double coop);
+
+    void logRep();
 };
 
 
