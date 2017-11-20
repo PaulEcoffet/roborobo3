@@ -228,7 +228,29 @@ set(SOURCE_FILES
         prj/PartnerChoice/src/PartnerChoiceWorldModel.cpp
         prj/PartnerChoice/include/PartnerChoiceWorldModel.h
         src/ext/PartnerChoiceConfigurationLoader.cpp
-        include/ext/Config/PartnerChoiceConfigurationLoader.h prj/PartnerChoice/src/PartnerChoiceAnalysisWorldObserver.cpp prj/PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h)
+        include/ext/Config/PartnerChoiceConfigurationLoader.h
+
+        # Partner control
+
+        prj/PartnerChoice/src/PartnerChoiceAnalysisWorldObserver.cpp
+        prj/PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h
+        prj/PartnerControl/include/PartnerControlAgentObserver.h
+        prj/PartnerControl/include/PartnerControlAnalysisWorldObserver.h
+        prj/PartnerControl/include/PartnerControlController.h
+        prj/PartnerControl/include/PartnerControlOpportunity.h
+        prj/PartnerControl/include/PartnerControlWorldModel.h
+        prj/PartnerControl/include/PartnerControlSharedData.h
+        prj/PartnerControl/include/PartnerControlWorldObserver.h
+        prj/PartnerControl/src/PartnerControlAgentObserver.cpp
+        prj/PartnerControl/src/PartnerControlAnalysisWorldObserver.cpp
+        prj/PartnerControl/src/PartnerControlController.cpp
+        prj/PartnerControl/src/PartnerControlOpportunity.cpp
+        prj/PartnerControl/src/PartnerControlSharedData.cpp
+        prj/PartnerControl/src/PartnerControlWorldModel.cpp
+        prj/PartnerControl/src/PartnerControlWorldObserver.cpp
+        src/ext/PartnerControlConfigurationLoader.cpp
+        include/ext/Config/PartnerControlConfigurationLoader.h
+        )
 
 include_directories(include)
 include_directories(include/contrib)
