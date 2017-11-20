@@ -2,6 +2,7 @@
 // Created by paul on 31/10/17.
 //
 
+#include <PartnerChoice/include/PartnerChoiceSharedData.h>
 #include "RoboroboMain/roborobo.h"
 #include "PartnerChoice/include/PartnerChoiceOpportunity.h"
 
@@ -13,8 +14,8 @@ PartnerChoiceOpportunity::PartnerChoiceOpportunity(int __id) : RoundObject(__id)
 void PartnerChoiceOpportunity::updateColor()
 {
     _displayColorRed = 0;
-    _displayColorGreen = static_cast<Uint8>(128 + 127 * m_coop / 2);
-    _displayColorBlue = static_cast<Uint8>(128 - 127 * m_coop / 2);
+    _displayColorGreen = static_cast<Uint8>(128 + 127 * m_coop / PartnerChoiceSharedData::maxCoop, 255);
+    _displayColorBlue = static_cast<Uint8>(128 - 127 * m_coop / PartnerChoiceSharedData::maxCoop);
 }
 
 void PartnerChoiceOpportunity::setCoopValue(double coop)
@@ -52,5 +53,12 @@ void PartnerChoiceOpportunity::step()
 {
     updateColor();
     RoundObject::step();
+}
+
+std::string PartnerChoiceOpportunity::inspect()
+{
+    std::stringstream s;
+    s << "My value is " << m_coop << "\n";
+    return s.str();
 }
 

@@ -53,7 +53,7 @@ void PartnerChoiceWorldObserver::initOpportunities()
     double stepCoop = 0;
     if (PartnerChoiceSharedData::nbCoopStep > 1)
     {
-        stepCoop = PartnerChoiceSharedData::maxCoop / ((double)PartnerChoiceSharedData::nbCoopStep - 1);
+        stepCoop = (PartnerChoiceSharedData::maxCoop - curCoopVal) / ((double)PartnerChoiceSharedData::nbCoopStep - 1);
     }
     else
     {
