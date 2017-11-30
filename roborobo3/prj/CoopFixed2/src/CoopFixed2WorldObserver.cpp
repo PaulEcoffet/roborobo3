@@ -144,8 +144,8 @@ void CoopFixed2WorldObserver::stepEvaluation()
         bool done = false;
         int pick = -1;
         while (done == false) {
-            pick = rand()%gNbOfRobots;
-            double draw = ranf()*totalFitness;
+            pick = randint()%gNbOfRobots;
+            double draw = random()*totalFitness;
             if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
             {
                 done = true;
@@ -166,7 +166,7 @@ void CoopFixed2WorldObserver::stepEvaluation()
 //        printf("Robot %.2d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
 }
 
-void CoopFixed2WorldObserver::step()
+void CoopFixed2WorldObserver::stepPre()
 {
     teleportRobots(_robotsToTeleport);
     _robotsToTeleport.clear();

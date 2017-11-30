@@ -4,7 +4,7 @@
 //                                                                                               //
 // Author: Nicolas Bredeche                                                                      //
 // Contact: nicolas.bredeche(at)upmc.fr / niko(at)factorycity.com                                //
-// http://factorycity.com // http://pages.isir.upmc.fr/~bredeche                                 //
+// http://pages.isir.upmc.fr/~bredeche                                                           //
 //                                                                                               //
 // 2008-2017 (started 20081216, version 3: 20160122)                                             //
 // current version: (see gVersion value)                                                         //
@@ -36,7 +36,6 @@
 //  http://lazyfoo.net/SDL_tutorials/                                                            //
 //                                                                                               //
 // * Projects acknowledgements                                                                   //
-//  http://factorycity.com                                                                       //
 //  Symbrion EU project, grant agreement 216342 (2008-2013) (EU FET Proactive Intiative)         //
 //  Grid'5000 experimental testbed ( https://www.grid5000.fr )                                   //
 //  BQR UPMC (2012-2013)                                                                         //
@@ -59,8 +58,6 @@
 #include "Utilities/Graphics.h"
 #include "WorldModels/RobotWorldModel.h"
 #include "Utilities/Misc.h"
-
-#include "MovingNS/include/MovingNSController.h"
 
 #include "Config/GlobalConfigurationLoader.h"
 
@@ -154,7 +151,6 @@ int gAgentsInitAreaWidth = -1;
 int gAgentsInitAreaHeight = -1;
 
 bool gMovableObjects = false;
-bool gStuckMovableObjects = false;
 
 bool gRobotDisplayFocus = false;
 
@@ -178,7 +174,7 @@ bool gStepByStep = false;
 bool gInspectorMode = false; // manual control mode -- false: agent-centered ; true: envt centered (ie. if inspector agent exists)
 bool gInspectorAgent = false; // is there an inspector agent? 
 
-long long gMaxIt = 0; // note: value *must* be defined in the properties file. ("-1" (ie. infinite) is a nice default setting).
+int gMaxIt = 0; // note: value *must* be defined in the properties file. ("-1" (ie. infinite) is a nice default setting).
 
 int gNbOfLandmarks = 0;
 std::vector<LandmarkObject*> gLandmarks;
@@ -312,9 +308,6 @@ Timer timeWatch;
 std::vector<Robot*> gRobots;
 std::vector<bool> gRobotsRegistry;
 
-
-void inspectAtPixel(int xIns, int yIns);
-
 /* ********************
  * * global functions *
  * ********************/
@@ -360,29 +353,38 @@ void displayHelp()
 		std::cout << " >>>> Keys:" << std::endl;
 		std::cout << "       h : help! (ie. this text)" << std::endl;
 		
-		std::cout << "       n : radio network communication on/off" << std::endl;
-		std::cout << "       d : set display mode - (1) default-60-fps; (2) fast; (3) fastest-no-display. (shift+d: inverse)" << std::endl;
+		//std::cout << "       n : radio network communication on/off (unused)" << std::endl;
+		std::cout << "       d : set display mode (shift+d: reverse)" << std::endl;
+        std::cout << "       \t (1) default-60-fps;" << std::endl;
+        std::cout << "       \t (2) fast;" << std::endl;
+        std::cout << "       \t (3) fastest-no-display." << std::endl;
 		std::cout << "       v : verbose on/off (console)" << std::endl;
-		std::cout << "       p : pause/freeze simulation (display mode) - use <space> for step-by-step update" << std::endl;
+		std::cout << "       p : pause/freeze simulation (display mode)"  << std::endl;
+        std::cout << "       \t use <space> for step-by-step update" << std::endl;
 		std::cout << "       s : slow mode on/off (switch it off if display is off)" << std::endl;
-
 		std::cout << "       x : (\"X-ray mode\") debug display mode on/off" << std::endl;
 		std::cout << "       f : highlight current focused agent on/off (display mode)" << std::endl;
 		std::cout << "       z : display ground type caption on/off (display mode)" << std::endl;
-		std::cout << "       g : (\"god mode\") switch agent/inspector mode - follow selected agent or move freely (display mode)" << std::endl;
-		std::cout << "       i : inspect currently selected agent on/off (display sensor and motor values on console)" << std::endl;
-		std::cout << "       j : show / dont show sensor raycasting and visual markers (display mode)" << std::endl;
-		std::cout << "       l : show / dont show LED color on top of the robots (display mode)" << std::endl;
+        std::cout << "       g : (\"god mode\") switch agent/inspector mode" << std::endl;
+        std::cout << "       \t follow selected agent or move freely (display mode)" << std::endl;
+		std::cout << "       i : inspect currently selected agent on/off" << std::endl;
+        std::cout << "       \t display sensor and motor values on console)" << std::endl;
+        std::cout << "       \t inspection can also be performed by mouse clicking." << std::endl;
+		std::cout << "       j : show/hide sensor raycasting and visual markers (display mode)" << std::endl;
+		std::cout << "       l : show/hide LED color on top of the robots (display mode)" << std::endl;
 		
-        std::cout << "       o : take screenshot - save image to disk (in ./logs) (display mode)" << std::endl;
-		std::cout << "       O : video recording start/stop - save images to disk (in ./logs) (display mode)" << std::endl;
-		
-        std::cout << "       t : start/stop tracking trajectories (all agents) - save image to disk (in ./logs) (display mode)" << std::endl;
-        std::cout << "       T : start/stop tracking trajectories (target agent) - save image to disk (in ./logs) (display mode)" << std::endl;
+        std::cout << "       o : take screenshot" << std::endl;
+        std::cout << "       \t save image to disk (in ./logs) (display mode)" << std::endl;
+		std::cout << "       O : video recording start/stop" << std::endl;
+        std::cout << "       \t save images to disk (in ./logs) (display mode)" << std::endl;
+		std::cout << "       t : start/stop tracking trajectories (all agents)" << std::endl;
+        std::cout << "       \t save images to disk (in ./logs) (display mode)" << std::endl;
+        std::cout << "       T : start/stop tracking trajectories (target agent)" << std::endl;
+        std::cout << "       \t save images to disk (in ./logs) (display mode)" << std::endl;
         
 		std::cout << "   <tab> : switch focus to next agent (shift+o: previous agent)" << std::endl;
 		std::cout << " <enter> : (in agent following mode) trigger manual agent control mode" << std::endl;
-		std::cout << " <enter> : (in inspector mode) sample and display sensor values at current location" << std::endl;
+		std::cout << " <enter> : (inspector mode) display sensor values at current location" << std::endl;
 		std::cout << "   <esc> : quit" << std::endl;
 		std::cout << "=-=-=-=-=-=-=-=-=-=-=-= roborobo! =-=-=-=-=-=-=-=-=-=-=-=\n\n";
 	}
@@ -393,28 +395,89 @@ void displayHelp()
  *   MAIN   *
  * ******** */
 
-bool checkEvent()
+void inspectAtPixel(int xIns, int yIns)
 {
-	bool quit = false;
-	//While there's events to handle
-	while( SDL_PollEvent( &gEvent ) )
-	{
-		//If the user has Xed out the window
-		if( gEvent.type == SDL_QUIT )
-		{
-			//Quit the program
-			quit = true;
-			break;
-		}
-		else if (gEvent.type == SDL_MOUSEBUTTONUP)
-		{
-			inspectAtPixel(gEvent.button.x, gEvent.button.y);
-		}
-	}
-	return quit;
+    std::cout << "## Inspector Agent ##" << std::endl; //"Inspector virtual sensors:"
+    
+    // location
+    std::cout << "\tcoordinates: (" << xIns << "," << yIns << ")" << std::endl;
+    
+    // virtual range sensor
+    Uint32 inspectorSensorValue = getPixel32(gEnvironmentImage, xIns, yIns);
+    Uint8 r, g, b;
+    SDL_GetRGB(inspectorSensorValue,gEnvironmentImage->format,&r,&g,&b);
+    inspectorSensorValue = (r<<16)+(g<<8)+b;
+    std::cout << "\tvirtual range sensor: ";
+    if ( inspectorSensorValue == 0xFFFFFF ) // either nothing or unregistered agent(s).
+    {
+        std::cout << "0xFFFFFF (nothing)" << std::endl;
+        
+        // Agents may not be visible in the internal scene buffer due to optimization
+        // Hence, we scan the list of agents to compare actual inspector location and agent location
+        // Results from this scan should be interpreted as a list of either
+        //  - nearby agents (possibly registered, or not)
+        //  - agent precisely at this location, but not registered
+        // note: registering Agent in the internal scene buffer is not mandatory if it is sure
+        //       that it is not within the perceptual range of any other agents (speed up simulation).
+        
+        int radiusMax = gRobotWidth > gRobotHeight ? ( gRobotWidth + 1 ) / 2 : ( gRobotHeight + 1 ) / 2; // assume an upper bound for dimension.
+        for ( int i = 0 ; i != gNbOfRobots ; i++ ) // test for agents proximity based on localization
+        {
+            int x = (int)(gWorld->getRobot(i)->getWorldModel()->getXReal());
+            int y = (int)(gWorld->getRobot(i)->getWorldModel()->getYReal());
+            if ( abs(x - xIns) < radiusMax && abs(y - yIns) < radiusMax )
+                std::cout << "\tAgent #" << i << " detected (closeby and/or unregistered)." << std::endl;
+        }
+    }
+    else
+    {
+        std::cout << "Detected id: " << inspectorSensorValue << std::endl;
+        if ( inspectorSensorValue >= (Uint32)gRobotIndexStartOffset )
+        {
+            std::cout << "\tInformation from agent #" << inspectorSensorValue - gRobotIndexStartOffset << std::endl;
+            Robot* robot = gWorld->getRobot(inspectorSensorValue - gRobotIndexStartOffset);
+            std::cout << robot->inspect("\t") << std::endl;
+        }
+        else if (inspectorSensorValue >= (Uint32) gPhysicalObjectIndexStartOffset
+                 && inspectorSensorValue < (Uint32) (gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects))
+        {
+            int iObj = inspectorSensorValue - gPhysicalObjectIndexStartOffset;
+            std::cout << "\tInformation from Physical object #" << iObj << std::endl;
+            PhysicalObject *physicalObject = gPhysicalObjects[iObj];
+            std::cout << physicalObject->inspect("\t");
+        }
+    }
+    
+    // virtual floor sensor
+    inspectorSensorValue = getPixel32( gFootprintImage, xIns, yIns);
+    SDL_GetRGB(inspectorSensorValue,gFootprintImage->format,&r,&g,&b);
+    
+    int value = ((int)r)*256*256 + ((int)g)*256 + (int)b;
+    
+    std::cout << "\tvirtual floor sensor: ( " << value << " : " << (int)r << "," << (int)g << "," << (int)b << ")" << std::endl;
 }
 
-
+bool checkEvent()
+{
+    bool quit = false;
+    //While there's events to handle
+    while( SDL_PollEvent( &gEvent ) )
+    {
+        //If the user has Xed out the window
+        if( gEvent.type == SDL_QUIT )
+        {
+            //Quit the program
+            quit = true;
+            break;
+        }
+        else
+            if (gEvent.type == SDL_MOUSEBUTTONUP)
+            {
+                inspectAtPixel(gEvent.button.x, gEvent.button.y);
+            }
+    }
+    return quit;
+}
 
 
 // return true if quit.
@@ -446,26 +509,19 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
 
 	if ( gDisplayMode == 0 || gDisplayMode == 1 )	
 	{
-        if ( keyboardStates[ SDL_SCANCODE_U ] ) // dump the genome of the target robot
+        if ( gStepByStep == true )
         {
-            Robot *robot = gWorld->getRobot(gRobotIndexFocus);
-            MovingNSController *ctl = static_cast<MovingNSController *>(robot->getController());
-            ctl->dumpGenome();
-            SDL_Delay(PAUSE_COMMAND);
+            gPauseMode = true;
+            gStepByStep = false;
         }
-		if ( gStepByStep == true )
-		{
-			gPauseMode = true;
-			gStepByStep = false;
-		}
-
-		if ( gPauseMode == true && keyboardStates[ SDL_SCANCODE_SPACE ] )
-		{
-			SDL_Delay(PAUSE_COMMAND); // 200ms delay
-			gPauseMode = false;
-			gStepByStep = true;
-			std::cout << "step #" << gWorld->getIterations() << std::endl;
-		}
+        
+        if ( gPauseMode == true && keyboardStates[ SDL_SCANCODE_SPACE ] )
+        {
+            SDL_Delay(PAUSE_COMMAND); // 200ms delay
+            gPauseMode = false;
+            gStepByStep = true;
+            std::cout << "step #" << gWorld->getIterations() << std::endl;
+        }
         
         if ( keyboardStates[ SDL_SCANCODE_P ] )
 		{
@@ -594,11 +650,10 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
 				if ( gVerbose )
 				{
 					// * inspector mode. Return key trigger sensor display. (note: non-collision enabled robot cannot be seen)
-					int xIns, yIns;
-					inspectorAgent->getCoord(xIns, yIns);
-					// inspector virtual sensors values
-					inspectAtPixel(xIns, yIns);
-
+			
+                    int xIns, yIns;
+                    inspectorAgent->getCoord(xIns, yIns);
+                    inspectAtPixel(xIns, yIns);
 				}
 			}				
 			SDL_Delay(PAUSE_COMMAND); // 200ms delay
@@ -751,69 +806,6 @@ bool handleKeyEvent(const Uint8 *keyboardStates)
 	return false;
 }
 
-void inspectAtPixel(int xIns, int yIns)
-{
-	std::cout << "## Inspector Agent ##" << std::endl; //"Inspector virtual sensors:"
-
-	// location
-	std::cout << "\tcoordinates: (" << xIns << "," << yIns << ")" << std::endl;
-
-	// virtual range sensor
-	Uint32 inspectorSensorValue = getPixel32(gEnvironmentImage, xIns, yIns);
-	Uint8 r, g, b;
-	SDL_GetRGB(inspectorSensorValue,gEnvironmentImage->format,&r,&g,&b);
-	inspectorSensorValue = (r<<16)+(g<<8)+b;
-	std::cout << "\tvirtual range sensor: ";
-	if ( inspectorSensorValue == 0xFFFFFF ) // either nothing or unregistered agent(s).
-					{
-						std::cout << "0xFFFFFF (nothing)" << std::endl;
-
-						// Agents may not be visible in the internal scene buffer due to optimization
-						// Hence, we scan the list of agents to compare actual inspector location and agent location
-						// Results from this scan should be interpreted as a list of either
-						//  - nearby agents (possibly registered, or not)
-						//  - agent precisely at this location, but not registered
-						// note: registering Agent in the internal scene buffer is not mandatory if it is sure
-						//       that it is not within the perceptual range of any other agents (speed up simulation).
-
-						int radiusMax = gRobotWidth > gRobotHeight ? ( gRobotWidth + 1 ) / 2 : ( gRobotHeight + 1 ) / 2; // assume an upper bound for dimension.
-						for ( int i = 0 ; i != gNbOfRobots ; i++ ) // test for agents proximity based on localization
-						{
-						  int x = (int)(gWorld->getRobot(i)->getWorldModel()->getXReal());
-						  int y = (int)(gWorld->getRobot(i)->getWorldModel()->getYReal());
-						  if ( abs(x - xIns) < radiusMax && abs(y - yIns) < radiusMax )
-							std::cout << "\t\tAgent #" << i << " detected (closeby and/or unregistered)." << std::endl;
-						}
-					}
-					else
-					{
-						std::cout << "Detected id: " << inspectorSensorValue << std::endl;
-						if ( inspectorSensorValue >= (Uint32)gRobotIndexStartOffset )
-						{
-							std::cout << "Information from agent #" << inspectorSensorValue - gRobotIndexStartOffset << std::endl;
-							Robot* robot = gWorld->getRobot(inspectorSensorValue - gRobotIndexStartOffset);
-							std::cout << robot->inspect() << std::endl;
-						}
-						else if (inspectorSensorValue >= (Uint32) gPhysicalObjectIndexStartOffset
-								 && inspectorSensorValue < (Uint32) (gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects))
-						{
-							int iObj = inspectorSensorValue - gPhysicalObjectIndexStartOffset;
-							std::cout << "Information from Physical object #" << iObj << std::endl;
-							PhysicalObject *physicalObject = gPhysicalObjects[iObj];
-							std::cout << physicalObject->inspect() << std::endl;
-						}
-						std::cout << std::endl;
-					}
-
-	// virtual floor sensor
-	inspectorSensorValue = getPixel32( gFootprintImage, xIns, yIns);
-	SDL_GetRGB(inspectorSensorValue,gFootprintImage->format,&r,&g,&b);
-
-	int value = ((int)r)*256*256 + ((int)g)*256 + (int)b;
-
-	std::cout << "\tvirtual floor sensor: ( " << value << " : " << (int)r << "," << (int)g << "," << (int)b << ")" << std::endl;
-}
-
 
 void updateDisplay() // display is called starting when gWorld->getIterations > 0.
 {
@@ -845,6 +837,15 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
         
         if ( gNiceRendering ) // + ( gDisplayMode != 2 || gSnapshot...? || gVideoRecording...? )   // !n
         {
+            // Show landmark(s) on the screen
+            for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
+            {
+                if ( gLandmarks[i]->isVisible() )
+                {
+                    gLandmarks[i]->show();
+                }
+            }
+            
             // Show object(s) on the screen
             {
                 for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
@@ -853,15 +854,6 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
                     {
                         gPhysicalObjects[i]->show();
                     }
-                }
-            }
-            
-            // Show landmark(s) on the screen
-            for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
-            {
-                if ( gLandmarks[i]->isVisible() )
-                {
-                    gLandmarks[i]->show();
                 }
             }
             
@@ -937,35 +929,44 @@ void initLogging()
 {
 	// test log directory.
     
-
+    /*
      
     // notes, 2014-09-02: unfortunatly, boost::filesystem is not a header-only boost library...
     // http://www.boost.org/doc/libs/1_53_0/more/getting_started/windows.html#header-only-libraries
-
-
+     
     boost::filesystem::path dir (gLogDirectoryname);
     try
     {
-        boost::filesystem::create_directories(dir);
-    }
-    catch (boost::filesystem::filesystem_error e)
-    {
-        std::cerr << "[CRITICAL]" << e.what() << "\n";
-        exit(-1);
-    }
-    assert(boost::filesystem::is_directory(dir));
-
-    boost::filesystem::path screendir (gLogDirectoryname + "/screenshots");
-    try
-    {
-        boost::filesystem::create_directories(screendir);
-    }
-    catch (boost::filesystem::filesystem_error e)
-    {
-        std::cerr << "[CRITICAL]" << e.what() << "\n";
-        exit(-1);
-    }
-    assert(boost::filesystem::is_directory(screendir));
+		if (boost::filesystem::exists(dir))
+	    {
+			if (boost::filesystem::is_regular_file(dir))
+			{
+	        	std::cout << "[ERROR] directory for logging \"" << dir << "\" already exists, but is a regular file!\n";
+				exit (-1);
+			}
+			else
+				if (!boost::filesystem::is_directory(dir))
+				{
+					// directory does not exist. Create it.
+                    std::cout << "[INFO] directory for logging \"" << dir << "\" did not exist. Creating new directory.\n";
+					boost::filesystem::create_directories(dir);
+				}
+	    }
+	    else
+		{
+			// directory does not exist. Create it.
+            std::cout << "[INFO] directory for logging \"" << dir << "\" did not exist. Creating new directory.\n";
+			boost::filesystem::create_directories(dir);
+		}
+	}
+	catch (const boost::filesystem::filesystem_error& ex)
+	{
+		std::cout << ex.what() << std::endl;
+		exit (-1);
+	}
+     
+    */
+    
     
     // init log file
     
@@ -974,38 +975,32 @@ void initLogging()
 	gLogFile.open(gLogFullFilename.c_str());//, std::ofstream::out | std::ofstream::app);
 	
 	if(!gLogFile) { 
-		
-        std::cout << "[CRITICAL] Cannot open log file " << gLogFullFilename << "." << std::endl << std::endl;
-        std::cout << "Error: " << strerror(errno) << std::endl;
+		std::cout << "[CRITICAL] Cannot open log file " << gLogFullFilename << "." << std::endl << std::endl;
 		exit(-1);
-	}
-    
-    std::stringstream initText;
+	} 
 
-	initText << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	initText << "# LOG DATA " << std::endl;
-	initText << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	initText << "#" << std::endl;
-	initText << "# =-= Roborobo^3 " << std::endl;
-	initText << "# =-= Official version tag    : " << gVersion << std::endl;
-	initText << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
-	initText << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
-	initText << "#" << std::endl;
-	initText << "# Loaded time stamp           : " << gStartTime << std::endl;
-    initText << "# process ID                  : " << getpidAsReadableString() << std::endl;
-	initText << "#" << std::endl;
+	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	gLogFile << "# LOG DATA " << std::endl;
+	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	gLogFile << "#" << std::endl;
+	gLogFile << "# =-= Roborobo^3 " << std::endl;
+	gLogFile << "# =-= Official version tag    : " << gVersion << std::endl;
+	gLogFile << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
+	gLogFile << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
+	gLogFile << "#" << std::endl;
+	gLogFile << "# Loaded time stamp           : " << gStartTime << std::endl;
+    gLogFile << "# process ID                  : " << getpidAsReadableString() << std::endl;
+	gLogFile << "#" << std::endl;
 
-	//initText << "# log comment      : " << gLogCommentText << std::endl; 
+	//gLogFile << "# log comment      : " << gLogCommentText << std::endl; 
 
     gLogManager = new LogManager(gLogFullFilename); // it is recommended (though not forced) to use gLogManager instead of gLogFile.
-    
-    gLogManager->write(initText.str());
 }
 
 
 void stopLogging()
 {
-    delete gLogManager;
+	gLogFile.close();
 }
 
 
@@ -1246,7 +1241,7 @@ bool loadProperties( std::string __propertiesFilename )
 	}
 
 	if ( gProperties.hasProperty("gMaxIt") )
-		convertFromString<long long>(gMaxIt, gProperties.getProperty("gMaxIt"), std::dec);
+		convertFromString<int>(gMaxIt, gProperties.getProperty("gMaxIt"), std::dec);
 	else
 	{
 		std::cerr << "[MISSING] gMaxIt value is missing.\n";
@@ -1474,10 +1469,13 @@ bool loadProperties( std::string __propertiesFilename )
 		if ( gRandomSeed == -1 ) // value = -1 means random seed. set seed, then update content of properties.
 		{
 			// set seed value
-			gRandomSeed = (unsigned int)time(NULL); // time-based random seed, if needed.
-
+            // use time in microseconds + PID to try to avoid duplicate when running multiple instances of roborobo (e.g. multiple experiences on a cluster).
+            struct timeval tv;
+            gettimeofday(&tv,NULL);
+            unsigned long time_in_microsec = 1000000 * tv.tv_sec + tv.tv_usec;
+            gRandomSeed = (int)time_in_microsec + getpid();
+            
 			// update properties
-
 			gProperties.setProperty("gRandomSeed",convertToString(gRandomSeed)); // update value.
 		}
 	}
@@ -1875,19 +1873,6 @@ bool loadProperties( std::string __propertiesFilename )
             std::cerr << "[WARNING] gMovableObjects is missing or corrupt (default is \"" << gMovableObjects << "\").\n";
             //returnValue = false;
         }
-    
-    s = gProperties.getProperty("gStuckMovableObjects");
-    if ( s == "true" || s == "True" || s == "TRUE" )
-        gStuckMovableObjects = true;
-    else
-        if ( s == "false" || s == "False" || s == "FALSE" )
-            gStuckMovableObjects = false;
-        else
-        {
-            std::cerr << "[WARNING] gStuckMovableObjects is missing or corrupt (default is \"false\").\n";
-            //returnValue = false;
-        }
-    
 
 	if ( gProperties.hasProperty("gRobotMaskImageFilename") )
 		gRobotMaskImageFilename = gProperties.getProperty("gRobotMaskImageFilename");
@@ -2059,20 +2044,21 @@ void initRoborobo()
     
 	// * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
 	
-	srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
-    gLogManager->write("# random seed             : " + std::to_string(gRandomSeed) + "\n");
+    engine.seed(gRandomSeed);
+    
+	//srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
+	gLogFile << "# random seed             : " << gRandomSeed << std::endl; 
 
 	gWorld = new World();
 
 	// * run
-	gWorld->in
-	itWorld();
+	gWorld->initWorld();
 
 	if ( gBatchMode == false )
 		initMonitor(true); // add speed monitoring and inspector agent
 }
 
-bool runRoborobo(long long __maxIt) // default parameter is -1 (infinite)
+bool runRoborobo(int __maxIt) // default parameter is -1 (infinite)
 {
 	bool quit = false;
 	int currentIt = 0;
@@ -2092,6 +2078,7 @@ bool runRoborobo(long long __maxIt) // default parameter is -1 (infinite)
 		{
 			const Uint8 *keyboardStates = SDL_GetKeyboardState( NULL );
 			quit = checkEvent() | handleKeyEvent(keyboardStates);
+            
 			//Start the frame timer
 			fps.start();
 			
@@ -2140,23 +2127,20 @@ void closeRoborobo()
     int days = hours/24;
     hours = hours - (days*24);
     
-    std::stringstream closeText;
-    
-    closeText << "# Started: " << gStartTime << std::endl;
-    closeText << "# Stopped: " << gStopTime << std::endl;
-    closeText << "# Elapsed: ";
+    gLogFile << "# Started: " << gStartTime << std::endl;
+    gLogFile << "# Stopped: " << gStopTime << std::endl;
+    gLogFile << "# Elapsed: ";
     if ( days > 0 )
-        closeText << days << " day(s), ";
+        gLogFile << days << " day(s), ";
     if ( hours > 0 )
-        closeText << hours << " hour(s), ";
+        gLogFile << hours << " hour(s), ";
     if ( minutes > 0 )
-        closeText << minutes << " minutes(s), ";
-    closeText <<  seconds << " second";
+        gLogFile << minutes << " minutes(s), ";
+    gLogFile <<  seconds << " second";
     if ( seconds > 1 )
-        closeText << "s";
-    closeText << "." << std::endl;
+        gLogFile << "s";
+    gLogFile << "." << std::endl;
 
-    gLogManager->write(closeText.str());
     
 	stopLogging();
 	clean_up();

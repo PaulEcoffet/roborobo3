@@ -80,7 +80,7 @@ void PartnerChoiceWorldObserver::initOpportunities()
     }
 }
 
-void PartnerChoiceWorldObserver::step()
+void PartnerChoiceWorldObserver::stepPre()
 {
     monitorPopulation();
     computeOpportunityImpact();
@@ -351,7 +351,7 @@ void PartnerChoiceWorldObserver::reset()
         gen.weights.resize(dynamic_cast<PartnerChoiceController *>(m_world->getRobot(0)->getController())->getGenome().weights.size());
         for (auto& weight: gen.weights)
         {
-            weight = ranf() * 2 - 1;
+            weight = random() * 2 - 1;
         }
         ind.genome = gen;
         m_individuals.push_back(ind);

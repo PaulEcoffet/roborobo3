@@ -277,7 +277,7 @@ unsigned int MovingNSController::computeRequiredNumberOfWeights()
 
 void MovingNSController::performVariation()
 {
-    if ( MovingNSSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( MovingNSSharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( MovingNSSharedData::gMutationOperator )
         {
@@ -304,7 +304,7 @@ void MovingNSController::mutateGaussian(float sigma) // mutate within bounds.
     
     for (unsigned int i = 0 ; i < _currentGenome.size() ; i++ )
     {
-        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
+        double value = _currentGenome[i] + 0 + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
@@ -336,7 +336,7 @@ void MovingNSController::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = float(rand()%100) / 100.0; // in [0,1[
+        float randomValue = float(randint()%100) / 100.0; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -389,7 +389,7 @@ void MovingNSController::initController()
     // Intialize genomes
     for ( unsigned int i = 0 ; i < nbGenes; i++ )
     {
-        _currentGenome.push_back((ranf()*2.0)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((random()*2.0)-1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
@@ -410,11 +410,11 @@ void MovingNSController::reset()
 
 void MovingNSController::mutateSigmaValue()
 {
-    float dice = ranf();
+    float dice = random();
     
     if ( dice <= MovingNSSharedData::gProbaMutation )
     {
-        dice = ranf();
+        dice = random();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + MovingNSSharedData::gUpdateSigmaStep ); // increase sigma
@@ -515,13 +515,12 @@ void MovingNSController::wasNearObject( int __objectId, bool __objectDidMove, do
     double coeff = MovingNSSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MovingNSSharedData::gConstantA) - __effort;
     
-    if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
-        increaseFitness(payoff);
-        _efforts.push_back(__effort);
-        if (_efforts.size() >= MovingNSSharedData::gMemorySize)
-            _efforts.pop_front();
-    }
+
+    increaseFitness(payoff);
+    _efforts.push_back(__effort);
+    if (_efforts.size() >= MovingNSSharedData::gMemorySize)
+        _efforts.pop_front();
+
     _totalEfforts.push_back(__totalEffort);
     if (_totalEfforts.size() >= MovingNSSharedData::gMemorySize)
         _totalEfforts.pop_front();

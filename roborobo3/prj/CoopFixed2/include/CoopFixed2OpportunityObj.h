@@ -78,7 +78,7 @@ public:
      */
     int getNbNearbyRobots();
 
-	std::string inspect() override;
+	std::string inspect(std::string prefix="") override;
 };
 
 #endif /* PRJ_COOPFIXED2_SRC_OPPORTUNITYOBJ_H_ */

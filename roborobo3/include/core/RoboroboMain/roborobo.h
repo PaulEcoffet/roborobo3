@@ -104,7 +104,6 @@ extern int gPhysicalObjectIndexStartOffset; // used for encoding the physical ob
 extern int gRobotIndexStartOffset; // used for encoding the robot's index into the environment image.
 
 extern bool gMovableObjects; // enable physics for moving (some) objects
-extern bool gStuckMovableObjects;
 
 extern bool gRobotDisplayFocus;  // make focused robot more visible
 
@@ -121,7 +120,7 @@ extern bool gStepByStep;
 extern bool gInspectorMode;			// defines if manual control is robot-centered or "god"-centered (ie. envt viewpoint)
 extern bool gInspectorAgent;		// defines if there *actually* is an inspector agent (note: if using batch mode for, e.g. evolution, no inspector agent is needed)
 
-extern long long gMaxIt;
+extern int gMaxIt;
 
 extern int gNbOfLandmarks;
 extern std::vector<LandmarkObject*> gLandmarks; // list of inanimate objects (landmarks).
@@ -251,6 +250,7 @@ extern int gLocomotionMode; // locomotion mode dynamics
 
 void clean_up();
 void displayHelp();
+void inspectAtPixel(int xIns, int yIns);
 bool checkEvent();
 bool handleKeyEvent(Uint8 *keyboardStates);
 void updateDisplay();

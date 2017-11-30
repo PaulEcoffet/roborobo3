@@ -266,7 +266,7 @@ unsigned int CoopOpportunity2MaxController::computeRequiredNumberOfWeights()
 
 void CoopOpportunity2MaxController::performVariation()
 {
-    if ( CoopOpportunity2MaxSharedData::gIndividualMutationRate > rand() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( CoopOpportunity2MaxSharedData::gIndividualMutationRate > randint() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( CoopOpportunity2MaxSharedData::gMutationOperator )
         {
@@ -293,7 +293,7 @@ void CoopOpportunity2MaxController::mutateGaussian(double sigma) // mutate withi
     
     for (double &curWeight : _currentGenome)
     {
-        double value = curWeight + getGaussianRand(0,_currentSigma);
+        double value = curWeight + 0 + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
@@ -325,7 +325,7 @@ void CoopOpportunity2MaxController::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = float(rand()%100) / 100.0; // in [0,1[
+        float randomValue = float(randint()%100) / 100.0; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -378,7 +378,7 @@ void CoopOpportunity2MaxController::initController()
     // Intialize genomes
     for ( unsigned int i = 0 ; i < nbGenes; i++ )
     {
-        _currentGenome.push_back((rand()*2.0)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((randint()*2.0)-1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
@@ -399,11 +399,11 @@ void CoopOpportunity2MaxController::reset()
 
 void CoopOpportunity2MaxController::mutateSigmaValue()
 {
-    float dice = rand();
+    float dice = randint();
     
     if ( dice <= CoopOpportunity2MaxSharedData::gProbaMutation )
     {
-        dice = rand();
+        dice = randint();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + CoopOpportunity2MaxSharedData::gUpdateSigmaStep ); // increase sigma
@@ -485,7 +485,7 @@ void CoopOpportunity2MaxController::wasNearObject( int __objectId, bool __object
     double coeff = CoopOpportunity2MaxSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, CoopOpportunity2MaxSharedData::gConstantA) - __effort;
     
-    if (__objectDidMove || gStuckMovableObjects) {
+    if (__objectDidMove) {
         increaseFitness(payoff);
         _efforts.push_back(__effort);
         if (_efforts.size() >= CoopOpportunity2MaxSharedData::gMemorySize)
