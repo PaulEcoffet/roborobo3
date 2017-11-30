@@ -38,7 +38,7 @@ public:
     
     
     virtual void reset();
-    virtual void step();
+    virtual void stepPre();
     void stepEvaluation( bool __newGeneration );
     void resetObjects(); // reset which objects are active, etc.
     void resetLandmarks();

@@ -23,7 +23,7 @@ public:
     int getNbNearbyRobots() const;
     double getCoop() const;
 
-    std::string inspect() override;
+    std::string inspect(std::string prefix="") override;
 
 protected:
     double m_coop;

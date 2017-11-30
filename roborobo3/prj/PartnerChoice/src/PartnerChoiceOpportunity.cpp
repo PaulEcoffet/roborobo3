@@ -55,7 +55,7 @@ void PartnerChoiceOpportunity::step()
     RoundObject::step();
 }
 
-std::string PartnerChoiceOpportunity::inspect()
+std::string PartnerChoiceOpportunity::inspect(std::string prefix)
 {
     std::stringstream s;
     s << "My value is " << m_coop << "\n";

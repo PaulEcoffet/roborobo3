@@ -18,7 +18,7 @@
 #include "Utilities/Graphics.h"
 
 Robot::Robot( World *__world )
-{
+{    
 	_wm = gConfigurationLoader->make_RobotWorldModel(); // TODO: externalize object referenced to create the new instance
 
 	_wm->_world = __world;
@@ -179,8 +179,8 @@ void Robot::reset()
 		
 			// pick random coordinate
 			
-            x = (int)(ranf() * (double)(gAgentsInitAreaWidth - (2 * gRobotWidth))) + gRobotWidth + gAgentsInitAreaX;
-            y = (int)(ranf() * (double)(gAgentsInitAreaHeight - (2 * gRobotHeight))) + gRobotHeight + gAgentsInitAreaY;
+            x = (int)(random() * (double)(gAgentsInitAreaWidth - (2 * gRobotWidth))) + gRobotWidth + gAgentsInitAreaX;
+            y = (int)(random() * (double)(gAgentsInitAreaHeight - (2 * gRobotHeight))) + gRobotHeight + gAgentsInitAreaY;
            
 			// check for agents superposition - ie. if picked position is valid vs. already located agents.
 			for ( int i = 0 ; i != _wm->getId() ; i++ )
@@ -254,7 +254,7 @@ void Robot::reset()
     }
 	else
 	{
-		_wm->_agentAbsoluteOrientation = ranf() * 360. - 180.;
+		_wm->_agentAbsoluteOrientation = random() * 360. - 180.;
         //randomOrientation = true;
 	}
     
@@ -690,7 +690,6 @@ bool Robot::isCollision()
                             if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // this is a physical object
                             {
                                 targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-
                                 gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
 
                                 //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collides with object #" << targetIndex << ".\n";
@@ -744,9 +743,9 @@ void Robot::show(SDL_Surface *surface) // display on screen
 			int dy = 10;
 			int xcenter = (int)_wm->_xReal + 0.5;
 			int ycenter = (int)_wm->_yReal + 0.5;
-			int r = 255.0 * ranf();
-			int g = 255.0 * ranf();
-			int b = 255.0 * ranf();
+			int r = 255.0 * random();
+			int g = 255.0 * random();
+			int b = 255.0 * random();
 						
 			for ( int xTmp = xcenter - dx ; xTmp != xcenter + dx + 1 ; xTmp++ )
 			{
@@ -933,26 +932,27 @@ void Robot::applyRobotPhysics( )
     }
 }
 
-int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
+
+std::string Robot::inspect( std::string prefix)
 {
-    int tries = 0;
-    int x = 0, y = 0;
-    do {
-        x = rand() % (__xMax - __xMin) + __xMin;
-        y = rand() % (__yMax - __yMin) + __yMin;
-        setCoord(x, y);
-        setCoordReal(x, y);
-        tries++;
-    } while (isCollision() == true && tries < gLocationFinderMaxNbOfTrials);
-    if (tries == gLocationFinderMaxNbOfTrials)
-    {
-        std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
-    }
-//    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
-    return tries;
+    return _controller->inspect( prefix );
 }
 
-std::string Robot::inspect()
+int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
 {
-	return _controller->inspect();
+	int tries = 0;
+	int x = 0, y = 0;
+	do {
+		x = randint() % (__xMax - __xMin) + __xMin;
+		y = randint() % (__yMax - __yMin) + __yMin;
+		setCoord(x, y);
+		setCoordReal(x, y);
+		tries++;
+	} while (isCollision() == true && tries < gLocationFinderMaxNbOfTrials);
+	if (tries == gLocationFinderMaxNbOfTrials)
+	{
+		std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
+	}
+//    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
+	return tries;
 }

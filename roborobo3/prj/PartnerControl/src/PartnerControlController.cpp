@@ -48,7 +48,7 @@ PartnerControlController::PartnerControlController(RobotWorldModel* wm)
 
     for (auto& weight: m_genome.weights)
     {
-        weight = ranf() * 2 - 1;
+        weight = random() * 2 - 1;
     }
     m_nn->setWeights(m_genome.weights);
     resetFitness();
@@ -190,7 +190,7 @@ void PartnerControlController::increaseFitness( double delta )
     updateFitness(m_wm->_fitnessValue+delta);
 }
 
-std::string PartnerControlController::inspect()
+std::string PartnerControlController::inspect(std::string prefix)
 {
     std::stringstream out;
 

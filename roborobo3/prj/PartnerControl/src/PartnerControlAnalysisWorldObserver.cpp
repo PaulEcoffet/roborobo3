@@ -53,7 +53,7 @@ void PartnerControlAnalysisWorldObserver::reset()
     resetEnvironment();
 }
 
-void PartnerControlAnalysisWorldObserver::step()
+void PartnerControlAnalysisWorldObserver::stepPre()
 {
     computeOpportunityImpact();
     monitorPopulation();

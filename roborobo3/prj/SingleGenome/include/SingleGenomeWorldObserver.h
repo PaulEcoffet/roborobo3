@@ -47,7 +47,7 @@ public:
     ~SingleGenomeWorldObserver();
     
     virtual void reset();
-    virtual void step();
+    virtual void stepPre();
     
     LogManager *getCoopLogManager() { return _coopLogManager; }
     

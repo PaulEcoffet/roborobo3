@@ -82,7 +82,7 @@ void MonoRobotController::initController()
     
     for ( unsigned int i = 0 ; i != nbGene ; i++ )
     {
-        _currentGenome.push_back((double)(rand()%MonoRobotSharedData::gNeuronWeightRange)/(MonoRobotSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((double)(randint()%MonoRobotSharedData::gNeuronWeightRange)/(MonoRobotSharedData::gNeuronWeightRange/2)-1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
@@ -304,7 +304,7 @@ unsigned int MonoRobotController::computeRequiredNumberOfWeights()
 
 void MonoRobotController::performVariation()
 {
-    if ( MonoRobotSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( MonoRobotSharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( MonoRobotSharedData::gMutationOperator )
         {
@@ -331,7 +331,7 @@ void MonoRobotController::mutateGaussian(float sigma) // mutate within bounds.
     
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
+        double value = _currentGenome[i] + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
@@ -364,7 +364,7 @@ void MonoRobotController::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = float(rand()%100) / 100.0; // in [0,1[
+        float randomValue = random(); // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -374,11 +374,11 @@ void MonoRobotController::mutateUniform() // mutate within bounds.
 
 void MonoRobotController::mutateSigmaValue()
 {
-    float dice = float(rand()%100) / 100.0;
+    float dice = random();
     
     if ( dice <= MonoRobotSharedData::gProbaMutation )
     {
-        dice = float(rand() %100) / 100.0;
+        dice = random();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + MonoRobotSharedData::gUpdateSigmaStep ); // increase sigma
@@ -484,14 +484,12 @@ void MonoRobotController::wasNearObject( int __objectId, bool __objectDidMove, d
     
     double coeff = MonoRobotSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, MonoRobotSharedData::gConstantA) - __effort;
-    
-    if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
-        increaseFitness(payoff);
-        _efforts.push_back(__effort);
-        if (_efforts.size() >= MonoRobotSharedData::gMemorySize)
-            _efforts.pop_front();
-    }
+
+//       printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
+    increaseFitness(payoff);
+    _efforts.push_back(__effort);
+    if (_efforts.size() >= MonoRobotSharedData::gMemorySize)
+        _efforts.pop_front();
     _totalEfforts.push_back(__totalEffort);
     if (_totalEfforts.size() >= MonoRobotSharedData::gMemorySize)
         _totalEfforts.pop_front();
