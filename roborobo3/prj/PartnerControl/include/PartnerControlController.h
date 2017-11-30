@@ -49,6 +49,7 @@ public:
                 assert(PartnerControlController::minWeight <= newVal && newVal <= PartnerControlController::maxWeight);
                 child.weights.push_back(newVal);
             }
+            assert(child.weights != weights);
             return child;
         }
 

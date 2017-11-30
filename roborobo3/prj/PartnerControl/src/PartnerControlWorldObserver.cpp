@@ -37,7 +37,8 @@ PartnerControlWorldObserver::PartnerControlWorldObserver(World *__world) : World
     m_observer->write("gen\tind\teval\titer\tonOpp\tcoop\n");
 
     m_nbIndividuals = 50;
-    gMaxIt = (long long) m_nbIndividuals * (long long)PartnerControlSharedData::evaluationTime * (long long)PartnerControlSharedData::nbEvaluationsPerGeneration * 2000;
+    gMaxIt = (long long) m_nbIndividuals * (long long)PartnerControlSharedData::evaluationTime * (long long)PartnerControlSharedData::nbEvaluationsPerGeneration
+            * ((long long) PartnerControlSharedData::nbGenerations + 50);
 }
 
 
@@ -49,33 +50,12 @@ PartnerControlWorldObserver::~PartnerControlWorldObserver()
 
 void PartnerControlWorldObserver::initOpportunities()
 {
-    double curCoopVal = 0;
-    double stepCoop = 0;
-    if (PartnerControlSharedData::nbCoopStep > 1)
-    {
-        stepCoop = PartnerControlSharedData::maxCoop / ((double)PartnerControlSharedData::nbCoopStep - 1);
-    }
-    else
-    {
-        curCoopVal = PartnerControlSharedData::maxCoop;
-    }
-    int stepEvery = std::ceil(gNbOfPhysicalObjects / PartnerControlSharedData::nbCoopStep);
-    int i = 0;
-    auto physObjList = gPhysicalObjects;
-    std::shuffle(physObjList.begin(), physObjList.end(), m_mt);
+    double curCoop =  m_curEvaluationInGeneration * PartnerControlSharedData::maxCoop / ((double) PartnerControlSharedData::nbEvaluationsPerGeneration - 1);
+    auto &physObjList = gPhysicalObjects;
     for (auto *physicalObject : physObjList)
     {
         auto *opp = dynamic_cast<PartnerControlOpportunity *>(physicalObject);
-        opp->setCoopValue(curCoopVal);
-        if ((i + 1) == stepEvery)
-        {
-            curCoopVal += stepCoop;
-            i = 0;
-        }
-        else
-        {
-            i++;
-        }
+        opp->setCoopValue(curCoop);
 
     }
 }
@@ -90,9 +70,9 @@ void PartnerControlWorldObserver::step()
 
     if (m_curEvalutionIteration == PartnerControlSharedData::evaluationTime)
     {
-        resetEnvironment();
         m_curEvalutionIteration = 0;
         m_curEvaluationInGeneration++;
+        resetEnvironment();
     }
     if( m_curEvaluationInGeneration == PartnerControlSharedData::nbEvaluationsPerGeneration)
     {
@@ -196,6 +176,7 @@ void PartnerControlWorldObserver::logFitnesses(const std::vector<std::pair<int, 
     out << variance << "\n";
     std::cout << out.str();
     m_fitnessLogManager->write(out.str());
+    m_fitnessLogManager->flush();
 }
 
 void PartnerControlWorldObserver::logGenomes(const std::vector<std::pair<int, double>>& sortedFitnesses)
@@ -266,17 +247,18 @@ void PartnerControlWorldObserver::resetEnvironment()
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
-    int i = 0;
+    initOpportunities();
+
     for (auto object: gPhysicalObjects)
     {
-        object->findRandomLocation();
+        object->resetLocation();
         object->registerObject();
     }
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
-        robot->registerRobot();
     }
 }
 
@@ -311,9 +293,17 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
 
 double PartnerControlWorldObserver::payoff(const double invest, const double totalInvest) const
 {
-    const int nbRobots = 2;
-    const double coeff = PartnerControlSharedData::constantK / (1.0 + pow(nbRobots - 2, 2)); // \frac{k}{1+(n-2)^2}
-    const double res = coeff * pow(totalInvest, PartnerControlSharedData::constantA) - invest;
+    double res;
+    if (!PartnerControlSharedData::gaussianPayoff)
+    {
+        const int nbRobots = 2;
+        const double coeff = PartnerControlSharedData::constantK / (1.0 + pow(nbRobots - 2, 2)); // \frac{k}{1+(n-2)^2}
+        res = coeff * pow(totalInvest, PartnerControlSharedData::constantA) - invest;
+    }
+    else
+    {
+        res = exp(-pow(totalInvest - 0.5, 2) / 0.05);
+    }
     return res;
 }
 
@@ -358,6 +348,7 @@ void PartnerControlWorldObserver::reset()
     }
 
     activateOnlyRobot(m_curInd);
+    resetEnvironment();
 }
 
 void PartnerControlWorldObserver::clearRobotFitnesses()

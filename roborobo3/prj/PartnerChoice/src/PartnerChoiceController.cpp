@@ -118,11 +118,12 @@ std::vector<double> PartnerChoiceController::getInputs()
             else
                 seenCoop = 0;
         }
-        inputs.emplace_back(std::string("dist from ") + std::to_string(i) , m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
-        inputs.emplace_back("is agent from " + std::to_string(i), static_cast<double> (Agent::isInstanceOf(entityId)));
-        inputs.emplace_back("is wall from " + std::to_string(i), static_cast<double> (entityId == WALL_ID));
-        inputs.emplace_back("is obj from " + std::to_string(i), static_cast<double> (isOpportunity));
-        inputs.emplace_back("seenCoop from " + std::to_string(i), seenCoop);
+        std::string istr = std::to_string(i);
+        inputs.emplace_back(std::string("dist from ") + istr , m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
+        inputs.emplace_back("is agent from " + istr, static_cast<double> (Agent::isInstanceOf(entityId)));
+        inputs.emplace_back("is wall from " + istr, static_cast<double> (entityId == WALL_ID));
+        inputs.emplace_back("is obj from " + istr, static_cast<double> (isOpportunity));
+        inputs.emplace_back("seenCoop from " + istr, seenCoop);
     }
 
     /*

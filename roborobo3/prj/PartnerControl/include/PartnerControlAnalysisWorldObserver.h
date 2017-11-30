@@ -30,6 +30,8 @@ protected:
     int m_curIterationInRep;
     int m_curRep;
 
+    std::ofstream m_log;
+
     void monitorPopulation();
 
     void resetEnvironment();
@@ -43,6 +45,10 @@ protected:
     double m_stepCoop;
 
     void setAllOpportunitiesCoop(double coop);
+
+    void computeOpportunityImpact();
+
+    void clearOpportunityNearbyRobots();
 };
 
 

@@ -22,10 +22,13 @@ double PartnerControlSharedData::constantK = 1.41;
 int PartnerControlSharedData::nbEvaluationsPerGeneration = 1;
 int PartnerControlSharedData::takeVideoEveryGeneration = std::numeric_limits<int>::max();
 int PartnerControlSharedData::seeCoopFromDist = 0;
+int PartnerControlSharedData::nbGenerations = 0;
+bool PartnerControlSharedData::gaussianPayoff = false;
 
 void PartnerControlSharedData::initSharedData()
 {
     gProperties.checkAndGetPropertyValue("evaluationTime", &PartnerControlSharedData::evaluationTime, true);
+    gProperties.checkAndGetPropertyValue("nbGenerations", &PartnerControlSharedData::nbGenerations, true);
     gProperties.checkAndGetPropertyValue("genomeLog", &PartnerControlSharedData::genomeLog, true);
     gProperties.checkAndGetPropertyValue("sigma", &PartnerControlSharedData::sigma, true);
     gProperties.checkAndGetPropertyValue("controllerType", &PartnerControlSharedData::controllerType, true);
@@ -40,6 +43,9 @@ void PartnerControlSharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &PartnerControlSharedData::nbEvaluationsPerGeneration, true);
     gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &PartnerControlSharedData::takeVideoEveryGeneration, false);
     gProperties.checkAndGetPropertyValue("seeCoopFromDist", &PartnerControlSharedData::seeCoopFromDist, false);
+
+    gProperties.checkAndGetPropertyValue("gaussianPayoff", &PartnerControlSharedData::gaussianPayoff, false);
+    std::cout << "gauss:" << PartnerControlSharedData::gaussianPayoff << "\n";
 }
 
 
