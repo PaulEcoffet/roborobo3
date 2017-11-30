@@ -30,12 +30,14 @@ PartnerControlController::PartnerControlController(RobotWorldModel* wm)
     {
         case MLP_ID:
             m_nn = new MLP(m_genome.weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            std::cout << "MLP\n";
             break;
         case PERCEPTRON_ID:
             m_nn = new Perceptron(m_genome.weights, nbInputs, nbOutputs);
             break;
         case ELMAN_ID:
             m_nn = new Elman(m_genome.weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            std::cout << "Elman\n";
             break;
         default:
             std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< PartnerControlSharedData::controllerType << "\n";
@@ -103,7 +105,7 @@ PartnerControlController::~PartnerControlController()
 std::vector<double> PartnerControlController::getInputs()
 {
     const int WALL_ID = 0;
-    std::vector<std::pair<std::string, double>> inputs;
+    std::vector<double> inputs;
     inputs.reserve(m_nn->getNbInputs());
 
     /*
@@ -115,39 +117,32 @@ std::vector<double> PartnerControlController::getInputs()
         double seenCoop = 0;
         auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(i));
 
-        if (entityId >= gPhysicalObjectIndexStartOffset && entityId < gPhysicalObjectIndexStartOffset+gNbOfPhysicalObjects) // is an Object
+        if (entityId >= gPhysicalObjectIndexStartOffset &&
+            entityId < gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects) // is an Object
         {
-            auto * opportunity = dynamic_cast<PartnerControlOpportunity*>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            auto *opportunity = dynamic_cast<PartnerControlOpportunity *>(gPhysicalObjects[entityId -
+                                                                                           gPhysicalObjectIndexStartOffset]);
             isOpportunity = true;
             if (PartnerControlSharedData::seeCoopFromDist)
                 seenCoop = opportunity->getCoop();
             else
                 seenCoop = 0;
         }
-        inputs.emplace_back(std::string("dist from ") + std::to_string(i) , m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
-        inputs.emplace_back("is agent from " + std::to_string(i), static_cast<double> (Agent::isInstanceOf(entityId)));
-        inputs.emplace_back("is wall from " + std::to_string(i), static_cast<double> (entityId == WALL_ID));
-        inputs.emplace_back("is obj from " + std::to_string(i), static_cast<double> (isOpportunity));
-        inputs.emplace_back("seenCoop from " + std::to_string(i), seenCoop);
+        inputs.emplace_back(m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
+        inputs.emplace_back(static_cast<double> (Agent::isInstanceOf(entityId)));
+        inputs.emplace_back(static_cast<double> (entityId == WALL_ID));
+        inputs.emplace_back(static_cast<double> (isOpportunity));
+        inputs.emplace_back(seenCoop);
     }
 
     /*
      * Opportunity inputs
      */
-    inputs.emplace_back("on Opp", static_cast<double>(m_wm->onOpportunity));
-    inputs.emplace_back("mean Last Total Invest", m_wm->meanLastTotalInvest());
-    inputs.emplace_back("mean Own Invest", m_wm->meanLastOwnInvest());
+    inputs.emplace_back(static_cast<double>(m_wm->onOpportunity));
+    inputs.emplace_back(m_wm->meanLastTotalInvest());
+    inputs.emplace_back(m_wm->meanLastOwnInvest());
 
-    /*
-    for (const auto &input : inputs)
-    {
-        std::cout << input.first << " : " << input.second << "\n";
-    }
-    //*/
-
-    std::vector<double> realinputs(inputs.size());
-    std::transform(inputs.begin(), inputs.end(), realinputs.begin(), [](std::pair<std::string, double> a){ return a.second;});
-    return realinputs;
+    return inputs;
 }
 
 void PartnerControlController::loadNewGenome(const genome &newGenome)

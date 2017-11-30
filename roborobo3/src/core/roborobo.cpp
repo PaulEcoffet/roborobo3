@@ -2065,7 +2065,8 @@ void initRoborobo()
 	gWorld = new World();
 
 	// * run
-	gWorld->initWorld();
+	gWorld->in
+	itWorld();
 
 	if ( gBatchMode == false )
 		initMonitor(true); // add speed monitoring and inspector agent

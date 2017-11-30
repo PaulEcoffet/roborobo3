@@ -29,6 +29,8 @@ public:
 
     static void initSharedData();
 
+    static int nbGenerations;
+    static bool gaussianPayoff;
 };
 
 
