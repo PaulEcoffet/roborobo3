@@ -319,7 +319,7 @@ unsigned int SingleGenomeController::computeRequiredNumberOfWeights()
 
 void SingleGenomeController::performVariation()
 {
-    if ( SingleGenomeSharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( SingleGenomeSharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( SingleGenomeSharedData::gMutationOperator )
         {
@@ -346,7 +346,7 @@ void SingleGenomeController::mutateGaussian(float sigma) // mutate within bounds
     
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        double value = _currentGenome[i] + getGaussianRand(0,_currentSigma);
+        double value = _currentGenome[i] + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
@@ -379,7 +379,7 @@ void SingleGenomeController::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = float(rand()%100) / 100.0; // in [0,1[
+        float randomValue = float(randint()%100) / 100.0; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -389,11 +389,11 @@ void SingleGenomeController::mutateUniform() // mutate within bounds.
 
 void SingleGenomeController::mutateSigmaValue()
 {
-    float dice = ranf();
+    float dice = random();
     
     if ( dice <= SingleGenomeSharedData::gProbaMutation )
     {
-        dice = ranf();
+        dice = random();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + SingleGenomeSharedData::gUpdateSigmaStep ); // increase sigma
@@ -502,13 +502,11 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
     double coeff = SingleGenomeSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, SingleGenomeSharedData::gConstantA) - __effort;
     
-    if (__objectDidMove || gStuckMovableObjects) {
-//        printf("[DEBUG] Robot %d (it %d): effort %lf, payoff %lf\n", _wm->getId(), gWorld->getIterations(), __effort, payoff);
-        increaseFitness(payoff);
-        _efforts.push_back(__effort);
-        if (_efforts.size() >= SingleGenomeSharedData::gMemorySize)
-            _efforts.pop_front();
-    }
+    increaseFitness(payoff);
+    _efforts.push_back(__effort);
+    if (_efforts.size() >= SingleGenomeSharedData::gMemorySize)
+        _efforts.pop_front();
+
     
     _totalEfforts.push_back(__totalEffort);
     if (_totalEfforts.size() >= SingleGenomeSharedData::gMemorySize)
@@ -527,15 +525,15 @@ void SingleGenomeController::dumpGenome()
 }
 
 
-std::string SingleGenomeController::inspect()
+std::string SingleGenomeController::inspect(std::string prefix)
 {
     std::stringstream out;
     out << "Near object: " << ((_isNearObject)? "True" : "False") << ".\n";
     if (_isNearObject || true)
     {
         out << std::setprecision(3);
-        out << "\tLast cooperation value: " << _wm->_cooperationLevel << ".\n";
-        out << "\tTotal Effort history: ";
+        out << prefix << "\tLast cooperation value: " << _wm->_cooperationLevel << ".\n";
+        out << prefix << "\tTotal Effort history: ";
         for (auto curTotEffort : _totalEfforts)
         {
             out << curTotEffort << ", ";
@@ -553,7 +551,7 @@ std::string SingleGenomeController::inspect()
     {
         seen.insert(_wm->getObjectIdFromCameraSensor(i));
     }
-    out << "Seen objects:\n";
+    out << prefix << "Seen objects:\n";
     for (int entityId : seen)
     {
         if (entityId == 0)
@@ -573,6 +571,6 @@ std::string SingleGenomeController::inspect()
             out << "with " << nbDist << " robots nearby.\n ";
         }
     }
-    out << "Actual fitness: " << getFitness() << "\n";
+    out << prefix <<  "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }

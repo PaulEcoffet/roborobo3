@@ -79,11 +79,11 @@ class Robot : public Agent
         AgentObserver* getObserver() { return _agentObserver; }
 		WorldObserver* getWorldObserver();
         RobotWorldModel* getWorldModel() { return _wm; }
-    
+
+        virtual std::string inspect( std::string prefix = "" );
+
 		void displayInfo(); // display input/output values on console. (used for inspect agent mode, cf. help on console) -- keep it simple: one line only.
 
-
-		std::string inspect() override;
 
 		// return a list of agents in the vincinity (ie. in the communication area)
 		// the content of this list depends on the max communication range (see properties file).

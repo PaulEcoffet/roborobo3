@@ -33,7 +33,7 @@ public:
             for (const double &weight : weights)
             {
                 // Bouncing random
-                double newVal = getGaussianRand(weight, sigma);
+                double newVal = weight + randgaussian() *  sigma;
                 if (newVal < PartnerControlController::minWeight)
                 {
                     const double range = PartnerControlController::maxWeight - PartnerControlController::minWeight;
@@ -68,7 +68,7 @@ public:
     void updateFitness(double newFitness);
     void increaseFitness(double delta);
 
-    std::string inspect() override;
+    std::string inspect(std::string prefix="") override;
 
     double getFitness() const;
     genome getGenome() const;

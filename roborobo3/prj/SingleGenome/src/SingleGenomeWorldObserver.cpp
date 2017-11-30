@@ -262,7 +262,7 @@ void SingleGenomeWorldObserver::stepEvaluation()
     loadGenome();
 }
 
-void SingleGenomeWorldObserver::step()
+void SingleGenomeWorldObserver::stepPre()
 {
 //    printf("Genome %d replica %d fakeRobots %d fakeCoop %d iter %d\n", _genome, _replica, _nbFakeRobots, _fakeCoop, _generationItCount);
     // switch to next generation.

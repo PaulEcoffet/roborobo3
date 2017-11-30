@@ -25,7 +25,6 @@ public:
     explicit PartnerControlWorldObserver(World *__world);
     ~PartnerControlWorldObserver() override;
 
-    void step() override;
     void reset() override;
     void stepEvaluation();
 
@@ -42,7 +41,7 @@ protected:
     LogManager* m_observer;
     json m_genomesLogJson;
 
-    int m_curEvalutionIteration;
+    int m_curEvaluationIteration;
     int _generationCount;
 
     std::mt19937 m_mt; // TODO: MUST BE THE SAME FOR THE WHOLE PROGRAM
@@ -66,6 +65,8 @@ protected:
     void monitorPopulation() const;
 
     int m_nbIndividuals;
+
+    void stepPre() override;
 };
 
 

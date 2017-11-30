@@ -141,7 +141,7 @@ void MovingNSWorldObserver::stepEvaluation()
     // register objects first because they might have fixed locations, whereas robots move anyway
     for (auto object: gPhysicalObjects)
     {
-        object->resetLocation();
+        object->findRandomLocation();
         object->registerObject();
     }
     
@@ -164,8 +164,8 @@ void MovingNSWorldObserver::stepEvaluation()
         bool done = false;
         int pick = -1;
         while (done == false) {
-            pick = rand()%gNbOfRobots;
-            double draw = ranf()*totalFitness;
+            pick = randint()%gNbOfRobots;
+            double draw = random()*totalFitness;
             if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
             {
                 done = true;
@@ -186,7 +186,7 @@ void MovingNSWorldObserver::stepEvaluation()
 //        printf("Robot %.2d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
 }
 
-void MovingNSWorldObserver::step()
+void MovingNSWorldObserver::stepPre()
 {
     // switch to next generation.
     if( _generationItCount == MovingNSSharedData::gEvaluationTime - 1 )

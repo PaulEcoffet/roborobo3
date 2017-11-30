@@ -73,7 +73,7 @@ void MovingEEController::performSelection()
     if ( nbSimilar > 0 ) // >1 genomes have the same fitness best value. Pick randomly among them
     {
         int count = 0;
-        int randomPick = rand() % ( nbSimilar + 1 );
+        int randomPick = randint() % ( nbSimilar + 1 );
         
         if ( randomPick != 0 ) // not already stored (i.e. not the first one)
         {

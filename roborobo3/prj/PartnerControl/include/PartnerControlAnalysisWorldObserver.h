@@ -19,7 +19,7 @@ class PartnerControlAnalysisWorldObserver : public WorldObserver
 public:
     explicit PartnerControlAnalysisWorldObserver(World *__world);
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
 
 

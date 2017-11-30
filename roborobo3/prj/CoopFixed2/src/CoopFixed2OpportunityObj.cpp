@@ -109,7 +109,7 @@ int CoopFixed2OpportunityObj::getNbNearbyRobots()
     return static_cast<int>(_prevNearbyRobots.size());
 }
 
-std::string CoopFixed2OpportunityObj::inspect()
+std::string CoopFixed2OpportunityObj::inspect(std::string prefix)
 {
     std::stringstream out;
     out << "I had agents previously present: ";

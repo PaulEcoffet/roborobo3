@@ -25,7 +25,7 @@ void MovingObject::reset()
 {
     for (auto& totEff: _totalEfforts)
         totEff = 0;
-    resetLocation();
+    findRandomLocation();
 }
 
 void MovingObject::move() {
@@ -74,7 +74,7 @@ void MovingObject::move() {
         Sint16 newX = _desiredX; //rounded
         Sint16 newY = _desiredY;
         
-        if (gStuckMovableObjects == false) {
+        if (true /* Stupid but for compatibility reasons */) {
             if (newX != getXCenterPixel() || newY != getYCenterPixel()) // we're going to try to move onscreen
             {
                 unregisterObject();
@@ -115,7 +115,7 @@ void MovingObject::step()
 //  double movement = sqrt((oldX-_desiredX)*(oldX-_desiredX) + (oldY-_desiredY)*(oldY-_desiredY));
 	_nbNearbyRobots = static_cast<int>(_nearbyRobots.size());
     
-    if (gStuckMovableObjects) // get back into place!
+    if (true /* Before : gStuckMovableObjects */) // get back into place!
     {
         _xReal = oldX;
         _yReal = oldY;

@@ -25,7 +25,7 @@ public:
     explicit PartnerChoiceWorldObserver(World *__world);
     ~PartnerChoiceWorldObserver() override;
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
     void stepEvaluation();
 

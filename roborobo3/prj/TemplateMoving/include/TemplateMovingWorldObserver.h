@@ -22,7 +22,7 @@ class TemplateMovingWorldObserver : public WorldObserver
 		~TemplateMovingWorldObserver();
 				
 		void reset();
-		void step();
+		void stepPre() override;
 		
 };
 

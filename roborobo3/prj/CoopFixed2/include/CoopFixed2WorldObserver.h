@@ -39,7 +39,7 @@ public:
 
     void reset() override;
 
-    void step() override;
+    void stepPre() override;
 
     void stepEvaluation();
     

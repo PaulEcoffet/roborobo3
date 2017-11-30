@@ -38,12 +38,15 @@ protected :
     bool _visible; // display option (default: true)
     
     void init();  // called by constructor only
-    
+
+
 protected:
     void setType ( int __type ) { type = __type; }
     
 public :
-    
+    int findRandomLocation( );
+
+
     PhysicalObject( int __id ); // use PhysicalObjectFactory instead!
     ~PhysicalObject() { }
 
@@ -70,9 +73,6 @@ public :
     virtual bool canRegister() = 0; // test if register object is possible (use both shape or footprints)
     virtual void registerObject() = 0; // register object in the world (write images)
     virtual void unregisterObject() = 0; // unregister object in the world (write blank pixels)
-    int findRandomLocation();
-    int findRandomLocation( int __xMin, int __xMax, int __yMin, int __yMax ); // find a random location within a specific area
-    void resetLocation(); // reset to the starting position if there was one, or pick a new random location
 
     virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
     virtual void isWalked( int __idAgent ) = 0; // callback, triggered by agent
@@ -88,9 +88,10 @@ public :
     int getType() { return type; }
 
     static bool isInstanceOf ( int index );
-
-    virtual std::string inspect( );
     
+    virtual std::string inspect( std::string prefix = "" );
+
+    void resetLocation();
 };
 
 #endif
