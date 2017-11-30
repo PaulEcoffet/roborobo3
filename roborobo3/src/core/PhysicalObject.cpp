@@ -132,21 +132,19 @@ void PhysicalObject::init()
     setCoordinates( x, y );
 }
 
-int PhysicalObject::findRandomLocation()
-{
-    return findRandomLocation(gPhysicalObjectsInitAreaX, gPhysicalObjectsInitAreaWidth+gPhysicalObjectsInitAreaX, gPhysicalObjectsInitAreaY, gPhysicalObjectsInitAreaHeight+gPhysicalObjectsInitAreaY);
-}
-
-int PhysicalObject::findRandomLocation( int __xMin, int __xMax, int __yMin, int __yMax)
+int PhysicalObject::findRandomLocation( )
 {
     double x = 0.0, y = 0.0;
     
     int tries = 0;
     
     do {
-        x = rand() % (__xMax - __xMin) + __xMin;
-        y = rand() % (__yMax - __yMin) + __yMin;
-                
+        x = ( randint() % ( gPhysicalObjectsInitAreaWidth  ) ) + gPhysicalObjectsInitAreaX;
+        y = ( randint() % ( gPhysicalObjectsInitAreaHeight ) ) + gPhysicalObjectsInitAreaY;
+        
+        //x = (randint() % (gAreaWidth-20)) + 10;  // deprecated
+        //y = (randint() % (gAreaHeight-20)) + 10; // deprecated
+        
         setCoordinates( x, y );
         
         tries++;
@@ -158,12 +156,6 @@ int PhysicalObject::findRandomLocation( int __xMin, int __xMax, int __yMin, int 
         exit(-1);
     }
     
-    if ( gVerbose )
-    {
-        std::cout << "[INFO] Object " << _id << " positioned at (" << _xReal << "), ";
-        std::cout<< _yReal << " -- [random pick after " << tries << " tries]" << std::endl;
-    }
-        
     return tries;
 }
 
@@ -244,6 +236,11 @@ bool PhysicalObject::triggerRegrow()
     return true;
 }
 
+std::string PhysicalObject::inspect( std::string prefix )
+{
+    return std::string(prefix + "PhysicalObject::inspect() not implemented.\n");
+}
+
 void PhysicalObject::resetLocation()
 {
     std::string loc = "physicalObject[" + std::to_string(_id) + "]";
@@ -254,9 +251,4 @@ void PhysicalObject::resetLocation()
     }
     else
         findRandomLocation();
-}
-
-std::string PhysicalObject::inspect()
-{
-    return std::string("PhysicalObject::inspect() not implemented.\n");
 }

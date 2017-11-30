@@ -19,7 +19,7 @@ class PartnerChoiceAnalysisWorldObserver : public WorldObserver
 public:
     explicit PartnerChoiceAnalysisWorldObserver(World *__world);
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
 
 

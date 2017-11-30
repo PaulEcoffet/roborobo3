@@ -163,7 +163,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
         int yMin = MonoRobotSharedData::gBorderSize + line * (MonoRobotSharedData::gZoneHeight + MonoRobotSharedData::gBorderSize) + 3*gPhysicalObjectDefaultRadius;
         int xMax = xMin + MonoRobotSharedData::gZoneWidth - 6*gPhysicalObjectDefaultRadius;
         int yMax = yMin + MonoRobotSharedData::gZoneHeight - 6*gPhysicalObjectDefaultRadius;
-        object->findRandomLocation(xMin, xMax, yMin, yMax);
+        object->findRandomLocation();
         object->registerObject();
     }
     
@@ -195,8 +195,8 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
             bool done = false;
             int pick = -1;
             while (done == false) {
-                pick = rand()%gNbOfRobots;
-                double draw = ranf()*totalFitness;
+                pick = randint()%gNbOfRobots;
+                double draw = random()*totalFitness;
                 if (draw <= fitnesses[pick]) // choose this robot
                     done = true;
             }
@@ -224,7 +224,7 @@ void MonoRobotWorldObserver::stepEvaluation( bool __newGeneration )
     resetObjects();
 }
 
-void MonoRobotWorldObserver::step()
+void MonoRobotWorldObserver::stepPre()
 {
     // Reset objects a few times per generation
     if ((_evaluationItCount+1)%(MonoRobotSharedData::gEvaluationTime/MonoRobotSharedData::gNumberOfPeriods) == 0)

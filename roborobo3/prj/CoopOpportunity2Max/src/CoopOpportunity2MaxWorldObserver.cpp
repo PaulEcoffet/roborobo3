@@ -130,7 +130,7 @@ void CoopOpportunity2MaxWorldObserver::stepEvaluation()
     // register objects first because they might have fixed locations, whereas robots move anyway
     for (auto object: gPhysicalObjects)
     {
-        object->resetLocation();
+        object->findRandomLocation();
         object->registerObject();
     }
     
@@ -153,8 +153,8 @@ void CoopOpportunity2MaxWorldObserver::stepEvaluation()
         bool done = false;
         int pick = -1;
         while (done == false) {
-            pick = rand()%gNbOfRobots;
-            double draw = ranf()*totalFitness;
+            pick = randint()%gNbOfRobots;
+            double draw = randint()*totalFitness;
             if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
             {
                 done = true;
@@ -175,7 +175,7 @@ void CoopOpportunity2MaxWorldObserver::stepEvaluation()
 //        printf("Robot %.2d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
 }
 
-void CoopOpportunity2MaxWorldObserver::step()
+void CoopOpportunity2MaxWorldObserver::stepPre()
 {
     // switch to next generation.
     if( _generationItCount == CoopOpportunity2MaxSharedData::gEvaluationTime - 1 )

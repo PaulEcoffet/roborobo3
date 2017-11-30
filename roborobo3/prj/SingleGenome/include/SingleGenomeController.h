@@ -131,7 +131,7 @@ public:
     
     void dumpGenome();
 
-    std::string inspect() override;
+    std::string inspect(std::string prefix="") override;
 };
 
 

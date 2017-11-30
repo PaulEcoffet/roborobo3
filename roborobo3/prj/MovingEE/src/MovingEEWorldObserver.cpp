@@ -21,9 +21,9 @@ MovingEEWorldObserver::~MovingEEWorldObserver()
     // superclass constructor called before
 }
 
-void MovingEEWorldObserver::step()
+void MovingEEWorldObserver::stepPre()
 {
-    TemplateEEWorldObserver::step();
+    TemplateEEWorldObserver::stepPre();
     
     /*
     if( gWorld->getIterations() > 0 && gWorld->getIterations() % TemplateEESharedData::gEvaluationTime == 0 )

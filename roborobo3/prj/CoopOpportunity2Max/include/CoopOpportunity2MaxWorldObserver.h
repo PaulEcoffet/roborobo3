@@ -34,7 +34,7 @@ public:
     ~CoopOpportunity2MaxWorldObserver();
     
     virtual void reset();
-    virtual void step();
+    virtual void stepPre();
     void stepEvaluation();
     
     virtual int getGenerationItCount() { return _generationItCount; }

@@ -26,7 +26,7 @@ public:
     MovingEEWorldObserver(World *world);
     ~MovingEEWorldObserver();
     
-    virtual void step();
+    virtual void stepPre();
 
 protected:    
     virtual void monitorPopulation( bool localVerbose = true );

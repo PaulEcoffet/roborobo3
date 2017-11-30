@@ -270,7 +270,7 @@ unsigned int CoopFixed2Controller::computeRequiredNumberOfWeights()
 
 void CoopFixed2Controller::performVariation()
 {
-    if ( CoopFixed2SharedData::gIndividualMutationRate > ranf() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if ( CoopFixed2SharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( CoopFixed2SharedData::gMutationOperator )
         {
@@ -297,7 +297,7 @@ void CoopFixed2Controller::mutateGaussian(double sigma) // mutate within bounds.
     
     for (double &curWeight : _currentGenome)
     {
-        double value = curWeight + getGaussianRand(0,_currentSigma);
+        double value = curWeight + 0 + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
         if ( value < _minValue )
         {
@@ -329,7 +329,7 @@ void CoopFixed2Controller::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = float(rand()%100) / 100.f; // in [0,1[
+        float randomValue = float(randint()%100) / 100.f; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -383,7 +383,7 @@ void CoopFixed2Controller::initController()
     // Intialize genomes
     for ( unsigned int i = 0 ; i < nbGenes; i++ )
     {
-        _currentGenome.push_back((ranf()*2.0)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((random()*2.0)-1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
@@ -404,11 +404,11 @@ void CoopFixed2Controller::reset()
 
 void CoopFixed2Controller::mutateSigmaValue()
 {
-    double dice = ranf();
+    double dice = random();
     
     if ( dice <= CoopFixed2SharedData::gProbaMutation )
     {
-        dice = ranf();
+        dice = random();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + CoopFixed2SharedData::gUpdateSigmaStep ); // increase sigma
@@ -511,7 +511,7 @@ void CoopFixed2Controller::setCanMove(bool _canMove) {
     CoopFixed2Controller::_canMove = _canMove;
 }
 
-std::string CoopFixed2Controller::inspect()
+std::string CoopFixed2Controller::inspect(std::string prefix)
 {
     std::stringstream out;
     out << "Near object: " << ((_isNearObject)? "True" : "False") << ".\n";

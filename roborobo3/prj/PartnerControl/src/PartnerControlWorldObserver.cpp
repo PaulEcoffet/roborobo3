@@ -16,7 +16,7 @@ PartnerControlWorldObserver::PartnerControlWorldObserver(World *__world) : World
 {
     m_world = __world;
 
-    m_curEvalutionIteration = 0;
+    m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
     _generationCount = 0;
     m_curInd = 0;
@@ -60,17 +60,17 @@ void PartnerControlWorldObserver::initOpportunities()
     }
 }
 
-void PartnerControlWorldObserver::step()
+void PartnerControlWorldObserver::stepPre()
 {
     monitorPopulation();
     computeOpportunityImpact();
     clearOpportunityNearbyRobots();
 
-    m_curEvalutionIteration++;
+    m_curEvaluationIteration++;
 
-    if (m_curEvalutionIteration == PartnerControlSharedData::evaluationTime)
+    if (m_curEvaluationIteration == PartnerControlSharedData::evaluationTime)
     {
-        m_curEvalutionIteration = 0;
+        m_curEvaluationIteration = 0;
         m_curEvaluationInGeneration++;
         resetEnvironment();
     }
@@ -109,7 +109,7 @@ void PartnerControlWorldObserver::monitorPopulation() const
         out << _generationCount << "\t";
         out << m_curInd << "\t";
         out << m_curEvaluationInGeneration << "\t";
-        out << m_curEvalutionIteration << "\t";
+        out << m_curEvaluationIteration << "\t";
         out << wm->onOpportunity << "\t";
         if (wm->onOpportunity)
         {
@@ -341,7 +341,7 @@ void PartnerControlWorldObserver::reset()
         gen.weights.resize(dynamic_cast<PartnerControlController *>(m_world->getRobot(0)->getController())->getGenome().weights.size());
         for (auto& weight: gen.weights)
         {
-            weight = ranf() * 2 - 1;
+            weight = random() * 2 - 1;
         }
         ind.genome = gen;
         m_individuals.push_back(ind);

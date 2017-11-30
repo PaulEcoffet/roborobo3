@@ -23,7 +23,7 @@ void TemplateMovingWorldObserver::reset()
 	// nothing to do.
 }
 
-void TemplateMovingWorldObserver::step()
+void TemplateMovingWorldObserver::stepPre()
 {
 	// nothing to do.
 }
