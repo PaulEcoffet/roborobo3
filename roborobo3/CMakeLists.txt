@@ -250,7 +250,23 @@ set(SOURCE_FILES
         prj/PartnerControl/src/PartnerControlWorldObserver.cpp
         src/ext/PartnerControlConfigurationLoader.cpp
         include/ext/Config/PartnerControlConfigurationLoader.h
-        )
+        src/contrib/network/NetworkInterface.cpp include/contrib/network/NetworkInterface.h
+
+        # Fast Wanderer
+
+        prj/FastWanderer/include/FastWandererAgentObserver.h
+        prj/FastWanderer/include/FastWandererController.h
+        prj/FastWanderer/include/FastWandererOpportunity.h
+        prj/FastWanderer/include/FastWandererSharedData.h
+        prj/FastWanderer/include/FastWandererWorldObserver.h
+
+        prj/FastWanderer/src/FastWandererAgentObserver.cpp
+        prj/FastWanderer/src/FastWandererController.cpp
+        prj/FastWanderer/src/FastWandererSharedData.cpp
+        prj/FastWanderer/src/FastWandererWorldObserver.cpp
+        include/ext/Config/FastWandererConfigurationLoader.h
+        src/ext/FastWandererConfigurationLoader.cpp
+        src/contrib/network/PyCMAESInterface.cpp include/contrib/network/PyCMAESInterface.h)
 
 include_directories(include)
 include_directories(include/contrib)

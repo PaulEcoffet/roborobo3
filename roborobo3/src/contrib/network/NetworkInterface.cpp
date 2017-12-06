@@ -1,0 +1,92 @@
+/**
+ * @author Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
+ * @date 2017-12-05
+ */
+
+
+#include <string>
+#include <iostream>
+#include <boost/asio.hpp>
+#include <iomanip>
+#include "contrib/network/NetworkInterface.h"
+
+
+namespace network
+{
+    /**
+     * Return a string extracted from a streambuf.
+     * @param streambuf
+     * @return the string extracted from the streambuf
+     */
+    std::string make_string(const boost::asio::streambuf &streambuf)
+    {
+        return {boost::asio::buffers_begin(streambuf.data()),
+                boost::asio::buffers_end(streambuf.data())};
+    }
+
+    NetworkInterface::NetworkInterface(): socket(io_service)
+    {
+    }
+
+    NetworkInterface::NetworkInterface(const std::string &ip, unsigned short port) :
+            endpoint(boost::asio::ip::address::from_string(ip), port),
+            socket(io_service)
+    {
+        socket.connect(endpoint);
+    }
+
+    void NetworkInterface::sendMessage(std::string msg)
+    {
+        if (!is_open())
+        {
+            throw "Connection is not open";
+        }
+        std::stringstream sizestr;
+        size_t out_size = htonl(msg.size());
+        sizestr << std::setw(8) << std::hex << out_size;
+        boost::asio::write(socket, boost::asio::buffer(sizestr.str()));
+        boost::asio::write(socket, boost::asio::buffer(msg));
+    }
+
+    std::string NetworkInterface::receiveMessage()
+    {
+        if (!is_open())
+        {
+            throw "Connection is not open";
+        }
+        std::string message;
+        char header[8] = {'\0'};
+        boost::system::error_code error;
+        socket.read_some(boost::asio::buffer(header, 8), error);
+        if (error == boost::asio::error::eof)
+        {
+            message = "";
+        }
+        else
+        {
+            size_t message_length = static_cast<size_t>(ntohl(std::stoul(header, nullptr, 16)));
+            boost::asio::streambuf message_buf;
+            size_t bytes_read = boost::asio::read(socket, message_buf.prepare(message_length), error);
+            message_buf.commit(bytes_read);
+            message = make_string(message_buf);
+            message_buf.consume(bytes_read);
+        }
+        return message;
+    }
+
+    void NetworkInterface::close()
+    {
+        socket.close();
+    }
+
+    void NetworkInterface::connect(std::string ip, unsigned short port)
+    {
+        endpoint = tcp::endpoint(boost::asio::ip::address::from_string(ip), port);
+        if (socket.is_open())
+        {
+            close();
+        }
+        socket.connect(endpoint);
+    }
+
+}

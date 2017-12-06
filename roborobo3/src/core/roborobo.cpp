@@ -108,6 +108,8 @@ bool gCustomSnapshot_showObjects = true;
 bool gCustomSnapshot_showRobots = true;
 bool gCustomSnapshot_showSensorRays = false;
 
+std::string gRemote = "";
+
 //filenames
 
 std::ofstream gLogFile;
@@ -929,7 +931,7 @@ void initLogging()
 {
 	// test log directory.
     
-    /*
+
      
     // notes, 2014-09-02: unfortunatly, boost::filesystem is not a header-only boost library...
     // http://www.boost.org/doc/libs/1_53_0/more/getting_started/windows.html#header-only-libraries
@@ -965,7 +967,7 @@ void initLogging()
 		exit (-1);
 	}
      
-    */
+
     
     
     // init log file
@@ -2013,7 +2015,6 @@ bool loadProperties( std::string __propertiesFilename )
 
 void initRoborobo()
 {
-    
 	// load properties
 	if ( loadProperties(gPropertiesFilename) == false )
 	{
@@ -2045,8 +2046,7 @@ void initRoborobo()
 	// * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
 	
     engine.seed(gRandomSeed);
-    randint.seed(gRandomSeed);
-    
+
 	//srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
 	gLogFile << "# random seed             : " << gRandomSeed << std::endl; 
 

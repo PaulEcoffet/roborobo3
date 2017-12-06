@@ -70,6 +70,9 @@ extern std::string gBackgroundImageFilename;
 extern std::string gFootprintImageFilename;
 extern std::string gConfigFilename;
 
+extern std::string gRemote;
+
+
 // general purpose
 
 extern int gRandomSeed;				// random seed. Default value (="-1") means time based.
@@ -85,6 +88,7 @@ extern int  gFastDisplayModeSpeed;  // #images ignored in fast display mode (the
 extern bool gMonitorRobot;			// display currently selected robot input/output value on console 
 extern int gTrajectoryMonitorIt;    // store the iteration when the last trajectory monitoring started. Use to create the trajectory image filename.
 extern long int gVersion;
+
 
 // global data
 
