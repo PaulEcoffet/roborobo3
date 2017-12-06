@@ -223,37 +223,24 @@ void PartnerChoiceWorldObserver::createNextGeneration(const std::vector<std::pai
 
     std::vector<double> fitWeights;
     std::transform(fitnesses.begin(), fitnesses.end(), std::back_inserter(fitWeights),
-                   [fitnesses](const std::pair<int, double>& a){return a.second;});
-    //std::discrete_distribution<int> drawParent(fitWeights.begin(), fitWeights.end());
-    std::uniform_int_distribution<int> drawParent(40, 49);
+                   [](const std::pair<int, double>& a){return a.second;});
+    std::discrete_distribution<int> drawParent(fitWeights.begin(), fitWeights.end());
+    //std::uniform_int_distribution<int> drawParent(40, 49);
     std::vector<PartnerChoiceController::genome> newGenomes;
-    std::vector<int> nbDrawn(m_individuals.size(), 0);
+    //std::vector<int> nbDrawn(m_individuals.size(), 0);
     newGenomes.reserve(m_individuals.size());
 
-    for (int i = 0; i < m_individuals.size() - 10; i++)
+    for (int i = 0; i < m_individuals.size(); i++)
     {
         int parentFitId = drawParent(m_mt);
         int parentId = fitnesses[parentFitId].first;
         newGenomes.push_back(m_individuals[parentId].genome);
-        nbDrawn[parentFitId]++;
-    }
-    for (int i = m_individuals.size() - 10; i < m_individuals.size(); i++)
-    {
-        int parentId = fitnesses[i].first;
-        newGenomes.push_back(m_individuals[parentId].genome);
-    }
-    for (int i = 0; i < m_individuals.size(); i++)
-    {
-        if (i < m_individuals.size() - 10)
-        {
-            m_individuals[i].genome = newGenomes[i].mutate();
-        }
-        else
-        {
-            m_individuals[i].genome = newGenomes[i];
-        }
     }
 
+    for (int i = 0; i < m_individuals.size(); i++)
+    {
+        m_individuals[i].genome = newGenomes[i].mutate();
+    }
 }
 
 void PartnerChoiceWorldObserver::resetEnvironment()
