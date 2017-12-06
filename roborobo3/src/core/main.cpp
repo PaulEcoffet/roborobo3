@@ -86,8 +86,8 @@ std::ostream& operator<<(std::ostream& os, const std::vector<T>& v)
 int main(int argc, char* argv[])
 {
     bool commandline_propertiesfilename = false;
-    
-	// Install signal handler, to handle Ctrl-C and 'kill' signals
+
+    // Install signal handler, to handle Ctrl-C and 'kill' signals
 	signal(SIGINT, quit);
 	signal(SIGTERM, quit);
     
@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     
     displayGeneralInformation();
     
-    int c = getopt (argc, argv, "vhsl:o:");
+    int c = getopt (argc, argv, "vhsl:o:r:");
     
     if ( c  == -1 ) // no arguments? display usage.
     {
@@ -181,7 +181,9 @@ int main(int argc, char* argv[])
                 gDisplayMode = 2;
                 gBatchMode_commandlineargument = true;
                 break;
-
+            case 'r':
+                gRemote = optarg;
+                break;
             case '?':
                 //std::cout << "[INFO] Unknown argument \"" << (char)optopt << "\" detected, and ignored." << std::endl;
                 break;
@@ -192,7 +194,7 @@ int main(int argc, char* argv[])
                 break;
         }
         
-        c = getopt (argc, argv, "vhsbl:o:");
+        c = getopt (argc, argv, "vhsbl:o:r:");
     }
     
     /**/
