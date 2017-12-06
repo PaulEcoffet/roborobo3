@@ -14,6 +14,7 @@
 #include "Config/CoopOpportunity2MaxConfigurationLoader.h"
 #include "Config/CoopFixed2ConfigurationLoader.h"
 #include "Config/PartnerControlConfigurationLoader.h"
+#include "Config/FastWandererConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -121,6 +122,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "PartnerControlConfigurationLoader" )
 	{
 		return new PartnerControlConfigurationLoader();
+	}
+#endif
+#if defined PRJ_FASTWANDERER || !defined MODULAR
+	else if (configurationLoaderObjectName == "FastWandererConfigurationLoader" )
+	{
+		return new FastWandererConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
