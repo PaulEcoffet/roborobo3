@@ -1,6 +1,6 @@
 import socket
 import cma
-import json
+from json_tricks import dump, dumps, load, loads, strip_comments
 import numpy as np
 import matplotlib.pyplot as plt
 import subprocess
@@ -71,7 +71,7 @@ def main():
 
         conn, cliend_data = serv_s.accept()  # connect to roborobo
         # Wait for roborobo to give information about the simulation
-        evo_info = json.loads(recv_msg(conn))
+        evo_info = loads(recv_msg(conn))
 
         es = cma.CMAEvolutionStrategy(evo_info['nb_weights'] * [0], 0.1,
                                       {'popsize': evo_info['popsize'],
@@ -82,12 +82,12 @@ def main():
 
         while not es.stop():
             solutions = [sol.tolist() for sol in es.ask()]
-            send_msg(conn, json.dumps(solutions))
+            send_msg(conn, dumps(solutions, primitives=True))
             ####################################
             # Roborobo simulation is done here #
             ####################################
             fit_jsonstr = recv_msg(conn)
-            fitnesses = json.loads(fit_jsonstr)
+            fitnesses = loads(fit_jsonstr)
             es.tell(solutions, np.array([-fit for fit in fitnesses]))
             es.disp()
             es.logger.add()
@@ -97,7 +97,7 @@ def main():
         # Show results
         es.result_pretty()
         with open(join(outdir, 'genome.txt'), 'w') as f:
-            json.dump(es.result, f)
+            dump(es.result, f, primitives=True)
         es.logger.plot()
         cma.s.figshow()
 
