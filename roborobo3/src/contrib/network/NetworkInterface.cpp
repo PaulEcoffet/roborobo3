@@ -39,7 +39,7 @@ namespace network
     {
         if (!is_open())
         {
-            throw "Connection is not open";
+            throw std::runtime_error("Connection is not open");
         }
         std::stringstream sizestr;
         size_t out_size = htonl(msg.size());
@@ -52,7 +52,7 @@ namespace network
     {
         if (!is_open())
         {
-            throw "Connection is not open";
+            throw std::runtime_error("Connection is not open");
         }
         std::string message;
         char header[8] = {'\0'};
