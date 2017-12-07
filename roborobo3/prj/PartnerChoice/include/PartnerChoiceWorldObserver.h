@@ -17,23 +17,16 @@ using json = nlohmann::json;
 class PartnerChoiceWorldObserver : public WorldObserver
 {
 public:
-    typedef struct {
-        double fitness;
-        PartnerChoiceController::genome genome;
-    } individual;
-
     explicit PartnerChoiceWorldObserver(World *__world);
     ~PartnerChoiceWorldObserver() override;
 
     void stepPre() override;
+    void stepPost() override;
     void reset() override;
-    void stepEvaluation();
+    void stepEvolution();
 
     std::vector<std::pair<int, double>> getSortedFitnesses() const;
 
-    void logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses);
-    void logGenomes(const std::vector<std::pair<int, double>>& sortedFitnesses);
-    void createNextGeneration(const std::vector<std::pair<int, double>>& sortedFitnesses);
     void resetEnvironment();
 
 protected:
@@ -41,31 +34,25 @@ protected:
     LogManager *m_fitnessLogManager;
     LogManager* m_observer;
     json m_genomesLogJson;
+    int m_curEvaluationIteration;
+    int m_nbIndividuals;
+    int m_curEvaluationInGeneration;
+    int m_curInd;
+    int m_generationCount;
 
-    int m_curEvalutionIteration;
-    int _generationCount;
-
-    std::mt19937 m_mt; // TODO: MUST BE THE SAME FOR THE WHOLE PROGRAM
+    std::vector<std::vector<double>> m_individuals;
+    std::vector<double> m_fitnesses;
+    PyCMAESInterface pycma;
 
     void initOpportunities();
     void computeOpportunityImpact();
-
     double payoff(const double invest, const double totalInvest) const;
-
     void clearOpportunityNearbyRobots();
-
     void clearRobotFitnesses();
-
-    int m_curEvaluationInGeneration;
-    int m_curInd;
-
-    std::vector<individual> m_individuals;
-
     void activateOnlyRobot(int robotIndex);
-
     void monitorPopulation() const;
+    void logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses);
 
-    int m_nbIndividuals;
 };
 
 

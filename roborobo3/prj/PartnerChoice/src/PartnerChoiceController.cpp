@@ -29,26 +29,20 @@ PartnerChoiceController::PartnerChoiceController(RobotWorldModel* wm)
     switch (PartnerChoiceSharedData::controllerType)
     {
         case MLP_ID:
-            m_nn = new MLP(m_genome.weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            m_nn = new MLP(m_weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             break;
         case PERCEPTRON_ID:
-            m_nn = new Perceptron(m_genome.weights, nbInputs, nbOutputs);
+            m_nn = new Perceptron(m_weights, nbInputs, nbOutputs);
             break;
         case ELMAN_ID:
-            m_nn = new Elman(m_genome.weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            m_nn = new Elman(m_weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             break;
         default:
             std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< PartnerChoiceSharedData::controllerType << "\n";
             exit(-1);
     }
-    m_genome.sigma = 0;
-    m_genome.weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
-
-    for (auto& weight: m_genome.weights)
-    {
-        weight = random() * 2 - 1;
-    }
-    m_nn->setWeights(m_genome.weights);
+    m_weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
+    m_nn->setWeights(m_weights);
     resetFitness();
 }
 
@@ -70,7 +64,7 @@ void PartnerChoiceController::step()
     std::vector<double> outputs = m_nn->readOut();
 
 
-    m_wm->_desiredTranslationalValue = (outputs[0] + 1.0)/2.0 * gMaxTranslationalSpeed;
+    m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
 
 
@@ -97,7 +91,7 @@ PartnerChoiceController::~PartnerChoiceController()
 std::vector<double> PartnerChoiceController::getInputs()
 {
     const int WALL_ID = 0;
-    std::vector<std::pair<std::string, double>> inputs;
+    std::vector<double> inputs;
     inputs.reserve(m_nn->getNbInputs());
 
     /*
@@ -118,37 +112,27 @@ std::vector<double> PartnerChoiceController::getInputs()
             else
                 seenCoop = 0;
         }
-        std::string istr = std::to_string(i);
-        inputs.emplace_back(std::string("dist from ") + istr , m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
-        inputs.emplace_back("is agent from " + istr, static_cast<double> (Agent::isInstanceOf(entityId)));
-        inputs.emplace_back("is wall from " + istr, static_cast<double> (entityId == WALL_ID));
-        inputs.emplace_back("is obj from " + istr, static_cast<double> (isOpportunity));
-        inputs.emplace_back("seenCoop from " + istr, seenCoop);
+        inputs.emplace_back(m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
+        inputs.emplace_back(static_cast<double> (Agent::isInstanceOf(entityId)));
+        inputs.emplace_back(static_cast<double> (entityId == WALL_ID));
+        inputs.emplace_back(static_cast<double> (isOpportunity));
+        inputs.emplace_back(seenCoop);
     }
 
     /*
      * Opportunity inputs
      */
-    inputs.emplace_back("on Opp", static_cast<double>(m_wm->onOpportunity));
-    inputs.emplace_back("mean Last Total Invest", m_wm->meanLastTotalInvest());
-    inputs.emplace_back("mean Own Invest", m_wm->meanLastOwnInvest());
+    inputs.emplace_back(static_cast<double>(m_wm->onOpportunity));
+    inputs.emplace_back(m_wm->meanLastTotalInvest());
+    inputs.emplace_back(m_wm->meanLastOwnInvest());
 
-    /*
-    for (const auto &input : inputs)
-    {
-        std::cout << input.first << " : " << input.second << "\n";
-    }
-    //*/
-
-    std::vector<double> realinputs(inputs.size());
-    std::transform(inputs.begin(), inputs.end(), realinputs.begin(), [](std::pair<std::string, double> a){ return a.second;});
-    return realinputs;
+    return inputs;
 }
 
-void PartnerChoiceController::loadNewGenome(const genome &newGenome)
+void PartnerChoiceController::loadNewGenome(const std::vector<double> &newGenome)
 {
-    m_genome = newGenome;
-    m_nn->setWeights(m_genome.weights);
+    m_weights = newGenome;
+    m_nn->setWeights(m_weights);
     if (PartnerChoiceSharedData::controllerType == ELMAN_ID)
         dynamic_cast<Elman*>(m_nn)->initLastOutputs();
 }
@@ -241,9 +225,9 @@ std::string PartnerChoiceController::inspect(std::string prefix)
     return out.str();
 }
 
-PartnerChoiceController::genome PartnerChoiceController::getGenome() const
+unsigned long PartnerChoiceController::getGenomeSize() const
 {
-    return m_genome;
+    return m_weights.size();
 }
 
 unsigned int PartnerChoiceController::getNbOutputs() const

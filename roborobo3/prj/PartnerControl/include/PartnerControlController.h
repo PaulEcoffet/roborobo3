@@ -22,62 +22,28 @@ using namespace Neural;
 class PartnerControlController : public Controller
 {
 public:
-    typedef struct genome {
-        std::vector<double> weights;
-        double sigma;
-        genome mutate()
-        {
-            genome child{};
-            child.sigma = sigma;
-            child.weights.reserve(weights.size());
-            for (const double &weight : weights)
-            {
-                // Bouncing random
-                double newVal = weight + randgaussian() *  sigma;
-                if (newVal < PartnerControlController::minWeight)
-                {
-                    const double range = PartnerControlController::maxWeight - PartnerControlController::minWeight;
-                    double overflow = computeModulo(PartnerControlController::minWeight - newVal, range);
-                    newVal = PartnerControlController::minWeight + overflow;
-                }
-                else if (newVal > PartnerControlController::maxWeight)
-                {
-                    const double range = PartnerControlController::maxWeight - PartnerControlController::minWeight;
-                    double overflow = computeModulo(newVal - PartnerControlController::maxWeight, range);
-                    newVal = PartnerControlController::maxWeight - overflow;
-                }
-                assert(PartnerControlController::minWeight <= newVal && newVal <= PartnerControlController::maxWeight);
-                child.weights.push_back(newVal);
-            }
-            assert(child.weights != weights);
-            return child;
-        }
-
-    } genome;
-
     explicit PartnerControlController(RobotWorldModel *wm);
     ~PartnerControlController() override;
 
     void step() override;
     void reset() override;
 
-    void loadNewGenome(const genome &newGenome);
-    void mutateGenome();
+    void loadNewGenome(const std::vector<double> &newGenome);
 
     void resetFitness();
     void updateFitness(double newFitness);
     void increaseFitness(double delta);
 
-    std::string inspect(std::string prefix="") override;
+    std::string inspect(std::string prefix) override;
 
     double getFitness() const;
-    genome getGenome() const;
+    std::vector<double> getWeights() const;
 
 protected:
     PartnerControlWorldModel *m_wm;
 
     NeuralNetwork *m_nn;
-    genome m_genome;
+    std::vector<double> weights;
 
     std::vector<double> getInputs();
 
@@ -86,9 +52,6 @@ protected:
 
     unsigned int getNbInputs() const;
     unsigned int getNbOutputs() const;
-
-    constexpr static double minWeight = -1;
-    constexpr static double maxWeight = 1;
 };
 
 
