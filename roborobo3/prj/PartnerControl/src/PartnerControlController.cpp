@@ -29,28 +29,24 @@ PartnerControlController::PartnerControlController(RobotWorldModel* wm)
     switch (PartnerControlSharedData::controllerType)
     {
         case MLP_ID:
-            m_nn = new MLP(m_genome.weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            m_nn = new MLP(weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             std::cout << "MLP\n";
             break;
         case PERCEPTRON_ID:
-            m_nn = new Perceptron(m_genome.weights, nbInputs, nbOutputs);
+            m_nn = new Perceptron(weights, nbInputs, nbOutputs);
             break;
         case ELMAN_ID:
-            m_nn = new Elman(m_genome.weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            m_nn = new Elman(weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             std::cout << "Elman\n";
             break;
         default:
             std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< PartnerControlSharedData::controllerType << "\n";
             exit(-1);
     }
-    m_genome.sigma = 0;
-    m_genome.weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
+    weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
 
-    for (auto& weight: m_genome.weights)
-    {
-        weight = random() * 2 - 1;
-    }
-    m_nn->setWeights(m_genome.weights);
+
+    m_nn->setWeights(weights);
     resetFitness();
 }
 
@@ -145,10 +141,10 @@ std::vector<double> PartnerControlController::getInputs()
     return inputs;
 }
 
-void PartnerControlController::loadNewGenome(const genome &newGenome)
+void PartnerControlController::loadNewGenome(const std::vector<double> &newGenome)
 {
-    m_genome = newGenome;
-    m_nn->setWeights(m_genome.weights);
+    weights = newGenome;
+    m_nn->setWeights(weights);
     if (PartnerControlSharedData::controllerType == ELMAN_ID)
         dynamic_cast<Elman*>(m_nn)->initLastOutputs();
 }
@@ -241,9 +237,9 @@ std::string PartnerControlController::inspect(std::string prefix)
     return out.str();
 }
 
-PartnerControlController::genome PartnerControlController::getGenome() const
+std::vector<double> PartnerControlController::getWeights() const
 {
-    return m_genome;
+    return weights;
 }
 
 unsigned int PartnerControlController::getNbOutputs() const

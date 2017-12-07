@@ -167,10 +167,7 @@ void PartnerChoiceAnalysisWorldObserver::resetEnvironment()
 void PartnerChoiceAnalysisWorldObserver::loadGenome(const std::vector<double> &weights)
 {
     auto *ctl = dynamic_cast<PartnerChoiceController *>(gWorld->getRobot(0)->getController());
-    PartnerChoiceController::genome genome;
-    genome.sigma  = 0;
-    genome.weights = weights;
-    ctl->loadNewGenome(genome);
+    ctl->loadNewGenome(weights);
     ctl->resetFitness();
 }
 

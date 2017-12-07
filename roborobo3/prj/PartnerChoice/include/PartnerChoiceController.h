@@ -7,6 +7,7 @@
 #define ROBOROBO3_PARTNERCHOICECONTROLLER_H
 
 #include <vector>
+#include <contrib/network/PyCMAESInterface.h>
 #include "Controllers/Controller.h"
 #include "neuralnetworks/NeuralNetwork.h"
 #include "PartnerChoiceOpportunity.h"
@@ -22,61 +23,28 @@ using namespace Neural;
 class PartnerChoiceController : public Controller
 {
 public:
-    typedef struct genome {
-        std::vector<double> weights;
-        double sigma;
-        genome mutate()
-        {
-            genome child{};
-            child.sigma = sigma;
-            child.weights.reserve(weights.size());
-            for (const double &weight : weights)
-            {
-                // Bouncing random
-                double newVal = weight + randgaussian() *  sigma;
-                if (newVal < PartnerChoiceController::minWeight)
-                {
-                    const double range = PartnerChoiceController::maxWeight - PartnerChoiceController::minWeight;
-                    double overflow = computeModulo(PartnerChoiceController::minWeight - newVal, range);
-                    newVal = PartnerChoiceController::minWeight + overflow;
-                }
-                else if (newVal > PartnerChoiceController::maxWeight)
-                {
-                    const double range = PartnerChoiceController::maxWeight - PartnerChoiceController::minWeight;
-                    double overflow = computeModulo(newVal - PartnerChoiceController::maxWeight, range);
-                    newVal = PartnerChoiceController::maxWeight - overflow;
-                }
-                assert(PartnerChoiceController::minWeight <= newVal && newVal <= PartnerChoiceController::maxWeight);
-                child.weights.push_back(newVal);
-            }
-            return child;
-        }
-
-    } genome;
-
     explicit PartnerChoiceController(RobotWorldModel *wm);
     ~PartnerChoiceController() override;
 
     void step() override;
     void reset() override;
 
-    void loadNewGenome(const genome &newGenome);
-    void mutateGenome();
+    void loadNewGenome(const std::vector<double> &newGenome);
+    unsigned long getGenomeSize() const;
 
     void resetFitness();
     void updateFitness(double newFitness);
     void increaseFitness(double delta);
 
-    std::string inspect(std::string prefix="") override;
+    std::string inspect(std::string prefix) override;
 
     double getFitness() const;
-    genome getGenome() const;
 
 protected:
     PartnerChoiceWorldModel *m_wm;
 
     NeuralNetwork *m_nn;
-    genome m_genome;
+    std::vector<double> m_weights;
 
     std::vector<double> getInputs();
 
@@ -86,8 +54,6 @@ protected:
     unsigned int getNbInputs() const;
     unsigned int getNbOutputs() const;
 
-    constexpr static double minWeight = -1;
-    constexpr static double maxWeight = 1;
 };
 
 
