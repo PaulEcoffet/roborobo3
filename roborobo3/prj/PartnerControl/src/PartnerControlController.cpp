@@ -143,6 +143,11 @@ std::vector<double> PartnerControlController::getInputs()
 
 void PartnerControlController::loadNewGenome(const std::vector<double> &newGenome)
 {
+    if(m_nn->getRequiredNumberOfWeights() != newGenome.size())
+    {
+        std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+        exit(-1);
+    }
     weights = newGenome;
     m_nn->setWeights(weights);
     if (PartnerControlSharedData::controllerType == ELMAN_ID)
