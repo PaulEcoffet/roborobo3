@@ -22,7 +22,8 @@ PartnerControlAnalysisWorldObserver::PartnerControlAnalysisWorldObserver(World *
         exit(-1);
     }
 
-    std::string genomePath(gProperties.getProperty("genomePath"));
+    std::string genomePath(gLogDirectoryname + "/genome.txt");
+    gProperties.checkAndGetPropertyValue("genomePath", &genomePath, false);
     if (!boost::filesystem::exists(genomePath))
     {
         std::cerr << "The genome file path '" << genomePath << "' does not exist.\n";
@@ -31,8 +32,7 @@ PartnerControlAnalysisWorldObserver::PartnerControlAnalysisWorldObserver(World *
     std::ifstream genomeFile(genomePath);
     genomeFile >> m_genomesJson;
     m_genomesIt = m_genomesJson.begin();
-
-    std::cout << gLogDirectoryname + "/analysis_log.txt";
+    
     m_log.open(gLogDirectoryname + "/analysis_log.txt");
     m_log << "generation\tind\trank\tcoop\trep\tit\tonOpp\townCoop\n";
 
