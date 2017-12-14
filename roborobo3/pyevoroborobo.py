@@ -1,5 +1,4 @@
 import socket
-import cma
 from json_tricks import dump, dumps, load, loads, strip_comments
 import numpy as np
 import matplotlib.pyplot as plt
@@ -7,6 +6,7 @@ import subprocess
 import sys
 import argparse
 from os.path import join
+from pyevo.pyevo import getES
 
 
 def recv_msg(sock, encoding='utf8'):
@@ -58,27 +58,28 @@ def connect_to_open_port(serv, desired_port, ip='127.0.0.1'):
 def main():
     # catch the output dir to put the cmaes logs in it.
     ap = argparse.ArgumentParser(prog='cmaesroborobo.py')
-    ap.add_argument('-o', '--output', type=str, default='.')
-    argout, unknown = ap.parse_known_args()
+    ap.add_argument('-o', '--output', type=str, default='logs/')
+    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop'],
+                    required=True)
+    argout, forwarded = ap.parse_known_args()
     outdir = argout.output
-
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv_s:
         desired_port = 1703
         port = connect_to_open_port(serv_s, desired_port)
         serv_s.listen(1)
         # Forward the args received by cmaesroborobo to roborobo and add the port information
-        subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] + sys.argv[1:])
+        subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
+                         ['-o', outdir] + forwarded)
 
         conn, cliend_data = serv_s.accept()  # connect to roborobo
         # Wait for roborobo to give information about the simulation
         evo_info = loads(recv_msg(conn))
 
-        es = cma.CMAEvolutionStrategy(evo_info['nb_weights'] * [0], 0.1,
-                                      {'popsize': evo_info['popsize'],
-                                      'BoundaryHandler': cma.s.ch.BoundTransform,
-                                      'bounds': [-1, 1],
-                                      'verb_filenameprefix': join(outdir, 'cmaes')
-                                      })
+        es = getES(argout.evolution, evo_info['nb_weights'] * [0], 0.01,
+                   evo_info['popsize'], [-1, 1], 30000, outdir)
+        sign = 1
+        if argout.evolution == 'cmaes':
+            sign = -1
 
         while not es.stop():
             solutions = [sol.tolist() for sol in es.ask()]
@@ -88,7 +89,7 @@ def main():
             ####################################
             fit_jsonstr = recv_msg(conn)
             fitnesses = loads(fit_jsonstr)
-            es.tell(solutions, np.array([-fit for fit in fitnesses]))
+            es.tell(solutions, np.array([sign*fit for fit in fitnesses]))
             es.disp()
             es.logger.add()
         # Close connection with roborobo (will trigger roborobo shutdown)
@@ -97,7 +98,7 @@ def main():
         # Show results
         es.result_pretty()
         with open(join(outdir, 'genome.txt'), 'w') as f:
-            dump(es.result, f, primitives=True)
+            dump(es.result(), f, primitives=True)
         es.logger.plot()
         cma.s.figshow()
 
