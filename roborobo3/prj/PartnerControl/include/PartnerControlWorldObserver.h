@@ -8,7 +8,7 @@
 
 #include <core/Observers/WorldObserver.h>
 #include <core/World/World.h>
-#include <contrib/network/PyCMAESInterface.h>
+#include <contrib/network/PyevoInterface.h>
 #include "core/Utilities/LogManager.h"
 #include "contrib/json/json.hpp"
 #include "PartnerControlController.h"
@@ -43,7 +43,7 @@ protected:
     int m_generationCount;
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
-    PyCMAESInterface pycma;
+    PyevoInterface pycma;
 
 
     void initOpportunities();

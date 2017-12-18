@@ -1,33 +1,27 @@
 /**
  * @author Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
- *
- */
+ * @date 2017-10-30
+*/
+
+#ifndef ROBOROBO3_COOPFIXED2AGENTOBSERVER_H
+#define ROBOROBO3_COOPFIXED2AGENTOBSERVER_H
 
 
-#ifndef COOPFIXED2AGENTOBSERVER_H
-#define COOPFIXED2AGENTOBSERVER_H
-
-#include "RoboroboMain/common.h"
-#include "RoboroboMain/roborobo.h"
-#include "Observers/AgentObserver.h"
-#include "WorldModels/RobotWorldModel.h"
-#include "CoopFixed2/include/CoopFixed2SharedData.h"
-
-
-#include <iomanip>
+#include "core/Observers/AgentObserver.h"
+#include "CoopFixed2WorldModel.h"
 
 class CoopFixed2AgentObserver : public AgentObserver
 {
 public:
-	CoopFixed2AgentObserver(RobotWorldModel *wm);
-	~CoopFixed2AgentObserver();
+    CoopFixed2AgentObserver(RobotWorldModel *wm);
+    ~CoopFixed2AgentObserver() override;
 
-	virtual void reset();
-	virtual void step();
-    
-    void logStats();
+    void step() override;
+    void reset() override;
 
+protected:
+    CoopFixed2WorldModel *m_wm;
 };
 
-#endif
 
+#endif //ROBOROBO3_COOPFIXED2AGENTOBSERVER_H

@@ -15,6 +15,7 @@
 #include "Config/CoopFixed2ConfigurationLoader.h"
 #include "Config/PartnerControlConfigurationLoader.h"
 #include "Config/FastWandererConfigurationLoader.h"
+#include "Config/CoopFixed2ConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -106,12 +107,6 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 		return new CoopOpportunity2MaxConfigurationLoader();
 	}
 #endif
-#if defined PRJ_COOPFIXED2 || !defined MODULAR
-	else if (configurationLoaderObjectName == "CoopFixed2ConfigurationLoader" )
-	{
-		return new CoopFixed2ConfigurationLoader();
-	}
-#endif
 #if defined PRJ_PARTNERCHOICE || !defined MODULAR
 	else if (configurationLoaderObjectName == "PartnerChoiceConfigurationLoader" )
 	{
@@ -128,6 +123,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "FastWandererConfigurationLoader" )
 	{
 		return new FastWandererConfigurationLoader();
+	}
+#endif
+#if defined PRJ_COOPFIXED2 || !defined MODULAR
+	else if (configurationLoaderObjectName == "CoopFixed2ConfigurationLoader" )
+	{
+		return new CoopFixed2ConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

@@ -1,331 +1,263 @@
 /**
- * @author Théotime Grohens ; Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
- *
+ * @author Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
+ * @date 2017-12-14
  */
 
-#include "Observers/AgentObserver.h"
-#include "Observers/WorldObserver.h"
+#include <CoopFixed2/include/CoopFixed2WorldModel.h>
+#include <CoopFixed2/include/CoopFixed2WorldObserver.h>
+#include <boost/algorithm/string.hpp>
+#include "core/RoboroboMain/main.h"
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include "CoopFixed2/include/CoopFixed2Controller.h"
-#include "World/World.h"
-#include "Utilities/Misc.h"
+#include "CoopFixed2/include/CoopFixed2SharedData.h"
 
-#include <cfloat>
-#include <random>
-#include <CoopFixed2/include/CoopFixed2OpportunityObj.h>
-#include "World/MovingObject.h"
 
-CoopFixed2WorldObserver::CoopFixed2WorldObserver( World* world ) : WorldObserver( world )
+CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver(__world)
 {
-    _world = world;
-    
-    // ==== loading project-specific properties
-    
-    gProperties.checkAndGetPropertyValue("gSigmaRef",&CoopFixed2SharedData::gSigmaRef,true);
-    gProperties.checkAndGetPropertyValue("gSigmaMin",&CoopFixed2SharedData::gSigmaMin,true);
-    gProperties.checkAndGetPropertyValue("gSigmaMax",&CoopFixed2SharedData::gSigmaMax,true);
-    
-    gProperties.checkAndGetPropertyValue("gProbaMutation",&CoopFixed2SharedData::gProbaMutation,true);
-    gProperties.checkAndGetPropertyValue("gUpdateSigmaStep",&CoopFixed2SharedData::gUpdateSigmaStep,true);
-    gProperties.checkAndGetPropertyValue("gEvaluationTime",&CoopFixed2SharedData::gEvaluationTime,true);
+    m_world = __world;
 
-    gProperties.checkAndGetPropertyValue("gNbHiddenLayers",&CoopFixed2SharedData::gNbHiddenLayers,true);
-    gProperties.checkAndGetPropertyValue("gNbNeuronsPerHiddenLayer",&CoopFixed2SharedData::gNbNeuronsPerHiddenLayer,true);
-    
-    gProperties.checkAndGetPropertyValue("gControllerType",&CoopFixed2SharedData::gControllerType,true);
-    
-    gProperties.checkAndGetPropertyValue("gIndividualMutationRate",&CoopFixed2SharedData::gIndividualMutationRate,false);
+    m_curEvaluationIteration = 0;
+    m_curEvaluationInGeneration = 0;
+    m_generationCount = 0;
 
-    gProperties.checkAndGetPropertyValue("gMutationOperator",&CoopFixed2SharedData::gMutationOperator,false);
-    
-    gProperties.checkAndGetPropertyValue("gSigma",&CoopFixed2SharedData::gSigma,false);
-    
-    gProperties.checkAndGetPropertyValue("gTotalEffort", &CoopFixed2SharedData::gTotalEffort, false);
-    
-    gProperties.checkAndGetPropertyValue("gFakeCoopValue", &CoopFixed2SharedData::gFakeCoopValue, false);
-    gProperties.checkAndGetPropertyValue("gNbFakeRobots", &CoopFixed2SharedData::gNbFakeRobots, false);
-    
-    gProperties.checkAndGetPropertyValue("gFixedEffort", &CoopFixed2SharedData::gFixedEffort, false);
-    gProperties.checkAndGetPropertyValue("gFixedEffortValue", &CoopFixed2SharedData::gFixedEffortValue, false);
-    
-    gProperties.checkAndGetPropertyValue("gGenerationLog", &CoopFixed2SharedData::gGenerationLog, false);
-    gProperties.checkAndGetPropertyValue("gTakeVideo", &CoopFixed2SharedData::gTakeVideo, false);
+    CoopFixed2SharedData::initSharedData();
 
-    gProperties.checkAndGetPropertyValue("gConstantA", &CoopFixed2SharedData::gConstantA, true);
-    gProperties.checkAndGetPropertyValue("gConstantK", &CoopFixed2SharedData::gConstantK, true);
+    // Log files
 
-    
-    // ====
-    
-    if ( !gRadioNetwork)
+    std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
+    m_fitnessLogManager = new LogManager(fitnessLogFilename);
+    m_fitnessLogManager->write("gen\tpop\tminfit\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
+
+    m_observer = new LogManager(gLogDirectoryname + "/observer.txt");
+    m_observer->write("gen\tind\teval\titer\tonOpp\tcoop\n");
+
+    std::vector<std::string> url;
+    if (gRemote.empty())
     {
-        std::cout << "Error : gRadioNetwork must be true." << std::endl;
-        exit(-1);
+        std::cerr << "[WARNING] gRemote needs to be defined.";
+        url.emplace_back("127.0.0.1");
+        url.emplace_back("1703");
     }
-    
-    // * iteration and generation counters
-    
-    _generationItCount = 0;
-    _generationCount = 0;
-    
-    // * Logfiles
+    else
+    {
+        boost::split(url, gRemote, boost::is_any_of(":"));
+    }
+    pyevo.connect(url[0], static_cast<unsigned short>(std::stol(url[1])));
 
-    std::string fitnessLogFilename = gLogDirectoryname + "/observer.txt";
-    _fitnessLogManager = new LogManager(fitnessLogFilename);
-    _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
-    
-    std::string genomeLogFilename = gLogDirectoryname + "/genome.txt";
-    _genomeLogManager = new LogManager(genomeLogFilename);
+    m_nbIndividuals = 50;
+    gMaxIt = -1;
 }
+
 
 CoopFixed2WorldObserver::~CoopFixed2WorldObserver()
 {
-    delete _fitnessLogManager;
-    delete _genomeLogManager;
-}
+    delete m_fitnessLogManager;
+    delete m_observer;
+};
 
 void CoopFixed2WorldObserver::reset()
 {
-    
+    // Init fitness
+    clearRobotFitnesses();
+
+    // create individuals
+    int nbweights = dynamic_cast<CoopFixed2Controller * >(m_world->getRobot(0)->getController())->getWeights().size();
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights);
+    m_fitnesses.resize(m_nbIndividuals, 0);
+
+    loadGenomesInRobots(m_individuals);
+    resetEnvironment();
 }
 
-// Reset the environment, and perform an evolution step
-void CoopFixed2WorldObserver::stepEvaluation()
+
+void CoopFixed2WorldObserver::stepPre()
 {
-    // Save fitness values and genomes before the reset
-    double totalFitness = 0;
-    int nbTrueRobots = gNbOfRobots - CoopFixed2SharedData::gNbFakeRobots;
-    std::vector<double> fitnesses(nbTrueRobots);
-    std::vector<CoopFixed2Controller::genome> genomes(nbTrueRobots);
-    std::vector<int> newGenomePick(gNbOfRobots);
-    // don't consider the last gNbFakeRobots robots (they have fixed cooperation levels)
-    for (int iRobot = 0; iRobot < nbTrueRobots; iRobot++)
+    m_curEvaluationIteration++;
+
+    if (m_curEvaluationIteration == CoopFixed2SharedData::evaluationTime)
     {
-        Robot *robot = gWorld->getRobot(iRobot);
-        CoopFixed2Controller *ctl = dynamic_cast<CoopFixed2Controller *>(robot->getController());
-        fitnesses[iRobot] = ctl->getFitness();
-        totalFitness += ctl->getFitness();
-        genomes[iRobot] = ctl->getGenome();
+        m_curEvaluationIteration = 0;
+        m_curEvaluationInGeneration++;
+        resetEnvironment();
     }
-    
-    // Environment stuff
-    // unregister everyone
+    if( m_curEvaluationInGeneration == CoopFixed2SharedData::nbEvaluationsPerGeneration)
+    {
+        m_curEvaluationInGeneration = 0;
+        stepEvolution();
+        m_generationCount++;
+    }
+}
+
+void CoopFixed2WorldObserver::stepPost()
+{
+    /* Teleport robots */
+    for (auto rid: robotsToTeleport)
+    {
+        m_world->getRobot(rid)->unregisterRobot();
+        m_world->getRobot(rid)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
+                                                   gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
+        m_world->getRobot(rid)->registerRobot();
+    }
+    robotsToTeleport.clear();
+    registerRobotsOnOpportunities();
+    computeOpportunityImpacts();
+}
+
+
+void CoopFixed2WorldObserver::stepEvolution()
+{
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
+        m_fitnesses[i] = m_world->getRobot(i)->getWorldModel()->_fitnessValue;
+    }
+    std::vector<std::pair<int, double>> fitnesses = getSortedFitnesses();
+    logFitnesses(fitnesses);
+    m_individuals = pyevo.getNextGeneration(m_fitnesses);
+    m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
+    loadGenomesInRobots(m_individuals);
+    clearRobotFitnesses();
+}
+
+std::vector<std::pair<int, double>> CoopFixed2WorldObserver::getSortedFitnesses() const
+{
+    std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
+    for (int i = 0; i < m_individuals.size(); i++)
+    {
+        fitnesses[i].first = i;
+        fitnesses[i].second = m_fitnesses[i];
+    }
+    std::sort(fitnesses.begin(), fitnesses.end(),
+              [](std::pair<int, double>a, std::pair<int, double>b){return a.second < b.second;});
+    return fitnesses;
+}
+
+void CoopFixed2WorldObserver::logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses)
+{
+    unsigned long size = sortedFitnesses.size();
+    double sum = std::accumulate(sortedFitnesses.begin(), sortedFitnesses.end(), 0.0,
+                                 [](double& a, const std::pair<int, double>& b) -> double {return a + b.second;});
+    double mean = sum / size;
+    std::vector<double> diff(size);
+    std::transform(sortedFitnesses.begin(), sortedFitnesses.end(), diff.begin(),
+                   [mean](std::pair<int, double> x) { return x.second - mean; });
+    double variance = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0) / size;
+    std::stringstream out;
+
+    out << m_generationCount << "\t";
+    out << size << "\t";
+    out << sortedFitnesses[0].second << "\t"; // MIN
+    out << sortedFitnesses[size/4].second << "\t"; // 1st quartile
+    out << sortedFitnesses[size/2].second << "\t"; // 2nd quartile - Median
+    out << sortedFitnesses[(3*size)/4].second << "\t"; // 3rd quartile
+    out << sortedFitnesses[size-1].second << "\t"; // Max
+    out << mean << "\t";
+    out << variance << "\n";
+    m_fitnessLogManager->write(out.str());
+    m_fitnessLogManager->flush();
+}
+
+void CoopFixed2WorldObserver::resetEnvironment()
+{
     for (auto object: gPhysicalObjects) {
         object->unregisterObject();
     }
-    
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
-    // register objects first because they might have fixed locations, whereas robots move anyway
+
+
     for (auto object: gPhysicalObjects)
     {
         object->resetLocation();
         object->registerObject();
     }
-    
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
     }
-    
-    
-    // update genomes (we do it here because Robot::reset() also resets genomes)
-    // Create a new generation via selection/mutation
-    
-    // O(1) fitness-proportionate selection
-    // Give everyone a new genome, including the fixed-coop robots
-    std::vector<int> nbPicks(gNbOfRobots);
-    for (int i = 0; i < gNbOfRobots; i++)
-        nbPicks[i] = 0;
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-    {
-        bool done = false;
-        int pick = -1;
-        while (done == false) {
-            pick = randint()%gNbOfRobots;
-            double draw = random()*totalFitness;
-            if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
-            {
-                done = true;
-                nbPicks[pick]++;
-            }
-        }
-        newGenomePick[iRobot] = pick;
-    }
-    
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-    {
-//        printf("New genome of robot %d: %d\n", iRobot, newGenomePick[iRobot]);
-        Robot *robot = gWorld->getRobot(iRobot);
-        CoopFixed2Controller *ctl = dynamic_cast<CoopFixed2Controller *>(robot->getController());
-        ctl->loadNewGenome(genomes[newGenomePick[iRobot]]);
-    }
-//    for (int iRobot = 0; iRobot < 40; iRobot++)
-//        printf("Robot %.2d was picked %.2lf%% of the time and had proba %.2lf%%\n", iRobot, (double)nbPicks[iRobot]/50.0*100.0, fitnesses[iRobot]/totalFitness*100.0);
 }
 
-void CoopFixed2WorldObserver::stepPre()
+void CoopFixed2WorldObserver::computeOpportunityImpacts()
 {
-    teleportRobots(_robotsToTeleport);
-    _robotsToTeleport.clear();
-
-    computeOpportunityImpact();
-
-    if( _generationItCount == CoopFixed2SharedData::gEvaluationTime - 1 )
+    // Mark all robots as not on an cooperation opportunity
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
-        monitorPopulation();
-        stepEvaluation();
-        _generationCount++;
-        _generationItCount = 0;
+        auto *wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
+        wm->onOpportunity = false;
+    }
+    for (auto *physicalObject : gPhysicalObjects)
+    {
+        double totalInvest = 0;
+        auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
+        for (auto index : opp->getNearbyRobotIndexes())
+        {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
+            totalInvest += wm->_cooperationLevel;
+        }
+        for (auto index: opp->getNearbyRobotIndexes())
+        {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
+            auto *ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(index)->getController());
+            wm->onOpportunity = true;
+            wm->appendOwnInvest(wm->_cooperationLevel);
+            wm->appendTotalInvest(totalInvest);
+            ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest));
+        }
+    }
+}
+
+double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest) const
+{
+    double res = 0;
+    if (!CoopFixed2SharedData::prisonerDilemma)
+    {
+        const double min = 0.45; //ensure fitness is always positive
+        const double a = 3, B = 4, q = 2, n = 2, c = 0.4;
+        const double p = B * std::pow(totalInvest, a) / (std::pow(q, a) + std::pow(totalInvest, a));
+        const double share = p / n;
+        const double g = std::pow(share, a) / (1 + std::pow(share, a));
+        res = min + g - c * invest;
     }
     else
     {
-        _generationItCount++;
+        throw std::runtime_error("Not implemented");
     }
-    
-    updateMonitoring();
-    updateEnvironment();
+    return res;
 }
 
-void CoopFixed2WorldObserver::computeOpportunityImpact() const
+
+void CoopFixed2WorldObserver::registerRobotsOnOpportunities()
 {
-    for (auto physicalObj : gPhysicalObjects)
+    for (auto *physicalObject : gPhysicalObjects)
     {
-        auto opportunity = dynamic_cast<CoopFixed2OpportunityObj *>(physicalObj);
-        if (opportunity->getNearbyRobots().size() == 2)
-        {
-            opportunity->decrementLockRemainingTime();
-
-            double totalInvest = 0;
-            for (auto robotIndex : opportunity->getNearbyRobots())
-            {
-                auto ctl = dynamic_cast<CoopFixed2Controller *>(gRobots[robotIndex]->getController());
-                totalInvest += ctl->getCooperationLevel();
-            }
-            for (auto robotIndex : opportunity->getNearbyRobots())
-            {
-                auto ctl = dynamic_cast<CoopFixed2Controller *>(gRobots[robotIndex]->getController());
-                ctl->wasNearObject(totalInvest, ctl->getCooperationLevel(),
-                                   static_cast<int>(opportunity->getNearbyRobots().size()));
-            }
-        }
-        else
-        {
-            opportunity->setLockRemainingTime(0);
-        }
-        bool canMove = opportunity->getNearbyRobots().size() == 2;
-        for (auto robotIndex : opportunity->getNearbyRobots())
-        {
-            auto ctl = dynamic_cast<CoopFixed2Controller *>(gRobots[robotIndex]->getController());
-            ctl->setCanMove(canMove);
-        }
-        opportunity->clearNearbyRobots();
+        auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
+        opp->registerNewRobots();
     }
 }
 
-void CoopFixed2WorldObserver::teleportRobots(std::set<int> const& robotsToTeleport) const
+void CoopFixed2WorldObserver::clearRobotFitnesses()
 {
-    for (auto robotIndex : robotsToTeleport)
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+        auto* ctl = dynamic_cast<CoopFixed2Controller*>(gWorld->getRobot(iRobot)->getController());
+        ctl->resetFitness();
+    }
+}
+
+void CoopFixed2WorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>>& genomes)
+{
+    assert(genomes.size() == m_world->getNbOfRobots());
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
-        gRobots[robotIndex]->unregisterRobot();
-        gRobots[robotIndex]->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                                gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
-        gRobots[robotIndex]->registerRobot();
+        auto* ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(i)->getController());
+        assert(genomes[i].size() == ctl->getWeights().size());
+        ctl->loadNewGenome(genomes[i]);
     }
-}
-
-
-void CoopFixed2WorldObserver::updateEnvironment()
-{
 
 }
 
-void CoopFixed2WorldObserver::updateMonitoring()
+void CoopFixed2WorldObserver::addRobotToTeleport(int robotId)
 {
-    if ( (_generationCount+1) % CoopFixed2SharedData::gGenerationLog == 0 && CoopFixed2SharedData::gTakeVideo)
-    {
-        std::string name = "gen_" + std::to_string(_generationCount);
-        saveCustomScreenshot(name);
-    }
-}
-
-void CoopFixed2WorldObserver::monitorPopulation( bool localVerbose )
-{
-    // * monitoring: count number of active agents.
-    
-    int nbTrueRobots = gNbOfRobots - CoopFixed2SharedData::gNbFakeRobots;
-    
-    std::vector<double> fitnesses(nbTrueRobots);
-    std::vector<int> index(nbTrueRobots);
-    
-    for (int iRobot = 0; iRobot < nbTrueRobots; iRobot++)
-    {
-        auto ctl = dynamic_cast<CoopFixed2Controller*>(gWorld->getRobot(iRobot)->getController());
-        fitnesses[iRobot] = ctl->getFitness();
-        index[iRobot] = iRobot;
-    }
-    
-    std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
-    
-//    printf("Robots sorted by decreasing fitness\n");
-//    for (int i = 0; i < nbTrueRobots; i++)
-//        printf("Robot #%.2d is %.2d with %.2lf\n", i, index[nbTrueRobots-i-1], fitnesses[index[nbTrueRobots-i-1]]);
-    
-    double minFit = fitnesses[index[0]];
-    double maxFit = fitnesses[index[nbTrueRobots-1]];
-    double medFit = fitnesses[index[nbTrueRobots/2]];
-    double lowQuartFit = fitnesses[index[nbTrueRobots/4]];
-    double highQuartFit = fitnesses[index[3*nbTrueRobots/4]];
-    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)nbTrueRobots;
-    double stddevFit = -1;
-    for (auto& fitness: fitnesses)
-        fitness = (fitness-avgFit)*(fitness-avgFit);
-    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)nbTrueRobots, 0.5);
-    
-    std::stringstream genLog;
-    
-    genLog << std::setprecision(5);
-    genLog << _generationCount+1 << "\t";
-    genLog << nbTrueRobots << "\t";
-    genLog << minFit << "\t";
-    genLog << maxFit << "\t";
-    genLog << avgFit << "\t";
-    genLog << lowQuartFit << "\t";
-    genLog << medFit << "\t";
-    genLog << highQuartFit << "\t";
-    genLog << stddevFit << "\n";
-    
-    _fitnessLogManager->write(genLog.str());
-    _fitnessLogManager->flush();
-    
-    if ( (_generationCount+1) % CoopFixed2SharedData::gGenerationLog == 0)
-    {
-        // log all genomes of each detailed generation, by decreasing fitness
-        std::stringstream genomes;
-        genomes << _generationCount << " ";
-        genomes << nbTrueRobots << "\n";
-        for (int iRobot = nbTrueRobots-1; iRobot >= 0; iRobot--)
-        {
-            auto ctl = dynamic_cast<CoopFixed2Controller *>(gWorld->getRobot(index[iRobot])->getController());
-            CoopFixed2Controller::genome gen = ctl->getGenome();
-            genomes << gen.second << " ";
-            genomes << gen.first.size() << " ";
-            for (auto gene: gen.first)
-                genomes << gene << " ";
-            genomes << "\n\n";
-        }
-        _genomeLogManager->write(genomes.str());
-        _genomeLogManager->flush();
-    }
-    
-    // display lightweight logs for easy-parsing
-    std::cout << "log," << (gWorld->getIterations()/CoopFixed2SharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
-    
-}
-
-void CoopFixed2WorldObserver::addRobotToTeleport(const int i)
-{
-    _robotsToTeleport.insert(i);
+    robotsToTeleport.emplace(robotId);
 }

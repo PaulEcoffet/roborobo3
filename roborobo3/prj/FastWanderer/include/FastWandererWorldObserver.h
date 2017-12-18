@@ -12,7 +12,7 @@
 #include "core/Utilities/LogManager.h"
 #include "contrib/json/json.hpp"
 #include "FastWandererController.h"
-#include "contrib/network/PyCMAESInterface.h"
+#include "contrib/network/PyevoInterface.h"
 
 using json = nlohmann::json;
 
@@ -36,7 +36,7 @@ protected:
 
     int m_curEvalutionIteration;
     int _generationCount;
-    PyCMAESInterface pycma;
+    PyevoInterface pycma;
 
     void clearRobotFitnesses();
 
