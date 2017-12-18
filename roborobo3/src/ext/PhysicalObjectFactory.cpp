@@ -1,4 +1,4 @@
-#include <CoopFixed2/include/CoopFixed2OpportunityObj.h>
+#include <CoopFixed2/include/CoopFixed2Opportunity.h>
 #include <PartnerChoice/include/PartnerChoiceOpportunity.h>
 #include <PartnerControl/include/PartnerControlOpportunity.h>
 #include "World/PhysicalObjectFactory.h"
@@ -76,7 +76,7 @@ void PhysicalObjectFactory::makeObject( int type )
         case 7:
             if (gVerbose)
                 std::cout << "[INFO] Coop Opportunity 2 Fixed created (type = 7).\n";
-            gPhysicalObjects.push_back( new CoopFixed2OpportunityObj(id));
+            gPhysicalObjects.push_back( new CoopFixed2Opportunity(id));
             break;
         case 8:
             if (gVerbose)

@@ -1,43 +1,39 @@
 /**
- * @author Nicolas Bredeche <nicolas.bredeche@upmc.fr>
- *
+ * @author Paul Ecoffet <paul.ecoffet@isir.upmc.fr>
+ * @date 2017-12-14
  */
 
-
-
+#include <limits>
+#include <core/RoboroboMain/main.h>
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
 
-double CoopFixed2SharedData::gSigmaMin = 0.0;
-double CoopFixed2SharedData::gProbaMutation = 0.0;
-double CoopFixed2SharedData::gUpdateSigmaStep = 0.0;
-double CoopFixed2SharedData::gSigmaRef = 0.0; // reference value of sigma
-double CoopFixed2SharedData::gSigmaMax = 0.0; // maximal value of sigma
-int CoopFixed2SharedData::gEvaluationTime = 0; // how long a controller will be evaluated on a robot
 
-int CoopFixed2SharedData::gNbHiddenLayers = 1;
-int CoopFixed2SharedData::gNbNeuronsPerHiddenLayer = 5;
+int CoopFixed2SharedData::evaluationTime = 1000;
+int CoopFixed2SharedData::genomeLog = 2000;
+int CoopFixed2SharedData::controllerType = 0;
+double CoopFixed2SharedData::maxTranslationalValue = 2;
+double CoopFixed2SharedData::maxRotationalVelocity = 30;
+int CoopFixed2SharedData::nbHiddenLayers = 1;
+int CoopFixed2SharedData::nbNeuronsPerHiddenLayer = 10;
+int CoopFixed2SharedData::nbEvaluationsPerGeneration = 1;
+int CoopFixed2SharedData::takeVideoEveryGeneration = std::numeric_limits<int>::max();
+int CoopFixed2SharedData::seeCoopFromDist = 0;
+bool CoopFixed2SharedData::prisonerDilemma = false;
 
-int CoopFixed2SharedData::gControllerType = -1; // cf. header for description
+void CoopFixed2SharedData::initSharedData()
+{
+    gProperties.checkAndGetPropertyValue("evaluationTime", &CoopFixed2SharedData::evaluationTime, true);
+    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &CoopFixed2SharedData::nbEvaluationsPerGeneration, true);
+    gProperties.checkAndGetPropertyValue("genomeLog", &CoopFixed2SharedData::genomeLog, true);
+    gProperties.checkAndGetPropertyValue("controllerType", &CoopFixed2SharedData::controllerType, true);
+    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &CoopFixed2SharedData::maxTranslationalValue, true);
+    gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &CoopFixed2SharedData::maxRotationalVelocity, true);
+    gProperties.checkAndGetPropertyValue("nbHiddenLayers", &CoopFixed2SharedData::nbHiddenLayers, true);
+    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &CoopFixed2SharedData::nbNeuronsPerHiddenLayer, true);
+    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &CoopFixed2SharedData::takeVideoEveryGeneration, false);
+    gProperties.checkAndGetPropertyValue("seeCoopFromDist", &CoopFixed2SharedData::seeCoopFromDist, false);
+    gProperties.checkAndGetPropertyValue("prisonerDilemma", &CoopFixed2SharedData::prisonerDilemma, false);
 
-double CoopFixed2SharedData::gIndividualMutationRate = 1.0;
+}
 
-int CoopFixed2SharedData::gMutationOperator = 1; // 0: uniform, 1: gaussian
-
-double CoopFixed2SharedData::gSigma = 0.01; // 0.01 is just some random value.
-
-int CoopFixed2SharedData::gMemorySize = 20;
-
-bool CoopFixed2SharedData::gTotalEffort = true;
-
-double CoopFixed2SharedData::gFakeCoopValue = 2.0; // maximum value of ...
-int CoopFixed2SharedData::gNbFakeRobots = 10; // number of fixed-coop robots in the pop
-
-bool CoopFixed2SharedData::gFixedEffort = false;
-double CoopFixed2SharedData::gFixedEffortValue = 0.25;
-
-int CoopFixed2SharedData::gGenerationLog = 5000;
-bool CoopFixed2SharedData::gTakeVideo = false;
-
-double CoopFixed2SharedData::gConstantK = 0;
-double CoopFixed2SharedData::gConstantA = 0;
 

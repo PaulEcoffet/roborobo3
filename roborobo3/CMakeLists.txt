@@ -207,14 +207,16 @@ set(SOURCE_FILES
         src/ext/CoopFixed2ConfigurationLoader.cpp
         prj/CoopFixed2/include/CoopFixed2AgentObserver.h
         prj/CoopFixed2/include/CoopFixed2Controller.h
-        prj/CoopFixed2/include/CoopFixed2OpportunityObj.h
         prj/CoopFixed2/include/CoopFixed2WorldObserver.h
         prj/CoopFixed2/include/CoopFixed2SharedData.h
+        prj/CoopFixed2/include/CoopFixed2Opportunity.h
+        prj/CoopFixed2/include/CoopFixed2WorldModel.h
         prj/CoopFixed2/src/CoopFixed2AgentObserver.cpp
         prj/CoopFixed2/src/CoopFixed2Controller.cpp
-        prj/CoopFixed2/src/CoopFixed2OpportunityObj.cpp
         prj/CoopFixed2/src/CoopFixed2SharedData.cpp
         prj/CoopFixed2/src/CoopFixed2WorldObserver.cpp
+        prj/CoopFixed2/src/CoopFixed2Opportunity.cpp
+        prj/CoopFixed2/src/CoopFixed2WorldModel.cpp
         prj/PartnerChoice/src/PartnerChoiceController.cpp
         prj/PartnerChoice/include/PartnerChoiceController.h
         prj/PartnerChoice/src/PartnerChoiceAgentObserver.cpp
@@ -266,7 +268,8 @@ set(SOURCE_FILES
         prj/FastWanderer/src/FastWandererWorldObserver.cpp
         include/ext/Config/FastWandererConfigurationLoader.h
         src/ext/FastWandererConfigurationLoader.cpp
-        src/contrib/network/PyCMAESInterface.cpp include/contrib/network/PyCMAESInterface.h)
+        src/contrib/network/PyevoInterface.cpp
+        include/contrib/network/PyevoInterface.h)
 
 include_directories(include)
 include_directories(include/contrib)

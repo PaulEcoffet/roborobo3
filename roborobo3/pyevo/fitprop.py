@@ -60,8 +60,10 @@ class FitPropEvolutionStrategy():
             maxfit=sorted_fitness[-1]
         ))
 
+    @property
     def result(self):
-        return deepcopy(self.solutions), deepcopy(self.lastfitnesses)
+        return [{'fit': fit, 'weights': weights} for weights, fit
+                in zip(deepcopy(self.solutions), deepcopy(self.lastfitnesses))]
 
 
 class FitPropLogger:

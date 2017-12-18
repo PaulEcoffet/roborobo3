@@ -42,7 +42,7 @@ protected:
 
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
-    PyCMAESInterface pycma;
+    PyevoInterface pycma;
 
     void initOpportunities();
     void computeOpportunityImpact();

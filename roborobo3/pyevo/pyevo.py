@@ -3,7 +3,7 @@ import cma
 
 def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath):
     if type_ == 'cmaes':
-        return cma.CMAEvolutionStrategy(guess, sigma,
+        return cma.CMAEvolutionStrategy(guess, 0.3,  # big sigma for init
                                       {'popsize': popsize,
                                       'BoundaryHandler': cma.s.ch.BoundTransform,
                                       'bounds': bounds,

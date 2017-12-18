@@ -1,40 +1,33 @@
-#if defined PRJ_COOPFIXED2 || !defined MODULAR
+//
+// Created by paul on 02/11/17.
+//
 
-#include "Config/CoopFixed2ConfigurationLoader.h"
-
+#include <core/RoboroboMain/main.h>
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
+#include "CoopFixed2/include/CoopFixed2WorldModel.h"
 #include "CoopFixed2/include/CoopFixed2AgentObserver.h"
 #include "CoopFixed2/include/CoopFixed2Controller.h"
+#include "ext/Config/CoopFixed2ConfigurationLoader.h"
 
-#include "WorldModels/RobotWorldModel.h"
-
-CoopFixed2ConfigurationLoader::CoopFixed2ConfigurationLoader()
+WorldObserver *CoopFixed2ConfigurationLoader::make_WorldObserver(World *wm)
 {
+    return new CoopFixed2WorldObserver(wm);
 }
 
-CoopFixed2ConfigurationLoader::~CoopFixed2ConfigurationLoader()
+RobotWorldModel *CoopFixed2ConfigurationLoader::make_RobotWorldModel()
 {
-	//nothing to do
+    return new CoopFixed2WorldModel();
 }
 
-WorldObserver* CoopFixed2ConfigurationLoader::make_WorldObserver(World* wm)
+AgentObserver *CoopFixed2ConfigurationLoader::make_AgentObserver(RobotWorldModel *wm)
 {
-	return new CoopFixed2WorldObserver(wm);
+    return new CoopFixed2AgentObserver(wm);
 }
 
-RobotWorldModel* CoopFixed2ConfigurationLoader::make_RobotWorldModel()
+Controller *CoopFixed2ConfigurationLoader::make_Controller(RobotWorldModel *wm)
 {
-	return new RobotWorldModel();
+    return new CoopFixed2Controller(wm);
 }
 
-AgentObserver* CoopFixed2ConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
-{
-	return new CoopFixed2AgentObserver(wm);
-}
 
-Controller* CoopFixed2ConfigurationLoader::make_Controller(RobotWorldModel* wm)
-{
-	return new CoopFixed2Controller(wm);
-}
 
-#endif
