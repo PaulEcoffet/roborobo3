@@ -269,7 +269,7 @@ set(SOURCE_FILES
         include/ext/Config/FastWandererConfigurationLoader.h
         src/ext/FastWandererConfigurationLoader.cpp
         src/contrib/network/PyevoInterface.cpp
-        include/contrib/network/PyevoInterface.h)
+        include/contrib/network/PyevoInterface.h prj/CoopFixed2/src/CoopFixed2AnalysisWorldObserver.cpp prj/CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h prj/CoopFixed2/src/CoopFixed2AnalysisOpportunity.cpp prj/CoopFixed2/include/CoopFixed2AnalysisOpportunity.h)
 
 include_directories(include)
 include_directories(include/contrib)

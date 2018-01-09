@@ -19,7 +19,7 @@ public:
 
     void isPushed(int id, std::tuple<double, double> speed) override;
 
-    int getNbNearbyRobots() const;
+    virtual int getNbNearbyRobots() const;
 
     std::string inspect(std::string prefix) override;
 
