@@ -6,6 +6,7 @@
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>
 #include <CoopFixed2/include/CoopFixed2WorldObserver.h>
 #include <boost/algorithm/string.hpp>
+#include <core/Utilities/Graphics.h>
 #include "core/RoboroboMain/main.h"
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include "CoopFixed2/include/CoopFixed2Controller.h"
@@ -28,9 +29,6 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver
     m_fitnessLogManager = new LogManager(fitnessLogFilename);
     m_fitnessLogManager->write("gen\tpop\tminfit\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
 
-    m_observer = new LogManager(gLogDirectoryname + "/observer.txt");
-    m_observer->write("gen\tind\teval\titer\tonOpp\tcoop\n");
-
     std::vector<std::string> url;
     if (gRemote.empty())
     {
@@ -52,7 +50,6 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver
 CoopFixed2WorldObserver::~CoopFixed2WorldObserver()
 {
     delete m_fitnessLogManager;
-    delete m_observer;
 };
 
 void CoopFixed2WorldObserver::reset()
@@ -101,11 +98,20 @@ void CoopFixed2WorldObserver::stepPost()
     robotsToTeleport.clear();
     registerRobotsOnOpportunities();
     computeOpportunityImpacts();
+    if ((m_generationCount+1) % 1000 == 0)
+        saveCustomScreenshot("gen_" + std::to_string(m_generationCount));
+
 }
 
 
 void CoopFixed2WorldObserver::stepEvolution()
 {
+    if ((m_generationCount+1) % 1000 == 0)
+    {
+        std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
+        std::ofstream genfile(path);
+        genfile << json(m_individuals);
+    }
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         m_fitnesses[i] = m_world->getRobot(i)->getWorldModel()->_fitnessValue;
@@ -113,6 +119,10 @@ void CoopFixed2WorldObserver::stepEvolution()
     std::vector<std::pair<int, double>> fitnesses = getSortedFitnesses();
     logFitnesses(fitnesses);
     m_individuals = pyevo.getNextGeneration(m_fitnesses);
+    if (m_individuals.empty())
+    {
+        exit(0);
+    }
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);
     clearRobotFitnesses();

@@ -37,7 +37,6 @@ public:
 protected:
     World *m_world;
     LogManager *m_fitnessLogManager;
-    LogManager* m_observer;
 
     int m_curEvaluationInGeneration;
     int m_curEvaluationIteration;

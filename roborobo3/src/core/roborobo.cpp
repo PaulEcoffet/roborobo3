@@ -966,11 +966,13 @@ void initLogging()
 		std::cout << ex.what() << std::endl;
 		exit (-1);
 	}
-     
 
-    
-    
-    // init log file
+
+	boost::filesystem::path screendir (gLogDirectoryname + "/screenshots");
+	boost::filesystem::create_directories(screendir);
+
+
+	// init log file
     
     gLogFullFilename = gLogDirectoryname + "/" + gLogFilename;
     

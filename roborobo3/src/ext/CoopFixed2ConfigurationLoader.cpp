@@ -3,6 +3,7 @@
 //
 
 #include <core/RoboroboMain/main.h>
+#include <CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h>
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include "CoopFixed2/include/CoopFixed2WorldModel.h"
 #include "CoopFixed2/include/CoopFixed2AgentObserver.h"
@@ -11,7 +12,16 @@
 
 WorldObserver *CoopFixed2ConfigurationLoader::make_WorldObserver(World *wm)
 {
-    return new CoopFixed2WorldObserver(wm);
+    bool analysis = false;
+    gProperties.checkAndGetPropertyValue("analysis", &analysis, false);
+    if (analysis)
+    {
+        return new CoopFixed2AnalysisWorldObserver(wm);
+    }
+    else
+    {
+        return new CoopFixed2WorldObserver(wm);
+    }
 }
 
 RobotWorldModel *CoopFixed2ConfigurationLoader::make_RobotWorldModel()
