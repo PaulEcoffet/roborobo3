@@ -223,12 +223,13 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     double res = 0;
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
-        const double min = 0.45; //ensure fitness is always positive
         const double a = 3, B = 4, q = 2, n = 2, c = 0.4;
         const double p = B * std::pow(totalInvest, a) / (std::pow(q, a) + std::pow(totalInvest, a));
         const double share = p / n;
         const double g = std::pow(share, a) / (1 + std::pow(share, a));
-        res = min + g - c * invest;
+        res = g - c * invest;
+        if (res < 0)
+            res = 0; // Reward can only be positive, prevent invest = 0 from being an attractor
     }
     else
     {
