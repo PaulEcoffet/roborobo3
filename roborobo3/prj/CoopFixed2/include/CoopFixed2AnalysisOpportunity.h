@@ -30,6 +30,8 @@ public:
     std::set<int> nearbyRobotIndexes;
 
     void updateColor();
+
+    int m_nbprev;
 };
 
 
