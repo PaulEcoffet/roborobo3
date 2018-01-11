@@ -13,6 +13,7 @@
 CoopFixed2AnalysisOpportunity::CoopFixed2AnalysisOpportunity(int __id) : CoopFixed2Opportunity(__id)
 {
     setType(10);
+    m_nbprev = 0;
 }
 
 void CoopFixed2AnalysisOpportunity::updateColor()
@@ -30,7 +31,7 @@ void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
 
 int CoopFixed2AnalysisOpportunity::getNbNearbyRobots() const
 {
-    return 1;
+    return 1 + m_nbprev;
 }
 
 void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed)
@@ -45,6 +46,7 @@ const std::set<int>& CoopFixed2AnalysisOpportunity::getNearbyRobotIndexes() cons
 
 void CoopFixed2AnalysisOpportunity::clearNearbyRobotIndexes()
 {
+    m_nbprev = nearbyRobotIndexes.size();
     nearbyRobotIndexes.clear();
 }
 
