@@ -67,9 +67,24 @@ void CoopFixed2Opportunity::updateColor()
     }
     else if (getNbNearbyRobots() == 2)
     {
-        _displayColorRed = 80;
-        _displayColorGreen = 79;
-        _displayColorBlue = 33;
+        if (curInv < 1.5)
+        {
+            _displayColorRed = 189;
+            _displayColorGreen = 131;
+            _displayColorBlue = 126;
+        }
+        else if (curInv < 3)
+        {
+            _displayColorRed =198;
+            _displayColorGreen = 186;
+            _displayColorBlue = 58;
+        }
+        else
+        {
+            _displayColorRed = 44;
+            _displayColorGreen = 83;
+            _displayColorBlue = 120;
+        }
     }
     else
     {
@@ -82,11 +97,14 @@ void CoopFixed2Opportunity::updateColor()
 std::string CoopFixed2Opportunity::inspect(std::string prefix)
 {
     std::stringstream out;
+    out << prefix << "Last inv: " << curInv << ".\n";
     out << prefix << "I have :";
     for (auto index : robotsOnOppLastTurn)
     {
         out << index << ",";
     }
     out << "\n";
+    out << prefix << curInv / 4 << "," << (curInv / 4) / 0.5 << ", " << ((curInv /4) - 0.5) / 0.5 << "\n";
+    out << prefix << _displayColorRed << "," << _displayColorGreen << "," << _displayColorBlue << "\n";
     return out.str();
 }
