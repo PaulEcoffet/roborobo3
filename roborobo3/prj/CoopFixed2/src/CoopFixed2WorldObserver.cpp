@@ -54,6 +54,7 @@ CoopFixed2WorldObserver::~CoopFixed2WorldObserver()
 
 void CoopFixed2WorldObserver::reset()
 {
+    m_nbFakeRobots = gNbOfRobots - m_nbIndividuals;
     // Init fitness
     clearRobotFitnesses();
 
@@ -63,6 +64,15 @@ void CoopFixed2WorldObserver::reset()
     m_fitnesses.resize(m_nbIndividuals, 0);
 
     loadGenomesInRobots(m_individuals);
+    for (int i = m_nbIndividuals; i < gNbOfRobots; i++)
+    {
+        const int fakeindex = i - m_nbIndividuals;
+        const double fakeval = (((double) fakeindex) / (m_nbFakeRobots - 1)) * 2; /* 2 is the max coop */
+        std::cout << fakeindex << " " << m_nbFakeRobots << " " << fakeval << "\n";
+        auto* ctl = dynamic_cast<CoopFixed2Controller *>(_world->getRobot(i)->getController());
+        ctl->setFake(true);
+        ctl->setFakeInvest(fakeval);
+    }
     resetEnvironment();
 }
 
@@ -112,7 +122,7 @@ void CoopFixed2WorldObserver::stepEvolution()
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    for (int i = 0; i < m_nbIndividuals; i++)
     {
         m_fitnesses[i] = m_world->getRobot(i)->getWorldModel()->_fitnessValue;
     }
@@ -201,20 +211,28 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     {
         double totalInvest = 0;
         auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
-        for (auto index : opp->getNearbyRobotIndexes())
+        if (opp->getNbNearbyRobots() == 2)
         {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-            totalInvest += wm->_cooperationLevel;
+            for (auto index : opp->getNearbyRobotIndexes())
+            {
+                auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
+                totalInvest += wm->_cooperationLevel;
+            }
+
+            for (auto index: opp->getNearbyRobotIndexes())
+            {
+                auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
+                auto *ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(index)->getController());
+                wm->onOpportunity = true;
+                wm->appendOwnInvest(wm->_cooperationLevel);
+                wm->appendTotalInvest(totalInvest);
+                ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest));
+            }
         }
-        for (auto index: opp->getNearbyRobotIndexes())
-        {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-            auto *ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(index)->getController());
-            wm->onOpportunity = true;
-            wm->appendOwnInvest(wm->_cooperationLevel);
-            wm->appendTotalInvest(totalInvest);
-            ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest));
-        }
+
+        // Set the cur total invest for coloring
+        opp->curInv = totalInvest;
+
     }
 }
 
@@ -223,6 +241,7 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     double res = 0;
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
+        /*
         const double a = 3, B = 4, q = 2, n = 2, c = 0.4;
         const double p = B * std::pow(totalInvest, a) / (std::pow(q, a) + std::pow(totalInvest, a));
         const double share = p / n;
@@ -230,6 +249,9 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
         res = g - c * invest;
         if (res < 0)
             res = 0; // Reward can only be positive, prevent invest = 0 from being an attractor
+        */
+        const double c = 0.5;
+        res = totalInvest - c * invest * invest;
     }
     else
     {
@@ -258,12 +280,11 @@ void CoopFixed2WorldObserver::clearRobotFitnesses()
 
 void CoopFixed2WorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>>& genomes)
 {
-    assert(genomes.size() == m_world->getNbOfRobots());
+    assert(genomes.size() == m_nbIndividuals);
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         auto* ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(i)->getController());
-        assert(genomes[i].size() == ctl->getWeights().size());
-        ctl->loadNewGenome(genomes[i]);
+        ctl->loadNewGenome(genomes[i % m_nbIndividuals]); // cycle through genome, the remaining ones are the fake robots
     }
 
 }

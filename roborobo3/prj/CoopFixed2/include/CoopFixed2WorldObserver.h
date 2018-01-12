@@ -54,6 +54,7 @@ protected:
     void loadGenomesInRobots(const std::vector<std::vector<double>>& genomes);
 
     std::set<int> robotsToTeleport;
+    int m_nbFakeRobots;
 };
 
 
