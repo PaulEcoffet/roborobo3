@@ -19,7 +19,7 @@ enum {
     ELMAN_ID = 2
 };
 
-CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm)
+CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm) : _fake(false), _fakeInvest(0)
 {
     m_wm = dynamic_cast<CoopFixed2WorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -68,7 +68,18 @@ void CoopFixed2Controller::step()
     m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
 
-    m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
+    if (_fake)
+    {
+        m_wm->_cooperationLevel = _fakeInvest;
+        m_wm->setRobotLED_colorValues(0, 0, 127);
+
+    }
+    else
+    {
+        m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
+        m_wm->setRobotLED_colorValues(0, 127, 0);
+
+    }
 }
 
 std::vector<unsigned int> CoopFixed2Controller::getNbNeuronsPerHiddenLayers() const
@@ -181,14 +192,17 @@ void CoopFixed2Controller::increaseFitness( double delta )
 std::string CoopFixed2Controller::inspect(std::string prefix)
 {
     std::stringstream out;
-
+    if (_fake)
+    {
+        out << prefix << "I'm fake robot with coop " << _fakeInvest << "\n";
+    }
     std::set<int> seen;
     for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
     {
         seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
     }
 
-    out << "Seen objects:\n";
+    out << prefix << "Seen objects:\n";
     for (int entityId : seen)
     {
         if (entityId == 0)
@@ -208,15 +222,15 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     }
     if (m_wm->onOpportunity)
     {
-        out << "On opportunity\n";
-        out << "\tLast own invest: ";
+        out << prefix << "On opportunity\n";
+        out << prefix << "\tLast own invest: ";
         for (auto ownInvest : m_wm->lastOwnInvest)
         {
             out << ownInvest << " ";
         }
         out << "(" << m_wm->meanLastOwnInvest() << ")";
         out << "\n";
-        out << "\tLast total invest: ";
+        out << prefix << "\tLast total invest: ";
         for (auto totInvest : m_wm->lastTotalInvest)
         {
             out << totInvest << " ";
@@ -225,7 +239,7 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
         out << "\n";
 
     }
-    out << "Actual fitness: " << getFitness() << "\n";
+    out << prefix << "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }
 
@@ -239,6 +253,16 @@ unsigned int CoopFixed2Controller::getNbOutputs() const
     return 2    // Motor commands
            + 1  // Cooperation value
     ;
+}
+
+void CoopFixed2Controller::setFakeInvest(const double fakeInvest)
+{
+    _fakeInvest = fakeInvest;
+}
+
+void CoopFixed2Controller::setFake(bool fake)
+{
+    _fake = fake;
 }
 
 

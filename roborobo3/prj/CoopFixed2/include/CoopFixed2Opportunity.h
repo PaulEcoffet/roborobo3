@@ -22,6 +22,8 @@ public:
     virtual int getNbNearbyRobots() const;
 
     std::string inspect(std::string prefix) override;
+    double curInv = 0;
+
 
 protected:
     std::set<int> newRobotsOnOppThisTurn;
