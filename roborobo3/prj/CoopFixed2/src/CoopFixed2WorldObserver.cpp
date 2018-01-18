@@ -27,7 +27,7 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver
 
     std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
     m_fitnessLogManager = new LogManager(fitnessLogFilename);
-    m_fitnessLogManager->write("gen\tpop\tminfit\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
+    m_fitnessLogManager->write("gen\tpop\tminft\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
 
     std::vector<std::string> url;
     if (gRemote.empty())
@@ -43,6 +43,9 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver
     pyevo.connect(url[0], static_cast<unsigned short>(std::stol(url[1])));
 
     m_nbIndividuals = 50;
+    m_nbFakeRobots = 25;
+    cur_batch = 0;
+
     gMaxIt = -1;
 }
 
@@ -222,11 +225,10 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             for (auto index: opp->getNearbyRobotIndexes())
             {
                 auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-                auto *ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(index)->getController());
                 wm->onOpportunity = true;
                 wm->appendOwnInvest(wm->_cooperationLevel);
                 wm->appendTotalInvest(totalInvest);
-                ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest));
+                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest);
             }
         }
 
@@ -241,17 +243,9 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     double res = 0;
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
-        /*
-        const double a = 3, B = 4, q = 2, n = 2, c = 0.4;
-        const double p = B * std::pow(totalInvest, a) / (std::pow(q, a) + std::pow(totalInvest, a));
-        const double share = p / n;
-        const double g = std::pow(share, a) / (1 + std::pow(share, a));
-        res = g - c * invest;
-        if (res < 0)
-            res = 0; // Reward can only be positive, prevent invest = 0 from being an attractor
-        */
+        const double n = 2;
         const double c = 0.5;
-        res = totalInvest - c * invest * invest;
+        res = totalInvest / n - 1/2 * c * invest * invest;
     }
     else
     {

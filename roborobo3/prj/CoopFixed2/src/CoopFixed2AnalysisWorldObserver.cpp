@@ -26,7 +26,10 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
         exit(-1);
     }
 
-    std::string genomePath(gLogDirectoryname + "/genomes_29999.txt");  // TODO Super Ugly
+    int gen = 0;
+    gProperties.checkAndGetPropertyValue("genAnalysis", &gen, true);
+
+    std::string genomePath(gLogDirectoryname + "/genomes_" + std::to_string(gen) + ".txt");
     gProperties.checkAndGetPropertyValue("genomePath", &genomePath, false);
     if (!boost::filesystem::exists(genomePath))
     {
@@ -37,7 +40,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
     genomeFile >> m_genomesJson;
     m_genomesIt = m_genomesJson.begin();
 
-    m_log.open(gLogDirectoryname + "/analysis_log.txt");
+    m_log.open(gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt");
     m_log << "ind\tcoop\trep\tit\tonOpp\townCoop\n";
 
 
