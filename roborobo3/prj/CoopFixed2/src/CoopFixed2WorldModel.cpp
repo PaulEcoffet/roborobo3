@@ -3,12 +3,22 @@
  * @date 2017-12-14
  */
 
+#include <core/RoboroboMain/main.h>
 #include "CoopFixed2/include/CoopFixed2WorldModel.h"
+#include <boost/algorithm/clamp.hpp>
 
 CoopFixed2WorldModel::CoopFixed2WorldModel()
         : RobotWorldModel(),
-          onOpportunity(false)
+          onOpportunity(false),
+          cval(0.5)
 {
+    setNewCval();
+}
+
+void CoopFixed2WorldModel::setNewCval() {
+    double cvalstd = 0;
+    gProperties.checkAndGetPropertyValue("cvalstd", &cvalstd, false);
+    cval = boost::algorithm::clamp(randgaussian() * cvalstd + 0.5, 0.0, 1.0);
 }
 
 double CoopFixed2WorldModel::meanLastTotalInvest()

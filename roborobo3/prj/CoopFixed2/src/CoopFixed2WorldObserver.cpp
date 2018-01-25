@@ -196,6 +196,8 @@ void CoopFixed2WorldObserver::resetEnvironment()
     {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
+        auto *wm = dynamic_cast<CoopFixed2WorldModel* >(robot->getWorldModel());
+        wm->setNewCval();
     }
 }
 
@@ -226,7 +228,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->onOpportunity = true;
                 wm->appendOwnInvest(wm->_cooperationLevel);
                 wm->appendTotalInvest(totalInvest);
-                ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest));
+                ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest, wm->cval));
             }
         }
 
@@ -236,7 +238,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 }
 
-double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest) const
+double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, double cval) const
 {
     double res = 0;
     if (!CoopFixed2SharedData::prisonerDilemma)
@@ -250,8 +252,8 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
         if (res < 0)
             res = 0; // Reward can only be positive, prevent invest = 0 from being an attractor
         */
-        const double c = 0.5;
-        res = totalInvest - c * invest * invest;
+        const double n = 2;
+        res = totalInvest / n - 0.5 * cval * invest * invest;
     }
     else
     {
