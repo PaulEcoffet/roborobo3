@@ -27,7 +27,7 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver
 
     std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
     m_fitnessLogManager = new LogManager(fitnessLogFilename);
-    m_fitnessLogManager->write("gen\tpop\tminfit\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
+    m_fitnessLogManager->write("gen\tpop\tminft\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
 
     std::vector<std::string> url;
     if (gRemote.empty())
@@ -224,11 +224,11 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             for (auto index: opp->getNearbyRobotIndexes())
             {
                 auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-                auto *ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(index)->getController());
                 wm->onOpportunity = true;
                 wm->appendOwnInvest(wm->_cooperationLevel);
                 wm->appendTotalInvest(totalInvest);
-                ctl->increaseFitness(payoff(wm->_cooperationLevel, totalInvest, wm->cval));
+                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, wm->cval);
+
             }
         }
 
