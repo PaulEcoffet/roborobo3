@@ -34,13 +34,14 @@ PartnerChoiceAnalysisWorldObserver::PartnerChoiceAnalysisWorldObserver(World *__
 
     std::cout << gLogDirectoryname + "/analysis_log.txt";
     m_log.open(gLogDirectoryname + "/analysis_log.txt");
-    m_log << "generation\tind\trank\tcoop\trep\tit\tonOpp\n";
+    m_log << "ind\tcoop\trep\tit\tonOpp\townInv\n";
 
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
     gProperties.checkAndGetPropertyValue("analysisNbRep", &m_nbRep, true);
     m_stepCoop = PartnerChoiceSharedData::maxCoop / ((double)PartnerChoiceSharedData::nbCoopStep - 1);
     m_curCoop = 0;
+    m_curInd = 0;
     m_curIterationInRep = 0;
     m_curRep = 0;
 
@@ -49,7 +50,7 @@ PartnerChoiceAnalysisWorldObserver::PartnerChoiceAnalysisWorldObserver(World *__
 
 void PartnerChoiceAnalysisWorldObserver::reset()
 {
-    loadGenome((*m_genomesIt)["weights"]);
+    loadGenome((*m_genomesIt));
     resetEnvironment();
 }
 
@@ -70,8 +71,6 @@ void PartnerChoiceAnalysisWorldObserver::stepPre()
     }
     if (m_curRep == m_nbRep)
     {
-        std::cout << "coop: " << m_curCoop << ", ind: " << (*m_genomesIt)["id"]
-                  << ", rank: " << (*m_genomesIt)["rank"] << ", gen: " << (*m_genomesIt)["generation"] << "\n";
         m_curCoop += m_stepCoop;
         this->setAllOpportunitiesCoop(m_curCoop);
         m_curRep = 0;
@@ -80,13 +79,12 @@ void PartnerChoiceAnalysisWorldObserver::stepPre()
     {
         m_curCoop = 0;
         this->setAllOpportunitiesCoop(m_curCoop);
+        m_genomesIt++;
         if (m_genomesIt < m_genomesJson.end())
         {
+            m_curInd++;
             m_log << std::flush;
-            m_genomesIt++;
-            while ((*m_genomesIt)["generation"] != 1999)
-                m_genomesIt++;
-            loadGenome((*m_genomesIt)["weights"]);
+            loadGenome((*m_genomesIt));
         }
         else
         {
@@ -101,13 +99,12 @@ void PartnerChoiceAnalysisWorldObserver::monitorPopulation()
 {
     auto *wm = dynamic_cast<PartnerChoiceWorldModel *>(gWorld->getRobot(0)->getWorldModel());
     std::stringstream out;
-    out << (*m_genomesIt)["generation"] << "\t";
-    out << (*m_genomesIt)["id"] << "\t";
-    out << (*m_genomesIt)["rank"] << "\t";
+    out << m_curInd << "\t";
     out << m_curCoop << "\t";
     out << m_curRep << "\t";
     out << m_curIterationInRep << "\t";
-    out << (int) wm->onOpportunity << "\n";
+    out << (int) wm->onOpportunity << "\t";
+    out << wm->_cooperationLevel << "\n";
     m_log << out.str();
 }
 
@@ -131,11 +128,11 @@ void PartnerChoiceAnalysisWorldObserver::computeOpportunityImpact()
             wm->onOpportunity = true;
 
             // Add information about his previous investment
-            wm->appendOwnInvest(0);
-            wm->appendTotalInvest(opp->getCoop());
+            wm->appendOwnInvest(wm->_cooperationLevel);
+            wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            ctl->increaseFitness(opp->getCoop());
+            ctl->increaseFitness(opp->getCoop()  + wm->_cooperationLevel);
         }
     }
 }

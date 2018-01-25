@@ -49,6 +49,8 @@ protected:
     void setAllOpportunitiesCoop(double coop);
 
     void logRep();
+
+    int m_curInd;
 };
 
 
