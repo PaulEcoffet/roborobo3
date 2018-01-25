@@ -15,10 +15,6 @@
 #include <iostream>
 #include <vector>
 
-//#include "tbb/blocked_range.h"
-//#include "tbb/parallel_for.h"
-//#include "tbb/task_scheduler_init.h"
-
 /*
 struct executor
 {
@@ -57,7 +53,6 @@ static void testTBB2()
 World::World()
 {
     //testTBB2();
-    
 	_iterations = 0;
 	_agentsVariation = false;
 	_worldObserver = gConfigurationLoader->make_WorldObserver(this);
