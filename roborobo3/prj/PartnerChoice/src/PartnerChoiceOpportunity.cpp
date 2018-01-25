@@ -13,9 +13,24 @@ PartnerChoiceOpportunity::PartnerChoiceOpportunity(int __id) : RoundObject(__id)
 
 void PartnerChoiceOpportunity::updateColor()
 {
-    _displayColorRed = 0;
-    _displayColorGreen = static_cast<Uint8>(128 + 127 * m_coop / PartnerChoiceSharedData::maxCoop, 255);
-    _displayColorBlue = static_cast<Uint8>(128 - 127 * m_coop / PartnerChoiceSharedData::maxCoop);
+    if (m_coop < PartnerChoiceSharedData::maxCoop / 3)
+    {
+        _displayColorRed = 189;
+        _displayColorGreen = 131;
+        _displayColorBlue = 126;
+    }
+    else if (m_coop < 2 * PartnerChoiceSharedData::maxCoop / 3)
+    {
+        _displayColorRed =198;
+        _displayColorGreen = 186;
+        _displayColorBlue = 58;
+    }
+    else
+    {
+        _displayColorRed = 44;
+        _displayColorGreen = 83;
+        _displayColorBlue = 120;
+    }
 }
 
 void PartnerChoiceOpportunity::setCoopValue(double coop)
