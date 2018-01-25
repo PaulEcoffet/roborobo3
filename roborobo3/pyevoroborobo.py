@@ -95,6 +95,8 @@ def main():
             # Roborobo simulation is done here #
             ####################################
             fit_jsonstr = recv_msg(conn)
+            if fit_jsonstr is None:
+                break
             fitnesses = loads(fit_jsonstr)
             es.tell(solutions, np.array([sign*fit for fit in fitnesses]))
             es.disp()
@@ -102,11 +104,8 @@ def main():
         # Close connection with roborobo (will trigger roborobo shutdown)
         conn.shutdown(socket.SHUT_RDWR)
         conn.close()
-        with open(join(outdir, 'genome.txt'), 'w') as f:
-            dump(es.result, f, primitives=True)
-        if argout.evolution == "cmaes":
-            es.logger.plot()
-            cma.s.figshow()
+        with open(join(outdir, 'genome_end.txt'), 'w') as f:
+            dump(solutions, f, primitives=True)
 
 
 main()

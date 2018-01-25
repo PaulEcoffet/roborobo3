@@ -23,9 +23,13 @@ public:
     void appendTotalInvest(const double invest);
 
     bool onOpportunity;
+    double cval;
+    void setNewCval();
+
 
 protected:
     unsigned int memorySize = 20;
+
 };
 
 

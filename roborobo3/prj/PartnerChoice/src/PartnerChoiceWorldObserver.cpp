@@ -174,6 +174,12 @@ void PartnerChoiceWorldObserver::monitorPopulation() const
 
 void PartnerChoiceWorldObserver::stepEvolution()
 {
+    if ((m_generationCount+1) % PartnerChoiceSharedData::genomeLog == 0)
+    {
+        std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
+        std::ofstream genfile(path);
+        genfile << json(m_individuals);
+    }
     logFitnesses(getSortedFitnesses());
     m_individuals = pycma.getNextGeneration(m_fitnesses);
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
@@ -259,26 +265,24 @@ void PartnerChoiceWorldObserver::computeOpportunityImpact()
         for (auto index : opp->getNearbyRobotIndexes())
         {
             auto *wm = dynamic_cast<PartnerChoiceWorldModel*>(m_world->getRobot(index)->getWorldModel());
-            auto *ctl = dynamic_cast<PartnerChoiceController*>(m_world->getRobot(index)->getController());
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
 
             // Add information about his previous investment
-            wm->appendOwnInvest(0);
-            wm->appendTotalInvest(opp->getCoop());
+            wm->appendOwnInvest(wm->_cooperationLevel);
+            wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            ctl->increaseFitness(opp->getCoop());
+            wm->_fitnessValue += payoff(wm->_cooperationLevel, opp->getCoop() + wm->_cooperationLevel);
         }
     }
 }
 
 double PartnerChoiceWorldObserver::payoff(const double invest, const double totalInvest) const
 {
-    const int nbRobots = 2;
-    const double coeff = PartnerChoiceSharedData::constantK / (1.0 + pow(nbRobots - 2, 2)); // \frac{k}{1+(n-2)^2}
-    const double res = coeff * pow(totalInvest, PartnerChoiceSharedData::constantA) - invest;
+    const double n = 2, c = 0.5;
+    double res = (totalInvest / n) - (0.5 * c * invest * invest);
     return res;
 }
 

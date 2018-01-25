@@ -239,6 +239,7 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
         out << "\n";
 
     }
+    out << prefix << "cost coeff: " << m_wm->cval << "\n";
     out << prefix << "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }

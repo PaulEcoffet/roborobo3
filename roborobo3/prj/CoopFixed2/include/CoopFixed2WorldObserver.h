@@ -48,7 +48,7 @@ protected:
 
 
     void computeOpportunityImpacts();
-    double payoff(double invest, double totalInvest) const;
+    double payoff(double invest, double totalInvest, double cval=0.5) const;
     void registerRobotsOnOpportunities();
     void clearRobotFitnesses();
     void loadGenomesInRobots(const std::vector<std::vector<double>>& genomes);
