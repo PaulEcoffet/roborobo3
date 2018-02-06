@@ -10,15 +10,18 @@
 CoopFixed2WorldModel::CoopFixed2WorldModel()
         : RobotWorldModel(),
           onOpportunity(false),
-          cval(0.5)
+          selfA(0.5)
 {
-    setNewCval();
+    setNewSelfA();
 }
 
-void CoopFixed2WorldModel::setNewCval() {
-    double cvalstd = 0;
-    gProperties.checkAndGetPropertyValue("cvalstd", &cvalstd, false);
-    cval = boost::algorithm::clamp(randgaussian() * cvalstd + 0.5, 0.0, 1.0);
+void CoopFixed2WorldModel::setNewSelfA() {
+    double ESSstd = 0;
+    const double targetESS = 0.25;
+    gProperties.checkAndGetPropertyValue("ESSstd", &ESSstd, false);
+    const double xESS = boost::algorithm::clamp(randgaussian() * ESSstd + targetESS, 0.01, 1.);
+    // set the selfA for a given drawn xESS.
+    selfA = 2.0 * xESS;
 }
 
 double CoopFixed2WorldModel::meanLastTotalInvest()

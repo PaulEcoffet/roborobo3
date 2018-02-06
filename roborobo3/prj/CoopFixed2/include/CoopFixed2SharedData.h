@@ -21,9 +21,13 @@ public:
     static int takeVideoEveryGeneration;
     static int seeCoopFromDist;
     static bool prisonerDilemma;
+    static bool selfAAsInput;
 
     static void initSharedData();
 
+    static int oppDecay;
+    static bool fixRobotNb;
+    static bool teleportRobots;
 };
 
 

@@ -3,6 +3,7 @@
 //
 
 #include <CoopFixed2/include/CoopFixed2WorldObserver.h>
+#include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include "RoboroboMain/roborobo.h"
 #include "core/World/World.h"
 #include "CoopFixed2/include/CoopFixed2Opportunity.h"
@@ -20,13 +21,13 @@ int CoopFixed2Opportunity::getNbNearbyRobots() const
 void CoopFixed2Opportunity::isPushed(int id, std::tuple<double, double> speed)
 {
     int rid = id - gRobotIndexStartOffset;
-    if (robotsOnOppLastTurn.size() >= 2 && robotsOnOppLastTurn.count(rid) == 0)
+    if (robotsOnOppLastTurn.size() >= 2 && robotsOnOppLastTurn.count(rid) == 0 && CoopFixed2SharedData::fixRobotNb)
     {
         // The opportunity was full last turn and the new robot was not here before. So we teleport it.
         auto *wobs = dynamic_cast<CoopFixed2WorldObserver*>(gWorld->getWorldObserver());
         wobs->addRobotToTeleport(rid);
     }
-    else if (newRobotsOnOppThisTurn.size() < 2)
+    else if (newRobotsOnOppThisTurn.size() < 2 || !CoopFixed2SharedData::fixRobotNb)
     {
         newRobotsOnOppThisTurn.insert(rid);
     }
@@ -47,6 +48,16 @@ void CoopFixed2Opportunity::registerNewRobots()
 
 void CoopFixed2Opportunity::step()
 {
+    int min_nb_robots = (CoopFixed2SharedData::fixRobotNb)? 2 : 1;
+    if (lifeExpectancy > 0 && (getNbNearbyRobots() >= min_nb_robots)) {
+        lifeExpectancy--;
+    }
+    else if (lifeExpectancy == 0)
+    {
+        resetLife();
+        auto *wobs = dynamic_cast<CoopFixed2WorldObserver*>(gWorld->getWorldObserver());
+        wobs->addObjectToTeleport(_id);
+    }
     updateColor();
     RoundObject::step();
 }
@@ -59,38 +70,26 @@ void CoopFixed2Opportunity::updateColor()
         _displayColorGreen = 200;
         _displayColorBlue = 158;
     }
-    else if (getNbNearbyRobots() == 1)
+    else
     {
-        _displayColorRed = 122;
-        _displayColorGreen = 164;
-        _displayColorBlue = 105;
-    }
-    else if (getNbNearbyRobots() == 2)
-    {
-        if (curInv < 1.5)
+        if (curInv < 0.4) /* under ESS set to sum_inv = 0.5 */
         {
             _displayColorRed = 189;
             _displayColorGreen = 131;
             _displayColorBlue = 126;
         }
-        else if (curInv < 3)
+        else if (curInv < 0.8) /* basically playing ESS */
         {
             _displayColorRed =198;
             _displayColorGreen = 186;
             _displayColorBlue = 58;
         }
-        else
+        else /* Playing above ESS, closer to SO */
         {
             _displayColorRed = 44;
             _displayColorGreen = 83;
             _displayColorBlue = 120;
         }
-    }
-    else
-    {
-        _displayColorRed = 255;
-        _displayColorGreen = 0;
-        _displayColorBlue = 0;
     }
 }
 
@@ -104,7 +103,10 @@ std::string CoopFixed2Opportunity::inspect(std::string prefix)
         out << index << ",";
     }
     out << "\n";
-    out << prefix << curInv / 4 << "," << (curInv / 4) / 0.5 << ", " << ((curInv /4) - 0.5) / 0.5 << "\n";
-    out << prefix << _displayColorRed << "," << _displayColorGreen << "," << _displayColorBlue << "\n";
+    out << prefix << "Still " << lifeExpectancy << " before I die :'(.\n";
     return out.str();
+}
+
+void CoopFixed2Opportunity::resetLife() {
+    lifeExpectancy = CoopFixed2SharedData::oppDecay;
 }

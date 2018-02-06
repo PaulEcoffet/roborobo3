@@ -9,6 +9,7 @@ import sys
 import argparse
 from os.path import join
 import cma
+from pathlib import Path
 
 from pyevo.pyevo import getES
 

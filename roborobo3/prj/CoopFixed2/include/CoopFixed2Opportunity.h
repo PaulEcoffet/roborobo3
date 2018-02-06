@@ -25,9 +25,12 @@ public:
     double curInv = 0;
 
 
+    void resetLife();
+
 protected:
     std::set<int> newRobotsOnOppThisTurn;
     std::set<int> robotsOnOppLastTurn;
+    int lifeExpectancy;
 
     void updateColor();
 };

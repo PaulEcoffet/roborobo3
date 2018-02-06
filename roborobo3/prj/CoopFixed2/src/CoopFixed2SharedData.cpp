@@ -19,6 +19,10 @@ int CoopFixed2SharedData::nbEvaluationsPerGeneration = 1;
 int CoopFixed2SharedData::takeVideoEveryGeneration = std::numeric_limits<int>::max();
 int CoopFixed2SharedData::seeCoopFromDist = 0;
 bool CoopFixed2SharedData::prisonerDilemma = false;
+bool CoopFixed2SharedData::selfAAsInput = false;
+int CoopFixed2SharedData::oppDecay = -1;
+bool CoopFixed2SharedData::fixRobotNb = true;
+bool CoopFixed2SharedData::teleportRobots = false;
 
 void CoopFixed2SharedData::initSharedData()
 {
@@ -33,7 +37,10 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &CoopFixed2SharedData::takeVideoEveryGeneration, false);
     gProperties.checkAndGetPropertyValue("seeCoopFromDist", &CoopFixed2SharedData::seeCoopFromDist, false);
     gProperties.checkAndGetPropertyValue("prisonerDilemma", &CoopFixed2SharedData::prisonerDilemma, false);
-
+    gProperties.checkAndGetPropertyValue("aAsInput", &CoopFixed2SharedData::selfAAsInput, false);
+    gProperties.checkAndGetPropertyValue("oppDecay", &CoopFixed2SharedData::oppDecay, false);
+    gProperties.checkAndGetPropertyValue("fixRobotNb", &CoopFixed2SharedData::fixRobotNb, false);
+    gProperties.checkAndGetPropertyValue("teleportRobots", &CoopFixed2SharedData::teleportRobots, false);
 }
 
 
