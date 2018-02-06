@@ -71,15 +71,21 @@ void CoopFixed2Controller::step()
     if (_fake)
     {
         m_wm->_cooperationLevel = _fakeInvest;
-        m_wm->setRobotLED_colorValues(0, 0, 127);
-
+        m_wm->setRobotLED_colorValues(150, 53, 61);
     }
     else
     {
         m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
-        m_wm->setRobotLED_colorValues(0, 127, 0);
-
+        if (m_wm->onOpportunity)
+        {
+            m_wm->setRobotLED_colorValues(51, 178, 117);
+        }
+        else
+        {
+            m_wm->setRobotLED_colorValues(158, 142, 200);
+        }
     }
+
 }
 
 std::vector<unsigned int> CoopFixed2Controller::getNbNeuronsPerHiddenLayers() const
@@ -135,6 +141,14 @@ std::vector<double> CoopFixed2Controller::getInputs()
     inputs.emplace_back(static_cast<double>(m_wm->onOpportunity));
     inputs.emplace_back(m_wm->meanLastTotalInvest());
     inputs.emplace_back(m_wm->meanLastOwnInvest());
+
+    /*
+     * introspection inputs
+     */
+    if (CoopFixed2SharedData::selfAAsInput) {
+        inputs.emplace_back(m_wm->selfA);
+    }
+
     assert(inputs.size() == m_nn->getNbInputs());
     return inputs;
 }
@@ -154,11 +168,17 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
 
 unsigned int CoopFixed2Controller::getNbInputs() const
 {
+    int c_as_input = 0;
+    if (CoopFixed2SharedData::selfAAsInput)
+    {
+        c_as_input = 1;
+    }
     return static_cast<unsigned int>(
             m_wm->_cameraSensorsNb * 5 // dist + isWall + isRobot + isObj + nbRob
             + 1 // onOpportunity
             + 1 // avgTotalEffort
             + 1 // avgEffort
+            + c_as_input
     );
 }
 
@@ -239,7 +259,7 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
         out << "\n";
 
     }
-    out << prefix << "cost coeff: " << m_wm->cval << "\n";
+    out << prefix << "a coeff: " << m_wm->selfA << "\n";
     out << prefix << "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }

@@ -27,7 +27,7 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver
 
     std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
     m_fitnessLogManager = new LogManager(fitnessLogFilename);
-    m_fitnessLogManager->write("gen\tpop\tminft\tq1fit\tmedfit\tq3fit\tmaxfit\tmeanfit\tvarfit\n");
+    m_fitnessLogManager->write("gen\tind\trep\tfitness\n");
 
     std::vector<std::string> url;
     if (gRemote.empty())
@@ -62,17 +62,9 @@ void CoopFixed2WorldObserver::reset()
     int nbweights = dynamic_cast<CoopFixed2Controller * >(m_world->getRobot(0)->getController())->getWeights().size();
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights);
     m_fitnesses.resize(m_nbIndividuals, 0);
-
+    m_curfitnesses.resize(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);
-    for (int i = m_nbIndividuals; i < gNbOfRobots; i++)
-    {
-        const int fakeindex = i - m_nbIndividuals;
-        const double fakeval = (((double) fakeindex) / (m_nbFakeRobots - 1)) * 2; /* 2 is the max coop */
-        std::cout << fakeindex << " " << m_nbFakeRobots << " " << fakeval << "\n";
-        auto* ctl = dynamic_cast<CoopFixed2Controller *>(_world->getRobot(i)->getController());
-        ctl->setFake(true);
-        ctl->setFakeInvest(fakeval);
-    }
+
     resetEnvironment();
 }
 
@@ -84,7 +76,16 @@ void CoopFixed2WorldObserver::stepPre()
     if (m_curEvaluationIteration == CoopFixed2SharedData::evaluationTime)
     {
         m_curEvaluationIteration = 0;
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
+            auto *wm = m_world->getRobot(i)->getWorldModel();
+            m_fitnesses[i] += wm->_fitnessValue;
+            m_curfitnesses[i] = wm->_fitnessValue;
+        }
+        logFitnesses(m_curfitnesses);
+        clearRobotFitnesses();
         m_curEvaluationInGeneration++;
+
         resetEnvironment();
     }
     if( m_curEvaluationInGeneration == CoopFixed2SharedData::nbEvaluationsPerGeneration)
@@ -98,13 +99,23 @@ void CoopFixed2WorldObserver::stepPre()
 void CoopFixed2WorldObserver::stepPost()
 {
     /* Teleport robots */
-    for (auto rid: robotsToTeleport)
-    {
-        m_world->getRobot(rid)->unregisterRobot();
-        m_world->getRobot(rid)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                                   gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
-        m_world->getRobot(rid)->registerRobot();
+    if (CoopFixed2SharedData::teleportRobots) {
+        for (auto rid: robotsToTeleport) {
+            m_world->getRobot(rid)->unregisterRobot();
+            m_world->getRobot(rid)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
+                                                       gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
+            m_world->getRobot(rid)->registerRobot();
+        }
     }
+
+    for (auto id: objectsToTeleport)
+    {
+        gPhysicalObjects[id]->unregisterObject();
+        gPhysicalObjects[id]->resetLocation();
+        dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[id])->resetLife();
+        gPhysicalObjects[id]->registerObject();
+    }
+    objectsToTeleport.clear();
     robotsToTeleport.clear();
     registerRobotsOnOpportunities();
     computeOpportunityImpacts();
@@ -122,12 +133,6 @@ void CoopFixed2WorldObserver::stepEvolution()
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
-    for (int i = 0; i < m_nbIndividuals; i++)
-    {
-        m_fitnesses[i] = m_world->getRobot(i)->getWorldModel()->_fitnessValue;
-    }
-    std::vector<std::pair<int, double>> fitnesses = getSortedFitnesses();
-    logFitnesses(fitnesses);
     m_individuals = pyevo.getNextGeneration(m_fitnesses);
     if (m_individuals.empty())
     {
@@ -151,27 +156,13 @@ std::vector<std::pair<int, double>> CoopFixed2WorldObserver::getSortedFitnesses(
     return fitnesses;
 }
 
-void CoopFixed2WorldObserver::logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses)
+void CoopFixed2WorldObserver::logFitnesses(const std::vector<double>& curfitness)
 {
-    unsigned long size = sortedFitnesses.size();
-    double sum = std::accumulate(sortedFitnesses.begin(), sortedFitnesses.end(), 0.0,
-                                 [](double& a, const std::pair<int, double>& b) -> double {return a + b.second;});
-    double mean = sum / size;
-    std::vector<double> diff(size);
-    std::transform(sortedFitnesses.begin(), sortedFitnesses.end(), diff.begin(),
-                   [mean](std::pair<int, double> x) { return x.second - mean; });
-    double variance = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0) / size;
     std::stringstream out;
-
-    out << m_generationCount << "\t";
-    out << size << "\t";
-    out << sortedFitnesses[0].second << "\t"; // MIN
-    out << sortedFitnesses[size/4].second << "\t"; // 1st quartile
-    out << sortedFitnesses[size/2].second << "\t"; // 2nd quartile - Median
-    out << sortedFitnesses[(3*size)/4].second << "\t"; // 3rd quartile
-    out << sortedFitnesses[size-1].second << "\t"; // Max
-    out << mean << "\t";
-    out << variance << "\n";
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
+        out << m_generationCount << "\t" << i << "\t" << m_curEvaluationInGeneration << "\t" << curfitness[i] << "\n";
+    }
     m_fitnessLogManager->write(out.str());
     m_fitnessLogManager->flush();
 }
@@ -187,8 +178,9 @@ void CoopFixed2WorldObserver::resetEnvironment()
     }
 
 
-    for (auto object: gPhysicalObjects)
+    for (auto* object: gPhysicalObjects)
     {
+        dynamic_cast<CoopFixed2Opportunity *>(object)->resetLife();
         object->resetLocation();
         object->registerObject();
     }
@@ -197,12 +189,15 @@ void CoopFixed2WorldObserver::resetEnvironment()
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         auto *wm = dynamic_cast<CoopFixed2WorldModel* >(robot->getWorldModel());
-        wm->setNewCval();
+        wm->setNewSelfA();
     }
 }
 
 void CoopFixed2WorldObserver::computeOpportunityImpacts()
 {
+    const double b = 3;
+
+
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
@@ -213,7 +208,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     {
         double totalInvest = 0;
         auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
-        if (opp->getNbNearbyRobots() == 2)
+        if (!CoopFixed2SharedData::fixRobotNb || opp->getNbNearbyRobots() == 2)
         {
             for (auto index : opp->getNearbyRobotIndexes())
             {
@@ -227,7 +222,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->onOpportunity = true;
                 wm->appendOwnInvest(wm->_cooperationLevel);
                 wm->appendTotalInvest(totalInvest);
-                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, wm->cval);
+                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
 
             }
         }
@@ -238,22 +233,13 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 }
 
-double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, double cval) const
+double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b) const
 {
     double res = 0;
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
-        /*
-        const double a = 3, B = 4, q = 2, n = 2, c = 0.4;
-        const double p = B * std::pow(totalInvest, a) / (std::pow(q, a) + std::pow(totalInvest, a));
-        const double share = p / n;
-        const double g = std::pow(share, a) / (1 + std::pow(share, a));
-        res = g - c * invest;
-        if (res < 0)
-            res = 0; // Reward can only be positive, prevent invest = 0 from being an attractor
-        */
-        const double n = 2;
-        res = totalInvest / n - 0.5 * cval * invest * invest;
+
+        res = (a * totalInvest + b * (totalInvest - invest)) / n - 0.5 * invest * invest;
     }
     else
     {
@@ -293,5 +279,10 @@ void CoopFixed2WorldObserver::loadGenomesInRobots(const std::vector<std::vector<
 
 void CoopFixed2WorldObserver::addRobotToTeleport(int robotId)
 {
+
     robotsToTeleport.emplace(robotId);
+}
+
+void CoopFixed2WorldObserver::addObjectToTeleport(int id) {
+    objectsToTeleport.emplace(id);
 }

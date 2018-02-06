@@ -25,7 +25,6 @@ public:
     void reset() override;
     void stepEvolution();
 
-    std::vector<std::pair<int, double>> getSortedFitnesses() const;
 
     void resetEnvironment();
 
@@ -42,6 +41,7 @@ protected:
 
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
+
     PyevoInterface pycma;
 
     void initOpportunities();
@@ -51,7 +51,6 @@ protected:
     void clearRobotFitnesses();
     void activateOnlyRobot(int robotIndex);
     void monitorPopulation() const;
-    void logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses);
 
 };
 

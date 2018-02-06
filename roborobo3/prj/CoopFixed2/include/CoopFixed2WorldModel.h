@@ -23,8 +23,8 @@ public:
     void appendTotalInvest(const double invest);
 
     bool onOpportunity;
-    double cval;
-    void setNewCval();
+    double selfA;
+    void setNewSelfA();
 
 
 protected:

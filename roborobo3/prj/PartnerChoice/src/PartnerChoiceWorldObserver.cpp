@@ -68,6 +68,7 @@ void PartnerChoiceWorldObserver::reset()
     m_individuals = pycma.initCMA(m_nbIndividuals, nbweights);
     m_fitnesses.resize(m_nbIndividuals, 0);
 
+
     activateOnlyRobot(m_curInd);
     resetEnvironment();
 }
@@ -113,11 +114,17 @@ void PartnerChoiceWorldObserver::stepPre()
     {
         resetEnvironment();
         m_curEvaluationIteration = 0;
+        auto *wm = m_world->getRobot(0)->getWorldModel();
+        std::stringstream out;
+        out << m_generationCount << "\t" << m_curInd << "\t" << m_curEvaluationInGeneration << "\t"
+            << wm->_fitnessValue << "\n";
+        m_fitnessLogManager->write(out.str());
+        m_fitnesses[m_curInd] += wm->_fitnessValue;
+        clearRobotFitnesses();
         m_curEvaluationInGeneration++;
     }
     if( m_curEvaluationInGeneration == PartnerChoiceSharedData::nbEvaluationsPerGeneration)
     {
-        m_fitnesses[m_curInd] = m_world->getRobot(0)->getWorldModel()->_fitnessValue;
         m_world->getRobot(0)->getWorldModel()->_fitnessValue = 0;
         m_curInd++;
         m_curEvaluationInGeneration = 0;
@@ -180,50 +187,8 @@ void PartnerChoiceWorldObserver::stepEvolution()
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
-    logFitnesses(getSortedFitnesses());
     m_individuals = pycma.getNextGeneration(m_fitnesses);
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
-    clearRobotFitnesses();
-}
-
-std::vector<std::pair<int, double>> PartnerChoiceWorldObserver::getSortedFitnesses() const
-{
-    std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
-    for (int i = 0; i < m_individuals.size(); i++)
-    {
-        fitnesses[i].first = i;
-        fitnesses[i].second = m_fitnesses[i];
-    }
-    std::sort(fitnesses.begin(), fitnesses.end(),
-              [](std::pair<int, double>a, std::pair<int, double>b){return a.second < b.second;});
-    return fitnesses;
-}
-
-void PartnerChoiceWorldObserver::logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses)
-{
-    unsigned long size = sortedFitnesses.size();
-
-    double sum = std::accumulate(sortedFitnesses.begin(), sortedFitnesses.end(), 0.0,
-                                 [](double& a, const std::pair<int, double>& b) -> double {return a + b.second;});
-    double mean = sum / size;
-
-    std::vector<double> diff(size);
-    std::transform(sortedFitnesses.begin(), sortedFitnesses.end(), diff.begin(),
-                   [mean](std::pair<int, double> x) { return x.second - mean; });
-    double variance = std::inner_product(diff.begin(), diff.end(), diff.begin(), 0.0) / size;
-
-
-    std::stringstream out;
-    out << m_generationCount << "\t";
-    out << size << "\t";
-    out << sortedFitnesses[0].second << "\t"; // MIN
-    out << sortedFitnesses[size/4].second << "\t"; // 1st quartile
-    out << sortedFitnesses[size/2].second << "\t"; // 2nd quartile - Median
-    out << sortedFitnesses[(3*size)/4].second << "\t"; // 3rd quartile
-    out << sortedFitnesses[size-1].second << "\t"; // Max
-    out << mean << "\t";
-    out << variance << "\n";
-    m_fitnessLogManager->write(out.str());
 }
 
 

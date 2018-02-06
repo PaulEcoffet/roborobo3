@@ -26,13 +26,15 @@ public:
 
     std::vector<std::pair<int, double>> getSortedFitnesses() const;
 
-    void logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses);
+    void logFitnesses(const std::vector<double>& curfitness);
     void resetEnvironment();
     void stepPre() override;
     void stepPost() override;
 
 
     void addRobotToTeleport(int robotId);
+
+    void addObjectToTeleport(int id);
 
 protected:
     World *m_world;
@@ -44,17 +46,19 @@ protected:
     int m_generationCount;
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
+    std::vector<double> m_curfitnesses;
     PyevoInterface pyevo;
 
 
     void computeOpportunityImpacts();
-    double payoff(double invest, double totalInvest, double cval=0.5) const;
+    double payoff(double invest, double totalInvest, int n, double a, double b) const;
     void registerRobotsOnOpportunities();
     void clearRobotFitnesses();
     void loadGenomesInRobots(const std::vector<std::vector<double>>& genomes);
 
     std::set<int> robotsToTeleport;
     int m_nbFakeRobots;
+    std::set<int> objectsToTeleport;
 };
 
 
