@@ -46,8 +46,10 @@ def send_msg(sock, msg, encoding='utf8'):
     sock.sendall(header + msg_byte)
 
 
-def connect_to_open_port(serv, desired_port, ip='127.0.0.1'):
+def connect_to_open_port(serv, desired_port, ip=None):
     """Find an open port to open a server and return the port chosen."""
+    if ip is None:
+        ip = '127.0.0.1'
     port = desired_port
     look_for_port = True
     while look_for_port:
@@ -67,44 +69,60 @@ def main():
     ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop'],
                     required=True)
     ap.add_argument('-s', '--server-only', action='store_true')
+    ap.add_argument('-p', '--parallel-rep', type=int, default=1)
     argout, forwarded = ap.parse_known_args()
-    outdir = argout.output
+    outdir = Path(argout.output)
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv_s:
         desired_port = 1703
         port = connect_to_open_port(serv_s, desired_port)
         print("Open on port {}".format(port))
-        serv_s.listen(1)
+        serv_s.listen(10)
         # Forward the args received by pyevoroborobo to roborobo and add the port information
         if not argout.server_only:
-            subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
-                             ['-o', outdir] + forwarded)
-
-        conn, cliend_data = serv_s.accept()  # connect to roborobo
-        # Wait for roborobo to give information about the simulation
-        evo_info = loads(recv_msg(conn))
-
+            for i in range(argout.parallel_rep):
+                subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
+                                 ['-o', str(outdir / 'rep{}'.format(i))] + forwarded)
+        conns = []
+        client_datas = []
+        for i in range(argout.parallel_rep):
+            print("try to connect")
+            tmpconn, tmpclient_data = serv_s.accept()  # connect to roborobo
+            conns.append(tmpconn)
+            client_datas.append(tmpclient_data)
+            print('*************************connected to {}************************'.format(i))
+            # Wait for roborobo to give information about the simulation
+            evo_info = loads(recv_msg(conns[i]))
+        print(evo_info)
         es = getES(argout.evolution, evo_info['nb_weights'] * [0], 0.01,
                    evo_info['popsize'], [-1, 1], 60000, join(outdir, ''))
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
 
-        while not es.stop():
+        end = False
+        while not es.stop() and not end:
             solutions = [sol.tolist() for sol in es.ask()]
-            send_msg(conn, dumps(solutions, primitives=True))
-            ####################################
-            # Roborobo simulation is done here #
-            ####################################
-            fit_jsonstr = recv_msg(conn)
-            if fit_jsonstr is None:
-                break
-            fitnesses = loads(fit_jsonstr)
-            es.tell(solutions, np.array([sign*fit for fit in fitnesses]))
-            es.disp()
-            es.logger.add()
+            for i in range(argout.parallel_rep):
+                send_msg(conns[i], dumps(solutions, primitives=True))
+            ########################################
+            # Roborobo simulation(s) are done here #
+            ########################################
+            fitnesses = []
+            for i in range(argout.parallel_rep):
+                fit_jsonstr = recv_msg(conns[i])
+                if fit_jsonstr is None:
+                    end = True
+                    break
+                fitnesses.append(loads(fit_jsonstr))
+            if not end:
+                fitnesses = np.asarray(fitnesses).sum(axis=0)
+                es.tell(solutions, np.array([sign*fit for fit in fitnesses]))
+                es.disp()
+                es.logger.add()
         # Close connection with roborobo (will trigger roborobo shutdown)
-        conn.shutdown(socket.SHUT_RDWR)
-        conn.close()
+        for i in range(argout.parallel_rep):
+            conns[i].shutdown(socket.SHUT_RDWR)
+            conns[i].close()
         with open(join(outdir, 'genome_end.txt'), 'w') as f:
             dump(solutions, f, primitives=True)
 
