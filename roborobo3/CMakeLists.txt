@@ -269,7 +269,22 @@ set(SOURCE_FILES
         include/ext/Config/FastWandererConfigurationLoader.h
         src/ext/FastWandererConfigurationLoader.cpp
         src/contrib/network/PyevoInterface.cpp
-        include/contrib/network/PyevoInterface.h prj/CoopFixed2/src/CoopFixed2AnalysisWorldObserver.cpp prj/CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h prj/CoopFixed2/src/CoopFixed2AnalysisOpportunity.cpp prj/CoopFixed2/include/CoopFixed2AnalysisOpportunity.h)
+        include/contrib/network/PyevoInterface.h prj/CoopFixed2/src/CoopFixed2AnalysisWorldObserver.cpp prj/CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h prj/CoopFixed2/src/CoopFixed2AnalysisOpportunity.cpp prj/CoopFixed2/include/CoopFixed2AnalysisOpportunity.h
+        prj/CorrectRepartition/include/CorrectRepartitionAgentObserver.h
+        prj/CorrectRepartition/include/CorrectRepartitionAnalysisWorldObserver.h
+        prj/CorrectRepartition/include/CorrectRepartitionController.h
+        prj/CorrectRepartition/include/CorrectRepartitionOpportunity.h
+        prj/CorrectRepartition/include/CorrectRepartitionSharedData.h
+        prj/CorrectRepartition/include/CorrectRepartitionWorldModel.h
+        prj/CorrectRepartition/include/CorrectRepartitionWorldObserver.h
+        prj/CorrectRepartition/src/CorrectRepartitionAgentObserver.cpp
+        prj/CorrectRepartition/src/CorrectRepartitionAnalysisWorldObserver.cpp
+        prj/CorrectRepartition/src/CorrectRepartitionController.cpp
+        prj/CorrectRepartition/src/CorrectRepartitionOpportunity.cpp
+        prj/CorrectRepartition/src/CorrectRepartitionSharedData.cpp
+        prj/CorrectRepartition/src/CorrectRepartitionWorldModel.cpp
+        prj/CorrectRepartition/src/CorrectRepartitionWorldObserver.cpp
+        src/ext/CorrectRepartitionConfigurationLoader.cpp)
 
 include_directories(include)
 include_directories(include/contrib)
