@@ -16,6 +16,7 @@
 #include "Config/PartnerControlConfigurationLoader.h"
 #include "Config/FastWandererConfigurationLoader.h"
 #include "Config/CoopFixed2ConfigurationLoader.h"
+#include "Config/CorrectRepartitionConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -129,6 +130,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "CoopFixed2ConfigurationLoader" )
 	{
 		return new CoopFixed2ConfigurationLoader();
+	}
+#endif
+#if defined PRJ_CORRECTREPARTITION || !defined MODULAR
+	else if (configurationLoaderObjectName == "CorrectRepartitionConfigurationLoader" )
+	{
+		return new CorrectRepartitionConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
