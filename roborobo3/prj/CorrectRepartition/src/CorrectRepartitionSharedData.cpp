@@ -18,6 +18,12 @@ int CorrectRepartitionSharedData::nbNeuronsPerHiddenLayer = 10;
 int CorrectRepartitionSharedData::nbEvaluationsPerGeneration = 1;
 int CorrectRepartitionSharedData::takeVideoEveryGeneration = std::numeric_limits<int>::max();
 
+bool CorrectRepartitionSharedData::arrivalMemory = false;
+bool CorrectRepartitionSharedData::exactlyTwo = false;
+bool CorrectRepartitionSharedData::clones = false;
+bool CorrectRepartitionSharedData::ifThreeNoGain = false;
+
+
 void CorrectRepartitionSharedData::initSharedData()
 {
     gProperties.checkAndGetPropertyValue("evaluationTime", &CorrectRepartitionSharedData::evaluationTime, true);
@@ -29,6 +35,12 @@ void CorrectRepartitionSharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &CorrectRepartitionSharedData::nbNeuronsPerHiddenLayer, true);
     gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &CorrectRepartitionSharedData::nbEvaluationsPerGeneration, true);
     gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &CorrectRepartitionSharedData::takeVideoEveryGeneration, false);
+    gProperties.checkAndGetPropertyValue("arrivalMemory", &CorrectRepartitionSharedData::arrivalMemory, false);
+    gProperties.checkAndGetPropertyValue("exactlyTwo", &CorrectRepartitionSharedData::exactlyTwo, false);
+    gProperties.checkAndGetPropertyValue("clones", &CorrectRepartitionSharedData::clones, false);
+    gProperties.checkAndGetPropertyValue("ifThreeNoGain", &CorrectRepartitionSharedData::ifThreeNoGain, false);
+
+
 }
 
 

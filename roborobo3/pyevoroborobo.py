@@ -72,6 +72,7 @@ def main():
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
     argout, forwarded = ap.parse_known_args()
     outdir = Path(argout.output)
+    sys.stdout.write("\x1b]2;{}\x07".format(outdir.name))
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv_s:
         desired_port = 1703
         port = connect_to_open_port(serv_s, desired_port)

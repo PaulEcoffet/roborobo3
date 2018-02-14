@@ -23,6 +23,7 @@ public:
     void appendTotalInvest(const double invest);
 
     bool onOpportunity;
+    int nbOnOpp = 0;
 
 protected:
     unsigned int memorySize = 20;

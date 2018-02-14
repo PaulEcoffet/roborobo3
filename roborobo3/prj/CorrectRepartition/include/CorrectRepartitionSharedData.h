@@ -20,8 +20,13 @@ public:
     static int nbEvaluationsPerGeneration;
     static int takeVideoEveryGeneration;
 
+    static bool arrivalMemory;
+    static bool exactlyTwo;
+
     static void initSharedData();
 
+    static bool clones;
+    static bool ifThreeNoGain;
 };
 
 

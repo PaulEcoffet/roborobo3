@@ -41,6 +41,7 @@ protected:
 
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
+    std::vector<int> m_shuffledIndividualId;
 
     PyevoInterface pycma;
 
@@ -51,6 +52,7 @@ protected:
     void activateOnlyRobot(int batchIndex);
     void monitorPopulation() const;
 
+    int m_batchSize = 0;
 };
 
 
