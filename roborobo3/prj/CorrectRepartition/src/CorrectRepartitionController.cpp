@@ -66,9 +66,6 @@ void CorrectRepartitionController::step()
 
     m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
-
-
-    m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
 }
 
 std::vector<unsigned int> CorrectRepartitionController::getNbNeuronsPerHiddenLayers() const
@@ -100,26 +97,27 @@ std::vector<double> CorrectRepartitionController::getInputs()
     for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
     {
         bool isOpportunity = false;
-        double nbOnCoop = 0;
         auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(i));
-
+        int nbOnOpp = 0;
         if (entityId >= gPhysicalObjectIndexStartOffset && entityId < gPhysicalObjectIndexStartOffset+gNbOfPhysicalObjects) // is an Object
         {
-            auto * opportunity = dynamic_cast<CorrectRepartitionOpportunity*>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            int objid = entityId - gPhysicalObjectIndexStartOffset;
             isOpportunity = true;
-            nbOnCoop = opportunity->getNbNearbyRobots();
+            auto *opp = dynamic_cast<CorrectRepartitionOpportunity *>(gPhysicalObjects[objid]);
+            nbOnOpp = opp->getNbNearbyRobots();
         }
         inputs.emplace_back(m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
         inputs.emplace_back(static_cast<double> (Agent::isInstanceOf(entityId)));
         inputs.emplace_back(static_cast<double> (entityId == WALL_ID));
         inputs.emplace_back(static_cast<double> (isOpportunity));
-        inputs.emplace_back(nbOnCoop);
+        inputs.emplace_back(static_cast<double> (nbOnOpp));
     }
 
     /*
      * Opportunity inputs
      */
     inputs.emplace_back(static_cast<double>(m_wm->onOpportunity));
+    inputs.emplace_back(static_cast<double>(m_wm->nbOnOpp));
     // inputs.emplace_back(m_wm->meanLastTotalInvest());
     // inputs.emplace_back(m_wm->meanLastOwnInvest());
 
@@ -137,8 +135,9 @@ void CorrectRepartitionController::loadNewGenome(const std::vector<double> &newG
 unsigned int CorrectRepartitionController::getNbInputs() const
 {
     return static_cast<unsigned int>(
-            m_wm->_cameraSensorsNb * 5 // dist + isWall + isRobot + isObj + nbRob
+            m_wm->_cameraSensorsNb * 5 // dist + isWall + isRobot + isObj + nbOnOpp
             + 1 // onOpportunity
+            + 1 // nbRobotsOnCurOpp
             //+ 1 // avgTotalEffort
             //+ 1 // avgEffort
     );
@@ -202,22 +201,9 @@ std::string CorrectRepartitionController::inspect(std::string prefix)
     if (m_wm->onOpportunity)
     {
         out << "On opportunity\n";
-        out << "\tLast own invest: ";
-        for (auto ownInvest : m_wm->lastOwnInvest)
-        {
-            out << ownInvest << " ";
-        }
-        out << "(" << m_wm->meanLastOwnInvest() << ")";
-        out << "\n";
-        out << "\tLast total invest: ";
-        for (auto totInvest : m_wm->lastTotalInvest)
-        {
-            out << totInvest << " ";
-        }
-        out << "(" << m_wm->meanLastTotalInvest() << ")";
-        out << "\n";
 
     }
+    out << "I see that we are " << m_wm->nbOnOpp << " here.\n";
     out << "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }
@@ -230,7 +216,7 @@ unsigned long CorrectRepartitionController::getGenomeSize() const
 unsigned int CorrectRepartitionController::getNbOutputs() const
 {
     return 2    // Motor commands
-           + 1  // Cooperation value
+          // + 1  // Cooperation value
     ;
 }
 

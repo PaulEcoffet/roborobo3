@@ -14,21 +14,25 @@ class CorrectRepartitionOpportunity: public RoundObject
 public:
     explicit CorrectRepartitionOpportunity(int __id);
     void step() override;
-    const std::set<int> & getNearbyRobotIndexes() const;
+    const std::vector<int> & getNearbyRobotIndexes() const;
     void clearNearbyRobotIndexes();
 
     void isPushed(int id, std::tuple<double, double> speed) override;
 
     int getNbNearbyRobots() const;
 
+    void registerNewNearbyRobots();
+
     std::string inspect(std::string prefix="") override;
 
 protected:
-    std::set<int> nearbyRobotIndexes;
+    std::vector<int> nearbyRobotIndexes;
+    std::vector<int> newNearbyRobotIndexes;
 
     void updateColor();
 
     int prev_nb = 0;
+
 };
 
 

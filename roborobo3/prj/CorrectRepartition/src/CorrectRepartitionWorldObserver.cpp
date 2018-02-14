@@ -56,16 +56,28 @@ CorrectRepartitionWorldObserver::~CorrectRepartitionWorldObserver()
 
 void CorrectRepartitionWorldObserver::reset()
 {
-    assert(m_nbIndividuals % gNbOfRobots == 0);
     // Init fitness
     clearRobotFitnesses();
+
+    if (CorrectRepartitionSharedData::clones)
+    {
+        m_batchSize = 1;
+    } else {
+        m_batchSize = gNbOfRobots;
+    }
+
+    assert(m_nbIndividuals % m_batchSize == 0);
+
 
     // create individuals
     int nbweights = dynamic_cast<CorrectRepartitionController * >(m_world->getRobot(0)->getController())->getGenomeSize();
     m_individuals = pycma.initCMA(m_nbIndividuals, nbweights);
     m_fitnesses.resize(m_nbIndividuals, 0);
-
-
+    m_shuffledIndividualId.resize(m_nbIndividuals, 0);
+    std::iota(m_shuffledIndividualId.begin(), m_shuffledIndividualId.end(), 0); // vector of 0, 1, .., m_nbIndividuals
+    if (!CorrectRepartitionSharedData::clones) { // Don't shuffle if it's with clones. Make less weird fitness logs
+        std::shuffle(m_shuffledIndividualId.begin(), m_shuffledIndividualId.end(), engine); // engine : Mersenne twister
+    }
     activateOnlyRobot(m_curBatch);
     resetEnvironment();
 }
@@ -82,28 +94,42 @@ void CorrectRepartitionWorldObserver::stepPre()
         std::stringstream out;
 
         for (int i = 0; i < gNbOfRobots; i++) {
-            int curRobot = m_curBatch * gNbOfRobots + i;
+            int curRobot = 0;
+            if (CorrectRepartitionSharedData::clones)
+            {
+                curRobot = m_curBatch;
+            }
+            else
+            {
+                curRobot = m_curBatch * m_batchSize + i;
+            }
             auto *wm = m_world->getRobot(i)->getWorldModel();
-            out << m_generationCount << "\t" << curRobot << "\t" << m_curEvaluationInGeneration << "\t"
+            out << m_generationCount << "\t" << m_shuffledIndividualId[curRobot] << "\t" << m_curEvaluationInGeneration << "\t"
                 << wm->_fitnessValue << "\n";
-            m_fitnesses[curRobot] += wm->_fitnessValue;
+            m_fitnesses[m_shuffledIndividualId[curRobot]] += wm->_fitnessValue;
         }
         m_fitnessLogManager->write(out.str());
 
         clearRobotFitnesses();
-        m_curEvaluationInGeneration++;
-    }
-    if( m_curEvaluationInGeneration == CorrectRepartitionSharedData::nbEvaluationsPerGeneration)
-    {
         m_curBatch++;
-        m_curEvaluationInGeneration = 0;
-        if (m_curBatch < m_nbIndividuals / gNbOfRobots)
+
+        if (m_curBatch < m_nbIndividuals / m_batchSize)
         {
             activateOnlyRobot(m_curBatch);
         }
     }
-    if (m_curBatch == m_nbIndividuals / gNbOfRobots)
+    if(m_curBatch == m_nbIndividuals / m_batchSize)
     {
+        m_curEvaluationInGeneration++;
+        m_curBatch = 0;
+        // Shuffle the pairing for the new evaluation
+        if (!CorrectRepartitionSharedData::clones) { // Don't shuffle if it's with clones. Make less weird fitness logs
+            std::shuffle(m_shuffledIndividualId.begin(), m_shuffledIndividualId.end(), engine); // engine: global var
+        }
+    }
+    if (m_curEvaluationInGeneration == CorrectRepartitionSharedData::nbEvaluationsPerGeneration)
+    {
+        m_curEvaluationInGeneration = 0;
         stepEvolution();
         m_curBatch = 0;
         activateOnlyRobot(m_curBatch);
@@ -189,23 +215,36 @@ void CorrectRepartitionWorldObserver::computeOpportunityImpact()
     {
         auto *wm = dynamic_cast<CorrectRepartitionWorldModel*>(m_world->getRobot(i)->getWorldModel());
         wm->onOpportunity = false;
+        wm->nbOnOpp = 0;
     }
     for (auto *physicalObject : gPhysicalObjects)
     {
         auto *opp = dynamic_cast<CorrectRepartitionOpportunity *>(physicalObject);
+        opp->registerNewNearbyRobots();
+        int arrival = 0;
         for (auto index : opp->getNearbyRobotIndexes())
         {
+            arrival += 1;
             auto *wm = dynamic_cast<CorrectRepartitionWorldModel*>(m_world->getRobot(index)->getWorldModel());
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
+            if (CorrectRepartitionSharedData::arrivalMemory)
+            {
+                wm->nbOnOpp = arrival;
+            }
+            else
+            {
+                wm->nbOnOpp = opp->getNbNearbyRobots();
+            }
 
             // Add information about his previous investment
             // wm->appendOwnInvest(wm->_cooperationLevel);
             // wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            wm->_fitnessValue += payoff(opp->getNbNearbyRobots());
+            if (!CorrectRepartitionSharedData::ifThreeNoGain || arrival < 3)
+                wm->_fitnessValue += payoff(opp->getNbNearbyRobots());
         }
     }
 }
@@ -213,17 +252,26 @@ void CorrectRepartitionWorldObserver::computeOpportunityImpact()
 double CorrectRepartitionWorldObserver::payoff(const int nbRobots) const
 {
     double res = 1.0 / (1.0 + (nbRobots-2)*(nbRobots-2));
+    if (CorrectRepartitionSharedData::exactlyTwo)
+    {
+        if (nbRobots == 2)
+            res = 1;
+        else
+            res = 0;
+    }
     return res;
 }
 
 
 void CorrectRepartitionWorldObserver::clearOpportunityNearbyRobots()
 {
+    /*
     for (auto *physicalObject : gPhysicalObjects)
     {
         auto *opp = dynamic_cast<CorrectRepartitionOpportunity *>(physicalObject);
         opp->clearNearbyRobotIndexes();
     }
+     */
 }
 
 
@@ -238,9 +286,18 @@ void CorrectRepartitionWorldObserver::clearRobotFitnesses()
 void CorrectRepartitionWorldObserver::activateOnlyRobot(int batchIndex)
 {
     for (int i = 0; i < gNbOfRobots; i++) {
-        int robId = batchIndex * gNbOfRobots + i;
+        int robId = 0;
+
+        if (CorrectRepartitionSharedData::clones)
+        {
+            robId = batchIndex;
+        }
+        else
+        {
+            robId = batchIndex * m_batchSize + i;
+        }
         auto *ctl = dynamic_cast<CorrectRepartitionController *>(m_world->getRobot(i)->getController());
-        ctl->loadNewGenome(m_individuals[robId]);
+        ctl->loadNewGenome(m_individuals[m_shuffledIndividualId[robId]]);
     }
 }
 

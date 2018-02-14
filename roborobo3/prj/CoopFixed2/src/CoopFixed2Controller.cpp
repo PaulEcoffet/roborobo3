@@ -139,6 +139,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
      * Opportunity inputs
      */
     inputs.emplace_back(static_cast<double>(m_wm->onOpportunity));
+    // TODO : Add nbOnOpp for actual onOpp
     inputs.emplace_back(m_wm->meanLastTotalInvest());
     inputs.emplace_back(m_wm->meanLastOwnInvest());
 
