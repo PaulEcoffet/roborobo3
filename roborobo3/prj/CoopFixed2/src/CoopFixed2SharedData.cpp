@@ -23,6 +23,10 @@ bool CoopFixed2SharedData::selfAAsInput = false;
 int CoopFixed2SharedData::oppDecay = -1;
 bool CoopFixed2SharedData::fixRobotNb = true;
 bool CoopFixed2SharedData::teleportRobots = false;
+double CoopFixed2SharedData::maxCoop = 10;
+double CoopFixed2SharedData::b = 10;
+double CoopFixed2SharedData::meanA = 5;
+double CoopFixed2SharedData::stdA = 2;
 
 void CoopFixed2SharedData::initSharedData()
 {
@@ -41,6 +45,13 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("oppDecay", &CoopFixed2SharedData::oppDecay, false);
     gProperties.checkAndGetPropertyValue("fixRobotNb", &CoopFixed2SharedData::fixRobotNb, false);
     gProperties.checkAndGetPropertyValue("teleportRobots", &CoopFixed2SharedData::teleportRobots, false);
+    gProperties.checkAndGetPropertyValue("maxCoop", &CoopFixed2SharedData::maxCoop, false);
+    gProperties.checkAndGetPropertyValue("b", &CoopFixed2SharedData::b, false);
+    gProperties.checkAndGetPropertyValue("meanA", &CoopFixed2SharedData::meanA, false);
+    gProperties.checkAndGetPropertyValue("stdA", &CoopFixed2SharedData::stdA, false);
+
+
+
 }
 
 
