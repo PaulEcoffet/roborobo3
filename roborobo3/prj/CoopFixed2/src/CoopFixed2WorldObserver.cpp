@@ -203,28 +203,43 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
         wm->onOpportunity = false;
+        wm->nbOnOpp = 0;
+        wm->arrival = 0;
     }
     for (auto *physicalObject : gPhysicalObjects)
     {
         double totalInvest = 0;
         auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
-        if (!CoopFixed2SharedData::fixRobotNb || opp->getNbNearbyRobots() == 2)
+        auto itmax = opp->getNearbyRobotIndexes().end();
+
+        int arrival = 1;
+        for (auto index : opp->getNearbyRobotIndexes())
         {
-            for (auto index : opp->getNearbyRobotIndexes())
-            {
-                auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-                totalInvest += wm->_cooperationLevel;
-            }
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
+            wm->onOpportunity = true;
+            wm->nbOnOpp = opp->getNbNearbyRobots();
+            wm->arrival = arrival;
+            arrival++;
+        }
 
-            for (auto index: opp->getNearbyRobotIndexes())
-            {
-                auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-                wm->onOpportunity = true;
-                wm->appendOwnInvest(wm->_cooperationLevel);
-                wm->appendTotalInvest(totalInvest);
-                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
+        // If we only give reward for the first two robots
+        if (CoopFixed2SharedData::fixRobotNb && opp->getNbNearbyRobots() > 2)
+        {
+            itmax = opp->getNearbyRobotIndexes().begin() + 2;
+        }
+        for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+        {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
+            totalInvest += wm->_cooperationLevel;
+        }
 
-            }
+        for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+        {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
+            wm->appendOwnInvest(wm->_cooperationLevel);
+            wm->appendTotalInvest(totalInvest);
+            wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
+
         }
 
         // Set the cur total invest for coloring

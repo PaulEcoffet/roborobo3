@@ -138,8 +138,8 @@ std::vector<double> CoopFixed2Controller::getInputs()
     /*
      * Opportunity inputs
      */
-    inputs.emplace_back(static_cast<double>(m_wm->onOpportunity));
-    // TODO : Add nbOnOpp for actual onOpp
+    inputs.emplace_back(m_wm->nbOnOpp);
+    inputs.emplace_back(m_wm->arrival); // TODO SHOULD BE OPTIONAL
     inputs.emplace_back(m_wm->meanLastTotalInvest());
     inputs.emplace_back(m_wm->meanLastOwnInvest());
 
@@ -169,17 +169,18 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
 
 unsigned int CoopFixed2Controller::getNbInputs() const
 {
-    int c_as_input = 0;
+    int a_as_input = 0;
     if (CoopFixed2SharedData::selfAAsInput)
     {
-        c_as_input = 1;
+        a_as_input = 1;
     }
     return static_cast<unsigned int>(
             m_wm->_cameraSensorsNb * 5 // dist + isWall + isRobot + isObj + nbRob
-            + 1 // onOpportunity
+            + 1 // nbOnOpportunity
+            + 1 // ArrivalOrder
             + 1 // avgTotalEffort
             + 1 // avgEffort
-            + c_as_input
+            + a_as_input
     );
 }
 
@@ -243,7 +244,7 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     }
     if (m_wm->onOpportunity)
     {
-        out << prefix << "On opportunity\n";
+        out << prefix << "On opportunity with " <<  m_wm->nbOnOpp << ". I arrived " << m_wm->arrival <<".\n";
         out << prefix << "\tLast own invest: ";
         for (auto ownInvest : m_wm->lastOwnInvest)
         {
