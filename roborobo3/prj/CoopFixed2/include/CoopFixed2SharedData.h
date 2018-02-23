@@ -22,12 +22,16 @@ public:
     static int seeCoopFromDist;
     static bool prisonerDilemma;
     static bool selfAAsInput;
-
-    static void initSharedData();
-
     static int oppDecay;
     static bool fixRobotNb;
     static bool teleportRobots;
+    static double maxCoop;
+    static double b;
+    static double meanA;
+    static double stdA;
+
+    static void initSharedData();
+
 };
 
 

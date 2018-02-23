@@ -75,14 +75,14 @@ void CoopFixed2Controller::step()
     }
     else
     {
-        m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
+        m_wm->_cooperationLevel = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop; // Range between [0; maxCoop]
         if (m_wm->onOpportunity)
         {
-            m_wm->setRobotLED_colorValues(51, 178, 117);
+            m_wm->setRobotLED_colorValues(0, 255, 0);
         }
         else
         {
-            m_wm->setRobotLED_colorValues(158, 142, 200);
+            m_wm->setRobotLED_colorValues(0, 0, 255);
         }
     }
 

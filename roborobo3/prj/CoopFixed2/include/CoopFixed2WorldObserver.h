@@ -59,6 +59,7 @@ protected:
     std::set<int> robotsToTeleport;
     int m_nbFakeRobots;
     std::set<int> objectsToTeleport;
+    std::ofstream m_logall;
 };
 
 
