@@ -15,34 +15,45 @@ CoopFixed2Opportunity::CoopFixed2Opportunity(int __id) : RoundObject(__id)
 
 int CoopFixed2Opportunity::getNbNearbyRobots() const
 {
-    return static_cast<int>(robotsOnOppLastTurn.size());
+    return static_cast<int>(nearbyRobotIndexes.size());
 }
 
 void CoopFixed2Opportunity::isPushed(int id, std::tuple<double, double> speed)
 {
-    int rid = id - gRobotIndexStartOffset;
-    if (robotsOnOppLastTurn.size() >= 2 && robotsOnOppLastTurn.count(rid) == 0 && CoopFixed2SharedData::fixRobotNb)
-    {
-        // The opportunity was full last turn and the new robot was not here before. So we teleport it.
-        auto *wobs = dynamic_cast<CoopFixed2WorldObserver*>(gWorld->getWorldObserver());
-        wobs->addRobotToTeleport(rid);
-    }
-    else if (newRobotsOnOppThisTurn.size() < 2 || !CoopFixed2SharedData::fixRobotNb)
-    {
-        newRobotsOnOppThisTurn.insert(rid);
+    const int rid = id - gRobotIndexStartOffset;
+    if(std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end()) { // if not already in the list
+        newNearbyRobotIndexes.push_back(rid);
     }
 }
 
-const std::set<int>& CoopFixed2Opportunity::getNearbyRobotIndexes() const
+const std::vector<int>& CoopFixed2Opportunity::getNearbyRobotIndexes() const
 {
-    return robotsOnOppLastTurn;
+    return nearbyRobotIndexes;
 }
 
 void CoopFixed2Opportunity::registerNewRobots()
 {
-    robotsOnOppLastTurn.clear();
-    robotsOnOppLastTurn = newRobotsOnOppThisTurn;
-    newRobotsOnOppThisTurn.clear();
+    std::vector<int> out;
+    // Look for the robot that were here last turn and are still here. Keep the order of arrival.
+    for(const auto rid : nearbyRobotIndexes)
+    {
+        auto pos = std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid);
+        if (pos != newNearbyRobotIndexes.end()) // we found something
+        {
+            out.push_back(rid);
+            *pos = -1; /* mark as already taken into account */
+        }
+    }
+    for (const auto rid: newNearbyRobotIndexes)
+    {
+        if (rid != -1) // This rid hasn't been processed yet
+        {
+            out.push_back(rid);
+        }
+    }
+
+    nearbyRobotIndexes = out;
+    newNearbyRobotIndexes.clear();
 }
 
 
@@ -72,13 +83,13 @@ void CoopFixed2Opportunity::updateColor()
     }
     else
     {
-        if (curInv < 0.4) /* under ESS set to sum_inv = 0.5 */
+        if (curInv < 0.35) /* under ESS set to sum_of_invest = 0.5 */
         {
             _displayColorRed = 189;
             _displayColorGreen = 131;
             _displayColorBlue = 126;
         }
-        else if (curInv < 0.8) /* basically playing ESS */
+        else if (curInv < 0.7) /* basically playing ESS */
         {
             _displayColorRed =198;
             _displayColorGreen = 186;
@@ -97,8 +108,8 @@ std::string CoopFixed2Opportunity::inspect(std::string prefix)
 {
     std::stringstream out;
     out << prefix << "Last inv: " << curInv << ".\n";
-    out << prefix << "I have :";
-    for (auto index : robotsOnOppLastTurn)
+    out << prefix << "I have " << getNbNearbyRobots() << " robots on me: ";
+    for (auto index : nearbyRobotIndexes)
     {
         out << index << ",";
     }

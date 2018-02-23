@@ -18,6 +18,7 @@ public:
 
     double meanLastTotalInvest();
     double meanLastOwnInvest();
+    double nbOnOpp = 0;
 
     void appendOwnInvest(const double invest);
     void appendTotalInvest(const double invest);
@@ -25,10 +26,11 @@ public:
     bool onOpportunity;
     double selfA;
     void setNewSelfA();
-
+    int arrival;
 
 protected:
-    unsigned int memorySize = 20;
+    unsigned int memorySize = 10;
+
 
 };
 
