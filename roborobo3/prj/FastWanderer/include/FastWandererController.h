@@ -10,7 +10,7 @@
 #include "Controllers/Controller.h"
 #include "neuralnetworks/NeuralNetwork.h"
 #include "FastWandererOpportunity.h"
-#include "core/Utilities/Misc.h"
+#include "Utilities/Misc.h"
 
 using namespace Neural;
 

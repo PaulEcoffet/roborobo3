@@ -6,10 +6,10 @@
 #define ROBOROBO3_PARTNERCONTROLWORLDOBSERVER_H
 
 
-#include <core/Observers/WorldObserver.h>
-#include <core/World/World.h>
+#include <Observers/WorldObserver.h>
+#include <World/World.h>
 #include <contrib/network/PyevoInterface.h>
-#include "core/Utilities/LogManager.h"
+#include "Utilities/LogManager.h"
 #include "contrib/json/json.hpp"
 #include "PartnerControlController.h"
 

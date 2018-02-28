@@ -6,7 +6,7 @@
 #define ROBOROBO3_CORRECTREPARTITIONWORLDMODEL_H
 
 
-#include <core/WorldModels/RobotWorldModel.h>
+#include <WorldModels/RobotWorldModel.h>
 #include <deque>
 
 class CorrectRepartitionWorldModel : public RobotWorldModel

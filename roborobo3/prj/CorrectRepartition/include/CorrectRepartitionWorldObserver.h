@@ -6,9 +6,9 @@
 #define ROBOROBO3_CORRECTREPARTITIONWORLDOBSERVER_H
 
 
-#include <core/Observers/WorldObserver.h>
-#include <core/World/World.h>
-#include "core/Utilities/LogManager.h"
+#include <Observers/WorldObserver.h>
+#include <World/World.h>
+#include "Utilities/LogManager.h"
 #include "contrib/json/json.hpp"
 #include "CorrectRepartitionController.h"
 

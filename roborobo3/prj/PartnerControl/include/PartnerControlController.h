@@ -11,7 +11,7 @@
 #include "neuralnetworks/NeuralNetwork.h"
 #include "PartnerControlOpportunity.h"
 #include "PartnerControlWorldModel.h"
-#include "core/Utilities/Misc.h"
+#include "Utilities/Misc.h"
 
 using namespace Neural;
 

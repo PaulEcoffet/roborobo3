@@ -7,8 +7,8 @@
 #define ROBOROBO3_FASTWANDERERAGENTOBSERVER_H
 
 
-#include <core/WorldModels/WorldModel.h>
-#include "core/Observers/AgentObserver.h"
+#include <WorldModels/WorldModel.h>
+#include "Observers/AgentObserver.h"
 
 class FastWandererAgentObserver : public AgentObserver
 {

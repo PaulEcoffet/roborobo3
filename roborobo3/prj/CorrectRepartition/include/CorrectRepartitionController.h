@@ -12,7 +12,7 @@
 #include "neuralnetworks/NeuralNetwork.h"
 #include "CorrectRepartitionOpportunity.h"
 #include "CorrectRepartitionWorldModel.h"
-#include "core/Utilities/Misc.h"
+#include "Utilities/Misc.h"
 
 using namespace Neural;
 

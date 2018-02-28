@@ -7,7 +7,7 @@
 #define ROBOROBO3_CORRECTREPARTITIONAGENTOBSERVER_H
 
 
-#include "core/Observers/AgentObserver.h"
+#include "Observers/AgentObserver.h"
 #include "CorrectRepartitionWorldModel.h"
 
 class CorrectRepartitionAgentObserver : public AgentObserver

@@ -11,7 +11,7 @@
 #include "neuralnetworks/NeuralNetwork.h"
 #include "CoopFixed2Opportunity.h"
 #include "CoopFixed2WorldModel.h"
-#include "core/Utilities/Misc.h"
+#include "Utilities/Misc.h"
 
 using namespace Neural;
 

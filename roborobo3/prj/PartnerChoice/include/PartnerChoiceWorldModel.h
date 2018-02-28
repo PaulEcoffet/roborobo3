@@ -6,7 +6,7 @@
 #define ROBOROBO3_PARTNERCHOICEWORLDMODEL_H
 
 
-#include <core/WorldModels/RobotWorldModel.h>
+#include <WorldModels/RobotWorldModel.h>
 #include <deque>
 
 class PartnerChoiceWorldModel : public RobotWorldModel

@@ -7,7 +7,7 @@
 #define ROBOROBO3_PARTNERCONTROLAGENTOBSERVER_H
 
 
-#include "core/Observers/AgentObserver.h"
+#include "Observers/AgentObserver.h"
 #include "PartnerControlWorldModel.h"
 
 class PartnerControlAgentObserver : public AgentObserver
