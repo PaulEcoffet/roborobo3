@@ -8,7 +8,7 @@
 #include "PartnerControl/include/PartnerControlWorldModel.h"
 #include "PartnerControl/include/PartnerControlAgentObserver.h"
 #include "PartnerControl/include/PartnerControlController.h"
-#include "ext/Config/PartnerControlConfigurationLoader.h"
+#include "Config/PartnerControlConfigurationLoader.h"
 
 WorldObserver *PartnerControlConfigurationLoader::make_WorldObserver(World *wm)
 {

@@ -8,7 +8,7 @@
 #include "CoopFixed2/include/CoopFixed2WorldModel.h"
 #include "CoopFixed2/include/CoopFixed2AgentObserver.h"
 #include "CoopFixed2/include/CoopFixed2Controller.h"
-#include "ext/Config/CoopFixed2ConfigurationLoader.h"
+#include "Config/CoopFixed2ConfigurationLoader.h"
 
 WorldObserver *CoopFixed2ConfigurationLoader::make_WorldObserver(World *wm)
 {

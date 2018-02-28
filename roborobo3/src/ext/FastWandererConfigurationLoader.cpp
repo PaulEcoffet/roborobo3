@@ -5,7 +5,7 @@
 #include <RoboroboMain/main.h>
 #include "FastWanderer/include/FastWandererWorldObserver.h"
 #include "FastWanderer/include/FastWandererAgentObserver.h"
-#include "ext/Config/FastWandererConfigurationLoader.h"
+#include "Config/FastWandererConfigurationLoader.h"
 #include "WorldModels/RobotWorldModel.h"
 
 WorldObserver *FastWandererConfigurationLoader::make_WorldObserver(World *wm)

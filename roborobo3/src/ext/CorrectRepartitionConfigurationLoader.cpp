@@ -8,7 +8,7 @@
 #include "CorrectRepartition/include/CorrectRepartitionWorldModel.h"
 #include "CorrectRepartition/include/CorrectRepartitionAgentObserver.h"
 #include "CorrectRepartition/include/CorrectRepartitionController.h"
-#include "ext/Config/CorrectRepartitionConfigurationLoader.h"
+#include "Config/CorrectRepartitionConfigurationLoader.h"
 
 WorldObserver *CorrectRepartitionConfigurationLoader::make_WorldObserver(World *wm)
 {
