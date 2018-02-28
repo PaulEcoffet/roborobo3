@@ -119,28 +119,27 @@ void CoopFixed2WorldObserver::stepPost()
     robotsToTeleport.clear();
     registerRobotsOnOpportunities();
     computeOpportunityImpacts();
-    if ((m_generationCount+1) % 1000 == 0)
+    if ((m_generationCount+1) % 1000 == 0) {
         saveCustomScreenshot("gen_" + std::to_string(m_generationCount));
-        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
-        {
-            if(m_logall.is_open())
-            {
+        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
+            if (m_logall.is_open()) {
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
             m_logall << "eval\titer\tid\ta\tonOpp\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\n";
         }
-    for (int i = 0; i < m_world->getNbOfRobots(); i++) {
-        auto* wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
-        m_logall << m_curEvaluationInGeneration << "\t"
-                 << m_curEvaluationIteration << "\t"
-                 << i << "\t"
-                 << wm->selfA << "\t"
-                 << wm->onOpportunity << "\t"
-                 << wm->nbOnOpp << "\t"
-                 << wm->_cooperationLevel << "\t"
-                 << wm->meanLastOwnInvest() << "\t"
-                 << wm->meanLastTotalInvest() << "\n";
+        for (int i = 0; i < m_world->getNbOfRobots(); i++) {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
+            m_logall << m_curEvaluationInGeneration << "\t"
+                     << m_curEvaluationIteration << "\t"
+                     << i << "\t"
+                     << wm->selfA << "\t"
+                     << wm->onOpportunity << "\t"
+                     << wm->nbOnOpp << "\t"
+                     << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
+                     << wm->meanLastOwnInvest() << "\t"
+                     << wm->meanLastTotalInvest() << "\n";
+        }
     }
 
 }
