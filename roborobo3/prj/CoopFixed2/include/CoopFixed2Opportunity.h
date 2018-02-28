@@ -6,7 +6,7 @@
 #define ROBOROBO3_COOPFIXED2OPPORTUNITY_H
 
 
-#include "ext/World/RoundObject.h"
+#include "World/RoundObject.h"
 #include <set>
 
 class CoopFixed2Opportunity: public RoundObject

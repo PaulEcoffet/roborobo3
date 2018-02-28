@@ -6,7 +6,7 @@
 #define ROBOROBO3_CORRECTREPARTITIONOPPORTUNITY_H
 
 
-#include "ext/World/RoundObject.h"
+#include "World/RoundObject.h"
 #include <set>
 
 class CorrectRepartitionOpportunity: public RoundObject

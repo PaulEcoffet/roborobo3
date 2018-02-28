@@ -8,7 +8,7 @@
 #include "PartnerChoice/include/PartnerChoiceWorldModel.h"
 #include "PartnerChoice/include/PartnerChoiceAgentObserver.h"
 #include "PartnerChoice/include/PartnerChoiceController.h"
-#include "ext/Config/PartnerChoiceConfigurationLoader.h"
+#include "Config/PartnerChoiceConfigurationLoader.h"
 
 WorldObserver *PartnerChoiceConfigurationLoader::make_WorldObserver(World *wm)
 {

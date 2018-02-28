@@ -1,4 +1,4 @@
-#include <ext/Config/PartnerChoiceConfigurationLoader.h>
+#include <Config/PartnerChoiceConfigurationLoader.h>
 #include "Config/ConfigurationLoader.h"
 #include "Config/TemplateWanderConfigurationLoader.h"
 #include "Config/TemplateBoidsConfigurationLoader.h"
