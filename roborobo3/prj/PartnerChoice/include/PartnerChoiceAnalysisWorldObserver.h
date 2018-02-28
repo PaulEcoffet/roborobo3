@@ -6,10 +6,10 @@
 #define ROBOROBO3_PARTNERCHOICEANALYSISWORLDOBSERVER_H
 
 
-#include <core/Observers/WorldObserver.h>
+#include <Observers/WorldObserver.h>
 #include <contrib/json/json.hpp>
-#include "core/World/World.h"
-#include "core/Agents/Robot.h"
+#include "World/World.h"
+#include "Agents/Robot.h"
 
 
 using json = nlohmann::json;

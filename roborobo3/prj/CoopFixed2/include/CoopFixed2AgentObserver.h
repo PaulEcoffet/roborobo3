@@ -7,7 +7,7 @@
 #define ROBOROBO3_COOPFIXED2AGENTOBSERVER_H
 
 
-#include "core/Observers/AgentObserver.h"
+#include "Observers/AgentObserver.h"
 #include "CoopFixed2WorldModel.h"
 
 class CoopFixed2AgentObserver : public AgentObserver

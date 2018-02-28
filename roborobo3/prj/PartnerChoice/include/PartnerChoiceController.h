@@ -12,7 +12,7 @@
 #include "neuralnetworks/NeuralNetwork.h"
 #include "PartnerChoiceOpportunity.h"
 #include "PartnerChoiceWorldModel.h"
-#include "core/Utilities/Misc.h"
+#include "Utilities/Misc.h"
 
 using namespace Neural;
 

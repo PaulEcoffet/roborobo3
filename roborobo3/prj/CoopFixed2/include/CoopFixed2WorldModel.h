@@ -6,7 +6,7 @@
 #define ROBOROBO3_COOPFIXED2WORLDMODEL_H
 
 
-#include <core/WorldModels/RobotWorldModel.h>
+#include <WorldModels/RobotWorldModel.h>
 #include <deque>
 
 class CoopFixed2WorldModel : public RobotWorldModel
