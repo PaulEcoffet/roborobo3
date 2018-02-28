@@ -2,7 +2,7 @@
 // Created by paul on 02/11/17.
 //
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h>
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include "CoopFixed2/include/CoopFixed2WorldModel.h"

@@ -5,7 +5,7 @@
 #include <CoopFixed2/include/CoopFixed2WorldObserver.h>
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include "RoboroboMain/roborobo.h"
-#include "core/World/World.h"
+#include "World/World.h"
 #include "CoopFixed2/include/CoopFixed2Opportunity.h"
 
 CoopFixed2Opportunity::CoopFixed2Opportunity(int __id) : RoundObject(__id)

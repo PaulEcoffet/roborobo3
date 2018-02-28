@@ -3,9 +3,9 @@
 //
 
 
-#include <core/WorldModels/RobotWorldModel.h>
+#include <WorldModels/RobotWorldModel.h>
 #include <FastWanderer/include/FastWandererWorldObserver.h>
-#include "core/RoboroboMain/main.h"
+#include "RoboroboMain/main.h"
 #include "FastWanderer/include/FastWandererSharedData.h"
 #include <boost/algorithm/string.hpp>
 

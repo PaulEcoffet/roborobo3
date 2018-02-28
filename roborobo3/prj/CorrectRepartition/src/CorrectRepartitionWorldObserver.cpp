@@ -3,11 +3,11 @@
 //
 
 #include <CorrectRepartition/include/CorrectRepartitionWorldModel.h>
-#include <core/Utilities/Graphics.h>
+#include <Utilities/Graphics.h>
 #include <CorrectRepartition/include/CorrectRepartitionAnalysisWorldObserver.h>
 #include <CorrectRepartition/include/CorrectRepartitionWorldObserver.h>
 #include <boost/algorithm/string.hpp>
-#include "core/RoboroboMain/main.h"
+#include "RoboroboMain/main.h"
 #include "CorrectRepartition/include/CorrectRepartitionWorldObserver.h"
 #include "CorrectRepartition/include/CorrectRepartitionController.h"
 #include "CorrectRepartition/include/CorrectRepartitionSharedData.h"

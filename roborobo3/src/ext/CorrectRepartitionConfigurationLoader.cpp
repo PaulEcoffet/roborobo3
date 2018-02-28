@@ -2,7 +2,7 @@
 // Created by paul on 02/11/17.
 //
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include <CorrectRepartition/include/CorrectRepartitionAnalysisWorldObserver.h>
 #include "CorrectRepartition/include/CorrectRepartitionWorldObserver.h"
 #include "CorrectRepartition/include/CorrectRepartitionWorldModel.h"

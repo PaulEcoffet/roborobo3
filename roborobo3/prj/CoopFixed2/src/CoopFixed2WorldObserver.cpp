@@ -6,8 +6,8 @@
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>
 #include <CoopFixed2/include/CoopFixed2WorldObserver.h>
 #include <boost/algorithm/string.hpp>
-#include <core/Utilities/Graphics.h>
-#include "core/RoboroboMain/main.h"
+#include "Utilities/Graphics.h"
+#include "RoboroboMain/main.h"
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include "CoopFixed2/include/CoopFixed2Controller.h"
 #include "CoopFixed2/include/CoopFixed2SharedData.h"

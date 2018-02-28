@@ -5,7 +5,7 @@
 
 #include "CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h"
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include <CoopFixed2/include/CoopFixed2Opportunity.h>
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include <CoopFixed2/include/CoopFixed2Controller.h>

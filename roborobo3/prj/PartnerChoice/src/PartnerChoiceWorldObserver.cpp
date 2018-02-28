@@ -3,11 +3,11 @@
 //
 
 #include <PartnerChoice/include/PartnerChoiceWorldModel.h>
-#include <core/Utilities/Graphics.h>
+#include <Utilities/Graphics.h>
 #include <PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h>
 #include <PartnerChoice/include/PartnerChoiceWorldObserver.h>
 #include <boost/algorithm/string.hpp>
-#include "core/RoboroboMain/main.h"
+#include "RoboroboMain/main.h"
 #include "PartnerChoice/include/PartnerChoiceWorldObserver.h"
 #include "PartnerChoice/include/PartnerChoiceController.h"
 #include "PartnerChoice/include/PartnerChoiceSharedData.h"
