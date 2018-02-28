@@ -2,14 +2,14 @@
 // Created by paul on 27/10/17.
 //
 
-#include "contrib/neuralnetworks/Perceptron.h"
+#include "neuralnetworks/Perceptron.h"
 #include "Utilities/Misc.h"
 #include "WorldModels/RobotWorldModel.h"
 #include "Agents/Agent.h"
 #include "RoboroboMain/main.h"
 #include <set>
 #include <CorrectRepartition/include/CorrectRepartitionWorldModel.h>
-#include "contrib/neuralnetworks/Elman.h"
+#include "neuralnetworks/Elman.h"
 #include "CorrectRepartition/include/CorrectRepartitionController.h"
 #include "CorrectRepartition/include/CorrectRepartitionSharedData.h"
 

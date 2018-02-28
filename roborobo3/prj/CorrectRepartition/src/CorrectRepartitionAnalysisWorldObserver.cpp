@@ -8,7 +8,7 @@
 #include <CorrectRepartition/include/CorrectRepartitionController.h>
 #include <CorrectRepartition/include/CorrectRepartitionWorldModel.h>
 #include "CorrectRepartition/include/CorrectRepartitionAnalysisWorldObserver.h"
-#include "contrib/json/json.hpp"
+#include "json/json.hpp"
 
 using json = nlohmann::json;
 

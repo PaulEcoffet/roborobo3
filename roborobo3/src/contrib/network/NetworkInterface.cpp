@@ -8,7 +8,7 @@
 #include <iostream>
 #include <boost/asio.hpp>
 #include <iomanip>
-#include "contrib/network/NetworkInterface.h"
+#include "network/NetworkInterface.h"
 
 
 namespace network

@@ -12,7 +12,7 @@
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisOpportunity.h>
 #include "CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h"
-#include "contrib/json/json.hpp"
+#include "json/json.hpp"
 
 using json = nlohmann::json;
 

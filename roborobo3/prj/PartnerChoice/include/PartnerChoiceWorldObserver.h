@@ -9,7 +9,7 @@
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
 #include "Utilities/LogManager.h"
-#include "contrib/json/json.hpp"
+#include "json/json.hpp"
 #include "PartnerChoiceController.h"
 
 using json = nlohmann::json;

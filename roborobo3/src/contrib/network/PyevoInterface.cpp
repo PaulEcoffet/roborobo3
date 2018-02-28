@@ -3,8 +3,8 @@
  * @date 2017-12-06
  */
 
-#include "contrib/network/PyevoInterface.h"
-#include "contrib/json/json.hpp"
+#include "network/PyevoInterface.h"
+#include "json/json.hpp"
 
 using json = nlohmann::json;
 
