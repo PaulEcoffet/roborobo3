@@ -3,7 +3,7 @@
  * @date 2017-12-14
  */
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include "CoopFixed2/include/CoopFixed2WorldModel.h"
 #include <boost/algorithm/clamp.hpp>
 #include <CoopFixed2/include/CoopFixed2SharedData.h>

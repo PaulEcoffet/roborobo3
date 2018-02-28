@@ -2,7 +2,7 @@
 // Created by paul on 06/11/17.
 //
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include <CorrectRepartition/include/CorrectRepartitionOpportunity.h>
 #include <CorrectRepartition/include/CorrectRepartitionSharedData.h>
 #include <CorrectRepartition/include/CorrectRepartitionController.h>

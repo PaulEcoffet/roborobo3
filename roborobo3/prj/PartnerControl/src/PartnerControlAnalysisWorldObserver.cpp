@@ -2,7 +2,7 @@
 // Created by paul on 06/11/17.
 //
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include <PartnerControl/include/PartnerControlOpportunity.h>
 #include <PartnerControl/include/PartnerControlSharedData.h>
 #include <PartnerControl/include/PartnerControlController.h>

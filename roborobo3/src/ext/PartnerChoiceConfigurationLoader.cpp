@@ -2,7 +2,7 @@
 // Created by paul on 02/11/17.
 //
 
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include <PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h>
 #include "PartnerChoice/include/PartnerChoiceWorldObserver.h"
 #include "PartnerChoice/include/PartnerChoiceWorldModel.h"

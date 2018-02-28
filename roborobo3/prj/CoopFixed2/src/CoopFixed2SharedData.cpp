@@ -4,7 +4,7 @@
  */
 
 #include <limits>
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
 
 

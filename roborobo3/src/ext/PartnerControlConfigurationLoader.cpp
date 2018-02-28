@@ -3,7 +3,7 @@
 //
 
 #include <PartnerControl/include/PartnerControlAnalysisWorldObserver.h>
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include "PartnerControl/include/PartnerControlWorldObserver.h"
 #include "PartnerControl/include/PartnerControlWorldModel.h"
 #include "PartnerControl/include/PartnerControlAgentObserver.h"

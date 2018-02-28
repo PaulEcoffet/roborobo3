@@ -3,7 +3,7 @@
 //
 
 #include <limits>
-#include <core/RoboroboMain/main.h>
+#include <RoboroboMain/main.h>
 #include "CorrectRepartition/include/CorrectRepartitionSharedData.h"
 
 

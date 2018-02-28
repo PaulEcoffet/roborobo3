@@ -3,10 +3,10 @@
 //
 
 #include "contrib/neuralnetworks/Perceptron.h"
-#include "core/Utilities/Misc.h"
-#include "core/WorldModels/RobotWorldModel.h"
-#include "core/Agents/Agent.h"
-#include "core/RoboroboMain/main.h"
+#include "Utilities/Misc.h"
+#include "WorldModels/RobotWorldModel.h"
+#include "Agents/Agent.h"
+#include "RoboroboMain/main.h"
 #include <set>
 #include <PartnerControl/include/PartnerControlWorldModel.h>
 #include "contrib/neuralnetworks/Elman.h"
