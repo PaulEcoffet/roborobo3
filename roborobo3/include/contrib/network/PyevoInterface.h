@@ -7,7 +7,7 @@
 #define ROBOROBO3_PYCMAESINTERFACE_H
 
 
-#include <contrib/network/NetworkInterface.h>
+#include <network/NetworkInterface.h>
 #include <string>
 #include <vector>
 

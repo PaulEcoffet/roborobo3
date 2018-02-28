@@ -8,7 +8,7 @@
 #include <PartnerChoice/include/PartnerChoiceController.h>
 #include <PartnerChoice/include/PartnerChoiceWorldModel.h>
 #include "PartnerChoice/include/PartnerChoiceAnalysisWorldObserver.h"
-#include "contrib/json/json.hpp"
+#include "json/json.hpp"
 
 using json = nlohmann::json;
 

@@ -7,7 +7,7 @@
 #define ROBOROBO3_PARTNERCHOICECONTROLLER_H
 
 #include <vector>
-#include <contrib/network/PyevoInterface.h>
+#include <network/PyevoInterface.h>
 #include "Controllers/Controller.h"
 #include "neuralnetworks/NeuralNetwork.h"
 #include "PartnerChoiceOpportunity.h"

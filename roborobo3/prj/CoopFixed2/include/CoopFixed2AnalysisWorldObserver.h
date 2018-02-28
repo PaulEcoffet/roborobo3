@@ -8,7 +8,7 @@
 
 
 #include <Observers/WorldObserver.h>
-#include <contrib/json/json.hpp>
+#include <json/json.hpp>
 #include "World/World.h"
 #include "Agents/Robot.h"
 

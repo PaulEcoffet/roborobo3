@@ -8,11 +8,11 @@
 
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
-#include <contrib/network/NetworkInterface.h>
+#include <network/NetworkInterface.h>
 #include "Utilities/LogManager.h"
-#include "contrib/json/json.hpp"
+#include "json/json.hpp"
 #include "FastWandererController.h"
-#include "contrib/network/PyevoInterface.h"
+#include "network/PyevoInterface.h"
 
 using json = nlohmann::json;
 

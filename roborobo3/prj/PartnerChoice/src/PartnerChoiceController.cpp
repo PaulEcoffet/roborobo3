@@ -2,14 +2,14 @@
 // Created by paul on 27/10/17.
 //
 
-#include "contrib/neuralnetworks/Perceptron.h"
+#include "neuralnetworks/Perceptron.h"
 #include "Utilities/Misc.h"
 #include "WorldModels/RobotWorldModel.h"
 #include "Agents/Agent.h"
 #include "RoboroboMain/main.h"
 #include <set>
 #include <PartnerChoice/include/PartnerChoiceWorldModel.h>
-#include "contrib/neuralnetworks/Elman.h"
+#include "neuralnetworks/Elman.h"
 #include "PartnerChoice/include/PartnerChoiceController.h"
 #include "PartnerChoice/include/PartnerChoiceSharedData.h"
 
