@@ -292,6 +292,9 @@ include_directories(include/core)
 include_directories(include/ext)
 include_directories(prj)
 
+
+set(Boost_USE_STATIC_LIBS   ON)
+set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # SDL IMPORT
