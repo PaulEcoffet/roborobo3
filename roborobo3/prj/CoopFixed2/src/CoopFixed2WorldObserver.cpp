@@ -54,7 +54,8 @@ CoopFixed2WorldObserver::~CoopFixed2WorldObserver()
 
 void CoopFixed2WorldObserver::reset()
 {
-    m_nbFakeRobots = gNbOfRobots - m_nbIndividuals;
+    m_nbIndividuals = gNbOfRobots;
+    m_nbFakeRobots = gNbOfRobots - m_nbIndividuals; // Useless so far
     // Init fitness
     clearRobotFitnesses();
 
@@ -140,6 +141,10 @@ void CoopFixed2WorldObserver::stepPost()
                      << wm->meanLastOwnInvest() << "\t"
                      << wm->meanLastTotalInvest() << "\n";
         }
+    }
+    else if ((m_generationCount+1) % 1000 == 1 && m_curEvaluationIteration == 0)
+    {
+        m_logall.flush(); // Let's flush now that we have written everything.
     }
 
 }
