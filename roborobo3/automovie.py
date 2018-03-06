@@ -1,8 +1,20 @@
 from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 from moviepy.video.compositing.concatenate import concatenate_videoclips
-from glob import iglob, glob
 import sys
+if sys.version_info >= (3, 5):
+    from glob import iglob, glob
+    def rglob(*args, **kwargs):
+        kwargs['recursive'] = True
+        return glob(*args, **kwargs)
+    def irglob(*args, **kwargs):
+        kwargs['recursive'] = True
+        return iglob(*args, **kwargs)
+else:
+    from glob2 import iglob, glob
+    rglob = glob
+    irglob = iglob
+
 from os.path import join as j
 from os.path import basename, dirname, exists
 from os import remove
@@ -21,7 +33,7 @@ try:
 except:
     pass
 screendirpattern = j(maindir, '**/screenshots/')
-for curdir in iglob(screendirpattern, recursive=True):
+for curdir in irglob(screendirpattern, recursive=True):
     print("looking up files in ", curdir)
     files = glob(j(curdir, 'screenshot_custom_*.png'))
     filesbygen = defaultdict(list)
