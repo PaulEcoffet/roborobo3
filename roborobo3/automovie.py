@@ -20,6 +20,7 @@ from os.path import basename, dirname, exists
 from os import remove
 from collections import defaultdict
 import re
+from joblib import Parallel, delayed
 import sys
 
 # Ensure automovie is not already running.
@@ -27,13 +28,7 @@ from tendo import singleton
 me = singleton.SingleInstance()
 
 
-maindir = '/data/logs/'
-try:
-     maindir = sys.argv[1]
-except:
-    pass
-screendirpattern = j(maindir, '**/screenshots/')
-for curdir in irglob(screendirpattern, recursive=True):
+def make_video(curdir):
     print("looking up files in ", curdir)
     files = glob(j(curdir, 'screenshot_custom_*.png'))
     filesbygen = defaultdict(list)
@@ -65,4 +60,31 @@ for curdir in irglob(screendirpattern, recursive=True):
         for pngfile in files:
             remove(pngfile)
 
-del me
+def tolerant_make_video(curdir):
+    try:
+        make_video(curdir)
+    except Exception as e:
+        print("error with {}:\n{}, {}".format(curdir, type(e), e),
+              file=sys.stderr)
+
+### MAIN ###
+
+maindir = '/data/logs/'
+try:
+     maindir = sys.argv[1]
+except Exception:
+    pass
+nbjobs = 1
+try:
+    nbjobs = int(sys.argv[2])
+except Exception:
+    pass
+
+screendirpattern = j(maindir, '**/screenshots/')
+Parallel(n_jobs=nbjobs)(
+    delayed(tolerant_make_video)(curdir)
+        for curdir in irglob(screendirpattern)
+            if glob(j(curdir, 'screenshot_custom_*_gen*.png')) # if there is screenshots to process
+)
+
+del me # del single instance mode
