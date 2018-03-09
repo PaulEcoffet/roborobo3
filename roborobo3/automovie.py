@@ -26,39 +26,49 @@ import sys
 # Ensure automovie is not already running.
 from tendo import singleton
 
+replim = 2 # Only keep 2 movies of a rep per experiment (faster movies)
+
 
 def make_video(curdir, nbjobs=1):
     print("looking up files in ", curdir)
-    files = glob(j(curdir, 'screenshot_custom_*.png'))
-    filesbygen = defaultdict(list)
-    for fname in files:
-        name = basename(fname)
-        out = re.match(r"""screenshot_custom_.+_
-                       gen_(?P<gen>\d+)
-                       (?:_ind_(?P<ind>\d+))?
-                       .*\.png""", name, re.VERBOSE)
-        if out:
-            gen = out.group("gen")
-            if out.group("ind"):
-                gen += "i" + out.group("ind")
-            filesbygen[gen].append(fname)
-    for gen, files in filesbygen.items():
-        print("making movie for {}".format(gen))
-        outname = j(curdir, 'mov_{}.mp4'.format(gen))
-        try:
-            newmov = ImageSequenceClip(sorted(files), fps=60)
-        except:
-            print(files)
-            raise
-        if exists(outname):
-            print("{} already found, concatenating.".format(basename(outname)))
-            prev = VideoFileClip(outname)
-            newmov = concatenate_videoclips([prev, newmov])
-        verbose = sys.stdout.isatty()
-        newmov.write_videofile(outname, fps=60, verbose=verbose, progress_bar=verbose, threads=nbjobs)
-        print("{} created".format(basename(outname)))
-        for pngfile in files:
-            remove(pngfile)
+    rep_out = re.match(r".*rep(\d+).*", curdir)
+    if rep_out:
+        rep = int(rep_out[1])
+    else:
+        rep = 0
+    if rep < replim:  # Only deal with the first reps
+        files = glob(j(curdir, 'screenshot_custom_*.png'))
+        filesbygen = defaultdict(list)
+        for fname in files:
+            name = basename(fname)
+            out = re.match(r"""screenshot_custom_.+_
+                           gen_(?P<gen>\d+)
+                           (?:_ind_(?P<ind>\d+))?
+                           .*\.png""", name, re.VERBOSE)
+            if out:
+                gen = out.group("gen")
+                if out.group("ind"):
+                    gen += "i" + out.group("ind")
+                filesbygen[gen].append(fname)
+        for gen, files in filesbygen.items():
+            print("making movie for {}".format(gen))
+            outname = j(curdir, 'mov_{}.mp4'.format(gen))
+            try:
+                newmov = ImageSequenceClip(sorted(files), fps=60)
+            except:
+                print(files)
+                raise
+            if exists(outname):
+                print("{} already found, concatenating.".format(basename(outname)))
+                prev = VideoFileClip(outname)
+                newmov = concatenate_videoclips([prev, newmov])
+            verbose = sys.stdout.isatty()
+            newmov.write_videofile(outname, fps=60, verbose=verbose, progress_bar=verbose, threads=nbjobs)
+            print("{} created".format(basename(outname)))
+    else:
+        print("Do not make movie for this rep {}, already have others".format(rep))
+    for pngfile in files:
+        remove(pngfile)
 
 def tolerant_make_video(curdir, nbjobs=1):
     try:
