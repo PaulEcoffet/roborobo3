@@ -25,10 +25,9 @@ import sys
 
 # Ensure automovie is not already running.
 from tendo import singleton
-me = singleton.SingleInstance()
 
 
-def make_video(curdir):
+def make_video(curdir, nbjobs=1):
     print("looking up files in ", curdir)
     files = glob(j(curdir, 'screenshot_custom_*.png'))
     filesbygen = defaultdict(list)
@@ -55,12 +54,13 @@ def make_video(curdir):
             print("{} already found, concatenating.".format(basename(outname)))
             prev = VideoFileClip(outname)
             newmov = concatenate_videoclips([prev, newmov])
-        newmov.write_videofile(outname, fps=60)
+        verbose = sys.stdout.isatty()
+        newmov.write_videofile(outname, fps=60, verbose=verbose, progress_bar=verbose, threads=nbjobs)
         print("{} created".format(basename(outname)))
         for pngfile in files:
             remove(pngfile)
 
-def tolerant_make_video(curdir):
+def tolerant_make_video(curdir, nbjobs=1):
     try:
         make_video(curdir)
     except Exception as e:
@@ -68,23 +68,26 @@ def tolerant_make_video(curdir):
               file=sys.stderr)
 
 ### MAIN ###
+def main():
+    me = singleton.SingleInstance()
+    maindir = '/data/logs/'
+    try:
+         maindir = sys.argv[1]
+    except Exception:
+        pass
+    nbjobs = 1
+    try:
+        nbjobs = int(sys.argv[2])
+    except Exception:
+        pass
 
-maindir = '/data/logs/'
-try:
-     maindir = sys.argv[1]
-except Exception:
-    pass
-nbjobs = 1
-try:
-    nbjobs = int(sys.argv[2])
-except Exception:
-    pass
+    screendirpattern = j(maindir, '**/screenshots/')
+    Parallel(n_jobs=nbjobs)(
+        delayed(tolerant_make_video)(curdir, 1)
+            for curdir in irglob(screendirpattern)
+                if glob(j(curdir, 'screenshot_custom_*_gen*.png')) # if there is screenshots to process
+    )
+    del me # del single instance mode
 
-screendirpattern = j(maindir, '**/screenshots/')
-Parallel(n_jobs=nbjobs)(
-    delayed(tolerant_make_video)(curdir)
-        for curdir in irglob(screendirpattern)
-            if glob(j(curdir, 'screenshot_custom_*_gen*.png')) # if there is screenshots to process
-)
-
-del me # del single instance mode
+if __name__ == "__main__":
+    main()
