@@ -134,6 +134,9 @@ std::string gFootprintImageFilename =           "data/ground.png";
 
 int gRandomSeed = -1; // (default value should be "-1" => time-based random seed)
 
+bool gMovie = true;
+
+
 bool gVerbose = true;
 bool gBatchMode = false;
 

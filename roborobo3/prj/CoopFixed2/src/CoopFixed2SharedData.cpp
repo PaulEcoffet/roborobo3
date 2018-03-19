@@ -16,7 +16,7 @@ double CoopFixed2SharedData::maxRotationalVelocity = 30;
 int CoopFixed2SharedData::nbHiddenLayers = 1;
 int CoopFixed2SharedData::nbNeuronsPerHiddenLayer = 10;
 int CoopFixed2SharedData::nbEvaluationsPerGeneration = 1;
-int CoopFixed2SharedData::takeVideoEveryGeneration = std::numeric_limits<int>::max();
+bool CoopFixed2SharedData::takeVideo = true;
 int CoopFixed2SharedData::seeCoopFromDist = 0;
 bool CoopFixed2SharedData::prisonerDilemma = false;
 bool CoopFixed2SharedData::selfAAsInput = false;
@@ -38,7 +38,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &CoopFixed2SharedData::maxRotationalVelocity, true);
     gProperties.checkAndGetPropertyValue("nbHiddenLayers", &CoopFixed2SharedData::nbHiddenLayers, true);
     gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &CoopFixed2SharedData::nbNeuronsPerHiddenLayer, true);
-    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &CoopFixed2SharedData::takeVideoEveryGeneration, false);
+    gProperties.checkAndGetPropertyValue("takeVideo", &CoopFixed2SharedData::takeVideo, false);
     gProperties.checkAndGetPropertyValue("seeCoopFromDist", &CoopFixed2SharedData::seeCoopFromDist, false);
     gProperties.checkAndGetPropertyValue("prisonerDilemma", &CoopFixed2SharedData::prisonerDilemma, false);
     gProperties.checkAndGetPropertyValue("aAsInput", &CoopFixed2SharedData::selfAAsInput, false);
@@ -49,9 +49,6 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("b", &CoopFixed2SharedData::b, false);
     gProperties.checkAndGetPropertyValue("meanA", &CoopFixed2SharedData::meanA, false);
     gProperties.checkAndGetPropertyValue("stdA", &CoopFixed2SharedData::stdA, false);
-
-
-
 }
 
 

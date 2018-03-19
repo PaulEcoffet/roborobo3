@@ -17,6 +17,7 @@
 extern char *optarg;
 extern int  optind, opterr;
 
+
 void displayGeneralInformation()
 {
 	std::cout << std::endl;
@@ -95,7 +96,7 @@ int main(int argc, char* argv[])
     
     displayGeneralInformation();
     
-    int c = getopt (argc, argv, "vhsl:o:r:");
+    int c = getopt (argc, argv, "vhsl:o:r:m");
     
     if ( c  == -1 ) // no arguments? display usage.
     {
@@ -183,6 +184,9 @@ int main(int argc, char* argv[])
                 break;
             case 'r':
                 gRemote = optarg;
+                break;
+            case 'm':
+                gMovie = false;
                 break;
             case '?':
                 //std::cout << "[INFO] Unknown argument \"" << (char)optopt << "\" detected, and ignored." << std::endl;

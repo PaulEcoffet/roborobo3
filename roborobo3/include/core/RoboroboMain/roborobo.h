@@ -70,7 +70,10 @@ extern std::string gBackgroundImageFilename;
 extern std::string gFootprintImageFilename;
 extern std::string gConfigFilename;
 
+
+// Defined in this roborobo fork
 extern std::string gRemote;
+extern bool gMovie;
 
 
 // general purpose
