@@ -18,7 +18,7 @@ public:
     static double maxRotationalVelocity;
     static int nbHiddenLayers;
     static int nbNeuronsPerHiddenLayer;
-    static int takeVideoEveryGeneration;
+    static bool takeVideo;
     static int seeCoopFromDist;
     static bool prisonerDilemma;
     static bool selfAAsInput;

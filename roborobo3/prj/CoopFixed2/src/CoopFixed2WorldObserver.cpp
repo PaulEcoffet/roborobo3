@@ -121,7 +121,9 @@ void CoopFixed2WorldObserver::stepPost()
     registerRobotsOnOpportunities();
     computeOpportunityImpacts();
     if ((m_generationCount+1) % 1000 == 0) {
-        saveCustomScreenshot("gen_" + std::to_string(m_generationCount));
+        if (CoopFixed2SharedData::takeVideo && gMovie) {
+            saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
+        }
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
             if (m_logall.is_open()) {
                 m_logall.close();
@@ -145,6 +147,7 @@ void CoopFixed2WorldObserver::stepPost()
     else if ((m_generationCount+1) % 1000 == 1 && m_curEvaluationIteration == 0)
     {
         m_logall.flush(); // Let's flush now that we have written everything.
+        m_logall.close();
     }
 
 }
