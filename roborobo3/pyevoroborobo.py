@@ -7,6 +7,7 @@ import numpy as np
 import subprocess
 import sys
 import argparse
+from os.path import join
 import cma
 from pathlib import Path
 
@@ -81,7 +82,7 @@ def main():
         if not argout.server_only:
             for i in range(argout.parallel_rep):
                 subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
-                                 ['-o', str(outdir / 'rep{}'.format(i))] + forwarded)
+                                 ['-o', str(outdir / 'rep{:02}'.format(i))] + forwarded)
         conns = []
         client_datas = []
         for i in range(argout.parallel_rep):
@@ -94,7 +95,7 @@ def main():
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
         es = getES(argout.evolution, evo_info['nb_weights'] * [0], 0.01,
-                   evo_info['popsize'], [-1, 1], 60000, str(outdir) + '/')
+                   evo_info['popsize'], [-1, 1], 60000, join(outdir, ''))
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
@@ -123,7 +124,7 @@ def main():
         for i in range(argout.parallel_rep):
             conns[i].shutdown(socket.SHUT_RDWR)
             conns[i].close()
-        with open(outdir / 'genome_end.txt', 'w') as f:
+        with open(join(outdir, 'genome_end.txt'), 'w') as f:
             dump(solutions, f, primitives=True)
 
 
