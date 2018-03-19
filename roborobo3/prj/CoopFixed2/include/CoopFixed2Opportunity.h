@@ -23,6 +23,7 @@ public:
 
     std::string inspect(std::string prefix) override;
     double curInv = 0;
+    double curA = 0;
 
 
     void resetLife();

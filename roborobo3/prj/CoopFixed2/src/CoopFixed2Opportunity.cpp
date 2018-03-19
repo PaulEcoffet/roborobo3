@@ -83,13 +83,13 @@ void CoopFixed2Opportunity::updateColor()
     }
     else
     {
-        if (curInv < CoopFixed2SharedData::meanA * 0.7) /* under xESS = a/n per robot, so for sum over rob xESS = A */
+        if (curInv < curA * 0.7) /* under xESS = a/n per robot, so for sum over rob xESS = A */
         {
             _displayColorRed = 189;
             _displayColorGreen = 131;
             _displayColorBlue = 126;
         }
-        else if (curInv < CoopFixed2SharedData::meanA * 1.3) /* basically playing ESS */
+        else if (curInv < curA * 1.3) /* basically playing ESS */
         {
             _displayColorRed =198;
             _displayColorGreen = 186;

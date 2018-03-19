@@ -56,6 +56,7 @@ void CoopFixed2WorldObserver::reset()
 {
     m_nbIndividuals = gNbOfRobots;
     m_nbFakeRobots = gNbOfRobots - m_nbIndividuals; // Useless so far
+
     // Init fitness
     clearRobotFitnesses();
 
@@ -237,6 +238,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     for (auto *physicalObject : gPhysicalObjects)
     {
         double totalInvest = 0;
+        double totalA = 0;
         auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
         auto itmax = opp->getNearbyRobotIndexes().end();
 
@@ -259,6 +261,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
             totalInvest += wm->_cooperationLevel;
+            totalA += wm->selfA;
         }
 
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
@@ -272,6 +275,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
 
         // Set the cur total invest for coloring
         opp->curInv = totalInvest;
+        opp->curA = totalA;
 
     }
 }
