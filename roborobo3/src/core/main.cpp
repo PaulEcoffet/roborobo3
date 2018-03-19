@@ -186,7 +186,7 @@ int main(int argc, char* argv[])
                 gRemote = optarg;
                 break;
             case 'm':
-                gMovie = false;
+                gMovie = true;
                 break;
             case '?':
                 //std::cout << "[INFO] Unknown argument \"" << (char)optopt << "\" detected, and ignored." << std::endl;
