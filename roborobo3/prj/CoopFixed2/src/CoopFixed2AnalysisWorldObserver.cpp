@@ -46,7 +46,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
     gProperties.checkAndGetPropertyValue("analysisNbRep", &m_nbRep, true);
-    m_stepCoop = 2.0 /*maxcoop*/ / ((double) 16 /*nbstep*/);  // TODO Super Ugly
+    m_stepCoop = CoopFixed2SharedData::maxCoop / ((double) 16 /*nbstep*/);  // TODO Super Ugly
     m_curCoop = 0;
     m_curIterationInRep = 0;
     m_curRep = 0;
