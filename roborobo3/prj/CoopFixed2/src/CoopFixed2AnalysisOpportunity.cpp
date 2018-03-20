@@ -3,6 +3,7 @@
  * @date 2018-01-08
  */
 
+#include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include "CoopFixed2/include/CoopFixed2AnalysisOpportunity.h"
 
 
@@ -19,8 +20,8 @@ CoopFixed2AnalysisOpportunity::CoopFixed2AnalysisOpportunity(int __id) : CoopFix
 void CoopFixed2AnalysisOpportunity::updateColor()
 {
     _displayColorRed = 0;
-    _displayColorGreen = static_cast<Uint8>(128 + 127 * m_coop / 2);
-    _displayColorBlue = static_cast<Uint8>(128 - 127 * m_coop / 2);
+    _displayColorGreen = static_cast<Uint8>(128 + 127 * m_coop / CoopFixed2SharedData::maxCoop);
+    _displayColorBlue = static_cast<Uint8>(128 - 127 * m_coop / CoopFixed2SharedData::maxCoop);
 }
 
 void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
