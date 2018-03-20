@@ -63,7 +63,7 @@ void CoopFixed2AnalysisWorldObserver::reset()
 
 void CoopFixed2AnalysisWorldObserver::stepPre()
 {
-    const double maxCoop = 2.0;
+    const double maxCoop = CoopFixed2SharedData::maxCoop;
     clearOpportunityNearbyRobots();
     m_curIterationInRep++;
     if (m_curIterationInRep == m_nbIterationPerRep)
