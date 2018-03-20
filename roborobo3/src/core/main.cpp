@@ -95,8 +95,8 @@ int main(int argc, char* argv[])
     // Parse Command line parameters (in argv), using getopt
     
     displayGeneralInformation();
-    
-    int c = getopt (argc, argv, "vhsl:o:r:m");
+    char options[] = "vhsl:o:r:m";
+    int c = getopt (argc, argv, options);
     
     if ( c  == -1 ) // no arguments? display usage.
     {
@@ -198,7 +198,7 @@ int main(int argc, char* argv[])
                 break;
         }
         
-        c = getopt (argc, argv, "vhsbl:o:r:");
+        c = getopt (argc, argv, options);
     }
     
     /**/
@@ -210,7 +210,7 @@ int main(int argc, char* argv[])
     /**/
     
 	std::cout << std::endl << std::endl;
-    
+
 	int returnValue = 0;
 	returnValue = launchRoborobo();
     
