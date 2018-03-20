@@ -1061,7 +1061,7 @@ void updateMonitor(const Uint8* __keyboardStates)
 }
 
 
-bool loadProperties( std::string __propertiesFilename )
+bool loadProperties( std::string __propertiesFilename, int argc, char* argv[] )
 {
 	bool returnValue = true;
 
@@ -1108,6 +1108,9 @@ bool loadProperties( std::string __propertiesFilename )
 		return false;
 	gProperties.load(in);
     in.close();
+
+    /* Load properties from the command line arguments */
+    gProperties.addCommandLineArgs(argc, argv, "+");
     
     // Load properties given in the config file
 	
@@ -2018,10 +2021,10 @@ bool loadProperties( std::string __propertiesFilename )
 
 // ---- ---- ---- ----“
 
-void initRoborobo()
+void initRoborobo(int argc, char* argv[])
 {
 	// load properties
-	if ( loadProperties(gPropertiesFilename) == false )
+	if ( loadProperties(gPropertiesFilename, argc, argv) == false )
 	{
 		std::cout << "[CRITICAL] properties file contains error(s) or does not exist (\"" << gPropertiesFilename << "\"). EXITING." << std::endl << std::endl;
 		exit (-1);
@@ -2242,9 +2245,9 @@ void updateTrajectoriesMonitor()
 // ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- ----- -----
 
 
-int launchRoborobo() // the main loop.
+int launchRoborobo(int argc, char* argv[]) // the main loop.
 {
-    initRoborobo();
+    initRoborobo(argc, argv);
 	runRoborobo(gMaxIt);
 	closeRoborobo();
 

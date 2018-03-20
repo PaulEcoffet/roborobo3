@@ -327,8 +327,8 @@ string Properties::getProperty(string key, string defaultValue) {
 }   
 
 //---------------------------------------------------------------------------
-
-vector<string> Properties::addCommandLineArgs(int argc, char* argv[])
+/* edited by PaulEcoffet to allow custom prefix on 2018-03-20 */
+vector<string> Properties::addCommandLineArgs(int argc, char* argv[], std::string prefix)
 {
   vector<string> unusedArgs;
   const string CMDLINEARG_FILETAG = "-f";
@@ -343,9 +343,9 @@ vector<string> Properties::addCommandLineArgs(int argc, char* argv[])
       load(propsFile);
       curArgIdx += 2;
     }
-    else if (curArgIdx < (argc-1) && curArg.find("-") == 0)
+    else if (curArgIdx < (argc-1) && curArg.find(prefix) == 0)
     {
-      setProperty(curArg.substr(1), string(argv[curArgIdx+1]));
+      setProperty(curArg.substr(prefix.length()), string(argv[curArgIdx+1]));
       curArgIdx += 2;
     }
     else

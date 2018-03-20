@@ -265,16 +265,16 @@ void initLogging();
 void stopLogging();
 void initMonitor( bool __isInspectorAgent = false );
 void updateMonitor(const Uint8* __keyboardStates);
-bool loadProperties( std::string __propertiesFilename );
+bool loadProperties( std::string __propertiesFilename, int argc, char* argv[] );
 
-void initRoborobo();
+void initRoborobo(int argc, char* argv[]);
 bool runRoborobo( int __maxIt = -1);
 void closeRoborobo();
 
 void initTrajectoriesMonitor();
 void updateTrajectoriesMonitor();
 
-int launchRoborobo(); // the main entry point
+int launchRoborobo(int argc, char* argv[]); // the main entry point
 
 
 #endif // ROBOROBO_H

@@ -252,9 +252,10 @@ public:
      *
      * @param argc The number of command-line args as standard in C/C++.
      * @param argv The array with command-line args as standard in C/C++.
+     * @param prefix The character with whom the string must start
      * @return A vector of unused command-line args, converted to strings.
      */
-    std::vector<std::string> addCommandLineArgs(int argc, char* argv[]);
+    std::vector<std::string> addCommandLineArgs(int argc, char* argv[], std::string prefix="-");
 
     /**
       Tries to load \c property from the environment.
