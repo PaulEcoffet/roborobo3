@@ -212,7 +212,7 @@ int main(int argc, char* argv[])
 	std::cout << std::endl << std::endl;
 
 	int returnValue = 0;
-	returnValue = launchRoborobo();
+	returnValue = launchRoborobo(argc, argv);
     
 	return returnValue;
 }
