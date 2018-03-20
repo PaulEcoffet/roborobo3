@@ -122,7 +122,7 @@ void CoopFixed2WorldObserver::stepPost()
     registerRobotsOnOpportunities();
     computeOpportunityImpacts();
     if ((m_generationCount+1) % 1000 == 0) {
-        if (CoopFixed2SharedData::takeVideo && gMovie) {
+        if (CoopFixed2SharedData::takeVideo) {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
         }
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
@@ -144,7 +144,7 @@ void CoopFixed2WorldObserver::stepPost()
                      << wm->meanLastOwnInvest() << "\t"
                      << wm->meanLastTotalInvest() << "\n";
         }
-    }
+    })
     else if ((m_generationCount+1) % 1000 == 1 && m_curEvaluationIteration == 0)
     {
         m_logall.flush(); // Let's flush now that we have written everything.

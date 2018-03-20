@@ -73,7 +73,6 @@ extern std::string gConfigFilename;
 
 // Defined in this roborobo fork
 extern std::string gRemote;
-extern bool gMovie;
 
 
 // general purpose

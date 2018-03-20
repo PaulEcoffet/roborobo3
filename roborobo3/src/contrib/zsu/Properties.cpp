@@ -327,12 +327,11 @@ string Properties::getProperty(string key, string defaultValue) {
 }   
 
 //---------------------------------------------------------------------------
-/* edited by PaulEcoffet to allow custom prefix on 2018-03-20 */
+/* edited by Paul Ecoffet <paul.ecoffet@isir.upmc.fr> to allow custom prefix on 2018-03-20 */
 vector<string> Properties::addCommandLineArgs(int argc, char* argv[], std::string prefix)
 {
   vector<string> unusedArgs;
   const string CMDLINEARG_FILETAG = "-f";
-
   int curArgIdx = 0;
   while(curArgIdx < argc) {
     string curArg(argv[curArgIdx]);
