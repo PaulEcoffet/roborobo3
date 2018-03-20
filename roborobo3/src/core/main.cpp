@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     // Parse Command line parameters (in argv), using getopt
     
     displayGeneralInformation();
-    char options[] = "vhsl:o:r:m";
+    char options[] = "vhsl:o:r:";
     int c = getopt (argc, argv, options);
     
     if ( c  == -1 ) // no arguments? display usage.
@@ -184,9 +184,6 @@ int main(int argc, char* argv[])
                 break;
             case 'r':
                 gRemote = optarg;
-                break;
-            case 'm':
-                gMovie = true;
                 break;
             case '?':
                 //std::cout << "[INFO] Unknown argument \"" << (char)optopt << "\" detected, and ignored." << std::endl;
