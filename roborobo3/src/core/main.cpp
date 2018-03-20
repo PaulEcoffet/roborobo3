@@ -95,7 +95,7 @@ int main(int argc, char* argv[])
     // Parse Command line parameters (in argv), using getopt
     
     displayGeneralInformation();
-    char options[] = "vhsl:o:r:";
+    char options[] = "vhsl:o:r:b";
     int c = getopt (argc, argv, options);
     
     if ( c  == -1 ) // no arguments? display usage.
