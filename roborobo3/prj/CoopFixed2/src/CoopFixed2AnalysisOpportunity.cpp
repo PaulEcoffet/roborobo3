@@ -15,6 +15,7 @@ CoopFixed2AnalysisOpportunity::CoopFixed2AnalysisOpportunity(int __id) : CoopFix
 {
     setType(10);
     m_nbprev = 0;
+    lifeExpectancy = -1;
 }
 
 void CoopFixed2AnalysisOpportunity::updateColor()

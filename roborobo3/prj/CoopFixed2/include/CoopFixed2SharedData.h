@@ -29,6 +29,7 @@ public:
     static double b;
     static double meanA;
     static double stdA;
+    static bool tpToNewObj;
 
     static void initSharedData();
 

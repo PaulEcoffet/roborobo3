@@ -6,6 +6,7 @@
 #include "Utilities/Misc.h"
 #include "WorldModels/RobotWorldModel.h"
 #include "Agents/Agent.h"
+#include "World/World.h"
 #include "RoboroboMain/main.h"
 #include <set>
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>

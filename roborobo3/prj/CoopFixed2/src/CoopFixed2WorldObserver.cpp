@@ -109,6 +109,23 @@ void CoopFixed2WorldObserver::stepPost()
             m_world->getRobot(rid)->registerRobot();
         }
     }
+    if (CoopFixed2SharedData::tpToNewObj)
+    {
+        auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
+        for (int i = 0; i < m_world->getNbOfRobots(); i++)
+        {
+            auto *rob = m_world->getRobot(i);
+            if (rob->getWorldModel()->_desiredTranslationalValue > 0)
+            {
+                int dest_obj = randomPhys(engine);
+                PhysicalObject *physobj = gPhysicalObjects[dest_obj];
+                rob->unregisterRobot();
+                rob->setCoord(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->setCoordReal(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->registerRobot();
+            }
+        }
+    }
 
     for (auto id: objectsToTeleport)
     {
@@ -257,6 +274,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         {
             itmax = opp->getNearbyRobotIndexes().begin() + 2;
         }
+
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
@@ -269,8 +287,14 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
             wm->appendOwnInvest(wm->_cooperationLevel);
             wm->appendTotalInvest(totalInvest);
+            /*
+            std::cout << "payoff(inv=" << wm->_cooperationLevel << ", totInv=" << totalInvest << ", n=" << opp->getNbNearbyRobots()
+                    << ", a=" << wm->selfA << ", b=" <<b << ")\n";
+            std::cout << payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b) << "\n";
+            std::cout << "fit: " << wm->_fitnessValue << "\n";
+             */
             wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
-
+            //std::cout << "fit after: " << wm->_fitnessValue << "\n";
         }
 
         // Set the cur total invest for coloring
