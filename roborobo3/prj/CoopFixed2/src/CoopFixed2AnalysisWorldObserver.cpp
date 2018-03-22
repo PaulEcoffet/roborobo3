@@ -126,6 +126,8 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(_world->getRobot(i)->getWorldModel());
         wm->onOpportunity = false;
+        wm->arrival = 0;
+        wm->nbOnOpp = 0;
     }
     for (auto *physicalObject : gPhysicalObjects)
     {
@@ -137,6 +139,8 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
+            wm->arrival = 1;
+            wm->nbOnOpp = opp->getNbNearbyRobots();
 
             // Add information about his previous investment
             wm->appendOwnInvest(wm->_cooperationLevel);

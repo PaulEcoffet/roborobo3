@@ -27,6 +27,8 @@ double CoopFixed2SharedData::maxCoop = 10;
 double CoopFixed2SharedData::b = 10;
 double CoopFixed2SharedData::meanA = 5;
 double CoopFixed2SharedData::stdA = 2;
+bool CoopFixed2SharedData::tpToNewObj = false;
+
 
 void CoopFixed2SharedData::initSharedData()
 {
@@ -49,6 +51,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("b", &CoopFixed2SharedData::b, false);
     gProperties.checkAndGetPropertyValue("meanA", &CoopFixed2SharedData::meanA, false);
     gProperties.checkAndGetPropertyValue("stdA", &CoopFixed2SharedData::stdA, false);
+    gProperties.checkAndGetPropertyValue("tpToNewObj", &CoopFixed2SharedData::tpToNewObj, false);
 }
 
 
