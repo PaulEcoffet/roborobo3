@@ -78,7 +78,7 @@ void PartnerControlController::step()
         m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
     }
 
-    m_wm->_cooperationLevel = outputs[2] + 1; // Range between [0; 2]
+    m_wm->_cooperationLevel = (outputs[2] + 1) / 2 * 10; // Range between [0; 2]
 }
 
 std::vector<unsigned int> PartnerControlController::getNbNeuronsPerHiddenLayers() const
