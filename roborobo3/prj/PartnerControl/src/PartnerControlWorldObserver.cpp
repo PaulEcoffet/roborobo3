@@ -252,16 +252,8 @@ double PartnerControlWorldObserver::payoff(const double invest, const double tot
     double res;
     if (!PartnerControlSharedData::gaussianPayoff)
     {
-        /*
-        const int nbRobots = 2;
-        const double coeff = PartnerControlSharedData::constantK / (1.0 + pow(nbRobots - 2, 2)); // \frac{k}{1+(n-2)^2}
-        res = coeff * pow(totalInvest, PartnerControlSharedData::constantA) - invest;
-         */
-        const double a = 3, B = 2, q = 1, n = B, c = 0.2;
-        const double p = B * std::pow(totalInvest, a) / (std::pow(q, a) + std::pow(totalInvest, a));
-        const double share = p / n;
-        const double g = std::pow(share, a) / (1 + std::pow(share, a));
-        res = g - c * invest;
+        const double a = 5, b = 1, n = 2;
+        res = (a * totalInvest + b * (totalInvest - invest)) / n - 0.5 * invest * invest;
     }
     else
     {
