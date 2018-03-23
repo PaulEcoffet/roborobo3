@@ -299,7 +299,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
 
         // Set the cur total invest for coloring
         opp->curInv = totalInvest;
-        opp->curA = totalA;
+        opp->curA = totalA / opp->getNbNearbyRobots();
 
     }
 }

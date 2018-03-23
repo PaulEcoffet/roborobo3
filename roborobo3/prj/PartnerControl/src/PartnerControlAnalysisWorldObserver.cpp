@@ -34,7 +34,7 @@ PartnerControlAnalysisWorldObserver::PartnerControlAnalysisWorldObserver(World *
     m_genomesIt = m_genomesJson.begin();
     
     m_log.open(gLogDirectoryname + "/analysis_log.txt");
-    m_log << "generation\tind\trank\tcoop\trep\tit\tonOpp\townCoop\n";
+    m_log << "ind\tcoop\trep\tit\tonOpp\townCoop\n";
 
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
@@ -43,13 +43,14 @@ PartnerControlAnalysisWorldObserver::PartnerControlAnalysisWorldObserver(World *
     m_curCoop = 0;
     m_curIterationInRep = 0;
     m_curRep = 0;
+    m_curInd = 0;
 
     gMaxIt = m_genomesJson.size() * m_nbIterationPerRep * m_nbRep * PartnerControlSharedData::nbCoopStep;
 }
 
 void PartnerControlAnalysisWorldObserver::reset()
 {
-    loadGenome((*m_genomesIt)["weights"]);
+    loadGenome((*m_genomesIt));
     resetEnvironment();
 }
 
@@ -68,8 +69,7 @@ void PartnerControlAnalysisWorldObserver::stepPre()
     }
     if (m_curRep == m_nbRep)
     {
-        std::cout << "coop: " << m_curCoop << ", ind: " << (*m_genomesIt)["id"]
-                  << ", rank: " << (*m_genomesIt)["rank"] << ", gen: " << (*m_genomesIt)["generation"] << "\n";
+        std::cout << "coop: " << m_curCoop << ", ind: " << m_curInd << "\n";
         m_curCoop += m_stepCoop;
         this->setAllOpportunitiesCoop(m_curCoop);
         m_curRep = 0;
@@ -79,10 +79,11 @@ void PartnerControlAnalysisWorldObserver::stepPre()
         m_curCoop = 0;
         this->setAllOpportunitiesCoop(m_curCoop);
         m_genomesIt++;
+        m_curInd++;
         if (m_genomesIt < m_genomesJson.end())
         {
             m_log << std::flush;
-            loadGenome((*m_genomesIt)["weights"]);
+            loadGenome((*m_genomesIt));
         }
         else
         {
@@ -97,9 +98,7 @@ void PartnerControlAnalysisWorldObserver::monitorPopulation()
 {
     auto *wm = dynamic_cast<PartnerControlWorldModel *>(gWorld->getRobot(0)->getWorldModel());
     std::stringstream out;
-    out << (*m_genomesIt)["generation"] << "\t";
-    out << (*m_genomesIt)["id"] << "\t";
-    out << (*m_genomesIt)["rank"] << "\t";
+    out << m_curInd << "\t";
     out << m_curCoop << "\t";
     out << m_curRep << "\t";
     out << m_curIterationInRep << "\t";

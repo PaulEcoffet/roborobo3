@@ -49,6 +49,8 @@ protected:
     void computeOpportunityImpact();
 
     void clearOpportunityNearbyRobots();
+
+    int m_curInd;
 };
 
 
