@@ -20,6 +20,8 @@ enum {
     ELMAN_ID = 2
 };
 
+std::vector<std::string> CoopFixed2Controller::inputnames;
+
 CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm) : _fake(false), _fakeInvest(0)
 {
     m_wm = dynamic_cast<CoopFixed2WorldModel *>(wm);
@@ -109,6 +111,8 @@ CoopFixed2Controller::~CoopFixed2Controller()
 std::vector<double> CoopFixed2Controller::getInputs()
 {
     const int WALL_ID = 0;
+    bool fill_names = inputnames.empty();
+
     std::vector<double> inputs;
     inputs.reserve(m_nn->getNbInputs());
 
@@ -134,24 +138,47 @@ std::vector<double> CoopFixed2Controller::getInputs()
         inputs.emplace_back(static_cast<double> (entityId == WALL_ID));
         inputs.emplace_back(static_cast<double> (isOpportunity));
         inputs.emplace_back(nbOnOpp);
+        if (fill_names) {
+            inputnames.emplace_back("dist " + std::to_string(i));
+            inputnames.emplace_back("is robot");
+            inputnames.emplace_back("is wall");
+            inputnames.emplace_back("is obj");
+            inputnames.emplace_back("nb on obj");
+        }
     }
 
     /*
      * Opportunity inputs
      */
     inputs.emplace_back(m_wm->nbOnOpp);
-    inputs.emplace_back(m_wm->arrival); // TODO SHOULD BE OPTIONAL
-    inputs.emplace_back(m_wm->meanLastTotalInvest());
+    if (fill_names) inputnames.emplace_back("nb on opp");
+
+    if (CoopFixed2SharedData::arrivalAsInput) {
+        inputs.emplace_back(m_wm->arrival);
+        if (fill_names) inputnames.emplace_back("arrival");
+
+    }
+    if (CoopFixed2SharedData::totalInvAsInput)
+    {
+        inputs.emplace_back(m_wm->meanLastTotalInvest());
+        if (fill_names) inputnames.emplace_back("mean total inv");
+
+    }
     inputs.emplace_back(m_wm->meanLastOwnInvest());
+    if (fill_names) inputnames.emplace_back("mean own inv");
+
 
     /*
      * introspection inputs
      */
     if (CoopFixed2SharedData::selfAAsInput) {
         inputs.emplace_back(m_wm->selfA);
+        if (fill_names) inputnames.emplace_back("own A");
+
     }
 
     assert(inputs.size() == m_nn->getNbInputs());
+    assert(inputnames.size() == inputs.size());
     return inputs;
 }
 
@@ -170,18 +197,14 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
 
 unsigned int CoopFixed2Controller::getNbInputs() const
 {
-    int a_as_input = 0;
-    if (CoopFixed2SharedData::selfAAsInput)
-    {
-        a_as_input = 1;
-    }
+
     return static_cast<unsigned int>(
             m_wm->_cameraSensorsNb * 5 // dist + isWall + isRobot + isObj + nbRob
             + 1 // nbOnOpportunity
-            + 1 // ArrivalOrder
-            + 1 // avgTotalEffort
-            + 1 // avgEffort
-            + a_as_input
+            + CoopFixed2SharedData::arrivalAsInput
+            + CoopFixed2SharedData::totalInvAsInput
+            + 1
+            + CoopFixed2SharedData::selfAAsInput
     );
 }
 
@@ -264,6 +287,12 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     }
     out << prefix << "a coeff: " << m_wm->selfA << "\n";
     out << prefix << "Actual fitness: " << getFitness() << "\n";
+    auto inputs = getInputs();
+    out << prefix << "inputs:\n";
+    for (int i; i < inputs.size(); i++)
+    {
+        out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
+    }
     return out.str();
 }
 

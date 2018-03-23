@@ -30,8 +30,11 @@ public:
     static double meanA;
     static double stdA;
     static bool tpToNewObj;
+    static bool totalInvAsInput;
+    static bool arrivalAsInput;
 
     static void initSharedData();
+
 
 };
 

@@ -59,6 +59,7 @@ protected:
 
     bool _fake;
     double _fakeInvest;
+    static std::vector<std::string> inputnames;
 };
 
 
