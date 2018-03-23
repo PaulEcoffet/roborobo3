@@ -19,7 +19,7 @@ int CoopFixed2SharedData::nbEvaluationsPerGeneration = 1;
 bool CoopFixed2SharedData::takeVideo = true;
 int CoopFixed2SharedData::seeCoopFromDist = 0;
 bool CoopFixed2SharedData::prisonerDilemma = false;
-bool CoopFixed2SharedData::selfAAsInput = false;
+bool CoopFixed2SharedData::selfAAsInput = true;
 int CoopFixed2SharedData::oppDecay = -1;
 bool CoopFixed2SharedData::fixRobotNb = true;
 bool CoopFixed2SharedData::teleportRobots = false;
@@ -28,6 +28,9 @@ double CoopFixed2SharedData::b = 10;
 double CoopFixed2SharedData::meanA = 5;
 double CoopFixed2SharedData::stdA = 2;
 bool CoopFixed2SharedData::tpToNewObj = false;
+bool CoopFixed2SharedData::totalInvAsInput = true;
+bool CoopFixed2SharedData::arrivalAsInput = false;
+
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -52,6 +55,9 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("meanA", &CoopFixed2SharedData::meanA, false);
     gProperties.checkAndGetPropertyValue("stdA", &CoopFixed2SharedData::stdA, false);
     gProperties.checkAndGetPropertyValue("tpToNewObj", &CoopFixed2SharedData::tpToNewObj, false);
+    gProperties.checkAndGetPropertyValue("totalInvAsInput", &CoopFixed2SharedData::totalInvAsInput, false);
+    gProperties.checkAndGetPropertyValue("arrivalAsInput", &CoopFixed2SharedData::arrivalAsInput, false);
+
 }
 
 
