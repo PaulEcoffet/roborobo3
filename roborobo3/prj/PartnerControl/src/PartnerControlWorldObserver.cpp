@@ -7,6 +7,7 @@
 #include <PartnerControl/include/PartnerControlAnalysisWorldObserver.h>
 #include <PartnerControl/include/PartnerControlWorldObserver.h>
 #include <boost/algorithm/string.hpp>
+#include <CoopFixed2/include/CoopFixed2WorldObserver.h>
 #include "RoboroboMain/main.h"
 #include "PartnerControl/include/PartnerControlWorldObserver.h"
 #include "PartnerControl/include/PartnerControlController.h"
@@ -74,6 +75,7 @@ void PartnerControlWorldObserver::reset()
 void PartnerControlWorldObserver::initOpportunities()
 {
     double curCoop =  m_curEvaluationInGeneration * PartnerControlSharedData::maxCoop / ((double) PartnerControlSharedData::nbEvaluationsPerGeneration - 1);
+    curCoop = 0;
     auto &physObjList = gPhysicalObjects;
     for (auto *physicalObject : physObjList)
     {
@@ -242,7 +244,8 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
             wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            ctl->increaseFitness(payoff(wm->_cooperationLevel, opp->getCoop() + wm->_cooperationLevel));
+            double fit = CoopFixed2WorldObserver::payoff(wm-> _cooperationLevel, opp->getCoop() + wm->_cooperationLevel, 2, 5, 1);
+            ctl->increaseFitness(fit);
         }
     }
 }
@@ -250,9 +253,10 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
 double PartnerControlWorldObserver::payoff(const double invest, const double totalInvest) const
 {
     double res;
+    throw std::string("Don't use the payoff function of PartnerControlWorldObserver right now");
     if (!PartnerControlSharedData::gaussianPayoff)
     {
-        const double a = 5, b = 1, n = 2;
+        double a=5, b = 1, n = 2;
         res = (a * totalInvest + b * (totalInvest - invest)) / n - 0.5 * invest * invest;
     }
     else

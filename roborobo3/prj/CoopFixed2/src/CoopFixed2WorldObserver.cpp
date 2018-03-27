@@ -304,12 +304,11 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 }
 
-double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b) const
+double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b)
 {
     double res = 0;
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
-
         res = (a * totalInvest + b * (totalInvest - invest)) / n - 0.5 * invest * invest;
     }
     else
