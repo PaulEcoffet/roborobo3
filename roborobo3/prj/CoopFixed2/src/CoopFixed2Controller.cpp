@@ -150,6 +150,9 @@ std::vector<double> CoopFixed2Controller::getInputs()
     /*
      * Opportunity inputs
      */
+    inputs.emplace_back(m_wm->onOpportunity);
+    if (fill_names) inputnames.emplace_back("on opp");
+
     inputs.emplace_back(m_wm->nbOnOpp);
     if (fill_names) inputnames.emplace_back("nb on opp");
 
@@ -200,6 +203,7 @@ unsigned int CoopFixed2Controller::getNbInputs() const
 
     return static_cast<unsigned int>(
             m_wm->_cameraSensorsNb * 5 // dist + isWall + isRobot + isObj + nbRob
+            + 1 // on Opp
             + 1 // nbOnOpportunity
             + CoopFixed2SharedData::arrivalAsInput
             + CoopFixed2SharedData::totalInvAsInput

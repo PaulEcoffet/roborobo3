@@ -35,6 +35,8 @@ public:
     void addRobotToTeleport(int robotId);
 
     void addObjectToTeleport(int id);
+    static double payoff(double invest, double totalInvest, int n, double a, double b);
+
 
 protected:
     World *m_world;
@@ -51,7 +53,6 @@ protected:
 
 
     void computeOpportunityImpacts();
-    double payoff(double invest, double totalInvest, int n, double a, double b) const;
     void registerRobotsOnOpportunities();
     void clearRobotFitnesses();
     void loadGenomesInRobots(const std::vector<std::vector<double>>& genomes);
