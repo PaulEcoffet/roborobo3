@@ -25,6 +25,9 @@
 // random number generators (defined in roborobo.cpp)
 // Note that boost/c++11 random is slower (by one order of magnitude), but more precise, than old classic rand()
 
+#define XSTR(s) STR(s)
+#define STR(s) #s
+
 extern std::random_device rnd;
 extern std::mt19937 engine;
 extern std::uniform_real_distribution<double> disRandom;
