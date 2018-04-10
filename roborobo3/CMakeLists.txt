@@ -301,6 +301,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 
 
+# Add git info as define
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC GIT_SHA1)
+git_local_changes(GIT_DIRTY)
+add_definitions("-DGIT_SHA1=${GIT_SHA1}")
+add_definitions("-DGIT_DIRTY=${GIT_DIRTY}")
+
+
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 #find_package(TBB REQUIRED)

@@ -978,30 +978,67 @@ void initLogging()
 	// init log file
     
     gLogFullFilename = gLogDirectoryname + "/" + gLogFilename;
-    
-	gLogFile.open(gLogFullFilename.c_str());//, std::ofstream::out | std::ofstream::app);
-	
-	if(!gLogFile) { 
-		std::cout << "[CRITICAL] Cannot open log file " << gLogFullFilename << "." << std::endl << std::endl;
-		exit(-1);
-	} 
+    gLogManager = new LogManager(gLogFullFilename); // it is recommended (though not forced) to use gLogManager instead of gLogFile.
 
-	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	gLogFile << "# LOG DATA " << std::endl;
-	gLogFile << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	gLogFile << "#" << std::endl;
-	gLogFile << "# =-= Roborobo^3 " << std::endl;
-	gLogFile << "# =-= Official version tag    : " << gVersion << std::endl;
-	gLogFile << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
-	gLogFile << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
-	gLogFile << "#" << std::endl;
-	gLogFile << "# Loaded time stamp           : " << gStartTime << std::endl;
-    gLogFile << "# process ID                  : " << getpidAsReadableString() << std::endl;
-	gLogFile << "#" << std::endl;
+
+    std::stringstream logText;
+    logText << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	logText << "# LOG DATA " << std::endl;
+    logText << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+    logText << "#" << std::endl;
+    logText << "# =-= Roborobo^3 " << std::endl;
+    logText << "# =-= Official version tag    : " << gVersion << std::endl;
+    logText << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
+    logText << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
+    logText << "#" << std::endl;
+    logText << "# Loaded time stamp           : " << gStartTime << std::endl;
+    logText << "# process ID                  : " << getpidAsReadableString() << std::endl;
+    logText << "#" << std::endl;
+
+    gLogManager->write(logText.str());
 
 	//gLogFile << "# log comment      : " << gLogCommentText << std::endl; 
 
-    gLogManager = new LogManager(gLogFullFilename); // it is recommended (though not forced) to use gLogManager instead of gLogFile.
+	gLogManager->write("GITSHA1=" XSTR(GIT_SHA1) "\n");
+	gLogManager->write("GITSTATUS=" XSTR(GIT_DIRTY) "\n");
+	gLogManager->flush();
+
+	// * Dump a raw copy of the properties file from gProperties, ie. as it was parsed and understood.
+
+	// prepare filename
+	std::string outputFileNameTmp = gLogDirectoryname;
+	outputFileNameTmp += "/";
+	outputFileNameTmp += "properties_";
+	outputFileNameTmp += gStartTime;
+	outputFileNameTmp += "_";
+	outputFileNameTmp += getpidAsReadableString();
+	outputFileNameTmp += ".txt";
+
+	// open file
+	const std::string outputFile = outputFileNameTmp;
+	std::ofstream out(outputFile.c_str());
+
+	// dump header information
+	out << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	out << "# PROPERTIES FILE DUMP " << std::endl;
+	out << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
+	out << "#" << std::endl;
+	out << "# =-= Roborobo^3 " << std::endl;
+	out << "# =-= Official version tag    : " << gVersion << std::endl;
+	out << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
+	out << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
+	out << "#" << std::endl;
+	out << "# Loaded time stamp           : " << gStartTime << std::endl;
+	out << "#" << std::endl;
+	out << "# Original Properties file    : " << "unknown" << std::endl;
+	out << "#" << std::endl;
+	out << std::endl << std::endl;
+
+	// dump properties content
+	gProperties.store(out);
+
+	// close file
+	out.close();
 }
 
 
@@ -1976,43 +2013,6 @@ bool loadProperties( std::string __propertiesFilename, int argc, char* argv[] )
 	}
 	
 
-
-	// * Dump a raw copy of the properties file from gProperties, ie. as it was parsed and understood.
-
-	// prepare filename
-	std::string outputFileNameTmp = gLogDirectoryname;
-    outputFileNameTmp += "/";
-	outputFileNameTmp += "properties_";
-	outputFileNameTmp += gStartTime;
-    outputFileNameTmp += "_";
-    outputFileNameTmp += getpidAsReadableString();
-	outputFileNameTmp += ".txt";
-	
-	// open file
-	const std::string outputFile = outputFileNameTmp;
-	std::ofstream out(outputFile.c_str());	
-	
-	// dump header information
-	out << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	out << "# PROPERTIES FILE DUMP " << std::endl;
-	out << "# =-=-=-=-=-=-=-=-=-=-=" << std::endl;
-	out << "#" << std::endl;
-	out << "# =-= Roborobo^3 " << std::endl;
-	out << "# =-= Official version tag    : " << gVersion << std::endl;
-	out << "# =-= Current build name      : " << gCurrentBuildInfo << std::endl;
-	out << "# =-= Compilation version tag : " << gCompileDate << " - " << gCompileTime << std::endl;
-	out << "#" << std::endl;
-	out << "# Loaded time stamp           : " << gStartTime << std::endl;
-	out << "#" << std::endl;
-	out << "# Original Properties file    : " << __propertiesFilename << std::endl;
-	out << "#" << std::endl;
-	out << std::endl << std::endl;
-		
-	// dump properties content
-	gProperties.store(out); 
-	
-	// close file
-	out.close();
 	
 	return returnValue;
 }
