@@ -2,6 +2,9 @@ from moviepy.video.io.VideoFileClip import VideoFileClip
 from moviepy.video.io.ImageSequenceClip import ImageSequenceClip
 from moviepy.video.compositing.concatenate import concatenate_videoclips
 import sys
+import traceback
+
+
 if sys.version_info >= (3, 5):
     from glob import iglob, glob
     def rglob(*args, **kwargs):
@@ -17,29 +20,29 @@ else:
 
 from os.path import join as j
 from os.path import basename, dirname, exists
-from os import remove
+import os
 from collections import defaultdict
 import re
 from joblib import Parallel, delayed
-import sys
 
 # Ensure automovie is not already running.
 from tendo import singleton
 
-replim = 2 # Only keep 2 movies of a rep per experiment (faster movies)
+replim = 10000 # Only keep replim movies of a rep per experiment (faster movies)
 
 
 def make_video(curdir, nbjobs=1):
     print("looking up files in ", curdir)
-    rep_out = re.match(r".*rep(\d+).*", curdir)
+    rep_out = re.match(r".*rep(?P<num>\d+).*", curdir)
     if rep_out:
-        rep = int(rep_out[1])
+        rep = int(rep_out.group('num'))
     else:
         rep = 0
+
+    allfiles = glob(j(curdir, 'screenshot_custom_*.png'))
     if rep < replim:  # Only deal with the first reps
-        files = glob(j(curdir, 'screenshot_custom_*.png'))
         filesbygen = defaultdict(list)
-        for fname in files:
+        for fname in allfiles:
             name = basename(fname)
             out = re.match(r"""screenshot_custom_.+_
                            gen_(?P<gen>\d+)
@@ -65,10 +68,12 @@ def make_video(curdir, nbjobs=1):
             verbose = sys.stdout.isatty()
             newmov.write_videofile(outname, fps=60, verbose=verbose, progress_bar=verbose, threads=nbjobs)
             print("{} created".format(basename(outname)))
+            for pngfile in files:
+                os.remove(pngfile)
     else:
         print("Do not make movie for this rep {}, already have others".format(rep))
-    for pngfile in files:
-        remove(pngfile)
+        for pngfile in allfiles:
+            os.remove(pngfile)
 
 def tolerant_make_video(curdir, nbjobs=1):
     try:
@@ -76,6 +81,7 @@ def tolerant_make_video(curdir, nbjobs=1):
     except Exception as e:
         print("error with {}:\n{}, {}".format(curdir, type(e), e),
               file=sys.stderr)
+        traceback.print_exc()
 
 ### MAIN ###
 def main():
@@ -92,7 +98,7 @@ def main():
         pass
 
     screendirpattern = j(maindir, '**/screenshots/')
-    Parallel(n_jobs=nbjobs)(
+    Parallel(n_jobs=nbjobs, verbose=10)(
         delayed(tolerant_make_video)(curdir, 1)
             for curdir in irglob(screendirpattern)
                 if glob(j(curdir, 'screenshot_custom_*_gen*.png')) # if there is screenshots to process
