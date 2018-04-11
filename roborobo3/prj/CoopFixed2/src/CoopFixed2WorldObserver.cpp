@@ -286,7 +286,12 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
             wm->appendOwnInvest(wm->_cooperationLevel);
-            wm->appendTotalInvest(totalInvest);
+            if (CoopFixed2SharedData::onlyOtherInTotalInv)
+            {
+                wm->appendTotalInvest(totalInvest - wm->_cooperationLevel);
+            } else {
+                wm->appendTotalInvest(totalInvest);
+            }
             /*
             std::cout << "payoff(inv=" << wm->_cooperationLevel << ", totInv=" << totalInvest << ", n=" << opp->getNbNearbyRobots()
                     << ", a=" << wm->selfA << ", b=" <<b << ")\n";
