@@ -167,9 +167,10 @@ std::vector<double> CoopFixed2Controller::getInputs()
         if (fill_names) inputnames.emplace_back("mean total inv");
 
     }
-    inputs.emplace_back(m_wm->meanLastOwnInvest());
-    if (fill_names) inputnames.emplace_back("mean own inv");
-
+    if (CoopFixed2SharedData::ownInvAsInput) {
+        inputs.emplace_back(m_wm->meanLastOwnInvest());
+        if (fill_names) inputnames.emplace_back("mean own inv");
+    }
 
     /*
      * introspection inputs
@@ -207,7 +208,7 @@ unsigned int CoopFixed2Controller::getNbInputs() const
             + 1 // nbOnOpportunity
             + CoopFixed2SharedData::arrivalAsInput
             + CoopFixed2SharedData::totalInvAsInput
-            + 1
+            + CoopFixed2SharedData::ownInvAsInput
             + CoopFixed2SharedData::selfAAsInput
     );
 }

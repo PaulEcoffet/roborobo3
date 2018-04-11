@@ -31,7 +31,10 @@ public:
     static double stdA;
     static bool tpToNewObj;
     static bool totalInvAsInput;
+    static bool ownInvAsInput;
     static bool arrivalAsInput;
+    static bool onlyOtherInTotalInv;
+
 
     static void initSharedData();
 

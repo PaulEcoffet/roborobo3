@@ -30,7 +30,8 @@ double CoopFixed2SharedData::stdA = 2;
 bool CoopFixed2SharedData::tpToNewObj = false;
 bool CoopFixed2SharedData::totalInvAsInput = true;
 bool CoopFixed2SharedData::arrivalAsInput = false;
-
+bool CoopFixed2SharedData::ownInvAsInput = true;
+bool CoopFixed2SharedData::onlyOtherInTotalInv = false;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -46,18 +47,19 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("takeVideo", &CoopFixed2SharedData::takeVideo, false);
     gProperties.checkAndGetPropertyValue("seeCoopFromDist", &CoopFixed2SharedData::seeCoopFromDist, false);
     gProperties.checkAndGetPropertyValue("prisonerDilemma", &CoopFixed2SharedData::prisonerDilemma, false);
-    gProperties.checkAndGetPropertyValue("aAsInput", &CoopFixed2SharedData::selfAAsInput, false);
-    gProperties.checkAndGetPropertyValue("oppDecay", &CoopFixed2SharedData::oppDecay, false);
-    gProperties.checkAndGetPropertyValue("fixRobotNb", &CoopFixed2SharedData::fixRobotNb, false);
-    gProperties.checkAndGetPropertyValue("teleportRobots", &CoopFixed2SharedData::teleportRobots, false);
-    gProperties.checkAndGetPropertyValue("maxCoop", &CoopFixed2SharedData::maxCoop, false);
-    gProperties.checkAndGetPropertyValue("b", &CoopFixed2SharedData::b, false);
-    gProperties.checkAndGetPropertyValue("meanA", &CoopFixed2SharedData::meanA, false);
-    gProperties.checkAndGetPropertyValue("stdA", &CoopFixed2SharedData::stdA, false);
+    gProperties.checkAndGetPropertyValue("aAsInput", &CoopFixed2SharedData::selfAAsInput, true);
+    gProperties.checkAndGetPropertyValue("oppDecay", &CoopFixed2SharedData::oppDecay, true);
+    gProperties.checkAndGetPropertyValue("fixRobotNb", &CoopFixed2SharedData::fixRobotNb, true);
+    gProperties.checkAndGetPropertyValue("teleportRobots", &CoopFixed2SharedData::teleportRobots, true);
+    gProperties.checkAndGetPropertyValue("maxCoop", &CoopFixed2SharedData::maxCoop, true);
+    gProperties.checkAndGetPropertyValue("b", &CoopFixed2SharedData::b, true);
+    gProperties.checkAndGetPropertyValue("meanA", &CoopFixed2SharedData::meanA, true);
+    gProperties.checkAndGetPropertyValue("stdA", &CoopFixed2SharedData::stdA, true);
     gProperties.checkAndGetPropertyValue("tpToNewObj", &CoopFixed2SharedData::tpToNewObj, false);
-    gProperties.checkAndGetPropertyValue("totalInvAsInput", &CoopFixed2SharedData::totalInvAsInput, false);
-    gProperties.checkAndGetPropertyValue("arrivalAsInput", &CoopFixed2SharedData::arrivalAsInput, false);
-
+    gProperties.checkAndGetPropertyValue("totalInvAsInput", &CoopFixed2SharedData::totalInvAsInput, true);
+    gProperties.checkAndGetPropertyValue("arrivalAsInput", &CoopFixed2SharedData::arrivalAsInput, true);
+    gProperties.checkAndGetPropertyValue("ownInvAsInput", &CoopFixed2SharedData::ownInvAsInput, true);
+    gProperties.checkAndGetPropertyValue("onlyOtherInTotalInv", &CoopFixed2SharedData::onlyOtherInTotalInv, true);
 }
 
 
