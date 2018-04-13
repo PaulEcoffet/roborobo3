@@ -49,7 +49,7 @@ double CoopFixed2WorldModel::meanLastOwnInvest()
 
 void CoopFixed2WorldModel::appendOwnInvest(const double invest)
 {
-    if (lastOwnInvest.size() >= memorySize)
+    if (lastOwnInvest.size() >= CoopFixed2SharedData::memorySize)
     {
         lastOwnInvest.pop_front();
     }
@@ -58,7 +58,7 @@ void CoopFixed2WorldModel::appendOwnInvest(const double invest)
 
 void CoopFixed2WorldModel::appendTotalInvest(const double invest)
 {
-    if (lastTotalInvest.size() >= memorySize)
+    if (lastTotalInvest.size() >= CoopFixed2SharedData::memorySize)
     {
         lastTotalInvest.pop_front();
     }

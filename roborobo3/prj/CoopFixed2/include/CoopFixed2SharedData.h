@@ -39,6 +39,7 @@ public:
     static void initSharedData();
 
 
+    static int memorySize;
 };
 
 
