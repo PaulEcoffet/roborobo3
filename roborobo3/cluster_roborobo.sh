@@ -10,7 +10,7 @@ export SDL_VIDEODRIVER=dummy
 
 python=/home/ecoffet/.virtualenvs/robocoop/bin/python
 
-groupname=`date +%F-%H%M`"-bm-grid-inv-input"
+groupname=`date +%F-%H%M`"-bm-grid-inv-input-no-mean"
 logdir="/home/ecoffet/robocoop/logs/$groupname"
 nb_rep=5
 confs=( 'bm_inv/notot_noinv' 'bm_inv/other_inv' 'bm_inv/other_noinv'
