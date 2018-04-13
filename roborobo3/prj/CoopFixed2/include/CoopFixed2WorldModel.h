@@ -28,10 +28,6 @@ public:
     void setNewSelfA();
     int arrival;
 
-protected:
-    unsigned int memorySize = 10;
-
-
 };
 
 

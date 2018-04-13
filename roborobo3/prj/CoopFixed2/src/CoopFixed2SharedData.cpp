@@ -32,6 +32,7 @@ bool CoopFixed2SharedData::totalInvAsInput = true;
 bool CoopFixed2SharedData::arrivalAsInput = false;
 bool CoopFixed2SharedData::ownInvAsInput = true;
 bool CoopFixed2SharedData::onlyOtherInTotalInv = false;
+int CoopFixed2SharedData::memorySize = 10;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -60,6 +61,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("arrivalAsInput", &CoopFixed2SharedData::arrivalAsInput, true);
     gProperties.checkAndGetPropertyValue("ownInvAsInput", &CoopFixed2SharedData::ownInvAsInput, true);
     gProperties.checkAndGetPropertyValue("onlyOtherInTotalInv", &CoopFixed2SharedData::onlyOtherInTotalInv, true);
+    gProperties.checkAndGetPropertyValue("memorySize", &CoopFixed2SharedData::memorySize, true);
 }
 
 
