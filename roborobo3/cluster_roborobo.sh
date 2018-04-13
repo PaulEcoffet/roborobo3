@@ -10,10 +10,12 @@ export SDL_VIDEODRIVER=dummy
 
 python=/home/ecoffet/.virtualenvs/robocoop/bin/python
 
-groupname=`date +%F-%H%M`"-partcontrol-bigmodel-nototmean"
+groupname=`date +%F-%H%M`"-bm-grid-inv-input"
 logdir="/home/ecoffet/robocoop/logs/$groupname"
-nb_rep=3
-confs=( 'bigmodel_mlp_nolim' 'bigmodel_mlp_lim' 'bigmodel_mlp_nolim_vara' )
+nb_rep=5
+confs=( 'bm_inv/notot_noinv' 'bm_inv/other_inv' 'bm_inv/other_noinv'
+        'bm_inv/tot_inv' 'bm_inv/tot_noinv' 'bm_inv/notot_inv')
+
 let "nbsplit=32 / (${#confs[@]} * nb_rep)"
 
 for curconf in "${confs[@]}"
