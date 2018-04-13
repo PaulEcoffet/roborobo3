@@ -4,6 +4,7 @@ logs/
 !roborobo3/roborobo
 .DS_Store
 *.swp
+*.[oe][123456789]*
 
 
 # Cmake related files
