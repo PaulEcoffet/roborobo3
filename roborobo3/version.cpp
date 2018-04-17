@@ -1,6 +1,6 @@
 #include "version.h"
 
 
-const std::string Version::GIT_SHA1 = "eb11c7193c674a25c9b33521a4d4313365d34c97-dirty";
-const std::string Version::GIT_DATE = "Fri Apr 13 16:15:04 2018";
-const std::string Version::GIT_COMMIT_SUBJECT = "memory size can now be changed";
+const std::string Version::GIT_SHA1 = "70f2d9b4031f90a661062691529b24528c7f0a92-dirty";
+const std::string Version::GIT_DATE = "Tue Apr 17 15:49:53 2018";
+const std::string Version::GIT_COMMIT_SUBJECT = "new gitsha1 status without define but automatic file to speed up compilation";
