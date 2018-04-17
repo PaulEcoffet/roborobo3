@@ -284,7 +284,8 @@ set(SOURCE_FILES
         prj/CorrectRepartition/src/CorrectRepartitionSharedData.cpp
         prj/CorrectRepartition/src/CorrectRepartitionWorldModel.cpp
         prj/CorrectRepartition/src/CorrectRepartitionWorldObserver.cpp
-        src/ext/CorrectRepartitionConfigurationLoader.cpp)
+        src/ext/CorrectRepartitionConfigurationLoader.cpp
+        )
 
 include_directories(include)
 include_directories(include/contrib)
@@ -304,11 +305,34 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 # Add git info as define
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
-include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC GIT_SHA1)
-git_local_changes(GIT_DIRTY)
-add_definitions("-DGIT_SHA1=${GIT_SHA1}")
-add_definitions("-DGIT_DIRTY=${GIT_DIRTY}")
+
+find_package(Git)
+
+# the commit's SHA1, and whether the building workspace was dirty or not
+execute_process(COMMAND
+        "${GIT_EXECUTABLE}" describe --match=NeVeRmAtCh --always --abbrev=40 --dirty
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_SHA1
+        ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# the date of the commit
+execute_process(COMMAND
+        "${GIT_EXECUTABLE}" log -1 --format=%ad --date=local
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_DATE
+        ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# the subject of the commit
+execute_process(COMMAND
+        "${GIT_EXECUTABLE}" log -1 --format=%s
+        WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+        OUTPUT_VARIABLE GIT_COMMIT_SUBJECT
+        ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+# generate version.cc
+configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cpp.in" "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" @ONLY)
+
+list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/version.h)
 
 
 find_package(SDL2 REQUIRED)
