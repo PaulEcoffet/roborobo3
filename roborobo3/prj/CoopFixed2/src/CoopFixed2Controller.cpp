@@ -22,7 +22,7 @@ enum {
 
 std::vector<std::string> CoopFixed2Controller::inputnames;
 
-CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm) : _fake(false), _fakeInvest(0)
+CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm)
 {
     m_wm = dynamic_cast<CoopFixed2WorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -71,10 +71,10 @@ void CoopFixed2Controller::step()
     m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
 
-    if (_fake)
+    if (m_wm->fake)
     {
-        m_wm->_cooperationLevel = _fakeInvest;
-        m_wm->setRobotLED_colorValues(150, 53, 61);
+        m_wm->_cooperationLevel = m_wm->fakeCoef * ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop;
+        m_wm->setRobotLED_colorValues(255, 0, 0);
     }
     else
     {
@@ -243,9 +243,9 @@ void CoopFixed2Controller::increaseFitness( double delta )
 std::string CoopFixed2Controller::inspect(std::string prefix)
 {
     std::stringstream out;
-    if (_fake)
+    if (m_wm->fake)
     {
-        out << prefix << "I'm fake robot with coop " << _fakeInvest << "\n";
+        out << prefix << "I'm fake robot with coop " << m_wm->fakeCoef << "\n";
     }
     std::set<int> seen;
     for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
@@ -294,10 +294,15 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     out << prefix << "Actual fitness: " << getFitness() << "\n";
     auto inputs = getInputs();
     out << prefix << "inputs:\n";
-    for (int i; i < inputs.size(); i++)
+    for (int i = 0; i < inputs.size(); i++)
     {
         out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
     }
+    out << prefix << "outputs:\n";
+    auto outputs = m_nn->readOut();
+    out << prefix << m_wm->_desiredTranslationalValue << "\n";
+    out << prefix << m_wm->_desiredRotationalVelocity << "\n";
+    out << prefix << (outputs[2] + 1) / 2 * CoopFixed2SharedData::maxCoop << "\n";
     return out.str();
 }
 
@@ -312,15 +317,3 @@ unsigned int CoopFixed2Controller::getNbOutputs() const
            + 1  // Cooperation value
     ;
 }
-
-void CoopFixed2Controller::setFakeInvest(const double fakeInvest)
-{
-    _fakeInvest = fakeInvest;
-}
-
-void CoopFixed2Controller::setFake(bool fake)
-{
-    _fake = fake;
-}
-
-

@@ -39,9 +39,6 @@ public:
     double getFitness() const;
     const std::vector<double>& getWeights() const;
 
-    void setFake(bool fake);
-
-    void setFakeInvest(const double fakeInvest);
 
 protected:
     CoopFixed2WorldModel *m_wm;
@@ -57,8 +54,6 @@ protected:
     unsigned int getNbInputs() const;
     unsigned int getNbOutputs() const;
 
-    bool _fake;
-    double _fakeInvest;
     static std::vector<std::string> inputnames;
 };
 

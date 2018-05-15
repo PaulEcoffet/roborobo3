@@ -11,7 +11,9 @@
 CoopFixed2WorldModel::CoopFixed2WorldModel()
         : RobotWorldModel(),
           onOpportunity(false),
-          selfA(0.5)
+          selfA(0.5),
+          fake(false),
+          fakeCoef(1)
 {
     setNewSelfA();
 }
