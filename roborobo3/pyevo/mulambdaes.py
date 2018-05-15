@@ -3,15 +3,16 @@ from copy import copy, deepcopy
 from json_tricks import dump
 
 
-class FitPropEvolutionStrategy():
-    """Fitness Proportionate with ask and tell interface."""
+class MuLambdaEvolutionStrategy():
+    """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False):
+                 bounds, path, full_random_begin=False, mu=None):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
-        self.log_every = 500
+        self.log_every = 1
+        self.mu = mu
 
         # boundaries are the same for all the dimension for now
         assert(bounds[0] < bounds[1])
@@ -19,17 +20,21 @@ class FitPropEvolutionStrategy():
         self.maxb = bounds[1]
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
         self.lastfitnesses = np.repeat(1, self.popsize)
-        self.logger = FitPropLogger(self, path)
+        self.logger = MuLambdaLogger(self, path)
 
     def ask(self):
         fitnesses = self.lastfitnesses
-        new_pop_index = np.random.choice(len(self.solutions),
-                                         self.popsize,
-                                         p=(fitnesses/np.sum(fitnesses)))
-        new_solutions = self.solutions[new_pop_index]
-        new_solutions = np.random.normal(new_solutions, self.mutation_rate)
-        np.clip(new_solutions, self.minb, self.maxb, out=new_solutions)
-        return deepcopy([solution for solution in new_solutions])
+        new_pop_index = np.argpartition(
+            fitnesses, -self.mu)[-self.mu:]
+        parents = self.solutions[new_pop_index].copy()
+        true_parent_indexes = np.random.choice(
+            len(parents), size=self.popsize - self.mu)
+        children = np.random.normal(parents[true_parent_indexes],
+                                    self.mutation_rate)
+        children.clip(self.minb, self.maxb, out=children)
+        new_solutions = np.concatenate((parents, children))
+        np.random.shuffle(new_solutions)
+        return new_solutions
 
     def tell(self, solutions, fitnesses):
         self.solutions = np.asarray(solutions)
@@ -66,8 +71,8 @@ class FitPropEvolutionStrategy():
                 in zip(deepcopy(self.solutions), deepcopy(self.lastfitnesses))]
 
 
-class FitPropLogger:
-    """Logger for the FitPropEvolutionStrategy"""
+class MuLambdaLogger:
+    """Logger for the MuLambdaEvolutionStrategy"""
     def __init__(self, fitpropes, path):
         self.es = fitpropes
         self.path = path

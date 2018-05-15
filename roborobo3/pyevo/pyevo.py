@@ -1,4 +1,9 @@
-from pyevo.fitprop import FitPropEvolutionStrategy
+try:
+    from pyevo.fitprop import FitPropEvolutionStrategy
+    from pyevo.mulambdaes import MuLambdaEvolutionStrategy
+except ImportError:
+    from fitprop import FitPropEvolutionStrategy
+    from mulambdaes import MuLambdaEvolutionStrategy
 import cma
 
 def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath):
@@ -13,5 +18,9 @@ def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath):
     elif type_ == 'fitprop':
         return FitPropEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
                                         logpath, full_random_begin=True)
+    elif type_ == 'mulambda':
+        return MuLambdaEvolutionStrategy(guess, 0.01, popsize, maxiter, bounds,
+                                         logpath, full_random_begin=True,
+                                         mu=popsize//2)
     else:
         raise NotImplemented()
