@@ -61,6 +61,8 @@ protected:
     int m_nbFakeRobots;
     std::set<int> objectsToTeleport;
     std::ofstream m_logall;
+    std::vector<int> m_fakerobotslist;
+    bool m_swapfake;
 };
 
 

@@ -52,7 +52,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
     m_curRep = 0;
     m_curInd = 0;
 
-    gMaxIt = m_genomesJson.size() * m_nbIterationPerRep * m_nbRep * 16 /*nbcoopstep*/;
+    gMaxIt = -1;
 }
 
 void CoopFixed2AnalysisWorldObserver::reset()
@@ -144,8 +144,12 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
 
             // Add information about his previous investment
             wm->appendOwnInvest(wm->_cooperationLevel);
-            wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
-
+            if (CoopFixed2SharedData::onlyOtherInTotalInv)
+            {
+                wm->appendTotalInvest(opp->getCoop());
+            } else {
+                wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
+            }
             //Reward him
             ctl->increaseFitness(0);
         }

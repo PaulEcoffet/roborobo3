@@ -34,6 +34,7 @@ public:
     static bool ownInvAsInput;
     static bool arrivalAsInput;
     static bool onlyOtherInTotalInv;
+    static bool fakeRobots;
 
 
     static void initSharedData();

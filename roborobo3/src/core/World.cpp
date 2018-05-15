@@ -14,6 +14,7 @@
 #include "Observers/WorldObserver.h"
 #include <iostream>
 #include <vector>
+#include <algorithm>
 
 /*
 struct executor
@@ -173,7 +174,7 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     int shuffledObjectIndex[gNbOfPhysicalObjects];
     for ( int i = 0 ; i < gNbOfPhysicalObjects ; i++ )
         shuffledObjectIndex[i] = i;
-    std::random_shuffle(&shuffledObjectIndex[0], &shuffledObjectIndex[gNbOfPhysicalObjects]);
+    std::shuffle(&shuffledObjectIndex[0], &shuffledObjectIndex[gNbOfPhysicalObjects], engine);
     for ( int i = 0 ; i < gNbOfPhysicalObjects ; i++ )
         gPhysicalObjects[shuffledObjectIndex[i]]->step();
     
@@ -193,7 +194,7 @@ void World::updateWorld(const Uint8 *__keyboardStates)
     int shuffledRobotIndex[gNbOfRobots];
     for ( int i = 0 ; i < gNbOfRobots ; i++ )
         shuffledRobotIndex[i] = i;
-    std::random_shuffle(&shuffledRobotIndex[0], &shuffledRobotIndex[gNbOfRobots]);
+    std::shuffle(&shuffledRobotIndex[0], &shuffledRobotIndex[gNbOfRobots], engine);
     
 	// update agent level observers
 	for ( int i = 0 ; i != gNbOfRobots ; i++ )

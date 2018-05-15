@@ -28,6 +28,9 @@ public:
     void setNewSelfA();
     int arrival;
 
+    bool fake;
+    double fakeCoef;
+
 };
 
 

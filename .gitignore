@@ -5,7 +5,7 @@ logs/
 .DS_Store
 *.swp
 *.[oe][123456789]*
-
+roborobo3/version.cpp
 
 # Cmake related files
 CMakeCache.txt

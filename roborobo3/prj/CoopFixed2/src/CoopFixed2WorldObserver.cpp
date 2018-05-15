@@ -13,10 +13,9 @@
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
 
 
-CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver(__world)
+CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver(__world), m_swapfake(false)
 {
     m_world = __world;
-
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
     m_generationCount = 0;
@@ -55,7 +54,21 @@ CoopFixed2WorldObserver::~CoopFixed2WorldObserver()
 void CoopFixed2WorldObserver::reset()
 {
     m_nbIndividuals = gNbOfRobots;
-    m_nbFakeRobots = gNbOfRobots - m_nbIndividuals; // Useless so far
+    if (CoopFixed2SharedData::fakeRobots) {
+        m_nbFakeRobots = gNbOfRobots / 2;
+    }
+    else {
+        m_nbFakeRobots = 0;
+
+    }
+
+    m_fakerobotslist = std::vector<int>(m_nbIndividuals, false);
+    for(int i = 0; i < m_nbFakeRobots; i++)
+    {
+        m_fakerobotslist[i] = true;
+    }
+    std::shuffle(m_fakerobotslist.begin(), m_fakerobotslist.end(), engine);
+    m_swapfake = true;
 
     // Init fitness
     clearRobotFitnesses();
@@ -87,7 +100,16 @@ void CoopFixed2WorldObserver::stepPre()
         logFitnesses(m_curfitnesses);
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
-
+        if (CoopFixed2SharedData::fakeRobots) {
+            if (m_swapfake) {
+                for (auto &isfake : m_fakerobotslist) {
+                    isfake = 1 - isfake;
+                }
+            } else {
+                std::shuffle(m_fakerobotslist.begin(), m_fakerobotslist.end(), engine);
+            }
+            m_swapfake = !m_swapfake;
+        }
         resetEnvironment();
     }
     if( m_curEvaluationInGeneration == CoopFixed2SharedData::nbEvaluationsPerGeneration)
@@ -230,11 +252,27 @@ void CoopFixed2WorldObserver::resetEnvironment()
         object->resetLocation();
         object->registerObject();
     }
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
-    {
+    int nb_fake_done = 0;
+    std::cout << "**********************\n";
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
-        auto *wm = dynamic_cast<CoopFixed2WorldModel* >(robot->getWorldModel());
+        auto *wm = dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel());
+        if (m_fakerobotslist[iRobot])
+        {
+            std::cout << iRobot << " is fake\n";
+            wm->fake = true;
+            if (nb_fake_done < m_nbFakeRobots / 2){
+                wm->fakeCoef = 0.8;
+            } else {
+                wm->fakeCoef = 1.2;
+            }
+            nb_fake_done++;
+        } else {
+            std::cout << iRobot << " is not fake\n";
+            wm->fake = false;
+            wm->fakeCoef = 1;
+        }
         wm->setNewSelfA();
     }
 }
@@ -298,7 +336,9 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             std::cout << payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b) << "\n";
             std::cout << "fit: " << wm->_fitnessValue << "\n";
              */
-            wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
+            if (!wm->fake) {
+                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
+            }
             //std::cout << "fit after: " << wm->_fitnessValue << "\n";
         }
 
@@ -347,7 +387,7 @@ void CoopFixed2WorldObserver::loadGenomesInRobots(const std::vector<std::vector<
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         auto* ctl = dynamic_cast<CoopFixed2Controller *>(m_world->getRobot(i)->getController());
-        ctl->loadNewGenome(genomes[i % m_nbIndividuals]); // cycle through genome, the remaining ones are the fake robots
+        ctl->loadNewGenome(genomes[i]);
     }
 
 }
