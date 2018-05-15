@@ -169,7 +169,7 @@ void CoopFixed2WorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tonOpp\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\n";
+            m_logall << "eval\titer\tid\ta\tfake\tonOpp\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++) {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
@@ -177,6 +177,7 @@ void CoopFixed2WorldObserver::stepPost()
                      << m_curEvaluationIteration << "\t"
                      << i << "\t"
                      << wm->selfA << "\t"
+                     << wm->fake << "\t"
                      << wm->onOpportunity << "\t"
                      << wm->nbOnOpp << "\t"
                      << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
@@ -253,14 +254,12 @@ void CoopFixed2WorldObserver::resetEnvironment()
         object->registerObject();
     }
     int nb_fake_done = 0;
-    std::cout << "**********************\n";
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel());
         if (m_fakerobotslist[iRobot])
         {
-            std::cout << iRobot << " is fake\n";
             wm->fake = true;
             if (nb_fake_done < m_nbFakeRobots / 2){
                 wm->fakeCoef = 0.8;
@@ -269,7 +268,6 @@ void CoopFixed2WorldObserver::resetEnvironment()
             }
             nb_fake_done++;
         } else {
-            std::cout << iRobot << " is not fake\n";
             wm->fake = false;
             wm->fakeCoef = 1;
         }
