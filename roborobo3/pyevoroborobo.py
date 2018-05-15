@@ -66,7 +66,7 @@ def main():
     # catch the output dir to put the evolution logs in it.
     ap = argparse.ArgumentParser(prog='cmaesroborobo.py')
     ap.add_argument('-o', '--output', type=str, default='logs/')
-    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop'],
+    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda'],
                     required=True)
     ap.add_argument('-s', '--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
