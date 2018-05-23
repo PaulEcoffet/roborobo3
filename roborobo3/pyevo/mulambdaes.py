@@ -11,7 +11,6 @@ class MuLambdaEvolutionStrategy():
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
-        self.log_every = 1
         self.mu = mu
 
         # boundaries are the same for all the dimension for now
@@ -90,12 +89,6 @@ class MuLambdaLogger:
                 q3fit=sorted_fitness[(3*size)//4],
                 maxfit=sorted_fitness[-1]
             ))
-        if self.es.iter % self.es.log_every == 0:
-            with open(self.path + 'genome_{}.txt'.format(self.es.iter), 'a') as f:
-                data = [{'weights': weights, 'fitness': fitness}
-                        for weights, fitness in zip(self.es.solutions,
-                                                    self.es.lastfitnesses)]
-                dump(data, f, primitives=True)
 
 
 
