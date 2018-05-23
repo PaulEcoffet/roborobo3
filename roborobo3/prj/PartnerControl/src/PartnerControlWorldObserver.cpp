@@ -244,7 +244,7 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
             wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            double fit = CoopFixed2WorldObserver::payoff(wm-> _cooperationLevel, opp->getCoop() + wm->_cooperationLevel, 2, 5, 1);
+            double fit = CoopFixed2WorldObserver::payoff(wm-> _cooperationLevel, opp->getCoop() + wm->_cooperationLevel, 2, 5, 1, 0);
             ctl->increaseFitness(fit);
         }
     }

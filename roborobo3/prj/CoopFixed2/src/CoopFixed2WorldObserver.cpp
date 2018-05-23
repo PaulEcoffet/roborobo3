@@ -278,6 +278,7 @@ void CoopFixed2WorldObserver::resetEnvironment()
 void CoopFixed2WorldObserver::computeOpportunityImpacts()
 {
     const double b = CoopFixed2SharedData::b;
+    const double d = CoopFixed2SharedData::d;
 
 
     // Mark all robots as not on an cooperation opportunity
@@ -335,7 +336,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             std::cout << "fit: " << wm->_fitnessValue << "\n";
              */
             if (!wm->fake) {
-                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b);
+                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b, d);
             }
             //std::cout << "fit after: " << wm->_fitnessValue << "\n";
         }
@@ -347,12 +348,13 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 }
 
-double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b)
+double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b, const double d)
 {
     double res = 0;
+    const double x0 = (totalInvest - invest);
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
-        res = (a * totalInvest + b * (totalInvest - invest)) / n - 0.5 * invest * invest;
+        res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest + d * x0 * invest;
     }
     else
     {
