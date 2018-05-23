@@ -35,7 +35,7 @@ public:
     void addRobotToTeleport(int robotId);
 
     void addObjectToTeleport(int id);
-    static double payoff(double invest, double totalInvest, int n, double a, double b);
+    static double payoff(double invest, double totalInvest, int n, double a, double b, double d);
 
 
 protected:

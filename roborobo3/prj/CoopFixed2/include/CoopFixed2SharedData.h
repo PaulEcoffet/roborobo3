@@ -41,6 +41,7 @@ public:
 
 
     static int memorySize;
+    static double d;
 };
 
 
