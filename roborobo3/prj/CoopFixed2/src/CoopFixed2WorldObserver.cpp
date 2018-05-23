@@ -354,7 +354,7 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     const double x0 = (totalInvest - invest);
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
-        res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest + d * x0 * invest;
+        res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest + d * x0 * invest / n;
     }
     else
     {
