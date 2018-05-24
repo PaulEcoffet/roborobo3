@@ -70,15 +70,17 @@ void CoopFixed2Controller::step()
 
     m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
+    m_wm->_cooperationLevel = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop; // Range between [0; maxCoop]
 
     if (m_wm->fake)
     {
-        m_wm->_cooperationLevel = m_wm->fakeCoef * ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop;
-        m_wm->setRobotLED_colorValues(255, 0, 0);
+        if (m_wm->fakeCoef < 1)
+            m_wm->setRobotLED_colorValues(255, 0, 0);
+        else
+            m_wm->setRobotLED_colorValues(127, 255, 255);
     }
     else
     {
-        m_wm->_cooperationLevel = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop; // Range between [0; maxCoop]
         if (m_wm->onOpportunity)
         {
             m_wm->setRobotLED_colorValues(0, 255, 0);

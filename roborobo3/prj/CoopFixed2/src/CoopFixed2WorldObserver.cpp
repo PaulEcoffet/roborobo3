@@ -11,6 +11,10 @@
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
 #include "CoopFixed2/include/CoopFixed2Controller.h"
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
+#include <boost/algorithm/clamp.hpp>
+
+using boost::algorithm::clamp;
+
 
 
 CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver(__world), m_swapfake(false)
@@ -97,7 +101,7 @@ void CoopFixed2WorldObserver::stepPre()
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
-        logFitnesses(m_curfitnesses);
+        logFitnesses(m_fitnesses);
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
         if (CoopFixed2SharedData::fakeRobots) {
@@ -262,9 +266,9 @@ void CoopFixed2WorldObserver::resetEnvironment()
         {
             wm->fake = true;
             if (nb_fake_done < m_nbFakeRobots / 2){
-                wm->fakeCoef = 0.8;
+                wm->fakeCoef = 1.0/CoopFixed2SharedData::fakeCoef;
             } else {
-                wm->fakeCoef = 1.2;
+                wm->fakeCoef = CoopFixed2SharedData::fakeCoef;
             }
             nb_fake_done++;
         } else {
@@ -314,18 +318,20 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
 
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
         {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
-            totalInvest += wm->_cooperationLevel;
+            const auto * const wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
+            const double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, CoopFixed2SharedData::maxCoop);
+            totalInvest += coop;
             totalA += wm->selfA;
         }
 
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
-            wm->appendOwnInvest(wm->_cooperationLevel);
+            const double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, CoopFixed2SharedData::maxCoop);
+            wm->appendOwnInvest(coop);
             if (CoopFixed2SharedData::onlyOtherInTotalInv)
             {
-                wm->appendTotalInvest(totalInvest - wm->_cooperationLevel);
+                wm->appendTotalInvest(totalInvest - coop);
             } else {
                 wm->appendTotalInvest(totalInvest);
             }
@@ -336,7 +342,11 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             std::cout << "fit: " << wm->_fitnessValue << "\n";
              */
             if (!wm->fake) {
-                wm->_fitnessValue += payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b, d);
+                int n = opp->getNbNearbyRobots();
+                if (CoopFixed2SharedData::fixRobotNb && n >2) {
+                    n = 2;
+                }
+                wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b, d);
             }
             //std::cout << "fit after: " << wm->_fitnessValue << "\n";
         }

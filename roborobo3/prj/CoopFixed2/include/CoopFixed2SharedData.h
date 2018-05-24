@@ -36,12 +36,13 @@ public:
     static bool onlyOtherInTotalInv;
     static bool fakeRobots;
 
+    static int memorySize;
+    static double d;
+    static double fakeCoef;
 
     static void initSharedData();
 
 
-    static int memorySize;
-    static double d;
 };
 
 
