@@ -35,6 +35,7 @@ bool CoopFixed2SharedData::ownInvAsInput = true;
 bool CoopFixed2SharedData::onlyOtherInTotalInv = false;
 bool CoopFixed2SharedData::fakeRobots = false;
 int CoopFixed2SharedData::memorySize = 10;
+double CoopFixed2SharedData::fakeCoef = 1.2;
 
 
 
@@ -67,6 +68,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("onlyOtherInTotalInv", &CoopFixed2SharedData::onlyOtherInTotalInv, true);
     gProperties.checkAndGetPropertyValue("memorySize", &CoopFixed2SharedData::memorySize, true);
     gProperties.checkAndGetPropertyValue("fakeRobots", &CoopFixed2SharedData::fakeRobots, true);
+    gProperties.checkAndGetPropertyValue("fakeCoef", &CoopFixed2SharedData::fakeCoef, true);
 }
 
 
