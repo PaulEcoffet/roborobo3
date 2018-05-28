@@ -177,13 +177,18 @@ void CoopFixed2WorldObserver::stepPost()
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++) {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
+            double nbOnOpp = wm->nbOnOpp;
+            if (CoopFixed2SharedData::fixRobotNb && nbOnOpp > 2)
+            {
+                nbOnOpp = 2;
+            }
             m_logall << m_curEvaluationInGeneration << "\t"
                      << m_curEvaluationIteration << "\t"
                      << i << "\t"
                      << wm->selfA << "\t"
                      << wm->fake << "\t"
                      << wm->onOpportunity << "\t"
-                     << wm->nbOnOpp << "\t"
+                     << nbOnOpp << "\t"
                      << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
                      << wm->meanLastOwnInvest() << "\t"
                      << wm->meanLastTotalInvest() << "\n";
