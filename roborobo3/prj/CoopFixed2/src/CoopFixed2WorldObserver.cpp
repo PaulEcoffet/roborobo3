@@ -63,7 +63,6 @@ void CoopFixed2WorldObserver::reset()
     }
     else {
         m_nbFakeRobots = 0;
-
     }
 
     m_fakerobotslist = std::vector<int>(m_nbIndividuals, false);
@@ -305,6 +304,11 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
         auto itmax = opp->getNearbyRobotIndexes().end();
 
+        int n = opp->getNbNearbyRobots();
+        if (CoopFixed2SharedData::fixRobotNb && n >2) {
+            n = 2;
+        }
+
         int arrival = 1;
         for (auto index : opp->getNearbyRobotIndexes())
         {
@@ -340,25 +344,15 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             } else {
                 wm->appendTotalInvest(totalInvest);
             }
-            /*
-            std::cout << "payoff(inv=" << wm->_cooperationLevel << ", totInv=" << totalInvest << ", n=" << opp->getNbNearbyRobots()
-                    << ", a=" << wm->selfA << ", b=" <<b << ")\n";
-            std::cout << payoff(wm->_cooperationLevel, totalInvest, opp->getNbNearbyRobots(), wm->selfA, b) << "\n";
-            std::cout << "fit: " << wm->_fitnessValue << "\n";
-             */
+
             if (!wm->fake) {
-                int n = opp->getNbNearbyRobots();
-                if (CoopFixed2SharedData::fixRobotNb && n >2) {
-                    n = 2;
-                }
                 wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b, d);
             }
-            //std::cout << "fit after: " << wm->_fitnessValue << "\n";
         }
 
         // Set the cur total invest for coloring
         opp->curInv = totalInvest;
-        opp->curA = totalA / opp->getNbNearbyRobots();
+        opp->curA = totalA / n;
 
     }
 }

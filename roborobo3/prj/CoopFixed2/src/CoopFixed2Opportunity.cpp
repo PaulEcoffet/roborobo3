@@ -59,7 +59,7 @@ void CoopFixed2Opportunity::registerNewRobots()
 
 void CoopFixed2Opportunity::step()
 {
-    int min_nb_robots = (CoopFixed2SharedData::fixRobotNb)? 2 : 1;
+    int min_nb_robots = 1;
     if (lifeExpectancy > 0 && (getNbNearbyRobots() >= min_nb_robots)) {
         lifeExpectancy--;
     }
