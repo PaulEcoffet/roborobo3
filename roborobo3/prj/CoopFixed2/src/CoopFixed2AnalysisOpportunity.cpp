@@ -4,6 +4,7 @@
  */
 
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
+#include <CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h>
 #include "CoopFixed2/include/CoopFixed2AnalysisOpportunity.h"
 
 
@@ -15,7 +16,23 @@ CoopFixed2AnalysisOpportunity::CoopFixed2AnalysisOpportunity(int __id) : CoopFix
 {
     setType(10);
     m_nbprev = 0;
-    lifeExpectancy = -1;
+    lifeExpectancy = CoopFixed2SharedData::oppDecay;
+}
+
+
+void CoopFixed2AnalysisOpportunity::step() {
+    if (m_nbprev > 0 && lifeExpectancy != -1)
+    {
+        lifeExpectancy--;
+    }
+    if (lifeExpectancy == 0)
+    {
+        auto *wobs = dynamic_cast<CoopFixed2AnalysisWorldObserver*>(gWorld->getWorldObserver());
+        wobs->addObjectToTeleport(_id);
+        lifeExpectancy = CoopFixed2SharedData::oppDecay;
+    }
+    updateColor();
+    RoundObject::step();
 }
 
 void CoopFixed2AnalysisOpportunity::updateColor()
@@ -55,11 +72,5 @@ void CoopFixed2AnalysisOpportunity::clearNearbyRobotIndexes()
 double CoopFixed2AnalysisOpportunity::getCoop() const
 {
     return m_coop;
-}
-
-void CoopFixed2AnalysisOpportunity::step()
-{
-    updateColor();
-    RoundObject::step();
 }
 

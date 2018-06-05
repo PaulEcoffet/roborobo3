@@ -9,6 +9,7 @@
 
 #include <Observers/WorldObserver.h>
 #include <json/json.hpp>
+#include <set>
 #include "World/World.h"
 #include "Agents/Robot.h"
 
@@ -23,6 +24,8 @@ public:
     void stepPre() override;
     void stepPost() override;
     void reset() override;
+    void addObjectToTeleport(int id);
+
 
 
 protected:
@@ -54,6 +57,8 @@ protected:
 
     void clearOpportunityNearbyRobots();
 
+
+    std::set<int> objectsToTeleport;
 };
 
 
