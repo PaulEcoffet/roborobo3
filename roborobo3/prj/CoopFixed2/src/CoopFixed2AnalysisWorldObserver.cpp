@@ -11,6 +11,7 @@
 #include <CoopFixed2/include/CoopFixed2Controller.h>
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisOpportunity.h>
+#include <CoopFixed2/include/CoopFixed2WorldObserver.h>
 #include "CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h"
 #include "json/json.hpp"
 
@@ -46,7 +47,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
     gProperties.checkAndGetPropertyValue("analysisNbRep", &m_nbRep, true);
-    m_stepCoop = CoopFixed2SharedData::maxCoop / ((double) 16 /*nbstep*/);  // TODO Super Ugly
+    m_stepCoop = CoopFixed2SharedData::maxCoop / ((double) 10 /*nbstep : 10+1*/);  // TODO Super Ugly
     m_curCoop = 0;
     m_curIterationInRep = 0;
     m_curRep = 0;
@@ -101,6 +102,15 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
 
 void CoopFixed2AnalysisWorldObserver::stepPost()
 {
+    for (auto id: objectsToTeleport)
+    {
+        gPhysicalObjects[id]->unregisterObject();
+        gPhysicalObjects[id]->resetLocation();
+        dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[id])->resetLife();
+        gPhysicalObjects[id]->registerObject();
+    }
+    objectsToTeleport.clear();
+
     computeOpportunityImpact();
     monitorPopulation();
 }
@@ -204,4 +214,9 @@ void CoopFixed2AnalysisWorldObserver::clearOpportunityNearbyRobots()
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(physicalObject);
         opp->clearNearbyRobotIndexes();
     }
+}
+
+
+void CoopFixed2AnalysisWorldObserver::addObjectToTeleport(int id) {
+    objectsToTeleport.emplace(id);
 }
