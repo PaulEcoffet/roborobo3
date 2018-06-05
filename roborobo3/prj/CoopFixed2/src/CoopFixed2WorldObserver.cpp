@@ -345,7 +345,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->appendTotalInvest(totalInvest);
             }
 
-            if (!wm->fake) {
+            if (!wm->fake && (!CoopFixed2SharedData::fixRobotNb || n == 2)) {
                 wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b, d);
             }
         }
