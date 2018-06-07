@@ -43,6 +43,7 @@ public:
     static void initSharedData();
 
 
+    static bool reputation;
 };
 
 

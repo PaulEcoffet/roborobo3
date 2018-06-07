@@ -285,6 +285,9 @@ set(SOURCE_FILES
         prj/CorrectRepartition/src/CorrectRepartitionWorldModel.cpp
         prj/CorrectRepartition/src/CorrectRepartitionWorldObserver.cpp
         src/ext/CorrectRepartitionConfigurationLoader.cpp
+
+        src/contrib/neuralnetworks/EigenMLP.cpp
+        include/contrib/neuralnetworks/EigenMLP.h
         )
 
 include_directories(include)
@@ -337,6 +340,7 @@ list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/versi
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
+find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
 find_package(Boost COMPONENTS filesystem system REQUIRED)
 
@@ -349,5 +353,6 @@ target_link_libraries(roborobo
         ${SDL2_IMAGE_LIBRARIES}
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
+        Eigen3::Eigen
        # tbb
         )

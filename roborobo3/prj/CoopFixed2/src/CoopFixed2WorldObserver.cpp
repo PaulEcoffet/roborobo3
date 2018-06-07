@@ -252,6 +252,8 @@ void CoopFixed2WorldObserver::resetEnvironment()
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
+        auto* rwm = dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel());
+        rwm->lastReputation.clear();
     }
 
 
@@ -338,6 +340,10 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
             const double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, CoopFixed2SharedData::maxCoop);
             wm->appendOwnInvest(coop);
+            if (n >= 2)
+            {
+                wm->appendToReputation(coop);
+            }
             if (CoopFixed2SharedData::onlyOtherInTotalInv)
             {
                 wm->appendTotalInvest(totalInvest - coop);
@@ -345,7 +351,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->appendTotalInvest(totalInvest);
             }
 
-            if (!wm->fake && (!CoopFixed2SharedData::fixRobotNb || n == 2)) {
+            if (!wm->fake) {
                 wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b, d);
             }
         }
