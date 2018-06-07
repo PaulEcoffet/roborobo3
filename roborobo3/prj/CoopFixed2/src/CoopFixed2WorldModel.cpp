@@ -67,3 +67,23 @@ void CoopFixed2WorldModel::appendTotalInvest(const double invest)
     lastTotalInvest.push_back(invest);
 }
 
+void CoopFixed2WorldModel::appendToReputation(const double d) {
+    if (lastReputation.size() >= 50 /* TODO fix */)
+    {
+        lastReputation.pop_front();
+    }
+    lastReputation.push_back(d);
+
+}
+
+double CoopFixed2WorldModel::meanLastReputation() {
+    if (not lastTotalInvest.empty())
+    {
+        return std::accumulate(lastTotalInvest.begin(), lastTotalInvest.end(), 0.0) / lastTotalInvest.size();
+    }
+    else
+    {
+        return 0;
+    }
+}
+

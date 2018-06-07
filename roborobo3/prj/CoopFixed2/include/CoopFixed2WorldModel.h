@@ -15,13 +15,17 @@ public:
     CoopFixed2WorldModel();
     std::deque<double> lastOwnInvest;
     std::deque<double> lastTotalInvest;
+    std::deque<double> lastReputation;
 
     double meanLastTotalInvest();
     double meanLastOwnInvest();
+    double meanLastReputation();
     double nbOnOpp = 0;
 
     void appendOwnInvest(const double invest);
     void appendTotalInvest(const double invest);
+    void appendToReputation(const double d);
+
 
     bool onOpportunity;
     double selfA;
