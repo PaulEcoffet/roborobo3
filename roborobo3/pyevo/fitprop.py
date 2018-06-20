@@ -22,7 +22,7 @@ class FitPropEvolutionStrategy():
         self.logger = FitPropLogger(self, path)
 
     def ask(self):
-        fitnesses = self.lastfitnesses
+        fitnesses = np.clip(self.lastfitnesses, 0, None)
         new_pop_index = np.random.choice(len(self.solutions),
                                          self.popsize,
                                          p=(fitnesses/np.sum(fitnesses)))

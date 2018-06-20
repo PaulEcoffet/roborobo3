@@ -142,6 +142,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     for (auto *physicalObject : gPhysicalObjects)
     {
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(physicalObject);
+        opp->curInv = opp->getCoop();
         for (auto index : opp->getNearbyRobotIndexes())
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel*>(_world->getRobot(index)->getWorldModel());
@@ -162,6 +163,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
             }
             //Reward him
             ctl->increaseFitness(0);
+            opp->curInv = opp->getCoop() + wm->_cooperationLevel;
         }
     }
 }
