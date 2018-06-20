@@ -133,3 +133,8 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+
+# log
+
+batch_log.txt
