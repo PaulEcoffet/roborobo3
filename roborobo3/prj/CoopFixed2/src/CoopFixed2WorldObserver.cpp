@@ -163,7 +163,7 @@ void CoopFixed2WorldObserver::stepPost()
     robotsToTeleport.clear();
     registerRobotsOnOpportunities();
     computeOpportunityImpacts();
-    if ((m_generationCount+1) % 1000 == 0) {
+    if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0) {
         if (CoopFixed2SharedData::takeVideo) {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
         }
@@ -193,7 +193,7 @@ void CoopFixed2WorldObserver::stepPost()
                      << wm->meanLastTotalInvest() << "\n";
         }
     }
-    else if ((m_generationCount+1) % 1000 == 1 && m_curEvaluationIteration == 0)
+    else if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
     {
         m_logall.flush(); // Let's flush now that we have written everything.
         m_logall.close();
@@ -204,7 +204,7 @@ void CoopFixed2WorldObserver::stepPost()
 
 void CoopFixed2WorldObserver::stepEvolution()
 {
-    if ((m_generationCount+1) % 1000 == 0)
+    if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0)
     {
         std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
         std::ofstream genfile(path);

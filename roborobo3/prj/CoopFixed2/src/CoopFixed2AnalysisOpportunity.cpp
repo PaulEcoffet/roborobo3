@@ -27,9 +27,9 @@ void CoopFixed2AnalysisOpportunity::step() {
     }
     if (lifeExpectancy == 0)
     {
+        resetLife();
         auto *wobs = dynamic_cast<CoopFixed2AnalysisWorldObserver*>(gWorld->getWorldObserver());
         wobs->addObjectToTeleport(_id);
-        lifeExpectancy = CoopFixed2SharedData::oppDecay;
     }
     updateColor();
     RoundObject::step();

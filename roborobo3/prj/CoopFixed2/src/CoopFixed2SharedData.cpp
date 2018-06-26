@@ -37,6 +37,7 @@ bool CoopFixed2SharedData::fakeRobots = false;
 int CoopFixed2SharedData::memorySize = 10;
 double CoopFixed2SharedData::fakeCoef = 1.2;
 bool CoopFixed2SharedData::reputation = true;
+int CoopFixed2SharedData::logEveryXGen = 1000;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -70,6 +71,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("fakeRobots", &CoopFixed2SharedData::fakeRobots, true);
     gProperties.checkAndGetPropertyValue("fakeCoef", &CoopFixed2SharedData::fakeCoef, true);
     gProperties.checkAndGetPropertyValue("reputation", &CoopFixed2SharedData::reputation, true);
+    gProperties.checkAndGetPropertyValue("logEveryXGen", &CoopFixed2SharedData::logEveryXGen, false);
 
 }
 

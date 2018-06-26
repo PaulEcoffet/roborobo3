@@ -11,6 +11,7 @@
 CoopFixed2Opportunity::CoopFixed2Opportunity(int __id) : RoundObject(__id)
 {
     setType(9);
+    lifeid = __id;
 }
 
 int CoopFixed2Opportunity::getNbNearbyRobots() const
@@ -120,4 +121,5 @@ std::string CoopFixed2Opportunity::inspect(std::string prefix)
 
 void CoopFixed2Opportunity::resetLife() {
     lifeExpectancy = CoopFixed2SharedData::oppDecay;
+    lifeid = lifeid + gNbOfPhysicalObjects*10;
 }

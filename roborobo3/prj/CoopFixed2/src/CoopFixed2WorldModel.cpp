@@ -87,3 +87,14 @@ double CoopFixed2WorldModel::meanLastReputation() {
     }
 }
 
+void CoopFixed2WorldModel::reset() {
+    lastReputation.clear();
+    lastOwnInvest.clear();
+    lastTotalInvest.clear();
+    onOpportunity = false;
+    nbOnOpp = 0;
+    arrival = 0;
+    oppId = 0;
+
+}
+
