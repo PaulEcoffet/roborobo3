@@ -3,8 +3,9 @@ gen=$1
 i=0
 
 tmpdir=$(mktemp -d)
-
-rm batch_log.txt
+mkdir -p batch_log/
+echo $$
+log=batch_log/log_$$.txt
 
 shift
 for path in "$@"
@@ -20,15 +21,15 @@ do
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
 analysisIterationPerRep=5000
-analysisNbRep=5
+analysisNbRep=3
 """ >> $tmpdir/conf$i.properties
   # time to launch
-  echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> batch_log.txt 2>&1 &"
-  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> batch_log.txt 2>&1 &
+  echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
+  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
 
-  # only run analyses 3 by 3
+  # only run analyses 5 by 5
   let "i=$i+1"
-  if [ "$i" = 3 ]
+  if [ "$i" = 5 ]
   then
     echo "wait"
     wait
