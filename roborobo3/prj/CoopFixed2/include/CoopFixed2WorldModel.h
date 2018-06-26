@@ -20,21 +20,22 @@ public:
     double meanLastTotalInvest();
     double meanLastOwnInvest();
     double meanLastReputation();
-    double nbOnOpp = 0;
-
     void appendOwnInvest(const double invest);
+
     void appendTotalInvest(const double invest);
     void appendToReputation(const double d);
 
-
+    double nbOnOpp = 0;
     bool onOpportunity;
     double selfA;
     void setNewSelfA();
     int arrival;
+    int oppId = 0;
 
     bool fake;
     double fakeCoef;
 
+    void reset();
 };
 
 

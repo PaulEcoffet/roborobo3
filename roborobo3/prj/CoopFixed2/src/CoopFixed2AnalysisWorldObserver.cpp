@@ -123,7 +123,7 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     out << m_curCoop << "\t";
     out << m_curRep << "\t";
     out << m_curIterationInRep << "\t";
-    out << (int) wm->onOpportunity << "\t";
+    out << wm->oppId << "\t";
     out << wm->_cooperationLevel << "\n";
     m_log << out.str();
 }
@@ -135,6 +135,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     for (int i = 0; i < _world->getNbOfRobots(); i++)
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(_world->getRobot(i)->getWorldModel());
+        wm->oppId = 0;
         wm->onOpportunity = false;
         wm->arrival = 0;
         wm->nbOnOpp = 0;
@@ -143,13 +144,13 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     {
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(physicalObject);
         opp->curInv = opp->getCoop();
-        for (auto index : opp->getNearbyRobotIndexes())
-        {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel*>(_world->getRobot(index)->getWorldModel());
-            auto *ctl = dynamic_cast<CoopFixed2Controller*>(_world->getRobot(index)->getController());
+        for (auto index : opp->getNearbyRobotIndexes()) {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(_world->getRobot(index)->getWorldModel());
+            auto *ctl = dynamic_cast<CoopFixed2Controller *>(_world->getRobot(index)->getController());
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
+            wm->oppId = opp->lifeid;
             wm->arrival = 1;
             wm->nbOnOpp = opp->getNbNearbyRobots();
 
@@ -189,6 +190,7 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
+        dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->reset();
     }
 }
 
