@@ -102,6 +102,25 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
 
 void CoopFixed2AnalysisWorldObserver::stepPost()
 {
+    if (CoopFixed2SharedData::tpToNewObj)
+    {
+        auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
+        for (int i = 0; i < gWorld->getNbOfRobots(); i++)
+        {
+            auto *rob = gWorld->getRobot(i);
+            if (rob->getWorldModel()->_desiredTranslationalValue > 0)
+            {
+                int dest_obj = randomPhys(engine);
+                PhysicalObject *physobj = gPhysicalObjects[dest_obj];
+                rob->unregisterRobot();
+                rob->setCoord(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->setCoordReal(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->registerRobot();
+            }
+        }
+    }
+
+
     for (auto id: objectsToTeleport)
     {
         gPhysicalObjects[id]->unregisterObject();
