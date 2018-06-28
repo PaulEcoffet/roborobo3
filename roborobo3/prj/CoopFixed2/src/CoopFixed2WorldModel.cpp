@@ -77,7 +77,7 @@ void CoopFixed2WorldModel::appendToReputation(const double d) {
 }
 
 double CoopFixed2WorldModel::meanLastReputation() {
-    if (not lastTotalInvest.empty())
+    if (not lastReputation.empty())
     {
         return std::accumulate(lastReputation.begin(), lastReputation.end(), 0.0) / lastReputation.size();
     }
