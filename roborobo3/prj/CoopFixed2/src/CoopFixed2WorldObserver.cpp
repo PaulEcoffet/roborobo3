@@ -140,13 +140,13 @@ void CoopFixed2WorldObserver::stepPost()
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
             auto *rob = m_world->getRobot(i);
-            if (rob->getWorldModel()->_desiredTranslationalValue > 0)
-            {
+            if (dynamic_cast<CoopFixed2WorldModel* >(rob->getWorldModel())->teleport) {
                 int dest_obj = randomPhys(engine);
                 PhysicalObject *physobj = gPhysicalObjects[dest_obj];
                 rob->unregisterRobot();
                 rob->setCoord(physobj->getXCenterPixel(), physobj->getYCenterPixel());
                 rob->setCoordReal(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->getWorldModel()->_agentAbsoluteOrientation = 0;
                 rob->registerRobot();
             }
         }
@@ -267,6 +267,10 @@ void CoopFixed2WorldObserver::resetEnvironment()
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
+        if (CoopFixed2SharedData::tpToNewObj)
+        {
+            robot->getWorldModel()->_agentAbsoluteOrientation = 0;
+        }
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel());
         if (m_fakerobotslist[iRobot])
         {

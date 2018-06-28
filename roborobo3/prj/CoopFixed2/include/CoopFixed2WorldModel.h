@@ -36,6 +36,8 @@ public:
     double fakeCoef;
 
     void reset();
+
+    bool teleport;
 };
 
 

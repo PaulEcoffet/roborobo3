@@ -64,13 +64,33 @@ void CoopFixed2Controller::step()
         return;
 
     std::vector<double> inputs = getInputs();
-
+    /*
+    std::cout << "Input: \n";
+    for (const auto input : inputs) {
+        std::cout << input << "\n";
+    }
+     */
     m_nn->setInputs(inputs);
     m_nn->step();
-    std::vector<double> outputs = m_nn->readOut();
 
-    m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
-    m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
+    std::vector<double> outputs = m_nn->readOut();
+    /*
+    std::cout << "Output: \n";
+    for (const auto output : outputs) {
+        std::cout << output << "\n";
+    }
+    */
+
+    if (CoopFixed2SharedData::tpToNewObj) {
+        m_wm->_desiredTranslationalValue = 1;
+        m_wm->_desiredRotationalVelocity = 0;
+        m_wm->teleport = outputs[0] > 0;
+
+    } else {
+        m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
+        m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
+
+    }
     m_wm->_cooperationLevel = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop; // Range between [0; maxCoop]
 
     if (m_wm->fake)
