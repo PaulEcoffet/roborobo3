@@ -50,7 +50,7 @@ void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
 
 int CoopFixed2AnalysisOpportunity::getNbNearbyRobots() const
 {
-    return 1 + m_nbprev;
+    return 1 + nearbyRobotIndexes.size();
 }
 
 void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed)
@@ -72,5 +72,10 @@ void CoopFixed2AnalysisOpportunity::clearNearbyRobotIndexes()
 double CoopFixed2AnalysisOpportunity::getCoop() const
 {
     return m_coop;
+}
+
+std::string CoopFixed2AnalysisOpportunity::inspect(std::string prefix) {
+    std::string info(prefix + "I'm a fake opp\n");
+    return info + CoopFixed2Opportunity::inspect(prefix);
 }
 
