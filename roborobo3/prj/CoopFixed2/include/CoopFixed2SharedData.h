@@ -45,6 +45,7 @@ public:
 
     static bool reputation;
     static int logEveryXGen;
+    static bool atLeastTwo;
 };
 
 

@@ -38,6 +38,8 @@ int CoopFixed2SharedData::memorySize = 10;
 double CoopFixed2SharedData::fakeCoef = 1.2;
 bool CoopFixed2SharedData::reputation = true;
 int CoopFixed2SharedData::logEveryXGen = 1000;
+bool CoopFixed2SharedData::atLeastTwo = false;
+
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -72,6 +74,8 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("fakeCoef", &CoopFixed2SharedData::fakeCoef, true);
     gProperties.checkAndGetPropertyValue("reputation", &CoopFixed2SharedData::reputation, true);
     gProperties.checkAndGetPropertyValue("logEveryXGen", &CoopFixed2SharedData::logEveryXGen, false);
+    gProperties.checkAndGetPropertyValue("atLeastTwo", &CoopFixed2SharedData::atLeastTwo, false);
+
 
 }
 
