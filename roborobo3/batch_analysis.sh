@@ -1,4 +1,6 @@
 #!/bin/bash
+
+
 gen=$1
 i=0
 
@@ -25,7 +27,7 @@ analysisNbRep=3
 """ >> $tmpdir/conf$i.properties
   # time to launch
   echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
-  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
+  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen &
 
   # only run analyses 5 by 5
   let "i=$i+1"
