@@ -108,7 +108,7 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
         for (int i = 0; i < gWorld->getNbOfRobots(); i++)
         {
             auto *rob = gWorld->getRobot(i);
-            if (rob->getWorldModel()->_desiredTranslationalValue > 0)
+            if (dynamic_cast<CoopFixed2WorldModel* >(rob->getWorldModel())->teleport)
             {
                 int dest_obj = randomPhys(engine);
                 PhysicalObject *physobj = gPhysicalObjects[dest_obj];
@@ -209,6 +209,10 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
+        if (CoopFixed2SharedData::tpToNewObj)
+        {
+            robot->getWorldModel()->_agentAbsoluteOrientation = 0;
+        }
         dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->reset();
     }
 }
