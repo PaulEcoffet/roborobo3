@@ -8,6 +8,7 @@
 
 #include <WorldModels/RobotWorldModel.h>
 #include <deque>
+#include "CoopFixed2Opportunity.h"
 
 class CoopFixed2WorldModel : public RobotWorldModel
 {
@@ -30,7 +31,7 @@ public:
     double selfA;
     void setNewSelfA();
     int arrival;
-    int oppId = 0;
+    CoopFixed2Opportunity* opp;
 
     bool fake;
     double fakeCoef;

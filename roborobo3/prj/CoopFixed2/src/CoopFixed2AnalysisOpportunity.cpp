@@ -50,22 +50,22 @@ void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
 
 int CoopFixed2AnalysisOpportunity::getNbNearbyRobots() const
 {
-    return 1 + nearbyRobotIndexes.size();
+    return nbFakeRobots + nearbyRobotIndexes.size();
 }
 
-void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed)
-{
-    nearbyRobotIndexes.insert(id - gRobotIndexStartOffset);
+void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed) {
+    if (std::find(nearbyRobotIndexes.begin(), nearbyRobotIndexes.end(), id) != nearbyRobotIndexes.end()) {
+        nearbyRobotIndexes.emplace_back(id - gRobotIndexStartOffset);
+    }
 }
 
-const std::set<int>& CoopFixed2AnalysisOpportunity::getNearbyRobotIndexes() const
+const std::vector<int>& CoopFixed2AnalysisOpportunity::getNearbyRobotIndexes() const
 {
     return nearbyRobotIndexes;
 }
 
 void CoopFixed2AnalysisOpportunity::clearNearbyRobotIndexes()
 {
-    m_nbprev = nearbyRobotIndexes.size();
     nearbyRobotIndexes.clear();
 }
 
@@ -77,5 +77,14 @@ double CoopFixed2AnalysisOpportunity::getCoop() const
 std::string CoopFixed2AnalysisOpportunity::inspect(std::string prefix) {
     std::string info(prefix + "I'm a fake opp\n");
     return info + CoopFixed2Opportunity::inspect(prefix);
+}
+
+void CoopFixed2AnalysisOpportunity::setNbFakeRobots(int nbrobots) {
+    nbFakeRobots = nbrobots;
+
+}
+
+int CoopFixed2AnalysisOpportunity::getNbFakeRobots() {
+    return nbFakeRobots;
 }
 
