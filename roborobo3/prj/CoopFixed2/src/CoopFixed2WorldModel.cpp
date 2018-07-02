@@ -94,7 +94,7 @@ void CoopFixed2WorldModel::reset() {
     onOpportunity = false;
     nbOnOpp = 0;
     arrival = 0;
-    oppId = 0;
+    opp = nullptr;
 
 }
 

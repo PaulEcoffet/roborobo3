@@ -42,13 +42,11 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
     m_genomesIt = m_genomesJson.begin();
 
     m_log.open(gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt");
-    m_log << "ind\tcoop\trep\tit\tonOpp\townCoop\n";
+    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\n";
 
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
     gProperties.checkAndGetPropertyValue("analysisNbRep", &m_nbRep, true);
-    m_stepCoop = CoopFixed2SharedData::maxCoop / ((double) 10 /*nbstep : 10+1*/);  // TODO Super Ugly
-    m_curCoop = 0;
     m_curIterationInRep = 0;
     m_curRep = 0;
     m_curInd = 0;
@@ -77,13 +75,7 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
     if (m_curRep == m_nbRep)
     {
         m_curCoop += m_stepCoop;
-        this->setAllOpportunitiesCoop(m_curCoop);
         m_curRep = 0;
-    }
-    if (m_curCoop > maxCoop + 0.1)
-    {
-        m_curCoop = 0;
-        this->setAllOpportunitiesCoop(m_curCoop);
         m_genomesIt++;
         m_curInd++;
         if (m_genomesIt < m_genomesJson.end())
@@ -138,11 +130,22 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
 {
     auto *wm = dynamic_cast<CoopFixed2WorldModel *>(gWorld->getRobot(0)->getWorldModel());
     std::stringstream out;
+
+    int oppLifeId = 0;
+    double oppCoop = 0;
+    int oppNbRob = 0;
+    if (wm->opp != nullptr) {
+        oppLifeId = wm->opp->lifeid;
+        oppCoop = dynamic_cast<CoopFixed2AnalysisOpportunity*>(wm->opp)->getCoop();
+        oppNbRob = dynamic_cast<CoopFixed2AnalysisOpportunity *>(wm->opp)->getNbFakeRobots();
+    }
+
     out << m_curInd << "\t";
-    out << m_curCoop << "\t";
     out << m_curRep << "\t";
     out << m_curIterationInRep << "\t";
-    out << wm->oppId << "\t";
+    out << oppLifeId << "\t";
+    out << oppCoop << "\t";
+    out << oppNbRob << "\t";
     out << wm->_cooperationLevel << "\n";
     m_log << out.str();
 }
@@ -154,7 +157,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     for (int i = 0; i < _world->getNbOfRobots(); i++)
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(_world->getRobot(i)->getWorldModel());
-        wm->oppId = 0;
+        wm->opp = nullptr;
         wm->onOpportunity = false;
         wm->arrival = 0;
         wm->nbOnOpp = 0;
@@ -169,7 +172,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
-            wm->oppId = opp->lifeid;
+            wm->opp = opp;
             wm->arrival = 1;
             wm->nbOnOpp = opp->getNbNearbyRobots();
 
@@ -198,13 +201,29 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
-    setAllOpportunitiesCoop(m_curCoop);
 
-    for (auto object: gPhysicalObjects)
+    int i = 0;
+    int objPerCoop = (int)ceil((double)gNbOfPhysicalObjects / 12); // coop : 0, 1, .., 10 + obj without ind
+    int nbRob = 0;
+    int coop = 0;
+    for (auto *phys : gPhysicalObjects)
     {
-        object->resetLocation();
-        object->registerObject();
+        auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(phys);
+        opp->setCoopValue(coop);
+        opp->setNbFakeRobots(nbRob);
+        i++;
+        if (i % objPerCoop == 0)
+        {
+            if (nbRob == 0) {
+                nbRob = 1;
+            } else {
+                coop += CoopFixed2SharedData::maxCoop / 10;
+            }
+        }
+        phys->resetLocation();
+        phys->registerObject();
     }
+
 
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
@@ -222,15 +241,6 @@ void CoopFixed2AnalysisWorldObserver::loadGenome(const std::vector<double> &weig
     auto *ctl = dynamic_cast<CoopFixed2Controller *>(gWorld->getRobot(0)->getController());
     ctl->loadNewGenome(weights);
     ctl->resetFitness();
-}
-
-void CoopFixed2AnalysisWorldObserver::setAllOpportunitiesCoop(const double coop)
-{
-    for (auto *phys : gPhysicalObjects)
-    {
-        auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(phys);
-        opp->setCoopValue(coop);
-    }
 }
 
 

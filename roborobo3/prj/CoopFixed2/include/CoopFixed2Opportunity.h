@@ -14,7 +14,8 @@ class CoopFixed2Opportunity: public RoundObject
 public:
     explicit CoopFixed2Opportunity(int __id);
     void step() override;
-    const std::vector<int> & getNearbyRobotIndexes() const;
+
+    virtual const std::vector<int> & getNearbyRobotIndexes() const;
     void registerNewRobots();
 
     void isPushed(int id, std::tuple<double, double> speed) override;
@@ -35,7 +36,7 @@ protected:
     std::vector<int> newNearbyRobotIndexes;
     int lifeExpectancy;
 
-    void updateColor();
+    virtual void updateColor();
 };
 
 

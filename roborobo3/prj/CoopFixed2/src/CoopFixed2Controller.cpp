@@ -349,10 +349,10 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
         out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
     }
     out << prefix << "outputs:\n";
-    auto outputs = m_nn->readOut();
-    out << prefix << m_wm->_desiredTranslationalValue << "\n";
-    out << prefix << m_wm->_desiredRotationalVelocity << "\n";
-    out << prefix << (outputs[2] + 1) / 2 * CoopFixed2SharedData::maxCoop << "\n";
+    auto& outputs = m_nn->readOut();
+    for (auto& output : outputs) {
+        out << prefix << "\t" << output << "\n"; // TODO Crash without reason
+    }
     return out.str();
 }
 
