@@ -6,7 +6,7 @@ from json_tricks import dump
 class MuLambdaEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False, mu=None):
+                 bounds, path, full_random_begin=False, mu=1):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
