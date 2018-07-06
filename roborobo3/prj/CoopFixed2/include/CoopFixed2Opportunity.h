@@ -16,7 +16,7 @@ public:
     void step() override;
 
     virtual const std::vector<int> & getNearbyRobotIndexes() const;
-    void registerNewRobots();
+    virtual void registerNewRobots();
 
     void isPushed(int id, std::tuple<double, double> speed) override;
 
@@ -29,12 +29,10 @@ public:
 
 
 
-    void resetLife();
-
 protected:
     std::vector<int> nearbyRobotIndexes;
     std::vector<int> newNearbyRobotIndexes;
-    int lifeExpectancy;
+    double lifeExpectancy;
 
     virtual void updateColor();
 };

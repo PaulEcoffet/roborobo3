@@ -67,7 +67,7 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
     m_curIterationInRep++;
     if (m_curIterationInRep == m_nbIterationPerRep)
     {
-        this->resetEnvironment();
+        resetEnvironment();
         m_curIterationInRep = 0;
         m_curRep++;
 
@@ -108,6 +108,7 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
                 rob->setCoord(physobj->getXCenterPixel(), physobj->getYCenterPixel());
                 rob->setCoordReal(physobj->getXCenterPixel(), physobj->getYCenterPixel());
                 rob->registerRobot();
+                physobj->isPushed(i + gRobotIndexStartOffset, std::tuple<int, int>(1, 1));
             }
         }
     }
@@ -117,7 +118,6 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
     {
         gPhysicalObjects[id]->unregisterObject();
         gPhysicalObjects[id]->resetLocation();
-        dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[id])->resetLife();
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();

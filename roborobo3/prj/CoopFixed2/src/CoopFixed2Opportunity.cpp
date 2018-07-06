@@ -12,6 +12,7 @@ CoopFixed2Opportunity::CoopFixed2Opportunity(int __id) : RoundObject(__id)
 {
     setType(9);
     lifeid = __id;
+    lifeExpectancy = 1. / CoopFixed2SharedData::oppDecay;
 }
 
 int CoopFixed2Opportunity::getNbNearbyRobots() const
@@ -60,14 +61,11 @@ void CoopFixed2Opportunity::registerNewRobots()
 
 void CoopFixed2Opportunity::step()
 {
-    int min_nb_robots = 1;
-    if (lifeExpectancy > 0 && (getNbNearbyRobots() >= min_nb_robots)) {
-        lifeExpectancy--;
-    }
-    else if (lifeExpectancy == 0)
-    {
-        resetLife();
-        auto *wobs = dynamic_cast<CoopFixed2WorldObserver*>(gWorld->getWorldObserver());
+    bool killed = random() < lifeExpectancy;
+    if (killed) {
+        auto *wobs = dynamic_cast<CoopFixed2WorldObserver *>(gWorld->getWorldObserver());
+        nearbyRobotIndexes.clear();
+        newNearbyRobotIndexes.clear();
         wobs->addObjectToTeleport(_id);
     }
     updateColor();
@@ -115,11 +113,5 @@ std::string CoopFixed2Opportunity::inspect(std::string prefix)
         out << index << ",";
     }
     out << "\n";
-    out << prefix << "Still " << lifeExpectancy << " before I die :'(.\n";
     return out.str();
-}
-
-void CoopFixed2Opportunity::resetLife() {
-    lifeExpectancy = CoopFixed2SharedData::oppDecay;
-    lifeid = lifeid + gNbOfPhysicalObjects*10;
 }

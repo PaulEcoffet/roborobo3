@@ -156,7 +156,6 @@ void CoopFixed2WorldObserver::stepPost()
     {
         gPhysicalObjects[id]->unregisterObject();
         gPhysicalObjects[id]->resetLocation();
-        dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[id])->resetLife();
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
@@ -259,7 +258,6 @@ void CoopFixed2WorldObserver::resetEnvironment()
 
     for (auto* object: gPhysicalObjects)
     {
-        dynamic_cast<CoopFixed2Opportunity *>(object)->resetLife();
         object->resetLocation();
         object->registerObject();
     }
