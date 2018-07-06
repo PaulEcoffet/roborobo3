@@ -187,14 +187,14 @@ std::vector<double> CoopFixed2Controller::getInputs()
             inputnames.emplace_back("is robot");
             if (CoopFixed2SharedData::reputation)
             {
-                inputnames.emplace_back("reputation:");
+                inputnames.emplace_back("reputation");
             }
             inputnames.emplace_back("is wall");
             inputnames.emplace_back("is obj");
             inputnames.emplace_back("nb on obj");
             if (CoopFixed2SharedData::reputation)
             {
-                inputnames.emplace_back("last inv on opp:");
+                inputnames.emplace_back("last inv on opp");
             }
         }
 

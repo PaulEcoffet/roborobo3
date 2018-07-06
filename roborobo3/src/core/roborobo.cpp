@@ -480,7 +480,11 @@ bool checkEvent()
         else
             if (gEvent.type == SDL_MOUSEBUTTONUP)
             {
-                inspectAtPixel(gEvent.button.x, gEvent.button.y);
+				int width, height, scaled_x, scaled_y;
+				SDL_GetWindowSize(gScreenWindow, &width, &height);
+				scaled_x = (int)(((float)gScreenDisplayWidth / width) * gEvent.button.x);
+				scaled_y = (int)(((float)gScreenDisplayHeight / height) * gEvent.button.y);
+                inspectAtPixel(scaled_x, scaled_y);
             }
     }
     return quit;
