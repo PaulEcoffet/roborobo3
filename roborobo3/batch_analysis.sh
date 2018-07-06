@@ -18,16 +18,17 @@ do
   # copy it and remove useless import
   cp $conf $tmpdir/conf$i.properties
   sed -i '/import(.*/d' $tmpdir/conf$i.properties
+  sed -i '/gRandomSeed.*/d' $tmpdir/conf$i.propertiesgRandomSeed
   sed -i 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' $tmpdir/conf$i.properties
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
 analysisIterationPerRep=5000
-analysisNbRep=3
+analysisNbRep=10
 """ >> $tmpdir/conf$i.properties
   # time to launch
   echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
-  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen &
+  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen #-b >> $log 2>&1 &
 
   # only run analyses 5 by 5
   let "i=$i+1"
