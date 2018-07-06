@@ -2,6 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
 
 set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-Wall -O2")
 
 set(SOURCE_FILES
         include/contrib/neuralnetworks/Elman.h
@@ -311,6 +312,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 find_package(Git)
 
+
 # the commit's SHA1, and whether the building workspace was dirty or not
 execute_process(COMMAND
         "${GIT_EXECUTABLE}" describe --match=NeVeRmAtCh --always --abbrev=40 --dirty
@@ -343,6 +345,8 @@ find_package(SDL2_image REQUIRED)
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
 find_package(Boost COMPONENTS filesystem system REQUIRED)
+find_package(BLAS REQUIRED)
+
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
@@ -354,5 +358,6 @@ target_link_libraries(roborobo
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         Eigen3::Eigen
+        ${BLAS_LIBRARIES}
        # tbb
         )

@@ -7,7 +7,7 @@
 
 #ifndef EIGENMLP_H
 #define EIGENMLP_H
-
+#define EIGEN_USE_BLAS
 #include <neuralnetworks/LayeredNeuralNetwork.h>
 #include <string>
 #include <vector>
