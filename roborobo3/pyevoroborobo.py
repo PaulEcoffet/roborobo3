@@ -68,6 +68,8 @@ def main():
     ap.add_argument('-o', '--output', type=str, default='logs/')
     ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda'],
                     required=True)
+    ap.add_argument('-m', '--mu', type=int, default=-1)
+
     ap.add_argument('-s', '--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
     argout, forwarded = ap.parse_known_args()
@@ -98,7 +100,7 @@ def main():
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
         es = getES(argout.evolution, evo_info['nb_weights'] * [0], 0.01,
-                   evo_info['popsize'], [-1, 1], 60000, join(str(outdir), ''))
+                   evo_info['popsize'], [-1, 1], 60000, join(str(outdir), ''), mu=argout.mu)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
