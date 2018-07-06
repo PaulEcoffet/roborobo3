@@ -74,12 +74,17 @@ void CoopFixed2Controller::step()
     m_nn->step();
 
     std::vector<double> outputs = m_nn->readOut();
-    /*
-    std::cout << "Output: \n";
+
     for (const auto output : outputs) {
-        std::cout << output << "\n";
+        if (isnan(output)) {
+            for (int i = 0; i < inputs.size(); i++)
+            {
+                std::cerr << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
+            }
+            std::cerr << "NaN in output.\nExiting\n";
+            exit(-1);
+        }
     }
-    */
 
     if (CoopFixed2SharedData::tpToNewObj) {
         m_wm->_desiredTranslationalValue = 1;

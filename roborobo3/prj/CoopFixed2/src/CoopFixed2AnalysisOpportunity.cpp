@@ -15,22 +15,12 @@
 CoopFixed2AnalysisOpportunity::CoopFixed2AnalysisOpportunity(int __id) : CoopFixed2Opportunity(__id)
 {
     setType(10);
-    m_nbprev = 0;
-    lifeExpectancy = CoopFixed2SharedData::oppDecay;
+    lifeExpectancy = 1. / CoopFixed2SharedData::oppDecay;
 }
 
 
 void CoopFixed2AnalysisOpportunity::step() {
-    if (m_nbprev > 0 && lifeExpectancy != -1)
-    {
-        lifeExpectancy--;
-    }
-    if (lifeExpectancy == 0)
-    {
-        resetLife();
-        auto *wobs = dynamic_cast<CoopFixed2AnalysisWorldObserver*>(gWorld->getWorldObserver());
-        wobs->addObjectToTeleport(_id);
-    }
+    CoopFixed2Opportunity::step();
     updateColor();
     RoundObject::step();
 }
@@ -54,8 +44,9 @@ int CoopFixed2AnalysisOpportunity::getNbNearbyRobots() const
 }
 
 void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed) {
-    if (std::find(nearbyRobotIndexes.begin(), nearbyRobotIndexes.end(), id) != nearbyRobotIndexes.end()) {
-        nearbyRobotIndexes.emplace_back(id - gRobotIndexStartOffset);
+    int rid = id - gRobotIndexStartOffset;
+    if (std::find(nearbyRobotIndexes.begin(), nearbyRobotIndexes.end(), rid) == nearbyRobotIndexes.end()) {
+        nearbyRobotIndexes.emplace_back(rid);
     }
 }
 

@@ -17,9 +17,9 @@ public:
     explicit CoopFixed2AnalysisOpportunity(int __id);
     void step() override;
     void setCoopValue(double coop);
-    void clearNearbyRobotIndexes();
+    void clearNearbyRobotIndexes() ;
     std::string inspect(std::string prefix) override ;
-    const std::vector<int> & getNearbyRobotIndexes() const;
+    const std::vector<int> & getNearbyRobotIndexes() const override;
 
     void isPushed(int id, std::tuple<double, double> speed) override;
 
@@ -36,7 +36,6 @@ protected:
 
     void updateColor();
 
-    int m_nbprev;
     int nbFakeRobots;
 
 };
