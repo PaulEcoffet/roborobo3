@@ -20,7 +20,13 @@ CoopFixed2AnalysisOpportunity::CoopFixed2AnalysisOpportunity(int __id) : CoopFix
 
 
 void CoopFixed2AnalysisOpportunity::step() {
-    CoopFixed2Opportunity::step();
+    bool killed = random() < lifeExpectancy;
+    if (killed) {
+        auto *wobs = dynamic_cast<CoopFixed2AnalysisWorldObserver *>(gWorld->getWorldObserver());
+        nearbyRobotIndexes.clear();
+        newNearbyRobotIndexes.clear();
+        wobs->addObjectToTeleport(_id);
+    }
     updateColor();
     RoundObject::step();
 }
