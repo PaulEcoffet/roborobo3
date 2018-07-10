@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
 
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Wall -O2 -Os")
+set(CMAKE_CXX_FLAGS "-Wall -O2")
 
 set(SOURCE_FILES
         include/contrib/neuralnetworks/Elman.h
@@ -289,7 +289,16 @@ set(SOURCE_FILES
 
         src/contrib/neuralnetworks/EigenMLP.cpp
         include/contrib/neuralnetworks/EigenMLP.h
-        )
+
+        # debug collision issue
+        prj/DebugColl/include/DebugCollAgentObserver.h
+        prj/DebugColl/include/DebugCollController.h
+        prj/DebugColl/include/DebugCollWorldObserver.h
+        prj/DebugColl/src/DebugCollAgentObserver.cpp
+        prj/DebugColl/src/DebugCollController.cpp
+        prj/DebugColl/src/DebugCollWorldObserver.cpp
+        src/ext/DebugCollConfigurationLoader.cpp
+        prj/DebugColl/src/DebugCollObj.cpp prj/DebugColl/include/DebugCollObj.h)
 
 include_directories(include)
 include_directories(include/contrib)
