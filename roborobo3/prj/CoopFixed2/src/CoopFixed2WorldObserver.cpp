@@ -17,7 +17,8 @@ using boost::algorithm::clamp;
 
 
 
-CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) : WorldObserver(__world), m_swapfake(false)
+CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
+        WorldObserver(__world), m_swapfake(false), objectsToTeleport(), robotsToTeleport()
 {
     m_world = __world;
     m_curEvaluationIteration = 0;
@@ -415,10 +416,9 @@ void CoopFixed2WorldObserver::loadGenomesInRobots(const std::vector<std::vector<
 
 void CoopFixed2WorldObserver::addRobotToTeleport(int robotId)
 {
-
-    robotsToTeleport.emplace(robotId);
+    robotsToTeleport.insert(robotId);
 }
 
 void CoopFixed2WorldObserver::addObjectToTeleport(int id) {
-    objectsToTeleport.emplace(id);
+    objectsToTeleport.insert(id);
 }
