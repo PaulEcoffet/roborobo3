@@ -71,7 +71,7 @@ void saveFootprintScreenshot( std::string __comment = "" );
 
 void saveTrajectoryImage( std::string __comment = "" );
 
-void saveImage ( SDL_Surface image, std::string __prefix, std::string __comment = "" );
+void saveImage ( SDL_Surface* image, std::string __prefix, std::string __comment = "" );
 
 // Draw a line
 // Algorithm: Bresenham

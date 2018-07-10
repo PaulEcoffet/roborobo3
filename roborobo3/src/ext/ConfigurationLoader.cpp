@@ -17,6 +17,7 @@
 #include "Config/FastWandererConfigurationLoader.h"
 #include "Config/CoopFixed2ConfigurationLoader.h"
 #include "Config/CorrectRepartitionConfigurationLoader.h"
+#include "Config/DebugCollConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -136,6 +137,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "CorrectRepartitionConfigurationLoader" )
 	{
 		return new CorrectRepartitionConfigurationLoader();
+	}
+#endif
+#if defined PRJ_DEBUGCOLL || !defined MODULAR
+	else if (configurationLoaderObjectName == "DebugCollConfigurationLoader" )
+	{
+		return new DebugCollConfigurationLoader();
 	}
 #endif
     //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

@@ -3,6 +3,7 @@
 #include <PartnerControl/include/PartnerControlOpportunity.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisOpportunity.h>
 #include <CorrectRepartition/include/CorrectRepartitionOpportunity.h>
+#include <DebugColl/include/DebugCollObj.h>
 #include "World/PhysicalObjectFactory.h"
 #include "World/RoundObject.h"
 #include "World/EnergyItem.h"
@@ -100,6 +101,11 @@ void PhysicalObjectFactory::makeObject( int type )
                 std::cout << "[INFO] CorrectRepartition Opportunity created (type = 11).\n";
             gPhysicalObjects.push_back(new CorrectRepartitionOpportunity(id));
             break;
+        case 12:
+            if (gVerbose)
+                std::cout << "[INFO] Debug Coll obj created (type = 12).\n";
+            gPhysicalObjects.push_back(new DebugCollObj(id));
+            break;
         // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;
@@ -109,7 +115,7 @@ void PhysicalObjectFactory::makeObject( int type )
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 11;
+    return 12;
 }
 
 

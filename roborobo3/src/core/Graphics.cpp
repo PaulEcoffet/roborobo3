@@ -17,7 +17,7 @@ int gEnvironmentScreenshotIndex = 0;
 int gFootprintScreenshotIndex = 0;
 int gTrajectoryFileIndex = 0; // numbering trajectory images (used by saveTrajectoryImage(...))
 
-void saveImage ( SDL_Surface *image, std::string __prefix, std::string __comment ) // comment is optional
+void saveImage ( SDL_Surface * image, std::string __prefix, std::string __comment ) // comment is optional
 {
     std::string sLog = gLogDirectoryname + "/screenshots/" + __prefix + "_" + gStartTime + "_" + getpidAsReadableString();
 

@@ -544,11 +544,9 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 	applyDynamics();
 
 	// * save position
-    
     double xReal_old = _wm->_xReal; // backup old position in case of collision
 	double yReal_old = _wm->_yReal;
-	
-	
+
 	// * update x/y position
 		
 	_xDeltaReal = _wm->_agentAbsoluteLinearSpeed * cos(_wm->_agentAbsoluteOrientation * M_PI / 180);
@@ -557,8 +555,10 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 	_wm->_xReal += _xDeltaReal;
 	_wm->_yReal += _yDeltaReal;	// TODO: round is for positive values... (ok in this case however as 0,0 is up-left)
 
-	setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5);
-	
+
+	setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5); // TODO WEIRD CAST HERE (paul)
+
+
 	// * collision with (image) border of the environment - position at border, then bounce
     
 	if ( isCollision() )
@@ -668,7 +668,6 @@ bool Robot::isCollision()
 	else
 	{
         //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collision manager.\n";
-        
 		// * environment objects
 		for ( int i = 0 ; i != gRobotWidth ; i++ )
 			for ( int j = 0 ; j != gRobotHeight ; j++ )
@@ -676,9 +675,10 @@ bool Robot::isCollision()
 				if ( getPixel32( gRobotMaskImage , i , j) != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) // opt: bounding box instead of pixel-to-pixel test.
 				{
                     // not useful: testing out-of-the-world status
-                    // if ( ( _x + i < 0 ) || ( _x + i  >= gAreaWidth ) || ( _y + j < 0 ) || ( _y + i  >= gAreaHeight ) ) { return true;	}				
+                    // if ( ( _x + i < 0 ) || ( _x + i  >= gAreaWidth ) || ( _y + j < 0 ) || ( _y + i  >= gAreaHeight ) ) { return true;	}
 					Uint32 pixel = getPixel32( gEnvironmentImage , _x+i , _y+j);
-					if (  pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) )
+					Uint32 truewhitepixel = SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
+					if (  pixel != truewhitepixel)
 					{
                         if (gMovableObjects) // will consider *all* collisions
                         {
