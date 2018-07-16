@@ -20,7 +20,7 @@ int CoopFixed2Opportunity::getNbNearbyRobots() const
     return static_cast<int>(nearbyRobotIndexes.size());
 }
 
-void CoopFixed2Opportunity::isPushed(int id, std::tuple<double, double> speed)
+void CoopFixed2Opportunity::isWalked(int id)
 {
     const int rid = id - gRobotIndexStartOffset;
     if(std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end()) { // if not already in the list

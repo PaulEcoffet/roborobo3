@@ -29,6 +29,8 @@ public:
     void setNbFakeRobots(int nbrobots);
 
     int getNbFakeRobots();
+    void isWalked(int id) override ;
+
 
 protected:
     double m_coop;

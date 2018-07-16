@@ -101,7 +101,6 @@ void CoopFixed2WorldObserver::stepPre()
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
-        logFitnesses(m_fitnesses);
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
         if (CoopFixed2SharedData::fakeRobots) {
@@ -118,6 +117,7 @@ void CoopFixed2WorldObserver::stepPre()
     }
     if( m_curEvaluationInGeneration == CoopFixed2SharedData::nbEvaluationsPerGeneration)
     {
+        logFitnesses(m_fitnesses);
         m_curEvaluationInGeneration = 0;
         stepEvolution();
         m_generationCount++;

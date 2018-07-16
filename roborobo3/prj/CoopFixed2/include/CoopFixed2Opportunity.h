@@ -18,7 +18,7 @@ public:
     virtual const std::vector<int> & getNearbyRobotIndexes() const;
     virtual void registerNewRobots();
 
-    void isPushed(int id, std::tuple<double, double> speed) override;
+    void isWalked(int id) override;
 
     virtual int getNbNearbyRobots() const;
 
