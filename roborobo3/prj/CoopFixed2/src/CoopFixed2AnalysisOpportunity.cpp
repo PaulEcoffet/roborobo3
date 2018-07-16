@@ -56,6 +56,13 @@ void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> 
     }
 }
 
+void CoopFixed2AnalysisOpportunity::isWalked(int id) {
+    int rid = id - gRobotIndexStartOffset;
+    if (std::find(nearbyRobotIndexes.begin(), nearbyRobotIndexes.end(), rid) == nearbyRobotIndexes.end()) {
+        nearbyRobotIndexes.emplace_back(rid);
+    }
+}
+
 const std::vector<int>& CoopFixed2AnalysisOpportunity::getNearbyRobotIndexes() const
 {
     return nearbyRobotIndexes;
