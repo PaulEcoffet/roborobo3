@@ -373,7 +373,7 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
         if (CoopFixed2SharedData::atLeastTwo and n < 2) {
-            res = 1;
+            res = payoff(a/2, 2*a/2, 2, a, b, d) * 0.8; /* 80% of ESS payoff with 2 player */
         } else {
             res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest + d * x0 * invest / n;
         }
