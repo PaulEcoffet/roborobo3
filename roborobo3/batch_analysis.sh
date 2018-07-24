@@ -1,8 +1,21 @@
 #!/bin/bash
 
+debug=false
+fake=false
+if [ $1 = "-d" ]
+then
+  debug=true
+  shift
+elif [ $1 = "-f" ]
+then
+  fake=true
+  shift
+fi
 
 gen=$1
 i=0
+
+echo $debug
 
 tmpdir=$(mktemp -d)
 mkdir -p batch_log/
@@ -26,10 +39,21 @@ gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
 analysisIterationPerRep=5000
 analysisNbRep=10
 """ >> $tmpdir/conf$i.properties
-  cat $tmpdir/conf$i.properties
+
   # time to launch
   echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
-  ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
+  if [ $debug = true ]
+  then
+    echo 'debug mode'
+    ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen
+    break
+  elif [ $fake = true ]
+  then	
+    read 'press enter to continue'
+    continue
+  else
+    ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
+  fi
 
   # only run analyses 5 by 5
   let "i=$i+1"
