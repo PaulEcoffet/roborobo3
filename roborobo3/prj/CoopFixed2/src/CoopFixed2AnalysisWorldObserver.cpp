@@ -57,6 +57,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
 void CoopFixed2AnalysisWorldObserver::reset()
 {
     loadGenome((*m_genomesIt));
+    initObjects();
     resetEnvironment();
 }
 
@@ -119,6 +120,7 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
         gPhysicalObjects[id]->unregisterObject();
         gPhysicalObjects[id]->resetLocation();
         gPhysicalObjects[id]->registerObject();
+        dynamic_cast<CoopFixed2AnalysisOpportunity*>(gPhysicalObjects[id])->placeFakeRobot();
     }
     objectsToTeleport.clear();
 
@@ -184,9 +186,13 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
             } else {
                 wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
             }
+            wm->appendToReputation(wm->_cooperationLevel);
+
             //Reward him
             ctl->increaseFitness(0);
-            opp->curInv = opp->getCoop() + wm->_cooperationLevel;
+            if (index == 0) {
+                opp->curInv = opp->getCoop() + wm->_cooperationLevel;
+            }
         }
     }
 }
@@ -197,11 +203,25 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
         object->unregisterObject();
     }
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-        Robot *robot = gWorld->getRobot(iRobot);
-        robot->unregisterRobot();
+    Robot *robot = gWorld->getRobot(0);
+    robot->unregisterRobot();
+
+
+    for (auto object: gPhysicalObjects) {
+        object->resetLocation();
+        object->registerObject();
+        dynamic_cast<CoopFixed2AnalysisOpportunity*>(object)->placeFakeRobot();
     }
 
+    robot->reset();
+    if (CoopFixed2SharedData::tpToNewObj)
+    {
+        robot->getWorldModel()->_agentAbsoluteOrientation = 0;
+    }
+    dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->reset();
+}
+
+void CoopFixed2AnalysisWorldObserver::initObjects() const {
     int i = 0;
     int objPerCoop = (int)ceil((double)gNbOfPhysicalObjects / 12); // coop : 0, 1, .., 10 + obj without ind
     int nbRob = 0;
@@ -211,6 +231,12 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(phys);
         opp->setCoopValue(coop);
         opp->setNbFakeRobots(nbRob);
+        if (nbRob > 0) {
+            std::shared_ptr<Robot> rob = std::make_shared<Robot>(gWorld);
+            rob->getWorldModel()->_cameraSensorsNb = 0;
+            gWorld->addRobot(rob.get());
+            opp->fakerobot = rob;
+        }
         i++;
         if (i % objPerCoop == 0)
         {
@@ -220,19 +246,10 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
                 coop += CoopFixed2SharedData::maxCoop / 10;
             }
         }
+        phys->unregisterObject();
         phys->resetLocation();
         phys->registerObject();
-    }
-
-
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-        Robot *robot = gWorld->getRobot(iRobot);
-        robot->reset();
-        if (CoopFixed2SharedData::tpToNewObj)
-        {
-            robot->getWorldModel()->_agentAbsoluteOrientation = 0;
-        }
-        dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->reset();
+        opp->placeFakeRobot();
     }
 }
 

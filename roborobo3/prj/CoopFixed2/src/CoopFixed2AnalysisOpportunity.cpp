@@ -5,6 +5,7 @@
 
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h>
+#include <core/WorldModels/RobotWorldModel.h>
 #include "CoopFixed2/include/CoopFixed2AnalysisOpportunity.h"
 
 
@@ -27,6 +28,12 @@ void CoopFixed2AnalysisOpportunity::step() {
         newNearbyRobotIndexes.clear();
         wobs->addObjectToTeleport(_id);
     }
+    if (fakerobot != nullptr) {
+        RobotWorldModel *wm = fakerobot->getWorldModel();
+        wm->_desiredTranslationalValue = gMaxTranslationalSpeed;
+        wm->_cooperationLevel = getCoop();
+        wm->_desiredRotationalVelocity = 0;
+    }
     updateColor();
     RoundObject::step();
 }
@@ -46,7 +53,7 @@ void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
 
 int CoopFixed2AnalysisOpportunity::getNbNearbyRobots() const
 {
-    return nbFakeRobots + nearbyRobotIndexes.size();
+    return static_cast<int>(nearbyRobotIndexes.size());
 }
 
 void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed) {
@@ -90,5 +97,31 @@ void CoopFixed2AnalysisOpportunity::setNbFakeRobots(int nbrobots) {
 
 int CoopFixed2AnalysisOpportunity::getNbFakeRobots() {
     return nbFakeRobots;
+}
+
+void CoopFixed2AnalysisOpportunity::placeFakeRobot() {
+    if (nbFakeRobots < 1 || fakerobot == nullptr) {
+        return;
+    }
+
+    const int cx = getXCenterPixel();
+    const int cy = getYCenterPixel();
+    const double rot = fmod((double)lifeid / gNbOfPhysicalObjects * 2 * M_PI, 2.0 * M_PI);
+    const int objradius = gPhysicalObjectDefaultRadius;
+    const int robh = gRobotHeight;
+    const int robw = gRobotWidth;
+    int newrobcx = static_cast<int>(round(cx + (objradius + robw/2) * cos(rot)));
+    int newrobcy = static_cast<int>(round(cy + (objradius + robh/2) * sin(rot)));
+    int xpad = 0, ypad = 0;
+    fakerobot->unregisterRobot();
+    fakerobot->setCoordReal(newrobcx + xpad, newrobcy + ypad);
+    fakerobot->setCoord(newrobcx + xpad, newrobcy + ypad);
+    fakerobot->registerRobot();
+    RobotWorldModel* wm = fakerobot->getWorldModel();
+    wm->_desiredTranslationalValue = gMaxTranslationalSpeed;
+    wm->_agentAbsoluteOrientation = fmod(rot * 180/M_PI + 180, 360);
+    wm->_cooperationLevel = getCoop();
+    wm->_desiredRotationalVelocity = 0;
+    wm->setAlive(false);
 }
 

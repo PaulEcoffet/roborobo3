@@ -51,14 +51,14 @@ protected:
     int m_nbRep;
     double m_stepCoop;
 
-    void setAllOpportunitiesCoop(double coop);
-
     void computeOpportunityImpact();
 
     void clearOpportunityNearbyRobots();
 
 
     std::set<int> objectsToTeleport;
+
+    void initObjects() const;
 };
 
 
