@@ -9,6 +9,7 @@
 
 #include "World/RoundObject.h"
 #include "CoopFixed2Opportunity.h"
+#include "RoboroboMain/roborobo.h"
 #include <set>
 
 class CoopFixed2AnalysisOpportunity: public CoopFixed2Opportunity
@@ -30,8 +31,11 @@ public:
 
     int getNbFakeRobots();
     void isWalked(int id) override ;
+    void placeFakeRobot();
 
 
+
+    std::shared_ptr<Robot> fakerobot = nullptr;
 protected:
     double m_coop;
     std::vector<int> nearbyRobotIndexes;
