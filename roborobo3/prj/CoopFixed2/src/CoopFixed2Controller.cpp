@@ -140,20 +140,19 @@ std::vector<double> CoopFixed2Controller::getInputs()
 {
     const int WALL_ID = 0;
     bool fill_names = inputnames.empty();
-
-    std::vector<double> inputs;
-    inputs.reserve(m_nn->getNbInputs());
+    size_t i = 0;
+    std::vector<double> inputs(m_nn->getNbInputs());
 
     /*
      * Camera inputs
      */
-    for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
+    for (int j = 0; j < m_wm->_cameraSensorsNb; j++)
     {
         bool isOpportunity = false;
         double nbOnOpp = 0;
         double lastInvOnOpp = 0;
         double reputation = 0;
-        auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(i));
+        auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(j));
 
         if (entityId >= gPhysicalObjectIndexStartOffset &&
             entityId < gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects) // is an Object
@@ -169,21 +168,21 @@ std::vector<double> CoopFixed2Controller::getInputs()
             auto* rwm = dynamic_cast<CoopFixed2WorldModel*> (gWorld->getRobot(entityId - gRobotIndexStartOffset)->getWorldModel());
             reputation = rwm->meanLastReputation();
         }
-        inputs.emplace_back(m_wm->getDistanceValueFromCameraSensor(i) / m_wm->getCameraSensorMaximumDistanceValue(i));
-        inputs.emplace_back(static_cast<double> (Agent::isInstanceOf(entityId)));
+        inputs[i++] = m_wm->getDistanceValueFromCameraSensor(j) / m_wm->getCameraSensorMaximumDistanceValue(j);
+        inputs[i++] = static_cast<double> (Agent::isInstanceOf(entityId));
         if (CoopFixed2SharedData::reputation) {
-            inputs.emplace_back(reputation);
+            inputs[i++] = reputation;
         }
-        inputs.emplace_back(static_cast<double> (entityId == WALL_ID));
-        inputs.emplace_back(static_cast<double> (isOpportunity));
-        inputs.emplace_back(nbOnOpp);
+        inputs[i++] = static_cast<double> (entityId == WALL_ID);
+        inputs[i++] = static_cast<double> (isOpportunity);
+        inputs[i++] = nbOnOpp;
 
         if (CoopFixed2SharedData::reputation)
         {
-            inputs.emplace_back(lastInvOnOpp);
+            inputs[i++] = lastInvOnOpp;
         }
         if (fill_names) {
-            inputnames.emplace_back("dist " + std::to_string(i));
+            inputnames.emplace_back("dist " + std::to_string(j));
             inputnames.emplace_back("is robot");
             if (CoopFixed2SharedData::reputation)
             {
@@ -203,25 +202,25 @@ std::vector<double> CoopFixed2Controller::getInputs()
     /*
      * Opportunity inputs
      */
-    inputs.emplace_back(m_wm->onOpportunity);
+    inputs[i++] = m_wm->onOpportunity;
     if (fill_names) inputnames.emplace_back("on opp");
 
-    inputs.emplace_back(m_wm->nbOnOpp);
+    inputs[i++] = m_wm->nbOnOpp;
     if (fill_names) inputnames.emplace_back("nb on opp");
 
     if (CoopFixed2SharedData::arrivalAsInput) {
-        inputs.emplace_back(m_wm->arrival);
+        inputs[i++] = m_wm->arrival;
         if (fill_names) inputnames.emplace_back("arrival");
 
     }
     if (CoopFixed2SharedData::totalInvAsInput)
     {
-        inputs.emplace_back(m_wm->meanLastTotalInvest());
+        inputs[i++] = m_wm->meanLastTotalInvest();
         if (fill_names) inputnames.emplace_back("mean total inv");
 
     }
     if (CoopFixed2SharedData::ownInvAsInput) {
-        inputs.emplace_back(m_wm->meanLastOwnInvest());
+        inputs[i++] = m_wm->meanLastOwnInvest();
         if (fill_names) inputnames.emplace_back("mean own inv");
     }
 
@@ -229,7 +228,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
      * introspection inputs
      */
     if (CoopFixed2SharedData::selfAAsInput) {
-        inputs.emplace_back(m_wm->selfA);
+        inputs[i++] = m_wm->selfA;
         if (fill_names) inputnames.emplace_back("own A");
 
     }
