@@ -69,8 +69,8 @@ def main():
     ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda'],
                     required=True)
     ap.add_argument('-m', '--mu', type=int, default=1)
-
-    ap.add_argument('-s', '--server-only', action='store_true')
+    ap.add_argument('-s', '--sigma', type=float, default=0.01)
+    ap.add_argument('--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
     argout, forwarded = ap.parse_known_args()
     outdir = Path(argout.output)
@@ -99,7 +99,7 @@ def main():
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
-        es = getES(argout.evolution, evo_info['nb_weights'] * [0], 0.01,
+        es = getES(argout.evolution, evo_info['nb_weights'] * [0], argout.sigma,
                    evo_info['popsize'], [-1, 1], 60000, join(str(outdir), ''), mu=argout.mu)
         sign = 1
         if argout.evolution == 'cmaes':
