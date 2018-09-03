@@ -32,7 +32,7 @@ class FitPropEvolutionStrategy():
         if normal_trans:
             new_solutions = np.random.normal(new_solutions, self.mutation_rate)
         else:  # pick few genes and uniform transformation on them.
-            p = 0.005  # TODO : Should be parameter
+            p = self.mutation_rate
             mutation_mask = np.random.choice([True, False], size=new_solutions.shape, p=[p, 1 - p])
             print("mask type :", mutation_mask.dtype)
             mutations = np.random.uniform(self.minb, self.maxb, size=mutation_mask.sum())
