@@ -96,7 +96,13 @@ void CoopFixed2Controller::step()
         m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
 
     }
-    m_wm->_cooperationLevel = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop; // Range between [0; maxCoop]
+    double coop;
+    if (CoopFixed2SharedData::reverseCoopOutput == false) {
+        coop = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop;
+    } else {
+        coop = (1 - ((outputs[2] + 1) / 2)) * CoopFixed2SharedData::maxCoop;
+    }
+    m_wm->_cooperationLevel = coop; // Range between [0; maxCoop]
 
     if (m_wm->fake)
     {
