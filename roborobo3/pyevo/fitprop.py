@@ -27,7 +27,16 @@ class FitPropEvolutionStrategy():
                                          self.popsize,
                                          p=(fitnesses/np.sum(fitnesses)))
         new_solutions = self.solutions[new_pop_index]
-        new_solutions = np.random.normal(new_solutions, self.mutation_rate)
+        normal_trans = False
+        # Normal transformation along all genes
+        if normal_trans:
+            new_solutions = np.random.normal(new_solutions, self.mutation_rate)
+        else:  # pick few genes and uniform transformation on them.
+            p = self.mutation_rate
+            mutation_mask = np.random.choice([True, False], size=new_solutions.shape, p=[p, 1 - p])
+            print("mask type :", mutation_mask.dtype)
+            mutations = np.random.uniform(self.minb, self.maxb, size=mutation_mask.sum())
+            new_solutions[mutation_mask] = mutations
         np.clip(new_solutions, self.minb, self.maxb, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
 
