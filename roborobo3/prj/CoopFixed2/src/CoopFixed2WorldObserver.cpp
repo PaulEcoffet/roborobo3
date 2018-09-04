@@ -291,8 +291,6 @@ void CoopFixed2WorldObserver::resetEnvironment()
 void CoopFixed2WorldObserver::computeOpportunityImpacts()
 {
     const double b = CoopFixed2SharedData::b;
-    const double d = CoopFixed2SharedData::d;
-
 
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
@@ -355,7 +353,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             }
 
             if (!wm->fake) {
-                wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b, d);
+                wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b);
             }
         }
 
@@ -366,16 +364,16 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 }
 
-double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b, const double d)
+double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a, const double b)
 {
     double res = 0;
     const double x0 = (totalInvest - invest);
     if (!CoopFixed2SharedData::prisonerDilemma)
     {
         if (CoopFixed2SharedData::atLeastTwo and n < 2) {
-            res = payoff(a/2, 2*a/2, 2, a, b, d) * 0.8; /* 80% of ESS payoff with 2 player */
+            res = payoff(a/2, 2*a/2, 2, a, b) * 0.0; /* 0% of ESS payoff with 2 player */
         } else {
-            res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest + d * x0 * invest / n;
+            res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
         }
     }
     else
