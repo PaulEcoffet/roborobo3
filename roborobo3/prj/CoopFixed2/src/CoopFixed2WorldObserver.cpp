@@ -309,14 +309,14 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
 
         int n = opp->getNbNearbyRobots();
         if (CoopFixed2SharedData::fixRobotNb && n >2) {
-            n = 2;
+            n = 1;
         }
 
         int arrival = 1;
         for (auto index : opp->getNearbyRobotIndexes())
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-            wm->onOpportunity = !CoopFixed2SharedData::fixRobotNb || arrival <= 2;
+            wm->onOpportunity = true;
             wm->nbOnOpp = opp->getNbNearbyRobots();
             wm->arrival = arrival;
             arrival++;

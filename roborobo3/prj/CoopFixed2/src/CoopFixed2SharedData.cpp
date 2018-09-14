@@ -40,7 +40,7 @@ bool CoopFixed2SharedData::reputation = true;
 int CoopFixed2SharedData::logEveryXGen = 1000;
 bool CoopFixed2SharedData::atLeastTwo = false;
 bool CoopFixed2SharedData::reverseCoopOutput = false;
-
+bool CoopFixed2SharedData::splitNetwork = false;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -77,6 +77,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("logEveryXGen", &CoopFixed2SharedData::logEveryXGen, false);
     gProperties.checkAndGetPropertyValue("atLeastTwo", &CoopFixed2SharedData::atLeastTwo, false);
     gProperties.checkAndGetPropertyValue("reverseCoopOutput", &CoopFixed2SharedData::reverseCoopOutput, false);
+    gProperties.checkAndGetPropertyValue("splitNetwork", &CoopFixed2SharedData::splitNetwork, false);
 
 }
 

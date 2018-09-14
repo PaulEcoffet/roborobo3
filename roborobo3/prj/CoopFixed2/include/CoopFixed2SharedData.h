@@ -47,6 +47,7 @@ public:
     static int logEveryXGen;
     static bool atLeastTwo;
     static bool reverseCoopOutput;
+    static bool splitNetwork;
 };
 
 

@@ -37,14 +37,17 @@ public:
     std::string inspect(std::string prefix) override;
 
     double getFitness() const;
-    const std::vector<double>& getWeights() const;
+    const std::vector<double> getWeights() const;
 
 
 protected:
     CoopFixed2WorldModel *m_wm;
 
     NeuralNetwork *m_nn;
+    NeuralNetwork *m_nn2;
+
     std::vector<double> weights;
+    std::vector<double> weights2;
 
     std::vector<double> getInputs();
 
@@ -55,6 +58,16 @@ protected:
     unsigned int getNbOutputs() const;
 
     static std::vector<std::string> inputnames;
+
+    std::vector<double> getGameInputs() const;
+
+    unsigned int getNbCameraInputs() const;
+
+    unsigned int getNbGameInputs() const;
+
+    std::vector<double> getCameraInputs() const;
+
+    bool fill_names = false;
 };
 
 
