@@ -23,32 +23,55 @@ enum {
 
 std::vector<std::string> CoopFixed2Controller::inputnames;
 
-CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm)
-{
+CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm) {
     m_wm = dynamic_cast<CoopFixed2WorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
-    unsigned int nbInputs = getNbInputs();
-    unsigned int nbOutputs = getNbOutputs();
+    unsigned int nbCamInputs = getNbCameraInputs();
+    unsigned int nbGameInputs = getNbGameInputs();
 
-    switch (CoopFixed2SharedData::controllerType)
-    {
+    unsigned int nbMoveOutput = 2;
+    unsigned int nbGameOutput = 1;
+
+    switch (CoopFixed2SharedData::controllerType) {
         case MLP_ID:
-            m_nn = new MLP(weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            if (CoopFixed2SharedData::splitNetwork) {
+                m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
+                m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, 2, true);  // TODO 2 should not be hardcoded
+            } else {
+                m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput,
+                               nbNeuronsPerHiddenLayers, true);
+            }
             break;
         case PERCEPTRON_ID:
-            m_nn = new Perceptron(weights, nbInputs, nbOutputs);
+            if (CoopFixed2SharedData::splitNetwork) {
+                m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput);
+                m_nn2 = new Perceptron(weights2, nbGameOutput, nbGameOutput);
+            } else {
+                m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput);
+            }
             break;
         case ELMAN_ID:
-            m_nn = new Elman(weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
+            if (CoopFixed2SharedData::splitNetwork) {
+                m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
+                m_nn2 = new Elman(weights2, nbGameOutput, nbGameOutput, 2, true);
+            } else {
+                m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput, nbNeuronsPerHiddenLayers, true);
+            }
             break;
         default:
-            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< CoopFixed2SharedData::controllerType << "\n";
+            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
+                      << CoopFixed2SharedData::controllerType << "\n";
             exit(-1);
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
-
-
     m_nn->setWeights(weights);
+
+    if (CoopFixed2SharedData::splitNetwork)
+    {
+        weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
+        m_nn2->setWeights(weights);
+    }
+
     resetFitness();
 }
 
@@ -63,34 +86,39 @@ void CoopFixed2Controller::step()
     if (not m_wm->isAlive())
         return;
 
-    std::vector<double> inputs = getInputs();
-    /*
-    std::cout << "Input: \n";
-    for (const auto input : inputs) {
-        std::cout << input << "\n";
-    }
-     */
-    m_nn->setInputs(inputs);
-    m_nn->step();
+    fill_names = inputnames.empty();
+    if (CoopFixed2SharedData::splitNetwork)
+    {
+        std::vector<double> moveInputs = getCameraInputs();
+        std::vector<double> gameInputs = getGameInputs();
+        std::vector<double> allInputs;
+        allInputs.insert(allInputs.end(), moveInputs.begin(), moveInputs.end());
+        allInputs.insert(allInputs.end(), gameInputs.begin(), gameInputs.end());
+        m_nn->setInputs(allInputs);
+        m_nn->step();
 
+        m_nn2->setInputs(gameInputs);
+        m_nn2->step();
+    } else {
+        std::vector<double> inputs = getInputs();
+        m_nn->setInputs(inputs);
+        m_nn->step();
+
+    }
+
+    /* Reading the output of the networks */
     std::vector<double> outputs = m_nn->readOut();
 
-    for (const auto output : outputs) {
-        if (isnan(output)) {
-            for (int i = 0; i < inputs.size(); i++)
-            {
-                std::cerr << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
-            }
-            std::cerr << "NaN in output.\nExiting\n";
-            exit(-1);
-        }
+    if (CoopFixed2SharedData::splitNetwork)
+    {
+        auto gameoutput = m_nn2->readOut();
+        outputs.insert(outputs.end(), gameoutput.begin(), gameoutput.end() );
     }
-
+    assert(outputs.size() == getNbOutputs());
     if (CoopFixed2SharedData::tpToNewObj) {
         m_wm->_desiredTranslationalValue = 1;
         m_wm->_desiredRotationalVelocity = 0;
         m_wm->teleport = outputs[0] > 0;
-
     } else {
         m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
         m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
@@ -113,7 +141,7 @@ void CoopFixed2Controller::step()
     }
     else
     {
-        if (m_wm->onOpportunity)
+        if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <=2))
         {
             m_wm->setRobotLED_colorValues(0, 255, 0);
         }
@@ -144,11 +172,23 @@ CoopFixed2Controller::~CoopFixed2Controller()
 
 std::vector<double> CoopFixed2Controller::getInputs()
 {
-    const int WALL_ID = 0;
-    bool fill_names = inputnames.empty();
-    size_t i = 0;
-    std::vector<double> inputs(m_nn->getNbInputs());
+    size_t i;
+    std::vector<double> inputs;
+    inputs = getCameraInputs();
 
+    const std::vector<double> game_inputs(getGameInputs());
+    inputs.insert(inputs.end(), game_inputs.begin(), game_inputs.end());
+
+
+    assert((CoopFixed2SharedData::splitNetwork && inputs.size() == m_nn->getNbInputs() + m_nn2->getNbInputs()) || inputs.size() == m_nn->getNbInputs());
+    assert(inputnames.size() == inputs.size());
+    return inputs;
+}
+
+std::vector<double> CoopFixed2Controller::getCameraInputs() const {
+    size_t i= 0;
+    std::vector<double> inputs(getNbCameraInputs(), 0);
+    const int WALL_ID = 0;
     /*
      * Camera inputs
      */
@@ -188,7 +228,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
             inputs[i++] = lastInvOnOpp;
         }
         if (fill_names) {
-            inputnames.emplace_back("dist " + std::to_string(j));
+            inputnames.emplace_back("dist " + std::__cxx11::to_string(j));
             inputnames.emplace_back("is robot");
             if (CoopFixed2SharedData::reputation)
             {
@@ -205,13 +245,35 @@ std::vector<double> CoopFixed2Controller::getInputs()
 
     }
 
+    return inputs;
+}
+
+std::vector<double> CoopFixed2Controller::getGameInputs() const {
     /*
      * Opportunity inputs
      */
+
+    std::vector<double> inputs(getNbGameInputs(), 0);
+    size_t i = 0;
+
+    bool playing = m_wm->onOpportunity && (m_wm->arrival <= 2 || !CoopFixed2SharedData::fixRobotNb);
+    inputs[i++] = (int) playing;
+    if (fill_names) inputnames.emplace_back("playing");
+
+
     inputs[i++] = m_wm->onOpportunity;
     if (fill_names) inputnames.emplace_back("on opp");
 
-    inputs[i++] = m_wm->nbOnOpp;
+    double nb_playing = 0;
+    if (playing)
+    {
+        nb_playing = m_wm->nbOnOpp - 1;
+        if (CoopFixed2SharedData::fixRobotNb and nb_playing > 1)
+        {
+            nb_playing = 1;
+        }
+    }
+    inputs[i++] = nb_playing;
     if (fill_names) inputnames.emplace_back("nb on opp");
 
     if (CoopFixed2SharedData::arrivalAsInput) {
@@ -238,37 +300,53 @@ std::vector<double> CoopFixed2Controller::getInputs()
         if (fill_names) inputnames.emplace_back("own A");
 
     }
-
-    assert(inputs.size() == m_nn->getNbInputs());
-    assert(inputnames.size() == inputs.size());
     return inputs;
 }
 
 void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
 {
-    if(m_nn->getRequiredNumberOfWeights() != newGenome.size())
-    {
-        std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
-        exit(-1);
+    if (!CoopFixed2SharedData::splitNetwork) {
+        if (m_nn->getRequiredNumberOfWeights() != newGenome.size()) {
+            std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+            exit(-1);
+        }
+        weights = newGenome;
+        m_nn->setWeights(weights);
+    } else {
+        if (m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size()) {
+            std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+            exit(-1);
+        }
+        auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights();
+        weights = std::vector<double>(newGenome.begin(), split);
+        weights2 = std::vector<double>(split, newGenome.end());
+        m_nn->setWeights(weights);
+        m_nn2->setWeights(weights2);
     }
-    weights = newGenome;
-    m_nn->setWeights(weights);
     if (CoopFixed2SharedData::controllerType == ELMAN_ID)
         dynamic_cast<Elman*>(m_nn)->initLastOutputs();
 }
 
 unsigned int CoopFixed2Controller::getNbInputs() const
 {
+    return getNbCameraInputs() + getNbGameInputs();
+}
 
-    return static_cast<unsigned int>(
-            m_wm->_cameraSensorsNb * (5 + 2 * (int) CoopFixed2SharedData::reputation) // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent
-            + 1 // on Opp
-            + 1 // nbOnOpportunity
-            + CoopFixed2SharedData::arrivalAsInput
-            + CoopFixed2SharedData::totalInvAsInput
-            + CoopFixed2SharedData::ownInvAsInput
-            + CoopFixed2SharedData::selfAAsInput
-    );
+unsigned int CoopFixed2Controller::getNbGameInputs() const {
+    const unsigned int nbGameInputs = static_cast<const unsigned int>(
+        1 // playing
+        + 1 // on Opp
+        + 1 // nbOnOpportunity
+        + CoopFixed2SharedData::arrivalAsInput
+        + CoopFixed2SharedData::totalInvAsInput
+        + CoopFixed2SharedData::ownInvAsInput
+        + CoopFixed2SharedData::selfAAsInput);
+    return nbGameInputs;
+}
+
+unsigned int CoopFixed2Controller::getNbCameraInputs() const {
+    const unsigned int nbCameraInputs = static_cast<const unsigned int>(m_wm->_cameraSensorsNb * (5 + 2 * (int) CoopFixed2SharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent
+    return nbCameraInputs;
 }
 
 
@@ -363,11 +441,26 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     for (auto& output : outputs) {
         out << prefix << "\t" << output << "\n"; // TODO Crash without reason
     }
+    if (CoopFixed2SharedData::splitNetwork)
+    {
+        auto& outputs = m_nn2->readOut();
+        for (auto& output : outputs) {
+            out << prefix << "\t" << output << "\n"; // TODO Crash without reason
+        }
+    }
     return out.str();
 }
 
-const std::vector<double>& CoopFixed2Controller::getWeights() const
+const std::vector<double> CoopFixed2Controller::getWeights() const
 {
+    if (CoopFixed2SharedData::splitNetwork)
+    {
+        std::vector<double> allweights;
+        allweights.insert(allweights.end(), weights.begin(), weights.end());
+        allweights.insert(allweights.end(), weights2.begin(), weights2.end());
+        return allweights;
+
+    }
     return weights;
 }
 
