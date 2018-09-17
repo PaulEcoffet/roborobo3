@@ -309,7 +309,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
 
         int n = opp->getNbNearbyRobots();
         if (CoopFixed2SharedData::fixRobotNb && n >2) {
-            n = 1;
+            n = 2;
         }
 
         int arrival = 1;
