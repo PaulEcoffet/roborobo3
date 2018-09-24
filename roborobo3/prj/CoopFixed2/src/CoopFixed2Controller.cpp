@@ -116,7 +116,7 @@ void CoopFixed2Controller::step()
     }
     assert(outputs.size() == getNbOutputs());
     if (CoopFixed2SharedData::tpToNewObj) {
-        m_wm->_desiredTranslationalValue = 1;
+        m_wm->_desiredTranslationalValue = 0;
         m_wm->_desiredRotationalVelocity = 0;
         m_wm->teleport = outputs[0] > 0;
     } else {
