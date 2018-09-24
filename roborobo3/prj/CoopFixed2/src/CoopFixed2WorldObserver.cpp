@@ -143,10 +143,13 @@ void CoopFixed2WorldObserver::stepPost()
             auto *rob = m_world->getRobot(i);
             if (dynamic_cast<CoopFixed2WorldModel* >(rob->getWorldModel())->teleport) {
                 int dest_obj = randomPhys(engine);
+                double angle = (float) i / gNbOfRobots * 2 * M_PI;
                 PhysicalObject *physobj = gPhysicalObjects[dest_obj];
                 rob->unregisterRobot();
-                rob->setCoord(physobj->getXCenterPixel(), physobj->getYCenterPixel());
-                rob->setCoordReal(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->setCoord(physobj->getXCenterPixel()+ cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2),
+                              physobj->getYCenterPixel()+ sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2));
+                rob->setCoordReal(physobj->getXCenterPixel()+ cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2),
+                                  physobj->getYCenterPixel()+ sin(angle) *(gPhysicalObjectDefaultRadius + gRobotWidth / 2));
                 rob->getWorldModel()->_agentAbsoluteOrientation = 0;
                 rob->registerRobot();
             }
