@@ -100,7 +100,7 @@ def main():
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
         es = getES(argout.evolution, evo_info['nb_weights'] * [0], argout.sigma,
-                   evo_info['popsize'], [-1, 1], 60000, join(str(outdir), ''), mu=argout.mu)
+                   evo_info['popsize'], [-10, 10], 60000, join(str(outdir), ''), mu=argout.mu)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
