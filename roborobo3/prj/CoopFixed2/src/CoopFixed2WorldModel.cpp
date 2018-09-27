@@ -13,10 +13,11 @@ CoopFixed2WorldModel::CoopFixed2WorldModel()
           onOpportunity(false),
           selfA(0.5),
           fake(false),
-          fakeCoef(1)
+          fakeCoef(1),
+          teleport(false)
 {
     setNewSelfA();
-}
+ }
 
 void CoopFixed2WorldModel::setNewSelfA() {
 
