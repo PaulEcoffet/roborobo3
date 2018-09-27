@@ -98,7 +98,7 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
     if (CoopFixed2SharedData::tpToNewObj)
     {
         auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
-        for (int i = 0; i < gWorld->getNbOfRobots(); i++)
+        for (int i = 0; i < 1; i++)
         {
             auto *rob = gWorld->getRobot(i);
             if (dynamic_cast<CoopFixed2WorldModel* >(rob->getWorldModel())->teleport)
@@ -106,10 +106,9 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
                 int dest_obj = randomPhys(engine);
                 PhysicalObject *physobj = gPhysicalObjects[dest_obj];
                 rob->unregisterRobot();
-                rob->setCoord(physobj->getXCenterPixel(), physobj->getYCenterPixel());
-                rob->setCoordReal(physobj->getXCenterPixel(), physobj->getYCenterPixel());
+                rob->setCoord(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius, physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
+                rob->setCoordReal(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius, physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
                 rob->registerRobot();
-                physobj->isPushed(i + gRobotIndexStartOffset, std::tuple<int, int>(1, 1));
             }
         }
     }
