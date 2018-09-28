@@ -29,7 +29,7 @@ void MonoRobotAgentObserver::reset()
     // nothing to do.
 }
 
-void MonoRobotAgentObserver::step()
+void MonoRobotAgentObserver::stepPre()
 {
     // See whether we're close to an object
     

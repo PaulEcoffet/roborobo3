@@ -22,7 +22,7 @@ class MonoRobotAgentObserver : public AgentObserver
 		~MonoRobotAgentObserver();
 
 		virtual void reset();
-		virtual void step();
+		virtual void stepPre();
 
 };
 

@@ -24,7 +24,7 @@ void Observer::reset()
 	// nothing to do.
 }
 
-void Observer::step()
+void Observer::stepPre()
 {
 	// nothing to do.
 }

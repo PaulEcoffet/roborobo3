@@ -17,7 +17,7 @@ class DebugCollAgentObserver : public AgentObserver
 		~DebugCollAgentObserver();
 				
 		void reset();
-		void step();
+		void stepPre();
 		
 };
 

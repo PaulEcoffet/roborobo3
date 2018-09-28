@@ -124,6 +124,7 @@ void CoopFixed2Controller::step()
         m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
 
     }
+
     double coop;
     if (CoopFixed2SharedData::reverseCoopOutput == false) {
         coop = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop;

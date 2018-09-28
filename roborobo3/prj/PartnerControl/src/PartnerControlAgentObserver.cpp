@@ -12,9 +12,9 @@ PartnerControlAgentObserver::PartnerControlAgentObserver(RobotWorldModel *wm)
 PartnerControlAgentObserver::~PartnerControlAgentObserver() = default;
 
 
-void PartnerControlAgentObserver::step()
+void PartnerControlAgentObserver::stepPre()
 {
-    AgentObserver::step();
+    AgentObserver::stepPre();
     if (not m_wm->onOpportunity)
     {
         m_wm->lastOwnInvest.clear();

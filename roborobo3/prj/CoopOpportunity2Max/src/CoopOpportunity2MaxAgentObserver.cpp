@@ -29,7 +29,7 @@ void CoopOpportunity2MaxAgentObserver::reset()
     // nothing to do.
 }
 
-void CoopOpportunity2MaxAgentObserver::step()
+void CoopOpportunity2MaxAgentObserver::stepPre()
 {
     // See whether we're close to an object
     

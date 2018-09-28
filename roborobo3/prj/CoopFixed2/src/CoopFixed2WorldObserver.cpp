@@ -6,6 +6,7 @@
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>
 #include <CoopFixed2/include/CoopFixed2WorldObserver.h>
 #include <boost/algorithm/string.hpp>
+#include "contrib/json/json.hpp"
 #include "Utilities/Graphics.h"
 #include "RoboroboMain/main.h"
 #include "CoopFixed2/include/CoopFixed2WorldObserver.h"
@@ -126,6 +127,11 @@ void CoopFixed2WorldObserver::stepPre()
 
 void CoopFixed2WorldObserver::stepPost()
 {
+    /* Plays */
+    registerRobotsOnOpportunities();
+    computeOpportunityImpacts();
+
+    /* Move */
     /* Teleport robots */
     if (CoopFixed2SharedData::teleportRobots) {
         for (auto rid: robotsToTeleport) {
@@ -135,7 +141,8 @@ void CoopFixed2WorldObserver::stepPost()
             m_world->getRobot(rid)->registerRobot();
         }
     }
-    if (CoopFixed2SharedData::tpToNewObj)
+
+    /*if (CoopFixed2SharedData::tpToNewObj)
     {
         auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
@@ -154,7 +161,7 @@ void CoopFixed2WorldObserver::stepPost()
                 rob->registerRobot();
             }
         }
-    }
+    }*/
 
     for (auto id: objectsToTeleport)
     {
@@ -164,8 +171,7 @@ void CoopFixed2WorldObserver::stepPost()
     }
     objectsToTeleport.clear();
     robotsToTeleport.clear();
-    registerRobotsOnOpportunities();
-    computeOpportunityImpacts();
+
     if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0) {
         if (CoopFixed2SharedData::takeVideo) {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));

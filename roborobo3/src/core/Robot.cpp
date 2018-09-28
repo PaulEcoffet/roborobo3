@@ -307,9 +307,14 @@ void Robot::reset()
 
 }
 
-void Robot::callObserver()
+void Robot::callObserverPre()
 {
-	_agentObserver->step();
+	_agentObserver->stepPre();
+}
+
+void Robot::callObserverPost()
+{
+	_agentObserver->stepPost();
 }
 
 void Robot::stepBehavior()
