@@ -17,7 +17,7 @@ class TemplateRandomwalkAgentObserver : public AgentObserver
 		~TemplateRandomwalkAgentObserver();
 				
 		void reset();
-		void step();
+		void stepPre();
 		
 };
 

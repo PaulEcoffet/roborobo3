@@ -54,7 +54,7 @@ class Robot : public Agent
 		virtual void stepBehavior();
 		virtual void stepBehavior(const Uint8* __keyboardStates);
 
-		void callObserver(); // call the embedded genetic engine -- always called before stepBehavior.
+		void callObserverPre(); // call the embedded genetic engine -- always called before stepBehavior.
 
 		void applyDynamics(); // use transl/rot delta to compute x/y delta.
 
@@ -89,6 +89,7 @@ class Robot : public Agent
 		// the content of this list depends on the max communication range (see properties file).
 		// works only if communication network is active.
 		/* std::vector<int> getNeighbors(); */
+	void callObserverPost();
 };
 
 

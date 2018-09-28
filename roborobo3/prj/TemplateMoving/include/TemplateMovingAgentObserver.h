@@ -18,7 +18,7 @@ class TemplateMovingAgentObserver : public AgentObserver
 		~TemplateMovingAgentObserver();
 				
 		void reset();
-		void step();
+		void stepPre();
 		
 };
 

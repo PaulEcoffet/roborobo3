@@ -16,11 +16,14 @@ public:
     CoopFixed2AgentObserver(RobotWorldModel *wm);
     ~CoopFixed2AgentObserver() override;
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
+    void stepPost() override;
+
 
 protected:
     CoopFixed2WorldModel *m_wm;
+
 };
 
 

@@ -28,7 +28,7 @@ MovingEEAgentObserver::~MovingEEAgentObserver()
  * If we pushed something, increase our fitness.
  *
  */
-void MovingEEAgentObserver::step()
+void MovingEEAgentObserver::stepPre()
 {
     // * update fitness (if needed)
     if ( _wm->isAlive() )
@@ -36,5 +36,5 @@ void MovingEEAgentObserver::step()
         _wm->_fitnessValue = _wm->_fitnessValue + 1;
     }
 
-    TemplateEEAgentObserver::step();
+    TemplateEEAgentObserver::stepPre();
 }

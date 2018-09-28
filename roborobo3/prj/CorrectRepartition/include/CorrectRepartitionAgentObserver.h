@@ -16,7 +16,7 @@ public:
     CorrectRepartitionAgentObserver(RobotWorldModel *wm);
     ~CorrectRepartitionAgentObserver() override;
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
 
 protected:

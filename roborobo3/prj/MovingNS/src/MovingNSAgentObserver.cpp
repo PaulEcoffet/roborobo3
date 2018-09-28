@@ -29,7 +29,7 @@ void MovingNSAgentObserver::reset()
     // nothing to do.
 }
 
-void MovingNSAgentObserver::step()
+void MovingNSAgentObserver::stepPre()
 {
     // See whether we're close to an object
     

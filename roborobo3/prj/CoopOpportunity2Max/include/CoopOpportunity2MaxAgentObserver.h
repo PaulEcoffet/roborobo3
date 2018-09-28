@@ -23,7 +23,7 @@ public:
 	~CoopOpportunity2MaxAgentObserver();
 
 	virtual void reset();
-	virtual void step();
+	virtual void stepPre();
     
     void logStats();
 

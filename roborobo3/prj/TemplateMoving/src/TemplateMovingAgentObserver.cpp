@@ -25,7 +25,7 @@ void TemplateMovingAgentObserver::reset()
 	// nothing to do.
 }
 
-void TemplateMovingAgentObserver::step()
+void TemplateMovingAgentObserver::stepPre()
 {
     // * send callback messages to objects touched or walked upon.
     

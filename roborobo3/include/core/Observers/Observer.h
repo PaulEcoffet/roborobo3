@@ -19,7 +19,7 @@ class Observer
 		virtual ~Observer();
 	
 		virtual void reset();
-		virtual void step();
+		virtual void stepPre();
 		
 };
 

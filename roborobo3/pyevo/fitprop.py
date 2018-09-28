@@ -52,7 +52,7 @@ class FitPropEvolutionStrategy():
         nb_weights = len(genome_guess)
         if full_random_begin:
             out = np.random.uniform(
-                self.minb, self.maxb, size=(self.popsize, nb_weights))
+                -1, 1, size=(self.popsize, nb_weights))  # TODO Hard coded guess
         else:
             out = np.tile(genome_guess, (self.popsize, 1))
         return out
