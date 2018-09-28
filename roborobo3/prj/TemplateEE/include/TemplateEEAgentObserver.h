@@ -18,7 +18,7 @@ class TemplateEEAgentObserver : public AgentObserver
 		~TemplateEEAgentObserver();
 
 		virtual void reset();
-		virtual void step();
+		virtual void stepPre();
 
 };
 

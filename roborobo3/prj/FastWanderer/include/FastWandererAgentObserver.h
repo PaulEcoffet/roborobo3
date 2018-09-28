@@ -16,7 +16,7 @@ public:
     FastWandererAgentObserver(RobotWorldModel *wm);
     ~FastWandererAgentObserver() override;
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
 
 protected:

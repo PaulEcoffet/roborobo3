@@ -21,7 +21,7 @@ TemplateMedeaAgentObserver::~TemplateMedeaAgentObserver()
  * Manage energy wrt. foraging (if energy management is activated in parameter files)
  *
  */
-void TemplateMedeaAgentObserver::step()
+void TemplateMedeaAgentObserver::stepPre()
 {
     // * update energy if needed
     if ( gEnergyLevel && _wm->isAlive() )
@@ -31,6 +31,6 @@ void TemplateMedeaAgentObserver::step()
         if ( _wm->getEnergyLevel() == 0 )
             _wm->setAlive(false);
     }
-        
-    TemplateEEAgentObserver::step();
+
+    TemplateEEAgentObserver::stepPre();
 }

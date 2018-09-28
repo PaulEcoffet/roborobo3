@@ -16,7 +16,7 @@ public:
     PartnerControlAgentObserver(RobotWorldModel *wm);
     ~PartnerControlAgentObserver() override;
 
-    void step() override;
+    void stepPre() override;
     void reset() override;
 
 protected:
