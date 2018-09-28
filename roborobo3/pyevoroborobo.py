@@ -72,6 +72,7 @@ def main():
     ap.add_argument('-s', '--sigma', type=float, default=0.01)
     ap.add_argument('--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
+    ap.add_argument('-g', '--generations', type=int, default=30000)
     argout, forwarded = ap.parse_known_args()
     outdir = Path(argout.output)
     sys.stdout.write("\x1b]2;{}\x07".format(outdir.name))  # Change the terminal title
@@ -100,7 +101,7 @@ def main():
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
         es = getES(argout.evolution, evo_info['nb_weights'] * [0], argout.sigma,
-                   evo_info['popsize'], [-1, 1], 60000, join(str(outdir), ''), mu=argout.mu)
+                   evo_info['popsize'], [-1, 1], argout.generations, join(str(outdir), ''), mu=argout.mu)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
