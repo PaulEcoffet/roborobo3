@@ -29,7 +29,7 @@ void SingleGenomeAgentObserver::reset()
     // nothing to do.
 }
 
-void SingleGenomeAgentObserver::step()
+void SingleGenomeAgentObserver::stepPre()
 {
     // See whether we're close to an object
     

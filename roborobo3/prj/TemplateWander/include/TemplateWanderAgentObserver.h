@@ -17,7 +17,7 @@ class TemplateWanderAgentObserver : public AgentObserver
 		~TemplateWanderAgentObserver();
 				
 		void reset();
-		void step();
+		void stepPre();
 		
 };
 

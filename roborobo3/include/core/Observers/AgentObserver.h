@@ -26,9 +26,9 @@ class AgentObserver : public Observer
 		AgentObserver( RobotWorldModel *__wm );
 		~AgentObserver();
 				
-		void reset();
-		void step();
-		
+		void reset() override;
+		virtual void stepPre();
+		virtual void stepPost();
 };
 
 

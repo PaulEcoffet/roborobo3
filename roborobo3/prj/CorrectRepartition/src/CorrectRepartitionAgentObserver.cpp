@@ -12,9 +12,9 @@ CorrectRepartitionAgentObserver::CorrectRepartitionAgentObserver(RobotWorldModel
 CorrectRepartitionAgentObserver::~CorrectRepartitionAgentObserver() = default;
 
 
-void CorrectRepartitionAgentObserver::step()
+void CorrectRepartitionAgentObserver::stepPre()
 {
-    AgentObserver::step();
+    AgentObserver::stepPre();
     if (not m_wm->onOpportunity)
     {
         m_wm->lastOwnInvest.clear();

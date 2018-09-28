@@ -12,7 +12,7 @@ FastWandererAgentObserver::FastWandererAgentObserver(RobotWorldModel *wm)
 FastWandererAgentObserver::~FastWandererAgentObserver() = default;
 
 
-void FastWandererAgentObserver::step()
+void FastWandererAgentObserver::stepPre()
 {
 
 }

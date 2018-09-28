@@ -16,7 +16,7 @@ class TemplateVanillaEEAgentObserver : public TemplateEEAgentObserver
 		TemplateVanillaEEAgentObserver(RobotWorldModel *wm);
 		~TemplateVanillaEEAgentObserver();
     
-        virtual void step();
+        virtual void stepPre();
 };
 
 #endif

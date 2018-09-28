@@ -30,7 +30,12 @@ void AgentObserver::reset()
 	// nothing to do.
 }
 
-void AgentObserver::step()
+void AgentObserver::stepPre()
+{
+	// nothing to do.
+}
+
+void AgentObserver::stepPost()
 {
 	// nothing to do.
 }

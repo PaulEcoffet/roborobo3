@@ -348,13 +348,15 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cpp.in" "${CMAKE_CURRE
 
 list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/version.h)
 
+SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
 find_package(Boost COMPONENTS filesystem system REQUIRED)
-
+find_package( ZLIB REQUIRED )
+find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
 
@@ -366,5 +368,7 @@ target_link_libraries(roborobo
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
         Eigen3::Eigen
+        ${GZSTREAM}
+        ${ZLIB}
        # tbb
         )

@@ -27,7 +27,7 @@ void DebugCollAgentObserver::reset()
 	// nothing to do.
 }
 
-void DebugCollAgentObserver::step()
+void DebugCollAgentObserver::stepPre()
 {
     // * send callback messages to objects touched or walked upon.
     // through distance sensors
