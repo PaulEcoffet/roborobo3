@@ -283,12 +283,12 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const {
     }
     if (CoopFixed2SharedData::totalInvAsInput)
     {
-        inputs[i++] = m_wm->meanLastTotalInvest();
+        inputs[i++] = m_wm->meanLastTotalInvest() / CoopFixed2SharedData::maxCoop;
         if (fill_names) inputnames.emplace_back("mean total inv");
 
     }
     if (CoopFixed2SharedData::ownInvAsInput) {
-        inputs[i++] = m_wm->meanLastOwnInvest();
+        inputs[i++] = m_wm->meanLastOwnInvest() / CoopFixed2SharedData::maxCoop;
         if (fill_names) inputnames.emplace_back("mean own inv");
     }
 
@@ -296,7 +296,7 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const {
      * introspection inputs
      */
     if (CoopFixed2SharedData::selfAAsInput) {
-        inputs[i++] = m_wm->selfA;
+        inputs[i++] = (m_wm->selfA  - CoopFixed2SharedData::meanA) / CoopFixed2SharedData::stdA;
         if (fill_names) inputnames.emplace_back("own A");
 
     }
