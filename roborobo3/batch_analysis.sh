@@ -48,7 +48,7 @@ analysisNbRep=10
     ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen
     break
   elif [ $fake = true ]
-  then	
+  then
     read 'press enter to continue'
     continue
   else
@@ -57,7 +57,7 @@ analysisNbRep=10
 
   # only run analyses 5 by 5
   let "i=$i+1"
-  if [ "$i" = 5 ]
+  if [ "$i" = 20 ]
   then
     echo "wait"
     wait
