@@ -55,7 +55,7 @@ analysisNbRep=10
     ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
   fi
 
-  # only run analyses 5 by 5
+  # only run analyses 10 by 10
   let "i=$i+1"
   if [ "$i" = 20 ]
   then

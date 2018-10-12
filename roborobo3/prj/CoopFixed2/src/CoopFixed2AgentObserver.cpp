@@ -26,7 +26,6 @@ void CoopFixed2AgentObserver::stepPre()
 
 void CoopFixed2AgentObserver::stepPost()
 {
-
     if (m_wm->teleport)
     {
         auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
@@ -45,7 +44,7 @@ void CoopFixed2AgentObserver::stepPost()
 
 
     int targetIndex = m_wm->getGroundSensorValue();
-    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset + (int)gPhysicalObjects.size() )   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
+    if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset + (int)gPhysicalObjects.size() )   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         //std::cout << "[DEBUG] #" << _wm->getId() << " walked upon " << targetIndex << "\n";

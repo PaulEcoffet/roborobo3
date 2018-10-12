@@ -17,7 +17,7 @@ CoopFixed2WorldModel::CoopFixed2WorldModel()
           teleport(false)
 {
     setNewSelfA();
- }
+}
 
 void CoopFixed2WorldModel::setNewSelfA() {
 
