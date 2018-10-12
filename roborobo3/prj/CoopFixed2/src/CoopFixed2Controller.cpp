@@ -29,7 +29,7 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm) {
     unsigned int nbCamInputs = getNbCameraInputs();
     unsigned int nbGameInputs = getNbGameInputs();
 
-    unsigned int nbMoveOutput = 2;
+    unsigned int nbMoveOutput = 1 + (int) !CoopFixed2SharedData::tpToNewObj;
     unsigned int nbGameOutput = 1;
 
     switch (CoopFixed2SharedData::controllerType) {
@@ -108,6 +108,11 @@ void CoopFixed2Controller::step()
 
     /* Reading the output of the networks */
     std::vector<double> outputs = m_nn->readOut();
+    int i_coopOut = 2;
+    if (CoopFixed2SharedData::tpToNewObj)
+    {
+        i_coopOut = 1;
+    }
 
     if (CoopFixed2SharedData::splitNetwork)
     {
@@ -127,9 +132,9 @@ void CoopFixed2Controller::step()
 
     double coop;
     if (CoopFixed2SharedData::reverseCoopOutput == false) {
-        coop = ((outputs[2] + 1) / 2) * CoopFixed2SharedData::maxCoop;
+        coop = ((outputs[i_coopOut] + 1) / 2) * CoopFixed2SharedData::maxCoop;
     } else {
-        coop = (1 - ((outputs[2] + 1) / 2)) * CoopFixed2SharedData::maxCoop;
+        coop = (1 - ((outputs[i_coopOut] + 1) / 2)) * CoopFixed2SharedData::maxCoop;
     }
     m_wm->_cooperationLevel = coop; // Range between [0; maxCoop]
 
@@ -467,7 +472,8 @@ const std::vector<double> CoopFixed2Controller::getWeights() const
 
 unsigned int CoopFixed2Controller::getNbOutputs() const
 {
-    return 2    // Motor commands
+    return 1
+           + (int) !CoopFixed2SharedData::tpToNewObj // Motor commands
            + 1  // Cooperation value
     ;
 }

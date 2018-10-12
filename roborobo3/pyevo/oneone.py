@@ -3,7 +3,7 @@ from copy import copy, deepcopy
 from json_tricks import dump
 
 
-class MuLambdaEvolutionStrategy():
+class OneOneEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
                  bounds, path, full_random_begin=False, mu=1):
@@ -25,16 +25,23 @@ class MuLambdaEvolutionStrategy():
         if self.iter == 0:
             return self.solutions
         fitnesses = self.lastfitnesses
-        new_pop_index = np.argpartition(
-            fitnesses, -self.mu)[-self.mu:]
-        parents = self.solutions[new_pop_index].copy()
-        true_parent_indexes = np.random.choice(
-            len(parents), size=self.popsize - self.mu)
-        children = parents[true_parent_indexes].copy()
-        igen = np.random.choice(children.shape[1], size=1, replace=False)
-        for ichild in range(children.shape[0]):
-            children[ichild][igen] = np.random.uniform(self.minb, self.maxb, size=1)
-        new_solutions = np.concatenate((parents, children))
+        fitnesses[:self.mu] = fitnesses[:self.mu].mean()
+        fitnesses[self.mu:] = fitnesses[self.mu:].mean()
+        new_pop_index = np.argmax(fitnesses)
+        if new_pop_index >= self.mu:
+            print('Invasion de mutants')
+        parent = self.solutions[new_pop_index].copy()
+        child = parent.copy()
+        igen = np.random.choice(child.shape[0], size=1, replace=False)
+        # Yes this is super weird sorry
+        child[igen] = np.random.uniform(self.minb, self.maxb, size=1)
+        new_solutions = np.concatenate(
+            (
+                np.tile(parent, (self.mu, 1)),
+                np.tile(child, (self.popsize - self.mu, 1))
+            ))
+        print(self.popsize)
+        assert(len(new_solutions) == self.popsize)
         return new_solutions
 
     def tell(self, solutions, fitnesses):
