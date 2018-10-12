@@ -22,17 +22,19 @@ class MuLambdaEvolutionStrategy():
         self.logger = MuLambdaLogger(self, path)
 
     def ask(self):
+        if self.iter == 0:
+            return self.solutions
         fitnesses = self.lastfitnesses
         new_pop_index = np.argpartition(
             fitnesses, -self.mu)[-self.mu:]
         parents = self.solutions[new_pop_index].copy()
         true_parent_indexes = np.random.choice(
             len(parents), size=self.popsize - self.mu)
-        children = np.random.normal(parents[true_parent_indexes],
-                                    self.mutation_rate)
-        children.clip(self.minb, self.maxb, out=children)
+        children = parents[true_parent_indexes].copy()
+        igen = np.random.choice(children.shape[1], size=1, replace=False)
+        for ichild in range(children.shape[0]):
+            children[ichild][igen] = np.random.uniform(self.minb, self.maxb, size=1)
         new_solutions = np.concatenate((parents, children))
-        np.random.shuffle(new_solutions)
         return new_solutions
 
     def tell(self, solutions, fitnesses):

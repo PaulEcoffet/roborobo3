@@ -218,6 +218,7 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
         robot->getWorldModel()->_agentAbsoluteOrientation = 0;
     }
     dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->reset();
+    dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
 }
 
 void CoopFixed2AnalysisWorldObserver::initObjects() const {

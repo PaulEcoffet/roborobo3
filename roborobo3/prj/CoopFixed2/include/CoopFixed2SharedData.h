@@ -48,6 +48,8 @@ public:
     static bool atLeastTwo;
     static bool reverseCoopOutput;
     static bool splitNetwork;
+    static bool randomFakeCoef;
+    static double fakeCoefStd;
 };
 
 
