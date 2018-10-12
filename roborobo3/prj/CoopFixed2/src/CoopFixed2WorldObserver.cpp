@@ -102,6 +102,7 @@ void CoopFixed2WorldObserver::stepPre()
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
+        logFitnesses(m_curfitnesses);
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
         if (CoopFixed2SharedData::fakeRobots) {
@@ -118,7 +119,6 @@ void CoopFixed2WorldObserver::stepPre()
     }
     if( m_curEvaluationInGeneration == CoopFixed2SharedData::nbEvaluationsPerGeneration)
     {
-        logFitnesses(m_fitnesses);
         m_curEvaluationInGeneration = 0;
         stepEvolution();
         m_generationCount++;
@@ -283,10 +283,17 @@ void CoopFixed2WorldObserver::resetEnvironment()
         if (m_fakerobotslist[iRobot])
         {
             wm->fake = true;
-            if (nb_fake_done < m_nbFakeRobots / 2){
-                wm->fakeCoef = 1.0/CoopFixed2SharedData::fakeCoef;
-            } else {
-                wm->fakeCoef = CoopFixed2SharedData::fakeCoef;
+            if(CoopFixed2SharedData::randomFakeCoef)
+            {
+                double res = 1 + CoopFixed2SharedData::fakeCoefStd * randgaussian();
+                wm->fakeCoef = res;
+            }
+            else {
+                if (nb_fake_done < m_nbFakeRobots / 2) {
+                    wm->fakeCoef = 1.0 / CoopFixed2SharedData::fakeCoef;
+                } else {
+                    wm->fakeCoef = CoopFixed2SharedData::fakeCoef;
+                }
             }
             nb_fake_done++;
         } else {

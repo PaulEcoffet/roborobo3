@@ -66,7 +66,7 @@ def main():
     # catch the output dir to put the evolution logs in it.
     ap = argparse.ArgumentParser(prog='cmaesroborobo.py')
     ap.add_argument('-o', '--output', type=str, default='logs/')
-    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda'],
+    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda', 'oneone'],
                     required=True)
     ap.add_argument('-m', '--mu', type=int, default=1)
     ap.add_argument('-s', '--sigma', type=float, default=0.01)
@@ -101,7 +101,7 @@ def main():
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
         es = getES(argout.evolution, evo_info['nb_weights'] * [0], argout.sigma,
-                   evo_info['popsize'], [-10, 10], argout.generations, join(str(outdir), ''), mu=argout.mu)
+                   evo_info['popsize'], [-5, 5], argout.generations, join(str(outdir), ''), mu=argout.mu)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
