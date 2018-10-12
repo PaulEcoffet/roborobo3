@@ -40,7 +40,6 @@ class OneOneEvolutionStrategy():
                 np.tile(parent, (self.mu, 1)),
                 np.tile(child, (self.popsize - self.mu, 1))
             ))
-        print(self.popsize)
         assert(len(new_solutions) == self.popsize)
         return new_solutions
 
