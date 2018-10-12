@@ -31,9 +31,10 @@ class MuLambdaEvolutionStrategy():
         true_parent_indexes = np.random.choice(
             len(parents), size=self.popsize - self.mu)
         children = parents[true_parent_indexes].copy()
-        igen = np.random.choice(children.shape[1], size=1, replace=False)
         for ichild in range(children.shape[0]):
-            children[ichild][igen] = np.random.uniform(self.minb, self.maxb, size=1)
+            if (np.random.uniform() < self.mutation_rate):
+                igen = np.random.choice(children.shape[1], size=1, replace=False)
+                children[ichild][igen] = np.random.uniform(self.minb, self.maxb, size=1)
         new_solutions = np.concatenate((parents, children))
         return new_solutions
 
