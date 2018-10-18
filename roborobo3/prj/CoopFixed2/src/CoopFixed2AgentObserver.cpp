@@ -2,9 +2,11 @@
 // Created by paul on 30/10/17.
 //
 
+#include <core/Utilities/Graphics.h>
 #include "core/RoboroboMain/main.h"
 #include "core/World/World.h"
 #include "CoopFixed2/include/CoopFixed2AgentObserver.h"
+#include <SDL2/SDL.h>
 
 CoopFixed2AgentObserver::CoopFixed2AgentObserver(RobotWorldModel *wm)
 {
@@ -26,29 +28,54 @@ void CoopFixed2AgentObserver::stepPre()
 
 void CoopFixed2AgentObserver::stepPost()
 {
+    int dest_obj = -1;
     if (m_wm->teleport)
     {
-        auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
-        int dest_obj = randomPhys(engine);
         double angle = (float) this->m_wm->getId() / gNbOfRobots * 2 * M_PI;
-        PhysicalObject *physobj = gPhysicalObjects[dest_obj];
-        auto rob = gWorld->getRobot(this->m_wm->getId());
-        rob->unregisterRobot();
-        rob->setCoord(physobj->getXCenterPixel()+ cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2),
-                      physobj->getYCenterPixel()+ sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2));
-        rob->setCoordReal(physobj->getXCenterPixel()+ cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2),
-                          physobj->getYCenterPixel()+ sin(angle) *(gPhysicalObjectDefaultRadius + gRobotWidth / 2));
-        rob->getWorldModel()->_agentAbsoluteOrientation = 0;
-        rob->registerRobot();
+        for(int i = 0; i < gNbOfPhysicalObjects; i++)
+        {
+            CoopFixed2Opportunity *cur = dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[i]);
+            //std::cout << "rob " << this->m_wm->getId() << " " << i <<" : " << cur->getNbNearbyRobots() << " " << cur->getNbNewNearbyRobots() << "\n";
+            if(cur->getNbNearbyRobots() + cur->getNbNewNearbyRobots() == 1)
+            {
+                dest_obj = i;
+                break;
+            } else if (cur->getNbNearbyRobots() + cur->getNbNewNearbyRobots() == 0 && dest_obj == -1){
+                dest_obj = i;
+            }
+        }
+        if (dest_obj != -1) {
+            PhysicalObject *physobj = gPhysicalObjects[dest_obj];
+            auto rob = gWorld->getRobot(this->m_wm->getId());
+            rob->unregisterRobot();
+            rob->setCoord(
+                    physobj->getXCenterPixel() + cos(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2),
+                    physobj->getYCenterPixel() + sin(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2));
+            rob->setCoordReal(
+                    physobj->getXCenterPixel() + cos(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2),
+                    physobj->getYCenterPixel() + sin(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2));
+            rob->getWorldModel()->_agentAbsoluteOrientation = 0;
+            rob->registerRobot();
+        }
     }
 
-
+    Uint8 r, g, b;
+    Uint32 pixel = getPixel32( gFootprintImage, _wm->_xReal+0.5, _wm->_yReal+0.5);
+    SDL_GetRGB(pixel,gFootprintImage->format,&r,&g,&b);
+    _wm->_groundSensorValue[0] = r;
+    _wm->_groundSensorValue[1] = g;
+    _wm->_groundSensorValue[2] = b;
     int targetIndex = m_wm->getGroundSensorValue();
     if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset + (int)gPhysicalObjects.size() )   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         //std::cout << "[DEBUG] #" << _wm->getId() << " walked upon " << targetIndex << "\n";
         gPhysicalObjects[targetIndex]->isWalked(m_wm->getId() + gRobotIndexStartOffset);
+        if(m_wm->teleport && dest_obj != -1 && targetIndex != dest_obj){
+            std::cerr << "ERROR: " << targetIndex << " " << dest_obj << "\n";
+            m_wm->setRobotLED_colorValues(0, 0, 0);
+            //exit(1);
+        }
     }
 }
 

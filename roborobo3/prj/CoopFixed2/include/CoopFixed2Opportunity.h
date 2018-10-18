@@ -21,6 +21,8 @@ public:
     void isWalked(int id) override;
 
     virtual int getNbNearbyRobots() const;
+    virtual int getNbNewNearbyRobots() const;
+
 
     std::string inspect(std::string prefix) override;
     double curInv = 0;
@@ -35,6 +37,7 @@ protected:
     double lifeExpectancy;
 
     virtual void updateColor();
+
 };
 
 
