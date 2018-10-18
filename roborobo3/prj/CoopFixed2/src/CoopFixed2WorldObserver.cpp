@@ -32,7 +32,7 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
 
     std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
     m_fitnessLogManager = new LogManager(fitnessLogFilename);
-    m_fitnessLogManager->write("gen\tind\trep\tfitness\n");
+    m_fitnessLogManager->write("gen\tind\trep\tfake\tfitness\n");
 
     std::vector<std::string> url;
     if (gRemote.empty())
@@ -172,7 +172,7 @@ void CoopFixed2WorldObserver::stepPost()
     objectsToTeleport.clear();
     robotsToTeleport.clear();
 
-    if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0) {
+    if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0 and m_curEvaluationInGeneration == 0) {
         if (CoopFixed2SharedData::takeVideo) {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
         }
@@ -247,7 +247,12 @@ void CoopFixed2WorldObserver::logFitnesses(const std::vector<double>& curfitness
     std::stringstream out;
     for (int i = 0; i < m_nbIndividuals; i++)
     {
-        out << m_generationCount << "\t" << i << "\t" << m_curEvaluationInGeneration << "\t" << curfitness[i] << "\n";
+        auto* cur_wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
+        out << m_generationCount << "\t"
+            << i << "\t"
+            << m_curEvaluationInGeneration << "\t"
+            << cur_wm->fake << "\n"
+            << curfitness[i] << "\n";
     }
     m_fitnessLogManager->write(out.str());
     m_fitnessLogManager->flush();
@@ -271,6 +276,15 @@ void CoopFixed2WorldObserver::resetEnvironment()
         object->resetLocation();
         object->registerObject();
     }
+
+    std::vector<float> fakeList(m_nbFakeRobots);
+    for (int i = 0; i < m_nbFakeRobots; i++)
+    {
+        fakeList[i] = (2.f * i) / (m_nbFakeRobots - 1);
+    }
+    // Randomize the fakeList so that the last fakeRobots aren't necessarly the ones who cooperate the most.
+    std::shuffle(fakeList.begin(), fakeList.end(), engine);
+
     int nb_fake_done = 0;
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
         Robot *robot = gWorld->getRobot(iRobot);
@@ -286,14 +300,11 @@ void CoopFixed2WorldObserver::resetEnvironment()
             if(CoopFixed2SharedData::randomFakeCoef)
             {
                 double res = 1 + CoopFixed2SharedData::fakeCoefStd * randgaussian();
+                if (res < 0) res = 0;
                 wm->fakeCoef = res;
             }
             else {
-                if (nb_fake_done < m_nbFakeRobots / 2) {
-                    wm->fakeCoef = 1.0 / CoopFixed2SharedData::fakeCoef;
-                } else {
-                    wm->fakeCoef = CoopFixed2SharedData::fakeCoef;
-                }
+                wm->fakeCoef = fakeList[nb_fake_done];
             }
             nb_fake_done++;
         } else {
