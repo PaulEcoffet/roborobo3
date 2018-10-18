@@ -57,7 +57,7 @@ analysisNbRep=10
 
   # only run analyses 10 by 10
   let "i=$i+1"
-  if [ "$i" = 5 ]
+  if [ "$i" = 10 ]
   then
     echo "wait"
     wait
