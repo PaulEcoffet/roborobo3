@@ -20,12 +20,18 @@ int CoopFixed2Opportunity::getNbNearbyRobots() const
     return static_cast<int>(nearbyRobotIndexes.size());
 }
 
+int CoopFixed2Opportunity::getNbNewNearbyRobots() const
+{
+    return static_cast<int>(newNearbyRobotIndexes.size());
+}
+
 void CoopFixed2Opportunity::isWalked(int id)
 {
     const int rid = id - gRobotIndexStartOffset;
     if(std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end()) { // if not already in the list
         newNearbyRobotIndexes.push_back(rid);
     }
+    //std::cout << "Coucou, c'est " << _id <<", " << rid << " vient d'arriver. On est maintenant " << newNearbyRobotIndexes.size() << "\n";
 }
 
 const std::vector<int>& CoopFixed2Opportunity::getNearbyRobotIndexes() const
