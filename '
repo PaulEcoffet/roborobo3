@@ -1,0 +1,24 @@
+Merge branch 'master' of github.com:PaulEcoffet/roborobo3
+
+# Conflicts:
+#	roborobo3/batch_analysis.sh
+#
+# Il semble que vous validiez une fusion.
+# Si ce n'est pas le cas, veuillez supprimer le fichier
+#	.git/MERGE_HEAD
+# et essayez à nouveau.
+
+
+# Veuillez saisir le message de validation pour vos modifications. Les lignes
+# commençant par '#' seront ignorées, et un message vide abandonne la validation.
+#
+# Sur la branche master
+# Votre branche et 'origin/master' ont divergé,
+# et ont 1 et 4 commits différents chacune respectivement.
+#   (utilisez "git pull" pour fusionner la branche distante dans la vôtre)
+#
+# Tous les conflits sont réglés mais la fusion n'est pas terminée.
+#
+# Modifications qui seront validées :
+#	modifié :         batch_analysis.sh
+#
