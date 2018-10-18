@@ -172,8 +172,8 @@ void CoopFixed2WorldObserver::stepPost()
     objectsToTeleport.clear();
     robotsToTeleport.clear();
 
-    if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0 and m_curEvaluationInGeneration == 0) {
-        if (CoopFixed2SharedData::takeVideo) {
+    if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 0) {
+        if (CoopFixed2SharedData::takeVideo and m_curEvaluationInGeneration == 0) {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
         }
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
