@@ -50,6 +50,7 @@ public:
     static bool splitNetwork;
     static bool randomFakeCoef;
     static double fakeCoefStd;
+    static bool smartTeleport;
 };
 
 

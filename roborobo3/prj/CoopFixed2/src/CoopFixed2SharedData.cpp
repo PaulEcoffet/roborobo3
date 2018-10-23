@@ -43,6 +43,7 @@ bool CoopFixed2SharedData::reverseCoopOutput = false;
 bool CoopFixed2SharedData::splitNetwork = false;
 bool CoopFixed2SharedData::randomFakeCoef = false;
 double CoopFixed2SharedData::fakeCoefStd = 0;
+bool CoopFixed2SharedData::smartTeleport = true;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -82,7 +83,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("splitNetwork", &CoopFixed2SharedData::splitNetwork, false);
     gProperties.checkAndGetPropertyValue("randomFakeCoef", &CoopFixed2SharedData::randomFakeCoef, false);
     gProperties.checkAndGetPropertyValue("fakeCoefStd", &CoopFixed2SharedData::fakeCoefStd, false);
-
+    gProperties.checkAndGetPropertyValue("smartTeleport", &CoopFixed2SharedData::smartTeleport, false);
 
 }
 
