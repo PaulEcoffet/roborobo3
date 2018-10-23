@@ -195,7 +195,7 @@ void CoopFixed2WorldObserver::stepPost()
                      << i << "\t"
                      << wm->selfA << "\t"
                      << wm->fake << "\t"
-                     << wm->opp->getId() << "\t"
+                     << ((wm->opp != nullptr)? wm->opp->getId(): 0) << "\t"
                      << nbOnOpp << "\t"
                      << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
                      << wm->meanLastOwnInvest() << "\t"
