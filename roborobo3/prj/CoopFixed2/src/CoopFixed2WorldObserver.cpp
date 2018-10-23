@@ -195,7 +195,7 @@ void CoopFixed2WorldObserver::stepPost()
                      << i << "\t"
                      << wm->selfA << "\t"
                      << wm->fake << "\t"
-                     << wm->onOpportunity << "\t"
+                     << wm->opp->getId() << "\t"
                      << nbOnOpp << "\t"
                      << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
                      << wm->meanLastOwnInvest() << "\t"
@@ -324,6 +324,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
         wm->onOpportunity = false;
+        wm->opp = nullptr;
         wm->nbOnOpp = 0;
         wm->arrival = 0;
     }
@@ -344,6 +345,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
             wm->onOpportunity = true;
+            wm->opp = opp;
             wm->nbOnOpp = opp->getNbNearbyRobots();
             wm->arrival = arrival;
             arrival++;

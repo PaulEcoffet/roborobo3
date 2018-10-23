@@ -354,11 +354,17 @@ find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
+set (Boost_USE_STATIC_LIBS ON) # enable dynamic linking
+set (Boost_USE_MULTITHREAD OFF)  # enable multithreading
 find_package(Boost COMPONENTS filesystem system REQUIRED)
+IF (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
+endif()
 find_package( ZLIB REQUIRED )
 find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
+
 
 add_executable(roborobo ${SOURCE_FILES})
 
