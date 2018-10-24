@@ -35,14 +35,9 @@ public:
     static bool arrivalAsInput;
     static bool onlyOtherInTotalInv;
     static bool fakeRobots;
-
     static int memorySize;
     static double d;
     static double fakeCoef;
-
-    static void initSharedData();
-
-
     static bool reputation;
     static int logEveryXGen;
     static bool atLeastTwo;
@@ -53,6 +48,11 @@ public:
     static bool smartTeleport;
     static bool punishment;
     static bool punishmentAsInput;
+    static bool partnerControl;
+
+    static void initSharedData();
+
+
 };
 
 
