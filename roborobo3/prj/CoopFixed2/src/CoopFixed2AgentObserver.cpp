@@ -36,7 +36,7 @@ void CoopFixed2AgentObserver::stepPost()
         obj_shuffle[i] = i;
     }
     std::shuffle(obj_shuffle.begin(), obj_shuffle.end(), engine);
-    if (m_wm->teleport)
+    if (m_wm->teleport && !(CoopFixed2SharedData::partnerControl && m_wm->nbOnOpp == 2))
     {
         double angle = (float) this->m_wm->getId() / gNbOfRobots * 2 * M_PI;
         if (CoopFixed2SharedData::smartTeleport)
