@@ -14,10 +14,13 @@ class CoopFixed2AgentObserver : public AgentObserver
 {
 public:
     CoopFixed2AgentObserver(RobotWorldModel *wm);
+
     ~CoopFixed2AgentObserver() override;
 
     void stepPre() override;
+
     void reset() override;
+
     void stepPost() override;
 
 

@@ -21,7 +21,8 @@ CoopFixed2WorldModel::CoopFixed2WorldModel()
     setNewSelfA();
 }
 
-void CoopFixed2WorldModel::setNewSelfA() {
+void CoopFixed2WorldModel::setNewSelfA()
+{
 
     // set the selfA, it makes a non-gaussian ESS distribution though TODO see if skewed is okay
     selfA = std::max(randgaussian() * CoopFixed2SharedData::stdA + CoopFixed2SharedData::meanA, 0.01);
@@ -70,7 +71,8 @@ void CoopFixed2WorldModel::appendTotalInvest(const double invest)
     lastTotalInvest.push_back(invest);
 }
 
-void CoopFixed2WorldModel::appendToReputation(const double d) {
+void CoopFixed2WorldModel::appendToReputation(const double d)
+{
     if (lastReputation.size() >= 50 /* TODO fix */)
     {
         lastReputation.pop_front();
@@ -79,7 +81,8 @@ void CoopFixed2WorldModel::appendToReputation(const double d) {
 
 }
 
-double CoopFixed2WorldModel::meanLastReputation() {
+double CoopFixed2WorldModel::meanLastReputation()
+{
     if (not lastReputation.empty())
     {
         return std::accumulate(lastReputation.begin(), lastReputation.end(), 0.0) / lastReputation.size();
@@ -90,7 +93,8 @@ double CoopFixed2WorldModel::meanLastReputation() {
     }
 }
 
-void CoopFixed2WorldModel::reset() {
+void CoopFixed2WorldModel::reset()
+{
     lastReputation.clear();
     lastOwnInvest.clear();
     lastTotalInvest.clear();

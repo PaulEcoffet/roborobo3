@@ -101,13 +101,15 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
         for (int i = 0; i < 1; i++)
         {
             auto *rob = gWorld->getRobot(i);
-            if (dynamic_cast<CoopFixed2WorldModel* >(rob->getWorldModel())->teleport)
+            if (dynamic_cast<CoopFixed2WorldModel * >(rob->getWorldModel())->teleport)
             {
                 int dest_obj = randomPhys(engine);
                 PhysicalObject *physobj = gPhysicalObjects[dest_obj];
                 rob->unregisterRobot();
-                rob->setCoord(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius, physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
-                rob->setCoordReal(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius, physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
+                rob->setCoord(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius,
+                              physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
+                rob->setCoordReal(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius,
+                                  physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
                 rob->registerRobot();
             }
         }
@@ -119,7 +121,7 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
         gPhysicalObjects[id]->unregisterObject();
         gPhysicalObjects[id]->resetLocation();
         gPhysicalObjects[id]->registerObject();
-        dynamic_cast<CoopFixed2AnalysisOpportunity*>(gPhysicalObjects[id])->placeFakeRobot();
+        dynamic_cast<CoopFixed2AnalysisOpportunity *>(gPhysicalObjects[id])->placeFakeRobot();
     }
     objectsToTeleport.clear();
 
@@ -135,9 +137,10 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     int oppLifeId = 0;
     double oppCoop = 0;
     int oppNbRob = 0;
-    if (wm->opp != nullptr) {
+    if (wm->opp != nullptr)
+    {
         oppLifeId = wm->opp->lifeid;
-        oppCoop = dynamic_cast<CoopFixed2AnalysisOpportunity*>(wm->opp)->getCoop();
+        oppCoop = dynamic_cast<CoopFixed2AnalysisOpportunity *>(wm->opp)->getCoop();
         oppNbRob = dynamic_cast<CoopFixed2AnalysisOpportunity *>(wm->opp)->getNbFakeRobots();
     }
 
@@ -157,7 +160,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < _world->getNbOfRobots(); i++)
     {
-        auto *wm = dynamic_cast<CoopFixed2WorldModel*>(_world->getRobot(i)->getWorldModel());
+        auto *wm = dynamic_cast<CoopFixed2WorldModel *>(_world->getRobot(i)->getWorldModel());
         wm->opp = nullptr;
         wm->onOpportunity = false;
         wm->arrival = 0;
@@ -167,7 +170,8 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
     {
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(physicalObject);
         opp->curInv = opp->getCoop();
-        for (auto index : opp->getNearbyRobotIndexes()) {
+        for (auto index : opp->getNearbyRobotIndexes())
+        {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(_world->getRobot(index)->getWorldModel());
             auto *ctl = dynamic_cast<CoopFixed2Controller *>(_world->getRobot(index)->getController());
 
@@ -182,14 +186,17 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
             if (CoopFixed2SharedData::onlyOtherInTotalInv)
             {
                 wm->appendTotalInvest(opp->getCoop());
-            } else {
+            }
+            else
+            {
                 wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
             }
             wm->appendToReputation(wm->_cooperationLevel);
 
             //Reward him
             ctl->increaseFitness(0);
-            if (index == 0) {
+            if (index == 0)
+            {
                 opp->curInv = opp->getCoop() + wm->_cooperationLevel;
             }
         }
@@ -198,7 +205,8 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
 
 void CoopFixed2AnalysisWorldObserver::resetEnvironment()
 {
-    for (auto object: gPhysicalObjects) {
+    for (auto object: gPhysicalObjects)
+    {
         object->unregisterObject();
     }
 
@@ -206,10 +214,11 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     robot->unregisterRobot();
 
 
-    for (auto object: gPhysicalObjects) {
+    for (auto object: gPhysicalObjects)
+    {
         object->resetLocation();
         object->registerObject();
-        dynamic_cast<CoopFixed2AnalysisOpportunity*>(object)->placeFakeRobot();
+        dynamic_cast<CoopFixed2AnalysisOpportunity *>(object)->placeFakeRobot();
     }
 
     robot->reset();
@@ -217,13 +226,14 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     {
         robot->getWorldModel()->_agentAbsoluteOrientation = 0;
     }
-    dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->reset();
-    dynamic_cast<CoopFixed2WorldModel*>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
+    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->reset();
+    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
 }
 
-void CoopFixed2AnalysisWorldObserver::initObjects() const {
+void CoopFixed2AnalysisWorldObserver::initObjects() const
+{
     int i = 0;
-    int objPerCoop = (int)ceil((double)gNbOfPhysicalObjects / 12); // coop : 0, 1, .., 10 + obj without ind
+    int objPerCoop = (int) ceil((double) gNbOfPhysicalObjects / 12); // coop : 0, 1, .., 10 + obj without ind
     int nbRob = 0;
     int coop = 0;
     for (auto *phys : gPhysicalObjects)
@@ -231,7 +241,8 @@ void CoopFixed2AnalysisWorldObserver::initObjects() const {
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(phys);
         opp->setCoopValue(coop);
         opp->setNbFakeRobots(nbRob);
-        if (nbRob > 0) {
+        if (nbRob > 0)
+        {
             std::shared_ptr<Robot> rob = std::make_shared<Robot>(gWorld);
             rob->getWorldModel()->_cameraSensorsNb = 0;
             gWorld->addRobot(rob.get());
@@ -240,9 +251,12 @@ void CoopFixed2AnalysisWorldObserver::initObjects() const {
         i++;
         if (i % objPerCoop == 0)
         {
-            if (nbRob == 0) {
+            if (nbRob == 0)
+            {
                 nbRob = 1;
-            } else {
+            }
+            else
+            {
                 coop += CoopFixed2SharedData::maxCoop / 10;
             }
         }
@@ -271,6 +285,7 @@ void CoopFixed2AnalysisWorldObserver::clearOpportunityNearbyRobots()
 }
 
 
-void CoopFixed2AnalysisWorldObserver::addObjectToTeleport(int id) {
+void CoopFixed2AnalysisWorldObserver::addObjectToTeleport(int id)
+{
     objectsToTeleport.emplace(id);
 }

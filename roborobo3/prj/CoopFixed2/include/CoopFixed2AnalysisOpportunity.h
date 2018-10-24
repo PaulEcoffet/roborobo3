@@ -12,27 +12,34 @@
 #include "RoboroboMain/roborobo.h"
 #include <set>
 
-class CoopFixed2AnalysisOpportunity: public CoopFixed2Opportunity
+class CoopFixed2AnalysisOpportunity : public CoopFixed2Opportunity
 {
 public:
     explicit CoopFixed2AnalysisOpportunity(int __id);
+
     void step() override;
+
     void setCoopValue(double coop);
-    void clearNearbyRobotIndexes() ;
-    std::string inspect(std::string prefix) override ;
-    const std::vector<int> & getNearbyRobotIndexes() const override;
+
+    void clearNearbyRobotIndexes();
+
+    std::string inspect(std::string prefix) override;
+
+    const std::vector<int> &getNearbyRobotIndexes() const override;
 
     void isPushed(int id, std::tuple<double, double> speed) override;
 
     int getNbNearbyRobots() const override;
+
     double getCoop() const;
 
     void setNbFakeRobots(int nbrobots);
 
     int getNbFakeRobots();
-    void isWalked(int id) override ;
-    void placeFakeRobot();
 
+    void isWalked(int id) override;
+
+    void placeFakeRobot();
 
 
     std::shared_ptr<Robot> fakerobot = nullptr;
@@ -45,7 +52,6 @@ protected:
     int nbFakeRobots;
 
 };
-
 
 
 #endif //ROBOROBO3_COOPFIXED2ANALYSISOPPORTUNITY_H
