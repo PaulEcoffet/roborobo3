@@ -50,13 +50,15 @@ bool CoopFixed2SharedData::punishmentAsInput = false;
 void CoopFixed2SharedData::initSharedData()
 {
     gProperties.checkAndGetPropertyValue("evaluationTime", &CoopFixed2SharedData::evaluationTime, true);
-    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &CoopFixed2SharedData::nbEvaluationsPerGeneration, true);
+    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration",
+                                         &CoopFixed2SharedData::nbEvaluationsPerGeneration, true);
     gProperties.checkAndGetPropertyValue("genomeLog", &CoopFixed2SharedData::genomeLog, true);
     gProperties.checkAndGetPropertyValue("controllerType", &CoopFixed2SharedData::controllerType, true);
     gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &CoopFixed2SharedData::maxTranslationalValue, true);
     gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &CoopFixed2SharedData::maxRotationalVelocity, true);
     gProperties.checkAndGetPropertyValue("nbHiddenLayers", &CoopFixed2SharedData::nbHiddenLayers, true);
-    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &CoopFixed2SharedData::nbNeuronsPerHiddenLayer, true);
+    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &CoopFixed2SharedData::nbNeuronsPerHiddenLayer,
+                                         true);
     gProperties.checkAndGetPropertyValue("takeVideo", &CoopFixed2SharedData::takeVideo, false);
     gProperties.checkAndGetPropertyValue("seeCoopFromDist", &CoopFixed2SharedData::seeCoopFromDist, false);
     gProperties.checkAndGetPropertyValue("prisonerDilemma", &CoopFixed2SharedData::prisonerDilemma, false);

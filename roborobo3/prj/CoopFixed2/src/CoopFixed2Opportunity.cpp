@@ -28,13 +28,14 @@ int CoopFixed2Opportunity::getNbNewNearbyRobots() const
 void CoopFixed2Opportunity::isWalked(int id)
 {
     const int rid = id - gRobotIndexStartOffset;
-    if(std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end()) { // if not already in the list
+    if (std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end())
+    { // if not already in the list
         newNearbyRobotIndexes.push_back(rid);
     }
     //std::cout << "Coucou, c'est " << _id <<", " << rid << " vient d'arriver. On est maintenant " << newNearbyRobotIndexes.size() << "\n";
 }
 
-const std::vector<int>& CoopFixed2Opportunity::getNearbyRobotIndexes() const
+const std::vector<int> &CoopFixed2Opportunity::getNearbyRobotIndexes() const
 {
     return nearbyRobotIndexes;
 }
@@ -43,7 +44,7 @@ void CoopFixed2Opportunity::registerNewRobots()
 {
     std::vector<int> out;
     // Look for the robot that were here last turn and are still here. Keep the order of arrival.
-    for(const auto rid : nearbyRobotIndexes)
+    for (const auto rid : nearbyRobotIndexes)
     {
         auto pos = std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid);
         if (pos != newNearbyRobotIndexes.end()) // we found something
@@ -68,7 +69,8 @@ void CoopFixed2Opportunity::registerNewRobots()
 void CoopFixed2Opportunity::step()
 {
     bool killed = random() < lifeExpectancy;
-    if (killed) {
+    if (killed)
+    {
         auto *wobs = dynamic_cast<CoopFixed2WorldObserver *>(gWorld->getWorldObserver());
         nearbyRobotIndexes.clear();
         newNearbyRobotIndexes.clear();
@@ -96,7 +98,7 @@ void CoopFixed2Opportunity::updateColor()
         }
         else if (curInv < curA * 1.3) /* basically playing ESS */
         {
-            _displayColorRed =198;
+            _displayColorRed = 198;
             _displayColorGreen = 186;
             _displayColorBlue = 58;
         }

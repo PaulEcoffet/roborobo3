@@ -19,22 +19,28 @@ class CoopFixed2WorldObserver : public WorldObserver
 {
 public:
     explicit CoopFixed2WorldObserver(World *__world);
+
     ~CoopFixed2WorldObserver() override;
 
     void reset() override;
+
     void stepEvolution();
 
     std::vector<std::pair<int, double>> getSortedFitnesses() const;
 
-    void logFitnesses(const std::vector<double>& curfitness);
+    void logFitnesses(const std::vector<double> &curfitness);
+
     void resetEnvironment();
+
     void stepPre() override;
+
     void stepPost() override;
 
 
     void addRobotToTeleport(int robotId);
 
     void addObjectToTeleport(int id);
+
     static double payoff(double invest, double totalInvest, int n, double a, double b);
 
 
@@ -53,9 +59,12 @@ protected:
 
 
     void computeOpportunityImpacts();
+
     void registerRobotsOnOpportunities();
+
     void clearRobotFitnesses();
-    void loadGenomesInRobots(const std::vector<std::vector<double>>& genomes);
+
+    void loadGenomesInRobots(const std::vector<std::vector<double>> &genomes);
 
     std::set<int> robotsToTeleport;
     int m_nbFakeRobots;

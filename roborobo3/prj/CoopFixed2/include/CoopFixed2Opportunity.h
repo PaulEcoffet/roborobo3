@@ -9,26 +9,29 @@
 #include "World/RoundObject.h"
 #include <set>
 
-class CoopFixed2Opportunity: public RoundObject
+class CoopFixed2Opportunity : public RoundObject
 {
 public:
     explicit CoopFixed2Opportunity(int __id);
+
     void step() override;
 
-    virtual const std::vector<int> & getNearbyRobotIndexes() const;
+    virtual const std::vector<int> &getNearbyRobotIndexes() const;
+
     virtual void registerNewRobots();
 
     void isWalked(int id) override;
 
     virtual int getNbNearbyRobots() const;
+
     virtual int getNbNewNearbyRobots() const;
 
 
     std::string inspect(std::string prefix) override;
+
     double curInv = 0;
     double curA = 0;
     int lifeid;
-
 
 
 protected:

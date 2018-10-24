@@ -22,10 +22,12 @@ public:
     explicit CoopFixed2AnalysisWorldObserver(World *__world);
 
     void stepPre() override;
-    void stepPost() override;
-    void reset() override;
-    void addObjectToTeleport(int id);
 
+    void stepPost() override;
+
+    void reset() override;
+
+    void addObjectToTeleport(int id);
 
 
 protected:

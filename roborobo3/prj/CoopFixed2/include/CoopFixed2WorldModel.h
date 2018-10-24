@@ -14,24 +14,31 @@ class CoopFixed2WorldModel : public RobotWorldModel
 {
 public:
     CoopFixed2WorldModel();
+
     std::deque<double> lastOwnInvest;
     std::deque<double> lastTotalInvest;
     std::deque<double> lastReputation;
 
     double meanLastTotalInvest();
+
     double meanLastOwnInvest();
+
     double meanLastReputation();
+
     void appendOwnInvest(const double invest);
 
     void appendTotalInvest(const double invest);
+
     void appendToReputation(const double d);
 
     double nbOnOpp = 0;
     bool onOpportunity;
     double selfA;
+
     void setNewSelfA();
+
     int arrival;
-    CoopFixed2Opportunity* opp;
+    CoopFixed2Opportunity *opp;
 
     bool fake;
     double fakeCoef;
