@@ -181,7 +181,7 @@ void CoopFixed2WorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tfake\tonOpp\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\n";
+            m_logall << "eval\titer\tid\ta\tfake\tonOpp\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++) {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
@@ -199,7 +199,10 @@ void CoopFixed2WorldObserver::stepPost()
                      << nbOnOpp << "\t"
                      << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
                      << wm->meanLastOwnInvest() << "\t"
-                     << wm->meanLastTotalInvest() << "\n";
+                     << wm->meanLastTotalInvest() << "\t"
+                     << wm->punishment << "\t"
+                     << wm->spite
+                     << "\n";
         }
     }
     else if ((m_generationCount+1) % CoopFixed2SharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
@@ -327,7 +330,9 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         wm->opp = nullptr;
         wm->nbOnOpp = 0;
         wm->arrival = 0;
+        wm->punishment = 0;
     }
+
     for (auto *physicalObject : gPhysicalObjects)
     {
         double totalInvest = 0;
@@ -383,6 +388,28 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
 
             if (!wm->fake) {
                 wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b);
+            }
+        }
+
+        if (CoopFixed2SharedData::punishment)
+        {
+            for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+            {
+                auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
+                const double spite = clamp(wm->spite, 0, CoopFixed2SharedData::maxCoop);
+                for(auto other = opp->getNearbyRobotIndexes().begin(); other != itmax; other++)
+                {
+                    auto *o_wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*other)->getWorldModel());
+                    if (other != index) // if it's a different robot
+                    {
+                        o_wm->punishment += spite;
+                        o_wm->_fitnessValue -= spite * 3; // TODO Make punishment coef variable
+                    }
+                    else
+                    {
+                        wm->_fitnessValue -= spite; // cost of punishing someone
+                    }
+                }
             }
         }
 

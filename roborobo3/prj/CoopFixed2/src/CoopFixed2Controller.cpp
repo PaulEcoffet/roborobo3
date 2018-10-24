@@ -29,8 +29,8 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel* wm) {
     unsigned int nbCamInputs = getNbCameraInputs();
     unsigned int nbGameInputs = getNbGameInputs();
 
-    unsigned int nbMoveOutput = 1 + (int) !CoopFixed2SharedData::tpToNewObj;
-    unsigned int nbGameOutput = 1;
+    unsigned int nbMoveOutput = 1 + (int) !CoopFixed2SharedData::tpToNewObj ;
+    unsigned int nbGameOutput = 1 + (int) CoopFixed2SharedData::punishment;
 
     switch (CoopFixed2SharedData::controllerType) {
         case MLP_ID:
@@ -109,9 +109,11 @@ void CoopFixed2Controller::step()
     /* Reading the output of the networks */
     std::vector<double> outputs = m_nn->readOut();
     int i_coopOut = 2;
+    int i_spite = 3;
     if (CoopFixed2SharedData::tpToNewObj)
     {
         i_coopOut = 1;
+        i_spite = 2;
     }
 
     if (CoopFixed2SharedData::splitNetwork)
@@ -137,6 +139,11 @@ void CoopFixed2Controller::step()
         coop = (1 - ((outputs[i_coopOut] + 1) / 2)) * CoopFixed2SharedData::maxCoop;
     }
     m_wm->_cooperationLevel = coop; // Range between [0; maxCoop]
+
+    if (CoopFixed2SharedData::punishment)
+    {
+        m_wm->spite = ((outputs[i_spite] + 1) / 2) * CoopFixed2SharedData::maxCoop;
+    }
 
     if (m_wm->fake)
     {
@@ -298,6 +305,12 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const {
         if (fill_names) inputnames.emplace_back("mean own inv");
     }
 
+    if (CoopFixed2SharedData::punishmentAsInput)
+    {
+        inputs[i++] = m_wm->punishment / CoopFixed2SharedData::maxCoop;
+        if (fill_names) inputnames.emplace_back("punishment");
+    }
+
     /*
      * introspection inputs
      */
@@ -339,14 +352,16 @@ unsigned int CoopFixed2Controller::getNbInputs() const
 }
 
 unsigned int CoopFixed2Controller::getNbGameInputs() const {
-    const unsigned int nbGameInputs = static_cast<const unsigned int>(
+    const auto nbGameInputs = static_cast<const unsigned int>(
         1 // playing
         + 1 // on Opp
         + 1 // nbOnOpportunity
         + CoopFixed2SharedData::arrivalAsInput
         + CoopFixed2SharedData::totalInvAsInput
         + CoopFixed2SharedData::ownInvAsInput
-        + CoopFixed2SharedData::selfAAsInput);
+        + CoopFixed2SharedData::selfAAsInput
+        + CoopFixed2SharedData::punishmentAsInput
+        );
     return nbGameInputs;
 }
 
@@ -434,6 +449,8 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     }
     out << prefix << "a coeff: " << m_wm->selfA << "\n";
     out << prefix << "reputation : " << m_wm->meanLastReputation() << "\n";
+    out << prefix << "received punishment : " << m_wm->punishment << "\n";
+    out << prefix << "sent punishment : " << m_wm->spite << "\n";
 
     out << prefix << "Actual fitness: " << getFitness() << "\n";
     auto inputs = getInputs();
@@ -473,7 +490,8 @@ const std::vector<double> CoopFixed2Controller::getWeights() const
 unsigned int CoopFixed2Controller::getNbOutputs() const
 {
     return 1
-           + (int) !CoopFixed2SharedData::tpToNewObj // Motor commands
+           + (unsigned int) !CoopFixed2SharedData::tpToNewObj // Motor commands
            + 1  // Cooperation value
+           + (unsigned int) CoopFixed2SharedData::punishment
     ;
 }
