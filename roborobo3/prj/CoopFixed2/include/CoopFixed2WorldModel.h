@@ -39,6 +39,8 @@ public:
     void reset();
 
     bool teleport;
+    double punishment;
+    double spite;
 };
 
 

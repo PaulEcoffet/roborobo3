@@ -51,6 +51,8 @@ public:
     static bool randomFakeCoef;
     static double fakeCoefStd;
     static bool smartTeleport;
+    static bool punishment;
+    static bool punishmentAsInput;
 };
 
 

@@ -14,7 +14,9 @@ CoopFixed2WorldModel::CoopFixed2WorldModel()
           selfA(0.5),
           fake(false),
           fakeCoef(1),
-          teleport(false)
+          teleport(false),
+          punishment(0),
+          spite(0)
 {
     setNewSelfA();
 }
