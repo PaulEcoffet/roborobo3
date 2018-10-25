@@ -12,6 +12,7 @@ CoopFixed2WorldModel::CoopFixed2WorldModel()
         : RobotWorldModel(),
           onOpportunity(false),
           selfA(0.5),
+          opp(nullptr),
           fake(false),
           fakeCoef(1),
           teleport(false),

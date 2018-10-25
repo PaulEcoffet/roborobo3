@@ -38,7 +38,7 @@ public:
     void setNewSelfA();
 
     int arrival;
-    CoopFixed2Opportunity *opp;
+    CoopFixed2Opportunity *opp = nullptr;
 
     bool fake;
     double fakeCoef;
