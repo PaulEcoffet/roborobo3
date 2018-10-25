@@ -42,7 +42,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
     m_genomesIt = m_genomesJson.begin();
 
     m_log.open(gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt");
-    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\n";
+    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\tspite\n";
 
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
@@ -64,7 +64,6 @@ void CoopFixed2AnalysisWorldObserver::reset()
 void CoopFixed2AnalysisWorldObserver::stepPre()
 {
     const double maxCoop = CoopFixed2SharedData::maxCoop;
-    clearOpportunityNearbyRobots();
     m_curIterationInRep++;
     if (m_curIterationInRep == m_nbIterationPerRep)
     {
@@ -95,27 +94,6 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
 
 void CoopFixed2AnalysisWorldObserver::stepPost()
 {
-    if (CoopFixed2SharedData::tpToNewObj)
-    {
-        auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
-        for (int i = 0; i < 1; i++)
-        {
-            auto *rob = gWorld->getRobot(i);
-            if (dynamic_cast<CoopFixed2WorldModel * >(rob->getWorldModel())->teleport)
-            {
-                int dest_obj = randomPhys(engine);
-                PhysicalObject *physobj = gPhysicalObjects[dest_obj];
-                rob->unregisterRobot();
-                rob->setCoord(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius,
-                              physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
-                rob->setCoordReal(physobj->getXCenterPixel() + gPhysicalObjectDefaultRadius,
-                                  physobj->getYCenterPixel() + gPhysicalObjectDefaultRadius);
-                rob->registerRobot();
-            }
-        }
-    }
-
-
     for (auto id: objectsToTeleport)
     {
         gPhysicalObjects[id]->unregisterObject();
@@ -123,10 +101,21 @@ void CoopFixed2AnalysisWorldObserver::stepPost()
         gPhysicalObjects[id]->registerObject();
         dynamic_cast<CoopFixed2AnalysisOpportunity *>(gPhysicalObjects[id])->placeFakeRobot();
     }
+
     objectsToTeleport.clear();
 
+    registerRobotsOnOpportunities();
     computeOpportunityImpact();
     monitorPopulation();
+}
+
+void CoopFixed2AnalysisWorldObserver::registerRobotsOnOpportunities()
+{
+    for (auto *physicalObject : gPhysicalObjects)
+    {
+        auto *opp = dynamic_cast<CoopFixed2Opportunity *>(physicalObject);
+        opp->registerNewRobots();
+    }
 }
 
 void CoopFixed2AnalysisWorldObserver::monitorPopulation()
@@ -150,7 +139,8 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     out << oppLifeId << "\t";
     out << oppCoop << "\t";
     out << oppNbRob << "\t";
-    out << wm->_cooperationLevel << "\n";
+    out << wm->_cooperationLevel << "\t";
+    out << wm->spite << "\n";
     m_log << out.str();
 }
 
@@ -274,15 +264,6 @@ void CoopFixed2AnalysisWorldObserver::loadGenome(const std::vector<double> &weig
     ctl->resetFitness();
 }
 
-
-void CoopFixed2AnalysisWorldObserver::clearOpportunityNearbyRobots()
-{
-    for (auto *physicalObject : gPhysicalObjects)
-    {
-        auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity *>(physicalObject);
-        opp->clearNearbyRobotIndexes();
-    }
-}
 
 
 void CoopFixed2AnalysisWorldObserver::addObjectToTeleport(int id)

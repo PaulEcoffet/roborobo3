@@ -27,6 +27,7 @@ public:
 
     void reset() override;
 
+    void registerRobotsOnOpportunities();
     void addObjectToTeleport(int id);
 
 
@@ -54,8 +55,6 @@ protected:
     double m_stepCoop;
 
     void computeOpportunityImpact();
-
-    void clearOpportunityNearbyRobots();
 
 
     std::set<int> objectsToTeleport;

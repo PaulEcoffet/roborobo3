@@ -21,34 +21,21 @@ public:
 
     void setCoopValue(double coop);
 
-    void clearNearbyRobotIndexes();
-
-    std::string inspect(std::string prefix) override;
-
-    const std::vector<int> &getNearbyRobotIndexes() const override;
-
-    void isPushed(int id, std::tuple<double, double> speed) override;
-
-    int getNbNearbyRobots() const override;
-
     double getCoop() const;
 
     void setNbFakeRobots(int nbrobots);
 
     int getNbFakeRobots();
 
-    void isWalked(int id) override;
-
     void placeFakeRobot();
+
+    void updateColor() override;
 
 
     std::shared_ptr<Robot> fakerobot = nullptr;
+
 protected:
     double m_coop;
-    std::vector<int> nearbyRobotIndexes;
-
-    void updateColor();
-
     int nbFakeRobots;
 
 };

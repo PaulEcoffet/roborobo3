@@ -6,6 +6,8 @@
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisWorldObserver.h>
 #include <core/WorldModels/RobotWorldModel.h>
+#include <CoopFixed2/include/CoopFixed2AnalysisOpportunity.h>
+
 #include "CoopFixed2/include/CoopFixed2AnalysisOpportunity.h"
 
 
@@ -29,22 +31,14 @@ void CoopFixed2AnalysisOpportunity::step()
         newNearbyRobotIndexes.clear();
         wobs->addObjectToTeleport(_id);
     }
+    updateColor();
     if (fakerobot != nullptr)
     {
         RobotWorldModel *wm = fakerobot->getWorldModel();
-        wm->_desiredTranslationalValue = gMaxTranslationalSpeed;
+        wm->_desiredTranslationalValue = 0;
         wm->_cooperationLevel = getCoop();
         wm->_desiredRotationalVelocity = 0;
     }
-    updateColor();
-    RoundObject::step();
-}
-
-void CoopFixed2AnalysisOpportunity::updateColor()
-{
-    _displayColorRed = 0;
-    _displayColorGreen = static_cast<Uint8>(128 + 127 * m_coop / CoopFixed2SharedData::maxCoop);
-    _displayColorBlue = static_cast<Uint8>(128 - 127 * m_coop / CoopFixed2SharedData::maxCoop);
 }
 
 void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
@@ -53,48 +47,9 @@ void CoopFixed2AnalysisOpportunity::setCoopValue(double coop)
     updateColor();
 }
 
-int CoopFixed2AnalysisOpportunity::getNbNearbyRobots() const
-{
-    return static_cast<int>(nearbyRobotIndexes.size());
-}
-
-void CoopFixed2AnalysisOpportunity::isPushed(int id, std::tuple<double, double> speed)
-{
-    int rid = id - gRobotIndexStartOffset;
-    if (std::find(nearbyRobotIndexes.begin(), nearbyRobotIndexes.end(), rid) == nearbyRobotIndexes.end())
-    {
-        nearbyRobotIndexes.emplace_back(rid);
-    }
-}
-
-void CoopFixed2AnalysisOpportunity::isWalked(int id)
-{
-    int rid = id - gRobotIndexStartOffset;
-    if (std::find(nearbyRobotIndexes.begin(), nearbyRobotIndexes.end(), rid) == nearbyRobotIndexes.end())
-    {
-        nearbyRobotIndexes.emplace_back(rid);
-    }
-}
-
-const std::vector<int> &CoopFixed2AnalysisOpportunity::getNearbyRobotIndexes() const
-{
-    return nearbyRobotIndexes;
-}
-
-void CoopFixed2AnalysisOpportunity::clearNearbyRobotIndexes()
-{
-    nearbyRobotIndexes.clear();
-}
-
 double CoopFixed2AnalysisOpportunity::getCoop() const
 {
     return m_coop;
-}
-
-std::string CoopFixed2AnalysisOpportunity::inspect(std::string prefix)
-{
-    std::string info(prefix + "I'm a fake opp\n");
-    return info + CoopFixed2Opportunity::inspect(prefix);
 }
 
 void CoopFixed2AnalysisOpportunity::setNbFakeRobots(int nbrobots)
@@ -129,10 +84,32 @@ void CoopFixed2AnalysisOpportunity::placeFakeRobot()
     fakerobot->setCoord(newrobcx + xpad, newrobcy + ypad);
     fakerobot->registerRobot();
     RobotWorldModel *wm = fakerobot->getWorldModel();
-    wm->_desiredTranslationalValue = gMaxTranslationalSpeed;
-    wm->_agentAbsoluteOrientation = fmod(rot * 180 / M_PI + 180, 360);
+    wm->_desiredTranslationalValue = 0;
+    wm->_agentAbsoluteOrientation = 0;
     wm->_cooperationLevel = getCoop();
     wm->_desiredRotationalVelocity = 0;
     wm->setAlive(false);
+}
+
+void CoopFixed2AnalysisOpportunity::updateColor()
+{
+    if (m_coop < 3) /* under xESS = a/n per robot, so for sum over rob xESS = A */
+    {
+        _displayColorRed = 189;
+        _displayColorGreen = 131;
+        _displayColorBlue = 126;
+    }
+    else if (m_coop < 6) /* basically playing ESS */
+    {
+        _displayColorRed = 198;
+        _displayColorGreen = 186;
+        _displayColorBlue = 58;
+    }
+    else /* Playing above ESS, closer to SO */
+    {
+        _displayColorRed = 44;
+        _displayColorGreen = 83;
+        _displayColorBlue = 120;
+    }
 }
 
