@@ -153,7 +153,7 @@ void PartnerControlWorldObserver::stepEvolution()
 {
     std::vector<std::pair<int, double>> fitnesses = getSortedFitnesses();
     logFitnesses(fitnesses);
-    m_individuals = pycma.getNextGeneration(m_fitnesses);
+    m_individuals = pycma.getNextGeneration(m_individuals, m_fitnesses);
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
     clearRobotFitnesses();
 }

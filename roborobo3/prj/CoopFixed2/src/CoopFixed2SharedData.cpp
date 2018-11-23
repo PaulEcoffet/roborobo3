@@ -47,6 +47,8 @@ bool CoopFixed2SharedData::smartTeleport = true;
 bool CoopFixed2SharedData::punishment = false;
 bool CoopFixed2SharedData::punishmentAsInput = false;
 bool CoopFixed2SharedData::partnerControl = false;
+double CoopFixed2SharedData::sigma = 0;
+bool CoopFixed2SharedData::fixCoop = false;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -92,6 +94,9 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("punishment", &CoopFixed2SharedData::punishment, false);
     gProperties.checkAndGetPropertyValue("punishmentAsInput", &CoopFixed2SharedData::punishmentAsInput, false);
     gProperties.checkAndGetPropertyValue("partnerControl", &CoopFixed2SharedData::partnerControl, false);
+    gProperties.checkAndGetPropertyValue("sigma", &CoopFixed2SharedData::sigma, false);
+    gProperties.checkAndGetPropertyValue("fixCoop", &CoopFixed2SharedData::fixCoop, false);
+
 }
 
 

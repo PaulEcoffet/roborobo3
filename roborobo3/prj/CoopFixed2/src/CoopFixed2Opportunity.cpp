@@ -68,16 +68,22 @@ void CoopFixed2Opportunity::registerNewRobots()
 
 void CoopFixed2Opportunity::step()
 {
-    bool killed = random() < lifeExpectancy;
-    if (killed)
+    if(random() < lifeExpectancy)
     {
-        auto *wobs = dynamic_cast<CoopFixed2WorldObserver *>(gWorld->getWorldObserver());
-        nearbyRobotIndexes.clear();
-        newNearbyRobotIndexes.clear();
-        wobs->addObjectToTeleport(_id);
+        kill();
     }
     updateColor();
     RoundObject::step();
+}
+
+void CoopFixed2Opportunity::kill()
+{
+    auto *wobs = dynamic_cast<CoopFixed2WorldObserver *>(gWorld->getWorldObserver());
+    nearbyRobotIndexes.clear();
+    newNearbyRobotIndexes.clear();
+    curA = 0;
+    curInv = 0;
+    wobs->addObjectToTeleport(_id);
 }
 
 void CoopFixed2Opportunity::updateColor()

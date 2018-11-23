@@ -55,11 +55,13 @@ void FastWandererWorldObserver::stepPre()
     {
         logFitnesses(getSortedFitnesses());
         std::vector<double> fitness;
+        std::vector<std::vector<double>> individuals;
         for (int i = 0; i < gWorld->getNbOfRobots(); i++)
         {
             fitness.push_back(gWorld->getRobot(i)->getWorldModel()->_fitnessValue);
+            individuals.push_back(dynamic_cast<FastWandererController*>(gWorld->getRobot(i)->getController())->getGenome());
         }
-        std::vector<std::vector<double>> new_generation = pycma.getNextGeneration(fitness);
+        std::vector<std::vector<double>> new_generation = pycma.getNextGeneration(individuals, fitness);
         if (new_generation.empty())
         {
             exit(0);
