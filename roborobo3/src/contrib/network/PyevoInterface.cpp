@@ -26,17 +26,22 @@ std::vector<std::vector<double>> PyevoInterface::initCMA(int popsize, int parame
             {"nb_weights", parameters_dimension}
     };
     ni.sendMessage(params.dump());
-    return getNextGeneration(std::vector<double>());
+    return getNextGeneration(std::vector<std::vector<double>>(), std::vector<double>());
 }
 
-std::vector<std::vector<double>> PyevoInterface::getNextGeneration(std::vector<double> fitnesses)
+std::vector<std::vector<double>> PyevoInterface::getNextGeneration(std::vector<std::vector<double>>individuals, std::vector<double> fitnesses)
 {
     std::vector<std::vector<double>> genomes;
 
-    if (!fitnesses.empty())
+    if (!fitnesses.empty() and !individuals.empty())
     {
         json json_fit = fitnesses;
-        ni.sendMessage(json_fit.dump());
+        json json_ind = individuals;
+        json json_both;
+        json_both["fitness"] = json_fit;
+        json_both["ind"] = individuals;
+
+        ni.sendMessage(json_both.dump());
     }
     std::string receivedJson = ni.receiveMessage();
     if (receivedJson.empty())

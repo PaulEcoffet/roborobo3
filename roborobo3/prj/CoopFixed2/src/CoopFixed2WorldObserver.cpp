@@ -99,7 +99,8 @@ void CoopFixed2WorldObserver::stepPre()
         m_curEvaluationIteration = 0;
         for (int i = 0; i < m_nbIndividuals; i++)
         {
-            auto *wm = m_world->getRobot(i)->getWorldModel();
+            auto *wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
+            assert(!wm->fake || wm->_fitnessValue == 0);
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
@@ -235,7 +236,7 @@ void CoopFixed2WorldObserver::stepEvolution()
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
-    m_individuals = pyevo.getNextGeneration(m_fitnesses);
+    m_individuals = pyevo.getNextGeneration(m_individuals, m_fitnesses);
     if (m_individuals.empty())
     {
         exit(0);
@@ -427,11 +428,13 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                     if (other != index) // if it's a different robot
                     {
                         o_wm->punishment += spite;
-                        o_wm->_fitnessValue -= spite * 3; // TODO Make punishment coef variable
+                        if (!o_wm->fake)
+                            o_wm->_fitnessValue -= spite * 3; // TODO Make punishment coef variable
                     }
                     else
                     {
-                        wm->_fitnessValue -= spite; // cost of punishing someone
+                        if (!wm->fake)
+                            wm->_fitnessValue -= spite; // cost of punishing someone
                     }
                 }
             }
@@ -440,7 +443,16 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         // Set the cur total invest for coloring
         opp->curInv = totalInvest;
         opp->curA = totalA / n;
+    }
 
+    // Give reward for all the lonely walkers
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
+        auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
+        if (!wm->onOpportunity and !wm->fake)
+        {
+            wm->_fitnessValue += CoopFixed2SharedData::sigma;
+        }
     }
 }
 
@@ -449,20 +461,13 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
 {
     double res = 0;
     const double x0 = (totalInvest - invest);
-    if (!CoopFixed2SharedData::prisonerDilemma)
+    if (CoopFixed2SharedData::atLeastTwo and n < 2)
     {
-        if (CoopFixed2SharedData::atLeastTwo and n < 2)
-        {
-            res = payoff(a / 2, 2 * a / 2, 2, a, b) * 0.0; /* 0% of ESS payoff with 2 player */
-        }
-        else
-        {
-            res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
-        }
+        res = 0; // No payoff if you are alone
     }
     else
     {
-        throw std::runtime_error("Not implemented");
+        res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
     }
     return res;
 }

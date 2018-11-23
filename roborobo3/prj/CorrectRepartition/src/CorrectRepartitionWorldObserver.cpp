@@ -180,7 +180,7 @@ void CorrectRepartitionWorldObserver::stepEvolution()
         std::ofstream genfile(path);
         genfile << std::setw(2) << json(m_individuals);
     }
-    m_individuals = pycma.getNextGeneration(m_fitnesses);
+    m_individuals = pycma.getNextGeneration(m_individuals, m_fitnesses);
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
 }
 

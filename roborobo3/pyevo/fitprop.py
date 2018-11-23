@@ -2,6 +2,10 @@ import numpy as np
 from copy import copy, deepcopy
 from json_tricks import dump
 
+NOTHING = 0
+UNIFORM = 1
+NORMAL = 2
+
 
 class FitPropEvolutionStrategy():
     """Fitness Proportionate with ask and tell interface."""
@@ -31,12 +35,18 @@ class FitPropEvolutionStrategy():
         # Normal transformation along all genes
         if normal_trans:
             new_solutions = np.random.normal(new_solutions, self.mutation_rate)
-        else:  # pick few genes and uniform transformation on them.
+        else:  # pick few genes and uniform transformation on them or a normal one
             p = self.mutation_rate
-            mutation_mask = np.random.choice([True, False], size=new_solutions.shape, p=[p, 1 - p])
-            print("mask type :", mutation_mask.dtype)
-            mutations = np.random.uniform(self.minb, self.maxb, size=mutation_mask.sum())
-            new_solutions[mutation_mask] = mutations
+            p_uni = 0.1 * p
+            p_normal = p - p_uni
+            mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
+            print(f"there are {(mutation_mask == UNIFORM).sum()} uniform mut and {(mutation_mask == NORMAL).sum()} normal out of {new_solutions.shape}.")
+            # Uniform transformation
+            mutations = np.random.uniform(self.minb, self.maxb, size=(mutation_mask == UNIFORM).sum())
+            new_solutions[mutation_mask == UNIFORM] = mutations
+            # normal transformation
+            mutations = np.random.normal(0, 0.05, size=(mutation_mask == NORMAL).sum())
+            new_solutions[mutation_mask == NORMAL] += mutations
         np.clip(new_solutions, self.minb, self.maxb, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
 

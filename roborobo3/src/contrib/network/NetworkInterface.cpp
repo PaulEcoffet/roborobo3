@@ -64,7 +64,7 @@ namespace network
         }
         else
         {
-            size_t message_length = static_cast<size_t>(ntohl(std::stoul(header, nullptr, 16)));
+            size_t message_length = static_cast<size_t>(std::stoul(header, nullptr, 16));
             boost::asio::streambuf message_buf;
             size_t bytes_read = boost::asio::read(socket, message_buf.prepare(message_length), error);
             message_buf.commit(bytes_read);

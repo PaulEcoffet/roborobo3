@@ -74,6 +74,9 @@ protected:
     std::vector<double> getCameraInputs() const;
 
     bool fill_names = false;
+
+    bool verbose = false;
+    double hardcoop;
 };
 
 

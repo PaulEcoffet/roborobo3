@@ -49,8 +49,11 @@ public:
     static bool punishment;
     static bool punishmentAsInput;
     static bool partnerControl;
+    static double sigma;
+    static bool fixCoop;
 
     static void initSharedData();
+
 
 
 };

@@ -46,7 +46,7 @@ public:
      * getNextGeneration.
      * @return A vector the new genomes for each individual
      */
-    std::vector<std::vector<double>> getNextGeneration(std::vector<double> fitnesses);
+    std::vector<std::vector<double>> getNextGeneration(std::vector<std::vector<double>>individuals, std::vector<double> fitnesses);
 
     /**
      * Close the connection between the PyCMAES server and roborobo.

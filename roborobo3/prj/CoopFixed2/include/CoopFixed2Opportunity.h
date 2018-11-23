@@ -26,18 +26,19 @@ public:
 
     virtual int getNbNewNearbyRobots() const;
 
+    virtual void kill();
 
     std::string inspect(std::string prefix) override;
 
     double curInv = 0;
     double curA = 0;
     int lifeid;
+    double lifeExpectancy;
 
 
 protected:
     std::vector<int> nearbyRobotIndexes;
     std::vector<int> newNearbyRobotIndexes;
-    double lifeExpectancy;
 
     virtual void updateColor();
 

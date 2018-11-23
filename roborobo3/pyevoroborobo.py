@@ -42,7 +42,7 @@ def send_msg(sock, msg, encoding='utf8'):
     """Send the message `msg` prefixed by its byte length through `sock`."""
     msg_byte = msg.encode(encoding)
     # write the header with the internet bit order (htonl) and encode it
-    header = '{:8X}'.format(socket.htonl(len(msg_byte))).encode(encoding)
+    header = '{:8X}'.format(len(msg_byte)).encode(encoding)
     sock.sendall(header + msg_byte)
 
 
@@ -116,11 +116,13 @@ def main():
             ########################################
             fitnesses = []
             for i in range(argout.parallel_rep):
-                fit_jsonstr = recv_msg(conns[i])
-                if fit_jsonstr is None:
+                back_jsonstr = recv_msg(conns[i])
+                if back_jsonstr is None:
                     end = True
                     break
-                fitnesses.append(loads(fit_jsonstr))
+                back_json = loads(back_jsonstr)
+                assert(np.allclose(back_json['ind'], np.array(solutions)))
+                fitnesses.append(back_json['fitness'])
             if not end:
                 fitnesses = np.asarray(fitnesses).sum(axis=0)
                 es.tell(solutions, np.array([sign*fit for fit in fitnesses]))

@@ -32,7 +32,7 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
     unsigned int nbGameInputs = getNbGameInputs();
 
     unsigned int nbMoveOutput = 1 + (int) !CoopFixed2SharedData::tpToNewObj;
-    unsigned int nbGameOutput = 1 + (int) CoopFixed2SharedData::punishment;
+    unsigned int nbGameOutput = (int) !CoopFixed2SharedData::fixCoop + (int) CoopFixed2SharedData::punishment;
 
     switch (CoopFixed2SharedData::controllerType)
     {
@@ -103,6 +103,8 @@ void CoopFixed2Controller::step()
         return;
     }
 
+    verbose = false;
+
     fill_names = inputnames.empty();
     if (CoopFixed2SharedData::splitNetwork)
     {
@@ -127,6 +129,12 @@ void CoopFixed2Controller::step()
 
     /* Reading the output of the networks */
     std::vector<double> outputs = m_nn->readOut();
+    if (CoopFixed2SharedData::splitNetwork)
+    {
+        auto gameoutput = m_nn2->readOut();
+        outputs.insert(outputs.end(), gameoutput.begin(), gameoutput.end());
+    }
+
     int i_coopOut = 2;
     int i_spite = 3;
     if (CoopFixed2SharedData::tpToNewObj)
@@ -135,11 +143,7 @@ void CoopFixed2Controller::step()
         i_spite = 2;
     }
 
-    if (CoopFixed2SharedData::splitNetwork)
-    {
-        auto gameoutput = m_nn2->readOut();
-        outputs.insert(outputs.end(), gameoutput.begin(), gameoutput.end());
-    }
+
     assert(outputs.size() == getNbOutputs());
     if (CoopFixed2SharedData::tpToNewObj)
     {
@@ -155,16 +159,22 @@ void CoopFixed2Controller::step()
     }
 
     double coop;
-    if (CoopFixed2SharedData::reverseCoopOutput == false)
+    if (!CoopFixed2SharedData::fixCoop)
     {
-        coop = ((outputs[i_coopOut] + 1) / 2) * CoopFixed2SharedData::maxCoop;
+        if (!CoopFixed2SharedData::reverseCoopOutput)
+        {
+            coop = ((outputs[i_coopOut] + 1) / 2) * CoopFixed2SharedData::maxCoop;
+        }
+        else
+        {
+            coop = (1 - ((outputs[i_coopOut] + 1) / 2)) * CoopFixed2SharedData::maxCoop;
+        }
     }
     else
     {
-        coop = (1 - ((outputs[i_coopOut] + 1) / 2)) * CoopFixed2SharedData::maxCoop;
+        coop = hardcoop;
     }
     m_wm->_cooperationLevel = coop; // Range between [0; maxCoop]
-
     if (CoopFixed2SharedData::punishment)
     {
         m_wm->spite = ((outputs[i_spite] + 1) / 2) * CoopFixed2SharedData::maxCoop;
@@ -250,8 +260,16 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
             auto *opportunity = dynamic_cast<CoopFixed2Opportunity *>(
                     gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
             isOpportunity = true;
-            nbOnOpp = opportunity->getNbNearbyRobots();
-            lastInvOnOpp = opportunity->curInv;
+            if (opportunity == m_wm->opp)
+            {
+                nbOnOpp = m_wm->nbOnOpp;
+                lastInvOnOpp = m_wm->meanLastTotalInvest();
+            }
+            else
+            {
+                nbOnOpp = opportunity->getNbNearbyRobots();
+                lastInvOnOpp = opportunity->curInv;
+            }
         }
         else if (Agent::isInstanceOf(entityId))
         {
@@ -370,28 +388,37 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const
 
 void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
 {
+    int coopgene = 0;
+    if (CoopFixed2SharedData::fixCoop)
+    {
+        coopgene = 1;
+    }
     if (!CoopFixed2SharedData::splitNetwork)
     {
-        if (m_nn->getRequiredNumberOfWeights() != newGenome.size())
+        if (m_nn->getRequiredNumberOfWeights() + coopgene != newGenome.size())
         {
-            std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
             exit(-1);
         }
-        weights = newGenome;
+        weights = std::vector<double>(newGenome.begin() + coopgene, newGenome.end());
         m_nn->setWeights(weights);
     }
     else
     {
-        if (m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
+        if (coopgene + m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
         {
-            std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
             exit(-1);
         }
-        auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights();
-        weights = std::vector<double>(newGenome.begin(), split);
+        auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights() + coopgene;
+        weights = std::vector<double>(newGenome.begin() + coopgene, split);
         weights2 = std::vector<double>(split, newGenome.end());
         m_nn->setWeights(weights);
         m_nn2->setWeights(weights2);
+    }
+    if(CoopFixed2SharedData::fixCoop)
+    {
+        hardcoop = (newGenome[0] + 5.) / 10 * CoopFixed2SharedData::maxCoop;
     }
     if (CoopFixed2SharedData::controllerType == ELMAN_ID)
     {
@@ -505,51 +532,59 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
 
     }
     out << prefix << "a coeff: " << m_wm->selfA << "\n";
+    out << prefix << "last coop: " << m_wm->_cooperationLevel << "\n";
     out << prefix << "reputation : " << m_wm->meanLastReputation() << "\n";
     out << prefix << "received punishment : " << m_wm->punishment << "\n";
     out << prefix << "sent punishment : " << m_wm->spite << "\n";
 
     out << prefix << "Actual fitness: " << getFitness() << "\n";
-    auto inputs = getInputs();
-    out << prefix << "inputs:\n";
-    for (int i = 0; i < inputs.size(); i++)
+    if (verbose)
     {
-        out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
-    }
-    out << prefix << "outputs:\n";
-    auto &outputs = m_nn->readOut();
-    for (auto &output : outputs)
-    {
-        out << prefix << "\t" << output << "\n"; // TODO Crash without reason
-    }
-    if (CoopFixed2SharedData::splitNetwork)
-    {
-        auto &outputs = m_nn2->readOut();
+        auto inputs = getInputs();
+        out << prefix << "inputs:\n";
+        for (int i = 0; i < inputs.size(); i++)
+        {
+            out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
+        }
+        out << prefix << "outputs:\n";
+        auto &outputs = m_nn->readOut();
         for (auto &output : outputs)
         {
             out << prefix << "\t" << output << "\n"; // TODO Crash without reason
         }
+        if (CoopFixed2SharedData::splitNetwork)
+        {
+            auto &outputs = m_nn2->readOut();
+            for (auto &output : outputs)
+            {
+                out << prefix << "\t" << output << "\n"; // TODO Crash without reason
+            }
+        }
     }
+    verbose = true;
     return out.str();
 }
 
 const std::vector<double> CoopFixed2Controller::getWeights() const
 {
+    std::vector<double> allweights;
+    if (CoopFixed2SharedData::fixCoop)
+    {
+        allweights.push_back(hardcoop);
+    }
+    allweights.insert(allweights.end(), weights.begin(), weights.end());
+
     if (CoopFixed2SharedData::splitNetwork)
     {
-        std::vector<double> allweights;
-        allweights.insert(allweights.end(), weights.begin(), weights.end());
         allweights.insert(allweights.end(), weights2.begin(), weights2.end());
-        return allweights;
-
     }
-    return weights;
+    return allweights;
 }
 
 unsigned int CoopFixed2Controller::getNbOutputs() const
 {
     return 1
            + (unsigned int) !CoopFixed2SharedData::tpToNewObj // Motor commands
-           + 1  // Cooperation value
+           + (unsigned int) !CoopFixed2SharedData::fixCoop  // Cooperation value
            + (unsigned int) CoopFixed2SharedData::punishment;
 }
