@@ -2,6 +2,7 @@
 
 debug=false
 fake=false
+max=10
 if [ $1 = "-d" ]
 then
   debug=true
@@ -10,7 +11,13 @@ elif [ $1 = "-f" ]
 then
   fake=true
   shift
+elif [ $1 = "-p" ]
+then
+  shift
+  max=$1
+  shift
 fi
+
 
 gen=$1
 i=0
@@ -58,7 +65,7 @@ analysisNbRep=10
 
   # only run analyses 10 by 10
   let "i=$i+1"
-  if [ "$i" = 10 ]
+  if [ "$i" = $max ]
   then
     echo "wait"
     wait
