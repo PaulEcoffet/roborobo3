@@ -46,7 +46,6 @@
 
 #include "RoboroboMain/roborobo.h"
 
-#include "version.h"
 
 // Project headers
 
@@ -1005,7 +1004,6 @@ void initLogging()
 
 	//gLogFile << "# log comment      : " << gLogCommentText << std::endl; 
 
-	gLogManager->write("GITSHA1=" + Version::GIT_SHA1 + "\n");
 	gLogManager->flush();
 
 	// * Dump a raw copy of the properties file from gProperties, ie. as it was parsed and understood.

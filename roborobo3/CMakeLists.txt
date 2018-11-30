@@ -20,7 +20,9 @@ include_directories(prj)
 
 
 set(Boost_USE_STATIC_LIBS   ON)
-set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
+if (UNIX AND NOT APPLE)
+    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
+endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 # SDL IMPORT
@@ -60,7 +62,6 @@ configure_file("${CMAKE_CURRENT_SOURCE_DIR}/cmake/version.cpp.in" "${CMAKE_CURRE
 
 list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/version.h)
 
-SET(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
 
 find_package(SDL2 REQUIRED)
 find_package(SDL2_image REQUIRED)
@@ -72,7 +73,10 @@ find_package(Boost COMPONENTS filesystem system REQUIRED)
 IF (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
 endif()
-find_package( ZLIB REQUIRED )
+
+Set(ZLIB_DIR /usr/local/opt/zlib/)
+
+find_package( ZLIB REQUIRED PATH ZLIB_DIR )
 find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2_IMAGE_INCLUDE_DIRS})
