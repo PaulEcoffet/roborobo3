@@ -293,7 +293,7 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
         }
         if (fill_names)
         {
-            inputnames.emplace_back("dist " + std::__cxx11::to_string(j));
+            inputnames.emplace_back("dist " + std::to_string(j));
             inputnames.emplace_back("is robot");
             if (CoopFixed2SharedData::reputation)
             {

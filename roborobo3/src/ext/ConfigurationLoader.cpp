@@ -18,7 +18,6 @@
 #include "Config/CoopFixed2ConfigurationLoader.h"
 #include "Config/CorrectRepartitionConfigurationLoader.h"
 #include "Config/DebugCollConfigurationLoader.h"
-#include "Config/PartnerBondingConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
