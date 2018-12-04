@@ -100,7 +100,6 @@ void CoopFixed2WorldObserver::stepPre()
         for (int i = 0; i < m_nbIndividuals; i++)
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
-            assert(!wm->fake || wm->_fitnessValue == 0);
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
@@ -410,10 +409,8 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->appendTotalInvest(totalInvest);
             }
 
-            if (!wm->fake)
-            {
-                wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b);
-            }
+            wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b);
+
         }
 
         if (CoopFixed2SharedData::punishment)
@@ -428,13 +425,11 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                     if (other != index) // if it's a different robot
                     {
                         o_wm->punishment += spite;
-                        if (!o_wm->fake)
-                            o_wm->_fitnessValue -= spite * 3; // TODO Make punishment coef variable
+                        o_wm->_fitnessValue -= spite * 3; // TODO Make punishment coef variable
                     }
                     else
                     {
-                        if (!wm->fake)
-                            wm->_fitnessValue -= spite; // cost of punishing someone
+                        wm->_fitnessValue -= spite; // cost of punishing someone
                     }
                 }
             }
@@ -449,7 +444,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
-        if (!wm->onOpportunity and !wm->fake)
+        if (!wm->onOpportunity)
         {
             wm->_fitnessValue += CoopFixed2SharedData::sigma;
         }
