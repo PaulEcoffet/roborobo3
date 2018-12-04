@@ -181,7 +181,7 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
             {
                 wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
             }
-            wm->appendToReputation(wm->_cooperationLevel);
+            wm->appendToCommonKnowledgeReputation(wm->_cooperationLevel);
 
             //Reward him
             ctl->increaseFitness(0);
