@@ -15,15 +15,15 @@ def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath, **kwargs):
                                       })
     elif type_ == 'fitprop':
         return FitPropEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
-                                        logpath, full_random_begin=True)
+                                        logpath)
     elif type_ == 'mulambda':
         mu = kwargs.get('mu', popsize//2)
         return MuLambdaEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
-                                         logpath, full_random_begin=True,
+                                         logpath,
                                          mu=mu)
     elif type_ == 'oneone':
         mu = kwargs.get('mu', (9*popsize)//10)
         return OneOneEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
-                                       logpath, full_random_begin=True, mu=mu)
+                                       logpath, mu=mu)
     else:
         raise NotImplemented()
