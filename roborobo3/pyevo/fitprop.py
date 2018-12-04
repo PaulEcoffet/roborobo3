@@ -59,8 +59,9 @@ class FitPropEvolutionStrategy():
         return self.iter >= self.maxiter
 
     def _init_solutions(self, genome_guess, full_random_begin):
-        nb_weights = len(genome_guess)
-        if full_random_begin:
+        if callable(genome_guess):
+            out = np.array([genome_guess() for dummy in range(self.popsize)])
+        elif full_random_begin:
             out = np.random.uniform(
                 -1, 1, size=(self.popsize, nb_weights))  # TODO Hard coded guess
         else:

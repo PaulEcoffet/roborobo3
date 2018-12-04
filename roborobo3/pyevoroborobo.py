@@ -100,8 +100,10 @@ def main():
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conns[i]))
         print(evo_info)
-        es = getES(argout.evolution, evo_info['nb_weights'] * [0], argout.sigma,
-                   evo_info['popsize'], [-5, 5], argout.generations, join(str(outdir), ''), mu=argout.mu)
+        es = getES(argout.evolution,
+                       lambda: np.random.uniform([-5] + [-1] * (evo_info['nb_weights'] - 1), [5] + [1] * (evo_info['nb_weights'] -1)),
+                       argout.sigma,
+                       evo_info['popsize'], [-5, 5], argout.generations, join(str(outdir), ''), mu=argout.mu)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
