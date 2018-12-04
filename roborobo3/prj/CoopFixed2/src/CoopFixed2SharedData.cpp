@@ -49,6 +49,9 @@ bool CoopFixed2SharedData::punishmentAsInput = false;
 bool CoopFixed2SharedData::partnerControl = false;
 double CoopFixed2SharedData::sigma = 0;
 bool CoopFixed2SharedData::fixCoop = false;
+bool CoopFixed2SharedData::commonKnowledgeReputation = false;
+double CoopFixed2SharedData::reputationNoise = 0;
+
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -96,7 +99,8 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("partnerControl", &CoopFixed2SharedData::partnerControl, false);
     gProperties.checkAndGetPropertyValue("sigma", &CoopFixed2SharedData::sigma, false);
     gProperties.checkAndGetPropertyValue("fixCoop", &CoopFixed2SharedData::fixCoop, false);
-
+    gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &CoopFixed2SharedData::commonKnowledgeReputation, false);
+    gProperties.checkAndGetPropertyValue("reputationNoise", &CoopFixed2SharedData::reputationNoise, false);
 }
 
 

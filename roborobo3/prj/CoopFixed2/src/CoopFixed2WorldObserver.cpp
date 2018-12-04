@@ -285,7 +285,7 @@ void CoopFixed2WorldObserver::resetEnvironment()
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
         auto *rwm = dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel());
-        rwm->lastReputation.clear();
+        rwm->lastCommonKnowledgeReputation.clear();
     }
 
 
@@ -389,6 +389,12 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             const double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, CoopFixed2SharedData::maxCoop);
             totalInvest += coop;
             totalA += wm->selfA;
+            for (auto oindex = opp->getNearbyRobotIndexes().begin(); oindex != itmax; oindex++)
+            {
+                if (oindex == index) continue;
+                auto* owm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*oindex)->getWorldModel());
+                owm->updateOtherReputation(wm->_id, coop + randgaussian() * CoopFixed2SharedData::reputationNoise);
+            }
         }
 
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
@@ -398,7 +404,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             wm->appendOwnInvest(coop);
             if (n >= 2)
             {
-                wm->appendToReputation(coop);
+                wm->appendToCommonKnowledgeReputation(coop);
             }
             if (CoopFixed2SharedData::onlyOtherInTotalInv)
             {

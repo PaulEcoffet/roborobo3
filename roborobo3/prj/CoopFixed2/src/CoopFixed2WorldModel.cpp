@@ -7,6 +7,9 @@
 #include "CoopFixed2/include/CoopFixed2WorldModel.h"
 #include <boost/algorithm/clamp.hpp>
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
+#include <CoopFixed2/include/CoopFixed2WorldModel.h>
+#include <core/World/World.h>
+
 
 CoopFixed2WorldModel::CoopFixed2WorldModel()
         : RobotWorldModel(),
@@ -20,6 +23,7 @@ CoopFixed2WorldModel::CoopFixed2WorldModel()
           spite(0)
 {
     setNewSelfA();
+    initOtherReputations();
 }
 
 void CoopFixed2WorldModel::setNewSelfA()
@@ -72,21 +76,21 @@ void CoopFixed2WorldModel::appendTotalInvest(const double invest)
     lastTotalInvest.push_back(invest);
 }
 
-void CoopFixed2WorldModel::appendToReputation(const double d)
+void CoopFixed2WorldModel::appendToCommonKnowledgeReputation(const double d)
 {
-    if (lastReputation.size() >= 50 /* TODO fix */)
+    if (lastCommonKnowledgeReputation.size() >= 50 /* TODO fix */)
     {
-        lastReputation.pop_front();
+        lastCommonKnowledgeReputation.pop_front();
     }
-    lastReputation.push_back(d);
+    lastCommonKnowledgeReputation.push_back(d);
 
 }
 
-double CoopFixed2WorldModel::meanLastReputation()
+double CoopFixed2WorldModel::meanLastCommonKnowledgeReputation()
 {
-    if (not lastReputation.empty())
+    if (not lastCommonKnowledgeReputation.empty())
     {
-        return std::accumulate(lastReputation.begin(), lastReputation.end(), 0.0) / lastReputation.size();
+        return std::accumulate(lastCommonKnowledgeReputation.begin(), lastCommonKnowledgeReputation.end(), 0.0) / lastCommonKnowledgeReputation.size();
     }
     else
     {
@@ -94,9 +98,10 @@ double CoopFixed2WorldModel::meanLastReputation()
     }
 }
 
+
 void CoopFixed2WorldModel::reset()
 {
-    lastReputation.clear();
+    lastCommonKnowledgeReputation.clear();
     lastOwnInvest.clear();
     lastTotalInvest.clear();
     onOpportunity = false;
@@ -104,5 +109,38 @@ void CoopFixed2WorldModel::reset()
     arrival = 0;
     opp = nullptr;
 
+}
+
+void CoopFixed2WorldModel::initOtherReputations()
+{
+    otherReputations.assign(gInitialNumberOfRobots, 0);
+    nbPlays.assign(gInitialNumberOfRobots, 0);
+}
+
+void CoopFixed2WorldModel::updateOtherReputation(int robid, double invest)
+{
+    const double currep = otherReputations[robid];
+    const int n = nbPlays[robid];
+    otherReputations[robid] = (currep * n + invest) / (n+1);
+    nbPlays[robid]++;
+}
+
+double CoopFixed2WorldModel::getOtherReputation(int robid)
+{
+    if (CoopFixed2SharedData::commonKnowledgeReputation)
+    {
+        auto *o_wm = dynamic_cast<CoopFixed2WorldModel*>(gWorld->getRobot(robid)->getWorldModel());
+        return o_wm->meanLastCommonKnowledgeReputation();
+    }
+    return otherReputations[robid];
+}
+
+int CoopFixed2WorldModel::getNbPlays(int robid)
+{
+    if (CoopFixed2SharedData::commonKnowledgeReputation)
+    {
+        return 0;
+    }
+    return nbPlays[robid];
 }
 

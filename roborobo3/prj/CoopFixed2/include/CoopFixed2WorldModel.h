@@ -17,19 +17,26 @@ public:
 
     std::deque<double> lastOwnInvest;
     std::deque<double> lastTotalInvest;
-    std::deque<double> lastReputation;
+    std::deque<double> lastCommonKnowledgeReputation;
 
     double meanLastTotalInvest();
 
     double meanLastOwnInvest();
 
-    double meanLastReputation();
+    double meanLastCommonKnowledgeReputation();
 
     void appendOwnInvest(const double invest);
 
     void appendTotalInvest(const double invest);
 
-    void appendToReputation(const double d);
+    void appendToCommonKnowledgeReputation(const double d);
+
+    void updateOtherReputation(int robid, double invest);
+
+    double getOtherReputation(int robid);
+    int getNbPlays(int robid);
+
+    void initOtherReputations();
 
     double nbOnOpp = 0;
     bool onOpportunity;
@@ -42,6 +49,9 @@ public:
 
     bool fake;
     double fakeCoef;
+
+    std::vector<double> otherReputations;
+    std::vector<int> nbPlays;
 
     void reset();
 

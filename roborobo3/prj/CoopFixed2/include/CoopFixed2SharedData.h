@@ -51,6 +51,8 @@ public:
     static bool partnerControl;
     static double sigma;
     static bool fixCoop;
+    static bool commonKnowledgeReputation;
+    static double reputationNoise;
 
     static void initSharedData();
 
