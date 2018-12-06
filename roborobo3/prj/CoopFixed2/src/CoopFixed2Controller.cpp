@@ -290,7 +290,7 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
 
         if (CoopFixed2SharedData::reputation)
         {
-            inputs[i++] = lastInvOnOpp;
+            inputs[i++] = lastInvOnOpp / CoopFixed2SharedData::maxCoop;
         }
         if (fill_names)
         {
@@ -420,7 +420,7 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
     }
     if(CoopFixed2SharedData::fixCoop)
     {
-        hardcoop = (newGenome[0] + 5.) / 10 * CoopFixed2SharedData::maxCoop;
+        hardcoop = newGenome[0] * CoopFixed2SharedData::maxCoop;
     }
     if (CoopFixed2SharedData::controllerType == ELMAN_ID)
     {
