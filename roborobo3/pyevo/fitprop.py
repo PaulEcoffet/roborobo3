@@ -18,9 +18,10 @@ class FitPropEvolutionStrategy():
         self.log_every = 500
 
         # boundaries are the same for all the dimension for now
-        assert(bounds[0] < bounds[1])
-        self.minb = bounds[0]
-        self.maxb = bounds[1]
+        bounds = np.asarray(bounds)
+        assert(np.all(bounds[0] < bounds[1]))
+        self.minb = np.asarray(bounds[0])
+        self.maxb = np.asarray(bounds[1])
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
         self.lastfitnesses = np.repeat(1, self.popsize)
         self.logger = FitPropLogger(self, path)
@@ -42,12 +43,14 @@ class FitPropEvolutionStrategy():
             mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
             print(f"there are {(mutation_mask == UNIFORM).sum()} uniform mut and {(mutation_mask == NORMAL).sum()} normal out of {new_solutions.shape}.")
             # Uniform transformation
-            mutations = np.random.uniform(self.minb, self.maxb, size=(mutation_mask == UNIFORM).sum())
+            min_mask = np.tile(self.minb, (self.popsize, 1))
+            max_mask = np.tile(self.maxb, (self.popsize, 1))
+            mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
             mutations = np.random.normal(0, 0.05, size=(mutation_mask == NORMAL).sum())
             new_solutions[mutation_mask == NORMAL] += mutations
-        np.clip(new_solutions, self.minb, self.maxb, out=new_solutions)
+        np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
 
     def tell(self, solutions, fitnesses):
