@@ -324,7 +324,7 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const
     std::vector<double> inputs(getNbGameInputs(), 0);
     size_t i = 0;
 
-    bool playing = m_wm->onOpportunity && (m_wm->arrival <= 2 || !CoopFixed2SharedData::fixRobotNb);
+    bool playing = m_wm->isPlaying();
     inputs[i++] = (int) playing;
     if (fill_names)
     { inputnames.emplace_back("playing"); }

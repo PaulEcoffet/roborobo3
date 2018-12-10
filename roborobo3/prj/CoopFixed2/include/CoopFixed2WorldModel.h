@@ -33,6 +33,8 @@ public:
 
     void updateOtherReputation(int robid, double invest);
 
+    bool isPlaying();
+
     double getOtherReputation(int robid);
     int getNbPlays(int robid);
 
