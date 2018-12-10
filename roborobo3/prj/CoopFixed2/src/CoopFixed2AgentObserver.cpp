@@ -30,18 +30,17 @@ void CoopFixed2AgentObserver::stepPre()
 void CoopFixed2AgentObserver::stepPost()
 {
     int dest_obj = -1;
-    std::vector<int> obj_shuffle(gNbOfPhysicalObjects);
-    for (int i = 0; i < gNbOfPhysicalObjects; i++)
-    {
-        obj_shuffle[i] = i;
-    }
-    std::shuffle(obj_shuffle.begin(), obj_shuffle.end(), engine);
     if (m_wm->teleport && !(CoopFixed2SharedData::partnerControl && m_wm->nbOnOpp >= 2 && m_wm->arrival <= 2))
     {
-        //std::cout << CoopFixed2SharedData::partnerControl << " " << m_wm->nbOnOpp << " " << ((m_wm->opp)? m_wm->opp->getNbNearbyRobots(): 0) << std::endl;
         double angle = (float) this->m_wm->getId() / gNbOfRobots * 2 * M_PI;
         if (CoopFixed2SharedData::smartTeleport)
         {
+            std::vector<int> obj_shuffle(gNbOfPhysicalObjects);
+            for (int i = 0; i < gNbOfPhysicalObjects; i++)
+            {
+                obj_shuffle[i] = i;
+            }
+            std::shuffle(obj_shuffle.begin(), obj_shuffle.end(), engine);
             for (int i = 0; i < gNbOfPhysicalObjects; i++)
             {
                 int cur_obj = obj_shuffle[i];
@@ -60,7 +59,8 @@ void CoopFixed2AgentObserver::stepPost()
         }
         else
         {
-            dest_obj = obj_shuffle[0];
+            std::uniform_int_distribution<int> dis(0, gNbOfPhysicalObjects-1);
+            dest_obj = dis(engine);
         }
         if (dest_obj != -1)
         {
