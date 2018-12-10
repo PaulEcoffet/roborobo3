@@ -450,7 +450,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
-        if (!wm->onOpportunity)
+        if (!wm->isPlaying())
         {
             wm->_fitnessValue += CoopFixed2SharedData::sigma;
         }

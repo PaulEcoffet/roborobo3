@@ -144,3 +144,8 @@ int CoopFixed2WorldModel::getNbPlays(int robid)
     return nbPlays[robid];
 }
 
+bool CoopFixed2WorldModel::isPlaying()
+{
+    return onOpportunity && (arrival <= 2 || !CoopFixed2SharedData::fixRobotNb);
+}
+
