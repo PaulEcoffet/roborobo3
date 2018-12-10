@@ -38,7 +38,7 @@ def send_msg(sock, msg, encoding='utf8'):
     """Send the message `msg` prefixed by its byte length through `sock`."""
     msg_byte = msg.encode(encoding)
     # write the header with the internet bit order (htonl) and encode it
-    header = '{:8X}'.format(socket.htonl(len(msg_byte))).encode(encoding)
+    header = '{:8X}'.format(len(msg_byte)).encode(encoding)
     sock.sendall(header + msg_byte)
 
 
