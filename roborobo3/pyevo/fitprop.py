@@ -41,7 +41,6 @@ class FitPropEvolutionStrategy():
             p_uni = 0.1 * p
             p_normal = p - p_uni
             mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
-            print(f"there are {(mutation_mask == UNIFORM).sum()} uniform mut and {(mutation_mask == NORMAL).sum()} normal out of {new_solutions.shape}.")
             # Uniform transformation
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
