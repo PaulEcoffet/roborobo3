@@ -341,6 +341,8 @@ void CoopFixed2WorldObserver::resetEnvironment()
 void CoopFixed2WorldObserver::computeOpportunityImpacts()
 {
     const double b = CoopFixed2SharedData::b;
+    double sum_payoff = 0;
+    int nb_payoffs = 0;
 
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
@@ -414,9 +416,10 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             {
                 wm->appendTotalInvest(totalInvest);
             }
-
-            wm->_fitnessValue += payoff(coop, totalInvest, n, wm->selfA, b);
-
+            double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b);
+            wm->_fitnessValue += curpayoff;
+            sum_payoff += curpayoff;
+            nb_payoffs += 1;
         }
 
         if (CoopFixed2SharedData::punishment)
@@ -441,6 +444,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             }
         }
 
+
         // Set the cur total invest for coloring
         opp->curInv = totalInvest;
         opp->curA = totalA / n;
@@ -452,7 +456,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
         if (!wm->isPlaying())
         {
-            wm->_fitnessValue += CoopFixed2SharedData::sigma;
+            wm->_fitnessValue += std::min(CoopFixed2SharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
         }
     }
 }
