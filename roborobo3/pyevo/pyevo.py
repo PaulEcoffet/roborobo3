@@ -6,6 +6,8 @@ import cma
 
 def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath, **kwargs):
     if type_ == 'cmaes':
+        if callable(guess):
+            guess = guess()
         return cma.CMAEvolutionStrategy(guess, 0.3,  # big sigma for init
                                       {'popsize': popsize,
                                       'BoundaryHandler': cma.s.ch.BoundTransform,
