@@ -267,7 +267,7 @@ void CoopFixed2WorldObserver::logFitnesses(const std::vector<double> &curfitness
         out << m_generationCount << "\t"
             << i << "\t"
             << m_curEvaluationInGeneration << "\t"
-            << cur_wm->fake << "\n"
+            << cur_wm->fake << "\t"
             << curfitness[i] << "\n";
     }
     m_fitnessLogManager->write(out.str());
