@@ -24,6 +24,8 @@ public:
      */
     void connect(const std::string& ip, unsigned short port);
 
+    std::vector<std::vector<double>> initCMA(int popsize, int parameters_dimension);
+
     /**
      * Init the CMAStrategy of the python server with a population size of `popsize` in which each individual is
      * parametrized by `parameters_dimension` values.
@@ -34,7 +36,9 @@ public:
      * @param parameters_dimension The number of parameters for each individual
      * @return A vector of size `popsize` of the initial genomes for each individual
      */
-    std::vector<std::vector<double>> initCMA(int popsize, int parameters_dimension);
+    std::vector<std::vector<double>> initCMA(int popsize, int parameters_dimension, std::vector<double>&minbounds,
+                                             std::vector<double>&maxbounds, std::vector<double>&minguess,
+                                             std::vector<double>&maxguess);
 
     /**
      * Return the next generation of the population based on the fitnesses of the current generation.
