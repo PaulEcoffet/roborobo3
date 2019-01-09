@@ -37,10 +37,20 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
     switch (CoopFixed2SharedData::controllerType)
     {
         case MLP_ID:
-            if (CoopFixed2SharedData::splitNetwork)
+            if (CoopFixed2SharedData::splitNetwork && !CoopFixed2SharedData::onlyNforGame)
             {
+                std::vector<unsigned int> nbNeurons2(1, 2); // TODO 2 should not be hardcode
                 m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, 2, true);  // TODO 2 should not be hardcoded
+                m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, nbNeurons2, true, false, 1.0);
+            }
+            else if (CoopFixed2SharedData::onlyNforGame)
+            {
+                assert(CoopFixed2SharedData::splitNetwork);
+                assert(!CoopFixed2SharedData::fixCoop);
+                std::vector<unsigned int> nbNeurons2(1, 1);
+                m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput,
+                               nbNeuronsPerHiddenLayers, true);
+                m_nn2 = new MLP(weights2, 1, 1, nbNeurons2, true, false, 1.0);
             }
             else
             {
@@ -54,6 +64,10 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
                 m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput);
                 m_nn2 = new Perceptron(weights2, nbGameOutput, nbGameOutput);
             }
+            else if (CoopFixed2SharedData::onlyNforGame)
+            {
+                throw std::string("Not implemented");
+            }
             else
             {
                 m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput);
@@ -64,6 +78,10 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
             {
                 m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
                 m_nn2 = new Elman(weights2, nbGameOutput, nbGameOutput, 2, true);
+            }
+            else if (CoopFixed2SharedData::onlyNforGame)
+            {
+                throw std::string("Not implemented");
             }
             else
             {
@@ -106,7 +124,7 @@ void CoopFixed2Controller::step()
     verbose = false;
 
     fill_names = inputnames.empty();
-    if (CoopFixed2SharedData::splitNetwork)
+    if (CoopFixed2SharedData::splitNetwork && !CoopFixed2SharedData::onlyNforGame)
     {
         std::vector<double> moveInputs = getCameraInputs();
         std::vector<double> gameInputs = getGameInputs();
@@ -118,6 +136,26 @@ void CoopFixed2Controller::step()
 
         m_nn2->setInputs(gameInputs);
         m_nn2->step();
+    }
+    if (CoopFixed2SharedData::onlyNforGame)
+    {
+        std::vector<double> inputs = getInputs();
+        m_nn->setInputs(inputs);
+        m_nn->step();
+
+        int nb_playing = m_wm->nbOnOpp - 1;
+        if (CoopFixed2SharedData::fixRobotNb and nb_playing > 1)
+        {
+            nb_playing = 1;
+        }
+        else if (nb_playing < 0)
+        {
+            nb_playing = 0;
+        }
+        std::vector<double> n(1, nb_playing);
+        m_nn2->setInputs(n);
+        m_nn2->step();
+
     }
     else
     {
@@ -482,51 +520,40 @@ void CoopFixed2Controller::increaseFitness(double delta)
     updateFitness(m_wm->_fitnessValue + delta);
 }
 
-std::string CoopFixed2Controller::inspect(std::string prefix)
-{
+std::string CoopFixed2Controller::inspect(std::string prefix) {
     std::stringstream out;
-    if (m_wm->fake)
-    {
+    if (verbose == 0) {
+    if (m_wm->fake) {
         out << prefix << "I'm fake robot with coop " << m_wm->fakeCoef << "\n";
     }
     std::set<int> seen;
-    for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
-    {
+    for (int i = 0; i < m_wm->_cameraSensorsNb; i++) {
         seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
     }
 
     out << prefix << "Seen objects:\n";
-    for (int entityId : seen)
-    {
-        if (entityId == 0)
-        {
+    for (int entityId : seen) {
+        if (entityId == 0) {
             out << "\tA wall\n";
-        }
-        else if (Agent::isInstanceOf(entityId))
-        {
+        } else if (Agent::isInstanceOf(entityId)) {
             out << "\tAnother agent\n";
-        }
-        else if (entityId >= gPhysicalObjectIndexStartOffset)
-        {
+        } else if (entityId >= gPhysicalObjectIndexStartOffset) {
             out << "\tA cooperation opportunity ";
             auto coop = dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[entityId -
                                                                                gPhysicalObjectIndexStartOffset]);
             out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
         }
     }
-    if (m_wm->onOpportunity)
-    {
+    if (m_wm->onOpportunity) {
         out << prefix << "On opportunity with " << m_wm->nbOnOpp << ". I arrived " << m_wm->arrival << ".\n";
         out << prefix << "\tLast own invest: ";
-        for (auto ownInvest : m_wm->lastOwnInvest)
-        {
+        for (auto ownInvest : m_wm->lastOwnInvest) {
             out << ownInvest << " ";
         }
         out << "(" << m_wm->meanLastOwnInvest() << ")";
         out << "\n";
         out << prefix << "\tLast total invest: ";
-        for (auto totInvest : m_wm->lastTotalInvest)
-        {
+        for (auto totInvest : m_wm->lastTotalInvest) {
             out << totInvest << " ";
         }
         out << "(" << m_wm->meanLastTotalInvest() << ")";
@@ -540,7 +567,8 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
     out << prefix << "sent punishment : " << m_wm->spite << "\n";
 
     out << prefix << "Actual fitness: " << getFitness() << "\n";
-    if (verbose)
+    }
+    if (verbose == 1)
     {
         auto inputs = getInputs();
         out << prefix << "inputs:\n";
@@ -563,7 +591,15 @@ std::string CoopFixed2Controller::inspect(std::string prefix)
             }
         }
     }
-    verbose = true;
+    if (verbose == 2)
+    {
+        out << m_nn->toString() << std::endl;
+        if (CoopFixed2SharedData::splitNetwork)
+        {
+            out << m_nn2->toString() << std::endl;
+        }
+    }
+    verbose++;
     return out.str();
 }
 

@@ -75,7 +75,7 @@ protected:
 
     bool fill_names = false;
 
-    bool verbose = false;
+    int verbose = 0;
     double hardcoop;
 };
 
