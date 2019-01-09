@@ -81,7 +81,19 @@ void CoopFixed2WorldObserver::reset()
 
     // create individuals
     int nbweights = dynamic_cast<CoopFixed2Controller * >(m_world->getRobot(0)->getController())->getWeights().size();
-    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights);
+    std::vector<double> minbounds(nbweights, -10);
+    std::vector<double> maxbounds(nbweights, 10);
+    std::vector<double> minguess(nbweights, -1);
+    std::vector<double> maxguess(nbweights, 1);
+
+    if(CoopFixed2SharedData::fixCoop)
+    {
+        minbounds[0] = 0;
+        maxbounds[0] = 1;
+        minguess[0] = 0;
+        maxguess[0] = 0.00001;
+    }
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);
