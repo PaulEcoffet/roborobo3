@@ -52,7 +52,7 @@ bool CoopFixed2SharedData::punishmentAsInput = false;
 bool CoopFixed2SharedData::partnerControl = false;
 double CoopFixed2SharedData::sigma = 0;
 bool CoopFixed2SharedData::fixCoop = false;
-bool CoopFixed2SharedData::commonKnowledgeReputation = false;
+bool CoopFixed2SharedData::commonKnowledgeReputation = true;
 double CoopFixed2SharedData::reputationNoise = 0;
 bool CoopFixed2SharedData::onlyNforGame = false;
 
