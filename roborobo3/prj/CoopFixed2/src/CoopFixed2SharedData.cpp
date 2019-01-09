@@ -7,6 +7,9 @@
 #include <RoboroboMain/main.h>
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
 
+#define GETVAL(name)  (gProperties.checkAndGetPropertyValue(#name, &CoopFixed2SharedData::name, false))
+
+
 
 int CoopFixed2SharedData::evaluationTime = 1000;
 int CoopFixed2SharedData::genomeLog = 2000;
@@ -51,6 +54,7 @@ double CoopFixed2SharedData::sigma = 0;
 bool CoopFixed2SharedData::fixCoop = false;
 bool CoopFixed2SharedData::commonKnowledgeReputation = false;
 double CoopFixed2SharedData::reputationNoise = 0;
+bool CoopFixed2SharedData::onlyNforGame = false;
 
 
 
@@ -101,6 +105,8 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("fixCoop", &CoopFixed2SharedData::fixCoop, false);
     gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &CoopFixed2SharedData::commonKnowledgeReputation, false);
     gProperties.checkAndGetPropertyValue("reputationNoise", &CoopFixed2SharedData::reputationNoise, false);
+    GETVAL(onlyNforGame);
+
 }
 
 

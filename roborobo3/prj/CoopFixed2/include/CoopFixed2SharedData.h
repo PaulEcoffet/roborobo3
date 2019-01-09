@@ -53,6 +53,7 @@ public:
     static bool fixCoop;
     static bool commonKnowledgeReputation;
     static double reputationNoise;
+    static bool onlyNforGame;
 
     static void initSharedData();
 
