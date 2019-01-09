@@ -99,17 +99,21 @@ def main():
             print('*************************connected to {}************************'.format(i))
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conns[i]))
-        print(evo_info)
-
-        # Evolution bounds
-        minb = -10
-        maxb = 10
-        bounds = np.array([[0] + [minb] * (evo_info['nb_weights'] - 1),
-                           [1] + [maxb] * (evo_info['nb_weights'] - 1)])
-
-        # Init bounds
-        init_min = np.array([0] + [-1] * (evo_info['nb_weights'] - 1))
-        init_max = np.array([0.01] + [1] * (evo_info['nb_weights'] -1))
+        if 'min_bounds' in evo_info:
+            bounds = [evo_info['min_bounds'], evo_info['max_bounds']]
+        else:
+            # Evolution bounds
+            minb = -10
+            maxb = 10
+            bounds = np.array([[0] + [minb] * (evo_info['nb_weights'] - 1),
+                               [1] + [maxb] * (evo_info['nb_weights'] - 1)])
+        if 'min_guess' in evo_info:
+            init_min = evo_info['min_guess']
+            init_max = evo_info['max_guess']
+        else:
+            # Init bounds
+            init_min = np.array([0] + [-1] * (evo_info['nb_weights'] - 1))
+            init_max = np.array([0.01] + [1] * (evo_info['nb_weights'] -1))
         es = getES(argout.evolution,
                        lambda: np.random.uniform(init_min, init_max),
                        argout.sigma,
