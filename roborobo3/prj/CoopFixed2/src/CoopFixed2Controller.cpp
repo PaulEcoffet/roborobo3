@@ -39,7 +39,7 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
         case MLP_ID:
             if (CoopFixed2SharedData::splitNetwork && !CoopFixed2SharedData::onlyNforGame)
             {
-                std::vector<unsigned int> nbNeurons2(1, 2); // TODO 2 should not be hardcode
+                std::vector<unsigned int> nbNeurons2 = {2}; // TODO 2 should not be hardcode
                 m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
                 m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, nbNeurons2, true, false, 1.0);
             }
@@ -47,7 +47,7 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
             {
                 assert(CoopFixed2SharedData::splitNetwork);
                 assert(!CoopFixed2SharedData::fixCoop);
-                std::vector<unsigned int> nbNeurons2(1, 1);
+                std::vector<unsigned int> nbNeurons2 = {2}; // best value for the fit
                 m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput,
                                nbNeuronsPerHiddenLayers, true);
                 m_nn2 = new MLP(weights2, 1, 1, nbNeurons2, true, false, 1.0);
