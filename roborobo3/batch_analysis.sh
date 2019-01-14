@@ -49,6 +49,13 @@ analysisNbRep=3
 """ >> $tmpdir/conf$i.properties
 
   # time to launch
+  if [ $gen = 0 ]
+  then
+    lastfilename=`ls -tr ${path}/genomes*.txt | tail -n 1`
+    real=`basename $lastfilename`
+    gen=`echo $real | sed -e "s/[^0-9]//g"`
+  fi
+
   echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
   if [ $debug = true ]
   then
