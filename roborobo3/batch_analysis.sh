@@ -64,8 +64,11 @@ analysisNbRep=3
     break
   elif [ $fake = true ]
   then
-    echo 'press enter to continue'
-    read
+    if [[ $- == *i* ]]  # Interactive shell
+    then
+      echo 'press enter to continue'
+      read
+    fi
     continue
   else
     ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &

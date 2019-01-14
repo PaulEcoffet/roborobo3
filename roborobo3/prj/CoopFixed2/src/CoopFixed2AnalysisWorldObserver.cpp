@@ -144,7 +144,7 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     auto *wm = dynamic_cast<CoopFixed2WorldModel *>(gWorld->getRobot(0)->getWorldModel());
     std::stringstream out;
 
-    int oppLifeId = 0;
+    int oppLifeId = -1;
     double oppCoop = 0;
     int oppNbRob = 0;
     if (wm->opp != nullptr)
