@@ -82,7 +82,6 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
         resetEnvironment();
         m_curIterationInRep = 0;
         m_curRep++;
-        std::cout << "ind: " << m_curInd << ", curnb: " << m_curnbrob << ", curcoop:" << m_curCoop << ", currep:" << m_curRep << std::endl;
 
     }
     if (m_curRep == m_nbRep) {
@@ -145,21 +144,17 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     std::stringstream out;
 
     int oppLifeId = -1;
-    double oppCoop = 0;
-    int oppNbRob = 0;
     if (wm->opp != nullptr)
     {
         oppLifeId = wm->opp->lifeid;
-        oppCoop = dynamic_cast<CoopFixed2AnalysisOpportunity *>(wm->opp)->getCoop();
-        oppNbRob = dynamic_cast<CoopFixed2AnalysisOpportunity *>(wm->opp)->getNbFakeRobots();
     }
 
     out << m_curInd << "\t";
     out << m_curRep << "\t";
     out << m_curIterationInRep << "\t";
     out << oppLifeId << "\t";
-    out << oppCoop << "\t";
-    out << oppNbRob << "\t";
+    out << m_curCoop << "\t";
+    out << m_curnbrob << "\t";
     out << wm->_cooperationLevel << "\t";
     out << wm->spite << "\n";
     m_log << out.str();
