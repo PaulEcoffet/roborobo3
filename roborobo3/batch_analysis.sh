@@ -18,9 +18,16 @@ then
   shift
 fi
 
-
 gen=$1
 i=0
+
+if [ gen = 0 ]
+then
+    findgen=1
+else
+    findgen=0
+fi
+
 
 echo $debug
 
@@ -37,10 +44,10 @@ do
   conf=$(/bin/ls -tr $path/*properties* | head -n 1)
   # copy it and remove useless import
   cp $conf $tmpdir/conf$i.properties
-  sed -i '' '/import(.*/d' "$tmpdir/conf$i.properties"
-  sed -i '' 's/gRandomSeed.*/gRandomSeed=-1/' "$tmpdir/conf$i.properties"
-  sed -i '' 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' "$tmpdir/conf$i.properties"
-  sed -i '' 's/gNbOfPhysicalObjects.*/gNbOfPhysicalObjects=5/' "$tmpdir/conf$i.properties"
+  sed -i '/import(.*/d' "$tmpdir/conf$i.properties"
+  sed -i 's/gRandomSeed.*/gRandomSeed=-1/' "$tmpdir/conf$i.properties"
+  sed -i 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' "$tmpdir/conf$i.properties"
+  sed -i 's/gNbOfPhysicalObjects.*/gNbOfPhysicalObjects=5/' "$tmpdir/conf$i.properties"
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
@@ -49,7 +56,7 @@ analysisNbRep=3
 """ >> $tmpdir/conf$i.properties
 
   # time to launch
-  if [ $gen = 0 ]
+  if [ $findgen = 1 ]
   then
     lastfilename=`ls -tr ${path}/genomes*.txt | tail -n 1`
     real=`basename $lastfilename`
