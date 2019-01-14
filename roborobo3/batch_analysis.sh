@@ -21,7 +21,7 @@ fi
 gen=$1
 i=0
 
-if [ gen = 0 ]
+if [ $gen = 0 ]
 then
     findgen=1
 else
