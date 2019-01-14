@@ -33,6 +33,8 @@ public:
 
 protected:
     double m_curCoop;
+    int m_curnbrob;
+    int m_maxrobnb;
     json m_genomesJson;
 
     int m_curIterationInRep;

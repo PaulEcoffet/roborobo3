@@ -23,7 +23,13 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
 
     if (gInitialNumberOfRobots != 1)
     {
-        std::cerr << "Only one robot must be instanced for this run";
+        std::cerr << "Only one robot must be instanced for this run\n";
+        exit(-1);
+    }
+
+    if (gNbOfPhysicalObjects != 5)
+    {
+        std::cerr << "Only 5 objects must be instanced for this run\n";
         exit(-1);
     }
 
@@ -47,9 +53,15 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
     gProperties.checkAndGetPropertyValue("analysisNbRep", &m_nbRep, true);
+    //gProperties.checkAndGetPropertyValue("maxrobnb", &m_maxrobnb, true);
+
+    m_maxrobnb = 50;
     m_curIterationInRep = 0;
     m_curRep = 0;
     m_curInd = 0;
+    m_curCoop = 0;
+    m_curnbrob = 0;
+    m_stepCoop = 1;
 
     gMaxIt = -1;
 }
@@ -70,22 +82,41 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
         resetEnvironment();
         m_curIterationInRep = 0;
         m_curRep++;
+        std::cout << "ind: " << m_curInd << ", curnb: " << m_curnbrob << ", curcoop:" << m_curCoop << ", currep:" << m_curRep << std::endl;
 
     }
-    if (m_curRep == m_nbRep)
-    {
+    if (m_curRep == m_nbRep) {
         m_curCoop += m_stepCoop;
         m_curRep = 0;
+        resetEnvironment();
+    }
+    if (m_curCoop > maxCoop)
+    {
+        m_curCoop = 0;
+        if (m_curnbrob < 10)
+        {
+            m_curnbrob += 1;
+        }
+        else {
+            m_curnbrob += 10;
+        }
+        if (m_curnbrob <= m_maxrobnb)
+            resetEnvironment();
+    }
+    if (m_curnbrob > m_maxrobnb)
+    {
+        m_curnbrob = 0;
         m_genomesIt++;
         m_curInd++;
         if (m_genomesIt < m_genomesJson.end())
         {
             m_log << std::flush;
             loadGenome((*m_genomesIt));
+            resetEnvironment();
         }
         else
         {
-            std::cout << "Over" << "\n";
+            std::cout << "Over\n";
             m_log.close();
             exit(0);
         }
@@ -94,16 +125,6 @@ void CoopFixed2AnalysisWorldObserver::stepPre()
 
 void CoopFixed2AnalysisWorldObserver::stepPost()
 {
-    for (auto id: objectsToTeleport)
-    {
-        gPhysicalObjects[id]->unregisterObject();
-        gPhysicalObjects[id]->resetLocation();
-        gPhysicalObjects[id]->registerObject();
-        dynamic_cast<CoopFixed2AnalysisOpportunity *>(gPhysicalObjects[id])->placeFakeRobot();
-    }
-
-    objectsToTeleport.clear();
-
     registerRobotsOnOpportunities();
     computeOpportunityImpact();
     monitorPopulation();
@@ -143,7 +164,6 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     out << wm->spite << "\n";
     m_log << out.str();
 }
-
 
 void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
 {
@@ -195,34 +215,52 @@ void CoopFixed2AnalysisWorldObserver::computeOpportunityImpact()
 
 void CoopFixed2AnalysisWorldObserver::resetEnvironment()
 {
-    for (auto object: gPhysicalObjects)
+    /* Put all robots in a hidden place */
+    for (int i = 0; i < gNbOfRobots; i++)
     {
-        object->unregisterObject();
+        Robot *robot = gWorld->getRobot(i);
+        robot->unregisterRobot();
+        robot->setCoord(0, 0);
+        robot->setCoordReal(0, 0);
     }
 
     Robot *robot = gWorld->getRobot(0);
     robot->unregisterRobot();
-
-
-    for (auto object: gPhysicalObjects)
-    {
-        object->resetLocation();
-        object->registerObject();
-        dynamic_cast<CoopFixed2AnalysisOpportunity *>(object)->placeFakeRobot();
-    }
-
-    robot->reset();
+    robot->setCoord(100+4, 100);
+    robot->setCoordReal(100+4, 100);
+    robot->registerRobot();
     if (CoopFixed2SharedData::tpToNewObj)
     {
         robot->getWorldModel()->_agentAbsoluteOrientation = 0;
     }
     dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->reset();
     dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
+
+
+    for (auto* obj : gPhysicalObjects)
+    {
+        auto* opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(obj);
+        opp->setCoopValue(2.5);
+    }
+
+    /* set up the target opportunity */
+    auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(gPhysicalObjects[0]);
+    opp->setCoopValue(m_curCoop);
+    opp->setNbFakeRobots(m_curnbrob);
+    opp->fakerobots.clear();
+    for (int i = 0; i < m_curnbrob; i++){
+        opp->fakerobots.push_back(gWorld->getRobot(i + 5));
+    }
+    for (auto* obj : gPhysicalObjects)
+    {
+        auto* opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(obj);
+        opp->placeFakeRobot();
+    }
 }
 
 void CoopFixed2AnalysisWorldObserver::initObjects() const
 {
-    int i = 0;
+    /*int i = 0;
     int objPerCoop = (int) ceil((double) gNbOfPhysicalObjects / 12); // coop : 0, 1, .., 10 + obj without ind
     int nbRob = 0;
     int coop = 0;
@@ -254,7 +292,49 @@ void CoopFixed2AnalysisWorldObserver::initObjects() const
         phys->resetLocation();
         phys->registerObject();
         opp->placeFakeRobot();
+    }*/
+
+    /* Robots creation */
+    for (int i = 0; i < m_maxrobnb + 4; i++)
+    {
+        Robot* rob = new Robot(gWorld);
+        gWorld->addRobot(rob);
     }
+
+
+    /* Unregister objects */
+    for (auto obj : gPhysicalObjects)
+    {
+        obj->unregisterObject();
+    }
+
+    /* Test objects */
+    gPhysicalObjects[0]->setCoordinates(100, 100);
+
+
+    /* Outside option objects */
+
+    gPhysicalObjects[1]->setCoordinates(50, 50);
+    gPhysicalObjects[2]->setCoordinates(50, 150);
+    gPhysicalObjects[3]->setCoordinates(150, 50);
+    gPhysicalObjects[4]->setCoordinates(150, 150);
+
+    /* register objects */
+    for (auto obj : gPhysicalObjects)
+    {
+        obj->registerObject();
+    }
+
+    /* attach fake robots for outside option objects */
+    for (int i = 1; i < 5; i++)
+    {
+        auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(gPhysicalObjects[i]);
+        opp->setNbFakeRobots(1);
+        opp->fakerobots.push_back(gWorld->getRobot(i));
+
+    }
+
+
 }
 
 void CoopFixed2AnalysisWorldObserver::loadGenome(const std::vector<double> &weights)
