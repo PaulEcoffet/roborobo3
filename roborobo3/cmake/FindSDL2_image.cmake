@@ -34,7 +34,7 @@
 # $SDL2DIR is an environment variable that would correspond to the
 # ./configure --prefix=$SDL2DIR used in building SDL.
 #
-# Created by Eric Wing. This was influenced by the FindSDL.cmake
+# Created by Eric Wing. This was influenced by the FindSDL2.cmake
 # module, but with modifications to recognize OS X frameworks and
 # additional Unix paths (FreeBSD, etc).
 

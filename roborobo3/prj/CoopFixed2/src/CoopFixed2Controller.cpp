@@ -116,12 +116,13 @@ void CoopFixed2Controller::reset()
 
 void CoopFixed2Controller::step()
 {
+    verbose = 0;
+
     if (not m_wm->isAlive())
     {
         return;
     }
 
-    verbose = false;
 
     fill_names = inputnames.empty();
     if (CoopFixed2SharedData::splitNetwork && !CoopFixed2SharedData::onlyNforGame)

@@ -37,14 +37,15 @@ do
   conf=$(/bin/ls -tr $path/*properties* | head -n 1)
   # copy it and remove useless import
   cp $conf $tmpdir/conf$i.properties
-  sed -i '/import(.*/d' $tmpdir/conf$i.properties
-  sed -i 's/gRandomSeed.*/gRandomSeed=-1/' $tmpdir/conf$i.properties
-  sed -i 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' $tmpdir/conf$i.properties
+  sed -i '' '/import(.*/d' "$tmpdir/conf$i.properties"
+  sed -i '' 's/gRandomSeed.*/gRandomSeed=-1/' "$tmpdir/conf$i.properties"
+  sed -i '' 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' "$tmpdir/conf$i.properties"
+  sed -i '' 's/gNbOfPhysicalObjects.*/gNbOfPhysicalObjects=5/' "$tmpdir/conf$i.properties"
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
-analysisIterationPerRep=5000
-analysisNbRep=10
+analysisIterationPerRep=100
+analysisNbRep=3
 """ >> $tmpdir/conf$i.properties
 
   # time to launch
