@@ -75,7 +75,7 @@ def main():
                              ['-o', outdir] + forwarded)
         conn, cliend_data = serv_s.accept()  # connect to roborobo
         # Wait for roborobo to give information about the simulation
-        evo_info = loads(recv_msg(conn))
+        evo_info = loads(recv_msg(conn)) # These info are ditched out because no learning happens
         with open(argout.genome) as f:
             genomes = load(f)
         for i in range(4):

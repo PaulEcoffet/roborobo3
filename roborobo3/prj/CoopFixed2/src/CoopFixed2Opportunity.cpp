@@ -12,7 +12,10 @@ CoopFixed2Opportunity::CoopFixed2Opportunity(int __id) : RoundObject(__id)
 {
     setType(9);
     lifeid = __id;
-    lifeExpectancy = 1. / CoopFixed2SharedData::oppDecay;
+    if (CoopFixed2SharedData::oppDecay > 0)
+        lifeExpectancy = 1. / CoopFixed2SharedData::oppDecay;
+    else
+        lifeExpectancy = 0;
 }
 
 int CoopFixed2Opportunity::getNbNearbyRobots() const
