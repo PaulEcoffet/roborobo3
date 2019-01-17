@@ -12,6 +12,7 @@ file(
 )
 
 
+
 include_directories(include)
 include_directories(include/contrib)
 include_directories(include/core)
@@ -19,7 +20,7 @@ include_directories(include/ext)
 include_directories(prj)
 
 
-set(Boost_USE_STATIC_LIBS   ON)
+set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
 endif()
@@ -80,7 +81,6 @@ find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} )
 
-
 add_executable(roborobo ${SOURCE_FILES})
 
 target_link_libraries(roborobo
@@ -91,5 +91,5 @@ target_link_libraries(roborobo
         Eigen3::Eigen
         ${GZSTREAM}
         ${ZLIB}
-       # tbb
+        # tbb
         )
