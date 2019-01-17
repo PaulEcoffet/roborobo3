@@ -67,11 +67,10 @@ protected:
     void loadGenomesInRobots(const std::vector<std::vector<double>> &genomes);
 
     std::set<int> robotsToTeleport;
-    int m_nbFakeRobots;
     std::set<int> objectsToTeleport;
     std::ofstream m_logall;
-    std::vector<int> m_fakerobotslist;
-    bool m_swapfake;
+    std::vector<double> variabilityCoef;
+
 };
 
 

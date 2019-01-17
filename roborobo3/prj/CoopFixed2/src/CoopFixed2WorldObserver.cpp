@@ -13,12 +13,13 @@
 #include "CoopFixed2/include/CoopFixed2Controller.h"
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
 #include <boost/algorithm/clamp.hpp>
+#include <boost/math/distributions/normal.hpp>
 
 using boost::algorithm::clamp;
 
 
 CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
-        WorldObserver(__world), robotsToTeleport(), objectsToTeleport(), m_swapfake(false)
+        WorldObserver(__world), robotsToTeleport(), objectsToTeleport(), variabilityCoef()
 {
     m_world = __world;
     m_curEvaluationIteration = 0;
@@ -46,8 +47,27 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
     }
     pyevo.connect(url[0], static_cast<unsigned short>(std::stol(url[1])));
 
-    m_nbIndividuals = 50;
+    m_nbIndividuals = gInitialNumberOfRobots;
     gMaxIt = -1;
+
+    /* build variability coef distribution */
+
+    variabilityCoef.resize(m_nbIndividuals, 0);
+    boost::math::normal normal(1, CoopFixed2SharedData::fakeCoefStd);
+    double minquantile = boost::math::cdf(normal, 1./ CoopFixed2SharedData::fakeCoef);
+    double maxquantile = boost::math::cdf(normal, 1);
+    double stepquantile = (maxquantile - minquantile) / ((m_nbIndividuals / 2) - 1);
+    double curquantile = minquantile;
+    for (int i = 0; i < m_nbIndividuals / 2 ; i++)
+    {
+        variabilityCoef[i] = boost::math::quantile(normal, curquantile);
+        curquantile += stepquantile;
+    }
+    for (int i = 0; i < m_nbIndividuals / 2; i++)
+    {
+        variabilityCoef[m_nbIndividuals - i] = 1. / variabilityCoef[i];
+    }
+
 }
 
 
@@ -59,22 +79,6 @@ CoopFixed2WorldObserver::~CoopFixed2WorldObserver()
 void CoopFixed2WorldObserver::reset()
 {
     m_nbIndividuals = gNbOfRobots;
-    if (CoopFixed2SharedData::fakeRobots)
-    {
-        m_nbFakeRobots = gNbOfRobots / 2;
-    }
-    else
-    {
-        m_nbFakeRobots = 0;
-    }
-
-    m_fakerobotslist = std::vector<int>(m_nbIndividuals, false);
-    for (int i = 0; i < m_nbFakeRobots; i++)
-    {
-        m_fakerobotslist[i] = true;
-    }
-    std::shuffle(m_fakerobotslist.begin(), m_fakerobotslist.end(), engine);
-    m_swapfake = true;
 
     // Init fitness
     clearRobotFitnesses();
@@ -118,21 +122,7 @@ void CoopFixed2WorldObserver::stepPre()
         logFitnesses(m_curfitnesses);
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
-        if (CoopFixed2SharedData::fakeRobots)
-        {
-            if (m_swapfake)
-            {
-                for (auto &isfake : m_fakerobotslist)
-                {
-                    isfake = 1 - isfake;
-                }
-            }
-            else
-            {
-                std::shuffle(m_fakerobotslist.begin(), m_fakerobotslist.end(), engine);
-            }
-            m_swapfake = !m_swapfake;
-        }
+
         resetEnvironment();
     }
     if (m_curEvaluationInGeneration == CoopFixed2SharedData::nbEvaluationsPerGeneration)
@@ -205,7 +195,7 @@ void CoopFixed2WorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tfake\tonOpp\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
+            m_logall << "eval\titer\tid\ta\tfakeCoef\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
@@ -219,10 +209,10 @@ void CoopFixed2WorldObserver::stepPost()
                      << m_curEvaluationIteration << "\t"
                      << i << "\t"
                      << wm->selfA << "\t"
-                     << wm->fake << "\t"
-                     << ((wm->opp != nullptr) ? wm->opp->getId() : 0) << "\t"
+                     << wm->fakeCoef << "\t"
+                     << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
                      << nbOnOpp << "\t"
-                     << wm->_cooperationLevel * (int) wm->onOpportunity << "\t"
+                     << wm->_cooperationLevel * wm->fakeCoef << "\t"
                      << wm->meanLastOwnInvest() << "\t"
                      << wm->meanLastTotalInvest() << "\t"
                      << wm->punishment << "\t"
@@ -279,7 +269,7 @@ void CoopFixed2WorldObserver::logFitnesses(const std::vector<double> &curfitness
         out << m_generationCount << "\t"
             << i << "\t"
             << m_curEvaluationInGeneration << "\t"
-            << cur_wm->fake << "\t"
+            << cur_wm->fakeCoef << "\t"
             << curfitness[i] << "\n";
     }
     m_fitnessLogManager->write(out.str());
@@ -307,15 +297,9 @@ void CoopFixed2WorldObserver::resetEnvironment()
         object->registerObject();
     }
 
-    std::vector<float> fakeList(m_nbFakeRobots);
-    for (int i = 0; i < m_nbFakeRobots; i++)
-    {
-        fakeList[i] = (2.f * i) / (m_nbFakeRobots - 1);
-    }
-    // Randomize the fakeList so that the last fakeRobots aren't necessarly the ones who cooperate the most.
-    std::shuffle(fakeList.begin(), fakeList.end(), engine);
+    // Randomize the fakeList so that the last fakeRobots aren't necessarily the ones who cooperate the most.
+    std::shuffle(variabilityCoef.begin(), variabilityCoef.end(), engine);
 
-    int nb_fake_done = 0;
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
         Robot *robot = gWorld->getRobot(iRobot);
@@ -325,26 +309,13 @@ void CoopFixed2WorldObserver::resetEnvironment()
             robot->getWorldModel()->_agentAbsoluteOrientation = 0;
         }
         auto *wm = dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel());
-        if (m_fakerobotslist[iRobot])
+        if (CoopFixed2SharedData::fakeRobots)
         {
-            wm->fake = true;
-            if (CoopFixed2SharedData::randomFakeCoef)
-            {
-                double res = 1 + CoopFixed2SharedData::fakeCoefStd * randgaussian();
-                if (res < 0)
-                { res = 0; }
-                wm->fakeCoef = res;
-            }
-            else
-            {
-                wm->fakeCoef = fakeList[nb_fake_done];
-            }
-            nb_fake_done++;
+                wm->fakeCoef = variabilityCoef[iRobot];
         }
         else
         {
-            wm->fake = false;
-            wm->fakeCoef = 1;
+            wm->fakeCoef = 1.0;
         }
         wm->setNewSelfA();
     }
