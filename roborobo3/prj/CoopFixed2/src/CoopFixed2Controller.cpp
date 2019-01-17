@@ -219,27 +219,22 @@ void CoopFixed2Controller::step()
         m_wm->spite = ((outputs[i_spite] + 1) / 2) * CoopFixed2SharedData::maxCoop;
     }
 
-    if (m_wm->fake)
+    if (m_wm->fakeCoef < 0.8)
     {
-        if (m_wm->fakeCoef < 1)
-        {
-            m_wm->setRobotLED_colorValues(255, 0, 0);
-        }
-        else
-        {
-            m_wm->setRobotLED_colorValues(127, 255, 255);
-        }
-    }
-    else
-    {
+        m_wm->setRobotLED_colorValues(126,55,49);
         if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <= 2))
-        {
-            m_wm->setRobotLED_colorValues(0, 255, 0);
-        }
-        else
-        {
-            m_wm->setRobotLED_colorValues(0, 0, 255);
-        }
+            m_wm->setRobotLED_colorValues(169,96,89);
+    }
+    else if (m_wm->fakeCoef < 1.2)
+    {
+        m_wm->setRobotLED_colorValues(0,0,255);
+        if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <= 2))
+            m_wm->setRobotLED_colorValues(100,100,255);
+    }
+    else {
+        m_wm->setRobotLED_colorValues(115,182,234);
+        if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <= 2))
+            m_wm->setRobotLED_colorValues(185,218,244);
     }
 
 }
@@ -524,9 +519,7 @@ void CoopFixed2Controller::increaseFitness(double delta)
 std::string CoopFixed2Controller::inspect(std::string prefix) {
     std::stringstream out;
     if (verbose == 0) {
-    if (m_wm->fake) {
-        out << prefix << "I'm fake robot with coop " << m_wm->fakeCoef << "\n";
-    }
+    out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
     std::set<int> seen;
     for (int i = 0; i < m_wm->_cameraSensorsNb; i++) {
         seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
