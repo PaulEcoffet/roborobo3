@@ -59,6 +59,8 @@ analysisNbRep=3
   if [ $findgen = 1 ]
   then
     lastfilename=`ls -tr ${path}/genomes*.txt | tail -n 1`
+    echo ${path}/genomes*.txt
+    echo $lastfilename
     real=`basename $lastfilename`
     gen=`echo $real | sed -e "s/[^0-9]//g"`
   fi
