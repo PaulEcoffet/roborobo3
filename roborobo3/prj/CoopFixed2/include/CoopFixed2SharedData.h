@@ -54,9 +54,10 @@ public:
     static bool commonKnowledgeReputation;
     static double reputationNoise;
     static bool onlyNforGame;
+    static double frictionCoef;
+    static double frictionInflexionPoint;
 
     static void initSharedData();
-
 
 
 };

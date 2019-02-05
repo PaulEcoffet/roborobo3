@@ -55,6 +55,8 @@ bool CoopFixed2SharedData::fixCoop = false;
 bool CoopFixed2SharedData::commonKnowledgeReputation = true;
 double CoopFixed2SharedData::reputationNoise = 0;
 bool CoopFixed2SharedData::onlyNforGame = false;
+double CoopFixed2SharedData::frictionCoef = 0;
+double CoopFixed2SharedData::frictionInflexionPoint = 2.5;
 
 
 
@@ -106,7 +108,8 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &CoopFixed2SharedData::commonKnowledgeReputation, false);
     gProperties.checkAndGetPropertyValue("reputationNoise", &CoopFixed2SharedData::reputationNoise, false);
     GETVAL(onlyNforGame);
-
+    GETVAL(frictionCoef);
+    GETVAL(frictionInflexionPoint);
 }
 
 
