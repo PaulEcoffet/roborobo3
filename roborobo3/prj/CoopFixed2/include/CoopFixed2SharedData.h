@@ -56,6 +56,7 @@ public:
     static bool onlyNforGame;
     static double frictionCoef;
     static double frictionInflexionPoint;
+    static int fitnessUnlockedIter;
 
     static void initSharedData();
 

@@ -202,7 +202,7 @@ void CoopFixed2WorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tfakeCoef\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
+            m_logall << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
@@ -217,6 +217,7 @@ void CoopFixed2WorldObserver::stepPost()
                      << i << "\t"
                      << wm->selfA << "\t"
                      << wm->fakeCoef << "\t"
+                     << wm->isPlaying() << "\t"
                      << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
                      << nbOnOpp << "\t"
                      << wm->_cooperationLevel * wm->fakeCoef << "\t"
@@ -407,7 +408,10 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->appendTotalInvest(totalInvest);
             }
             double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b);
-            wm->_fitnessValue += curpayoff;
+            if (m_curEvaluationIteration >= CoopFixed2SharedData::fitnessUnlockedIter)
+            {
+                wm->_fitnessValue += curpayoff;
+            }
             sum_payoff += curpayoff;
             nb_payoffs += 1;
         }
