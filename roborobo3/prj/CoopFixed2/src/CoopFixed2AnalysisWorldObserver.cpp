@@ -27,12 +27,6 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
         exit(-1);
     }
 
-    if (gNbOfPhysicalObjects != 5)
-    {
-        std::cerr << "Only 5 objects must be instanced for this run\n";
-        exit(-1);
-    }
-
     int gen = 0;
     gProperties.checkAndGetPropertyValue("genAnalysis", &gen, true);
 
@@ -219,21 +213,15 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
         robot->setCoordReal(0, 0);
     }
 
-    Robot *robot = gWorld->getRobot(0);
-    robot->unregisterRobot();
-    robot->setCoord(100+4, 100);
-    robot->setCoordReal(100+4, 100);
-    robot->registerRobot();
-    if (CoopFixed2SharedData::tpToNewObj)
-    {
-        robot->getWorldModel()->_agentAbsoluteOrientation = 0;
-    }
-    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->reset();
-    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
-
-
     for (auto* obj : gPhysicalObjects)
     {
+
+        /* register objects */
+        obj->unregisterObject();
+        obj->resetLocation();
+        obj->registerObject();
+
+        /* Make them ESS */
         auto* opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(obj);
         opp->setCoopValue(2.5);
     }
@@ -244,13 +232,30 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     opp->setNbFakeRobots(m_curnbrob);
     opp->fakerobots.clear();
     for (int i = 0; i < m_curnbrob; i++){
-        opp->fakerobots.push_back(gWorld->getRobot(i + 5));
+        opp->fakerobots.push_back(gWorld->getRobot(i + gNbOfPhysicalObjects));
     }
     for (auto* obj : gPhysicalObjects)
     {
         auto* opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(obj);
         opp->placeFakeRobot();
     }
+
+    /* place robot on target */
+    Robot *robot = gWorld->getRobot(0);
+    robot->unregisterRobot();
+    int xrob = gPhysicalObjects[0]->getXCenterPixel() + gPhysicalObjectDefaultRadius + 2;
+    int yrob = gPhysicalObjects[0]->getYCenterPixel();
+    robot->setCoord(xrob, yrob);
+    robot->setCoordReal(xrob, yrob);
+    robot->registerRobot();
+
+    if (CoopFixed2SharedData::tpToNewObj)
+    {
+        robot->getWorldModel()->_agentAbsoluteOrientation = 0;
+    }
+    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->reset();
+    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
+
 }
 
 void CoopFixed2AnalysisWorldObserver::initObjects() const
@@ -290,38 +295,26 @@ void CoopFixed2AnalysisWorldObserver::initObjects() const
     }*/
 
     /* Robots creation */
-    for (int i = 0; i < m_maxrobnb + 4; i++)
+    for (int i = 0; i < m_maxrobnb + gNbOfPhysicalObjects; i++)
     {
         Robot* rob = new Robot(gWorld);
+        rob->getWorldModel()->_cameraSensorsNb = 0; // Dummy robot
+        rob->getWorldModel()->setAlive(false);
         gWorld->addRobot(rob);
     }
 
 
-    /* Unregister objects */
-    for (auto obj : gPhysicalObjects)
-    {
-        obj->unregisterObject();
-    }
-
-    /* Test objects */
-    gPhysicalObjects[0]->setCoordinates(100, 100);
-
-
-    /* Outside option objects */
-
-    gPhysicalObjects[1]->setCoordinates(50, 50);
-    gPhysicalObjects[2]->setCoordinates(50, 150);
-    gPhysicalObjects[3]->setCoordinates(150, 50);
-    gPhysicalObjects[4]->setCoordinates(150, 150);
-
     /* register objects */
     for (auto obj : gPhysicalObjects)
     {
+        obj->unregisterObject();
+        obj->resetLocation();
         obj->registerObject();
     }
 
+
     /* attach fake robots for outside option objects */
-    for (int i = 1; i < 5; i++)
+    for (int i = 1; i < gNbOfPhysicalObjects; i++)
     {
         auto *opp = dynamic_cast<CoopFixed2AnalysisOpportunity*>(gPhysicalObjects[i]);
         opp->setNbFakeRobots(1);
