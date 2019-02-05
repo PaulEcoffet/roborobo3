@@ -401,7 +401,10 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
                 wm->appendTotalInvest(totalInvest);
             }
             double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b);
-            wm->_fitnessValue += curpayoff;
+            if (m_curEvaluationIteration >= CoopFixed2SharedData::fitnessUnlockedIter)
+            {
+                wm->_fitnessValue += curpayoff;
+            }
             sum_payoff += curpayoff;
             nb_payoffs += 1;
         }

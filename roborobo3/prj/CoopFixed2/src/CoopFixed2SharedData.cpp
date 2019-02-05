@@ -55,6 +55,7 @@ bool CoopFixed2SharedData::fixCoop = false;
 bool CoopFixed2SharedData::commonKnowledgeReputation = true;
 double CoopFixed2SharedData::reputationNoise = 0;
 bool CoopFixed2SharedData::onlyNforGame = false;
+int CoopFixed2SharedData::fitnessUnlockedIter = 0;
 
 
 
@@ -106,6 +107,7 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &CoopFixed2SharedData::commonKnowledgeReputation, false);
     gProperties.checkAndGetPropertyValue("reputationNoise", &CoopFixed2SharedData::reputationNoise, false);
     GETVAL(onlyNforGame);
+    GETVAL(fitnessUnlockedIter);
 
 }
 
