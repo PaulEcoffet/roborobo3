@@ -54,9 +54,9 @@ public:
     static bool commonKnowledgeReputation;
     static double reputationNoise;
     static bool onlyNforGame;
+    static int fitnessUnlockedIter;
 
     static void initSharedData();
-
 
 
 };
