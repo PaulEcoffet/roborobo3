@@ -28,6 +28,13 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
 
     CoopFixed2SharedData::initSharedData();
 
+    /* Coherence cheks */
+    if (CoopFixed2SharedData::frictionCoef != 0)
+    {
+        assert(!CoopFixed2SharedData::fixRobotNb);
+        assert(CoopFixed2SharedData::frictionInflexionPoint > 0);
+    }
+
     // Log files
 
     std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
@@ -444,6 +451,12 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 }
 
+static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
+{
+    return lowerbound + (upperbound - lowerbound)/(1 + exp(-slope*(x - inflexionPoint)));
+}
+
+
 double CoopFixed2WorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
                                        const double b)
 {
@@ -457,8 +470,13 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     {
         res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
     }
+    if (CoopFixed2SharedData::frictionCoef > 0)
+    {
+        res *= (1-sigmoid(n, 0, 1, CoopFixed2SharedData::frictionCoef, CoopFixed2SharedData::frictionInflexionPoint));
+    }
     return res;
 }
+
 
 
 void CoopFixed2WorldObserver::registerRobotsOnOpportunities()
