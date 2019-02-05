@@ -47,7 +47,6 @@ do
   sed -i.bak '/import(.*/d' "$tmpdir/conf$i.properties"
   sed -i.bak 's/gRandomSeed.*/gRandomSeed=-1/' "$tmpdir/conf$i.properties"
   sed -i.bak 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' "$tmpdir/conf$i.properties"
-  sed -i.bak 's/gNbOfPhysicalObjects.*/gNbOfPhysicalObjects=5/' "$tmpdir/conf$i.properties"
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
@@ -59,8 +58,11 @@ analysisNbRep=3
   if [ $findgen = 1 ]
   then
     lastfilename=`ls -tr ${path}/genomes*.txt | tail -n 1`
+    echo ${path}/genomes*.txt
+    echo $lastfilename
     real=`basename $lastfilename`
     gen=`echo $real | sed -e "s/[^0-9]//g"`
+    echo $gen
   fi
 
   echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
