@@ -30,8 +30,17 @@ void CoopFixed2AgentObserver::stepPre()
 void CoopFixed2AgentObserver::stepPost()
 {
     int dest_obj = -1;
-    if (m_wm->teleport && !(CoopFixed2SharedData::partnerControl && m_wm->nbOnOpp >= 2 && m_wm->arrival <= 2))
+    if (!m_wm->toBeTeleported && m_wm->teleport && !(CoopFixed2SharedData::partnerControl && m_wm->nbOnOpp >= 2 && m_wm->arrival <= 2))
     {
+        auto rob = gWorld->getRobot(this->m_wm->getId());
+        rob->unregisterRobot();
+        rob->setCoord(0,0);
+        rob->setCoordReal(0,0);
+        m_wm->toBeTeleported = true;
+    }
+    if (m_wm->toBeTeleported && random() < CoopFixed2SharedData::tpProba)
+    {
+        m_wm->toBeTeleported = false;
         double angle = (float) this->m_wm->getId() / gNbOfRobots * 2 * M_PI;
         if (CoopFixed2SharedData::smartTeleport)
         {

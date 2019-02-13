@@ -57,8 +57,10 @@ public:
     static double frictionCoef;
     static double frictionInflexionPoint;
     static int fitnessUnlockedIter;
+    static double tpProba;
 
     static void initSharedData();
+
 
 
 };

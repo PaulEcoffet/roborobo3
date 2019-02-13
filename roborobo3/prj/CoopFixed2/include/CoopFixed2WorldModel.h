@@ -60,6 +60,7 @@ public:
     bool teleport;
     double punishment;
     double spite;
+    bool toBeTeleported = false;
 };
 
 
