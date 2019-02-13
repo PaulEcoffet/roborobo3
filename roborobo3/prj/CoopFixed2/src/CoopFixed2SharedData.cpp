@@ -58,7 +58,7 @@ bool CoopFixed2SharedData::onlyNforGame = false;
 double CoopFixed2SharedData::frictionCoef = 0;
 double CoopFixed2SharedData::frictionInflexionPoint = 2.5;
 int CoopFixed2SharedData::fitnessUnlockedIter = 0;
-
+double CoopFixed2SharedData::tpProba = 1;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -112,6 +112,7 @@ void CoopFixed2SharedData::initSharedData()
     GETVAL(frictionCoef);
     GETVAL(frictionInflexionPoint);
     GETVAL(fitnessUnlockedIter);
+    GETVAL(tpProba);
 }
 
 
