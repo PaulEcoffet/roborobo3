@@ -69,6 +69,7 @@ analysisNbRep=3
   if [ $debug = true ]
   then
     echo 'debug mode'
+    debugpath=`basename $path`
     ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen
     break
   elif [ $fake = true ]

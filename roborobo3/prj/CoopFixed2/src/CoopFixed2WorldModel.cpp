@@ -107,6 +107,8 @@ void CoopFixed2WorldModel::reset()
     onOpportunity = false;
     nbOnOpp = 0;
     arrival = 0;
+    teleport = false;
+    toBeTeleported = false;
     opp = nullptr;
 
 }

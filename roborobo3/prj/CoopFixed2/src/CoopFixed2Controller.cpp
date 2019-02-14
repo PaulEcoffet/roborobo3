@@ -34,6 +34,7 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
     unsigned int nbMoveOutput = 1 + (int) !CoopFixed2SharedData::tpToNewObj;
     unsigned int nbGameOutput = (int) !CoopFixed2SharedData::fixCoop + (int) CoopFixed2SharedData::punishment;
 
+    fill_names = true;
     switch (CoopFixed2SharedData::controllerType)
     {
         case MLP_ID:
@@ -124,7 +125,6 @@ void CoopFixed2Controller::step()
     }
 
 
-    fill_names = inputnames.empty();
     if (CoopFixed2SharedData::splitNetwork && !CoopFixed2SharedData::onlyNforGame)
     {
         std::vector<double> moveInputs = getCameraInputs();
@@ -264,7 +264,7 @@ std::vector<double> CoopFixed2Controller::getInputs()
 
     const std::vector<double> game_inputs(getGameInputs());
     inputs.insert(inputs.end(), game_inputs.begin(), game_inputs.end());
-
+    fill_names = false;
 
     assert((CoopFixed2SharedData::splitNetwork && inputs.size() == m_nn->getNbInputs() + m_nn2->getNbInputs()) ||
            inputs.size() == m_nn->getNbInputs());

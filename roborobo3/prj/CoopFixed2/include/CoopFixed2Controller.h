@@ -45,6 +45,8 @@ public:
     const std::vector<double> getWeights() const;
 
 
+    std::vector<double> getInputs();
+
 protected:
     CoopFixed2WorldModel *m_wm;
 
@@ -53,8 +55,6 @@ protected:
 
     std::vector<double> weights;
     std::vector<double> weights2;
-
-    std::vector<double> getInputs();
 
 
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;

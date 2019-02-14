@@ -243,18 +243,22 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     /* place robot on target */
     Robot *robot = gWorld->getRobot(0);
     robot->unregisterRobot();
-    int xrob = gPhysicalObjects[0]->getXCenterPixel() + gPhysicalObjectDefaultRadius + 2;
+    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->reset();
+    int xrob = gPhysicalObjects[0]->getXCenterPixel() + gPhysicalObjectDefaultRadius + 1;
     int yrob = gPhysicalObjects[0]->getYCenterPixel();
     robot->setCoord(xrob, yrob);
     robot->setCoordReal(xrob, yrob);
     robot->registerRobot();
+    //dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->opp = dynamic_cast<CoopFixed2Opportunity*>(gPhysicalObjects[0]);
+    computeOpportunityImpact();
 
     if (CoopFixed2SharedData::tpToNewObj)
     {
         robot->getWorldModel()->_agentAbsoluteOrientation = 0;
     }
-    dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->reset();
     dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->selfA = CoopFixed2SharedData::meanA;
+
+
 
 }
 
