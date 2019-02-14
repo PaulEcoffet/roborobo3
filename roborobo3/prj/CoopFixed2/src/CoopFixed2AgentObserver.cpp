@@ -95,10 +95,10 @@ void CoopFixed2AgentObserver::stepPost()
     Uint32 pixel = getPixel32(gFootprintImage, static_cast<int>(_wm->_xReal + 0.5),
                               static_cast<int>(_wm->_yReal + 0.5));
     SDL_GetRGB(pixel, gFootprintImage->format, &r, &g, &b);
-    _wm->_groundSensorValue[0] = r;
-    _wm->_groundSensorValue[1] = g;
-    _wm->_groundSensorValue[2] = b;
-    int targetIndex = m_wm->getGroundSensorValue();
+    _wm->_groundSensorValue[0] = (int)r;
+    _wm->_groundSensorValue[1] = (int)g;
+    _wm->_groundSensorValue[2] = (int)b;
+    int targetIndex = _wm->getGroundSensorValue();
     if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset +
                                                                         (int) gPhysicalObjects.size())   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
     {
