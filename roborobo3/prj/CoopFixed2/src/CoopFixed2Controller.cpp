@@ -35,6 +35,7 @@ CoopFixed2Controller::CoopFixed2Controller(RobotWorldModel *wm)
     unsigned int nbGameOutput = (int) !CoopFixed2SharedData::fixCoop + (int) CoopFixed2SharedData::punishment;
 
     fill_names = true;
+    fillNames();
     switch (CoopFixed2SharedData::controllerType)
     {
         case MLP_ID:
@@ -326,27 +327,61 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
         {
             inputs[i++] = lastInvOnOpp / CoopFixed2SharedData::maxCoop;
         }
-        if (fill_names)
-        {
+
+    }
+
+    return inputs;
+}
+
+
+void CoopFixed2Controller::fillNames()
+{
+    if (inputnames.empty()) {
+        for (int j = 0; j < m_wm->_cameraSensorsNb; j++) {
             inputnames.emplace_back("dist " + std::to_string(j));
             inputnames.emplace_back("is robot");
-            if (CoopFixed2SharedData::reputation)
-            {
+            if (CoopFixed2SharedData::reputation) {
                 inputnames.emplace_back("reputation");
                 inputnames.emplace_back("nb plays");
             }
             inputnames.emplace_back("is wall");
             inputnames.emplace_back("is obj");
             inputnames.emplace_back("nb on obj");
-            if (CoopFixed2SharedData::reputation)
-            {
+            if (CoopFixed2SharedData::reputation) {
                 inputnames.emplace_back("last inv on opp");
             }
         }
 
-    }
+        inputnames.emplace_back("playing");
+        inputnames.emplace_back("on opp");
+        inputnames.emplace_back("nb on opp");
+        if (CoopFixed2SharedData::arrivalAsInput)
+        {
+            inputnames.emplace_back("arrival");
+        }
+        if (CoopFixed2SharedData::totalInvAsInput)
+        {
+            inputnames.emplace_back("mean total inv");
 
-    return inputs;
+        }
+        if (CoopFixed2SharedData::ownInvAsInput)
+        {
+            inputnames.emplace_back("mean own inv");
+        }
+
+        if (CoopFixed2SharedData::punishmentAsInput)
+        {
+            inputnames.emplace_back("punishment");
+        }
+
+        /*
+         * introspection inputs
+         */
+        if (CoopFixed2SharedData::selfAAsInput) {
+            inputnames.emplace_back("own A");
+        }
+        fill_names = false;
+    }
 }
 
 std::vector<double> CoopFixed2Controller::getGameInputs() const
@@ -357,16 +392,9 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const
 
     std::vector<double> inputs(getNbGameInputs(), 0);
     size_t i = 0;
-
     bool playing = m_wm->isPlaying();
     inputs[i++] = (int) playing;
-    if (fill_names)
-    { inputnames.emplace_back("playing"); }
-
-
     inputs[i++] = m_wm->onOpportunity;
-    if (fill_names)
-    { inputnames.emplace_back("on opp"); }
 
     double nb_playing = 0;
     if (playing)
@@ -378,35 +406,23 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const
         }
     }
     inputs[i++] = nb_playing;
-    if (fill_names)
-    { inputnames.emplace_back("nb on opp"); }
 
     if (CoopFixed2SharedData::arrivalAsInput)
     {
         inputs[i++] = m_wm->arrival;
-        if (fill_names)
-        { inputnames.emplace_back("arrival"); }
-
     }
     if (CoopFixed2SharedData::totalInvAsInput)
     {
         inputs[i++] = m_wm->meanLastTotalInvest() / CoopFixed2SharedData::maxCoop;
-        if (fill_names)
-        { inputnames.emplace_back("mean total inv"); }
-
     }
     if (CoopFixed2SharedData::ownInvAsInput)
     {
         inputs[i++] = m_wm->meanLastOwnInvest() / CoopFixed2SharedData::maxCoop;
-        if (fill_names)
-        { inputnames.emplace_back("mean own inv"); }
     }
 
     if (CoopFixed2SharedData::punishmentAsInput)
     {
         inputs[i++] = m_wm->punishment / CoopFixed2SharedData::maxCoop;
-        if (fill_names)
-        { inputnames.emplace_back("punishment"); }
     }
 
     /*
@@ -415,9 +431,6 @@ std::vector<double> CoopFixed2Controller::getGameInputs() const
     if (CoopFixed2SharedData::selfAAsInput)
     {
         inputs[i++] = (m_wm->selfA - CoopFixed2SharedData::meanA) / CoopFixed2SharedData::stdA;
-        if (fill_names)
-        { inputnames.emplace_back("own A"); }
-
     }
     return inputs;
 }

@@ -358,7 +358,8 @@ SDL_Surface *load_image( std::string filename )
     SDL_Surface* optimizedImage = NULL;
     
     //loadedImage = IMG_Load( filename.c_str() );
-    
+
+    std::cout << filename << "\n";
     loadedImage = SDL_LoadBMP( filename.c_str() );
     
     if( loadedImage != NULL )
