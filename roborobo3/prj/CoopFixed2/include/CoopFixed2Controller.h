@@ -59,6 +59,8 @@ protected:
 
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
+    void fillNames();
+
     unsigned int getNbInputs() const;
 
     unsigned int getNbOutputs() const;

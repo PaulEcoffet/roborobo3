@@ -32,7 +32,6 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
     if (CoopFixed2SharedData::frictionCoef != 0)
     {
         assert(!CoopFixed2SharedData::fixRobotNb);
-        assert(CoopFixed2SharedData::frictionInflexionPoint > 0);
     }
 
     // Log files
