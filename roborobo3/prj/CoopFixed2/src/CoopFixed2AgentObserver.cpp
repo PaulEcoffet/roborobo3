@@ -103,7 +103,6 @@ void CoopFixed2AgentObserver::stepPost()
                                                                         (int) gPhysicalObjects.size())   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-        //std::cout << "[DEBUG] #" << _wm->getId() << " walked upon " << targetIndex << "\n";
         gPhysicalObjects[targetIndex]->isWalked(m_wm->getId() + gRobotIndexStartOffset);
         if (m_wm->teleport && dest_obj != -1 && targetIndex != dest_obj)
         {
