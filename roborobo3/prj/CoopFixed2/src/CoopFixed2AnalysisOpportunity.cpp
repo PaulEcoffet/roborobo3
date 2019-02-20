@@ -90,6 +90,7 @@ void CoopFixed2AnalysisOpportunity::placeFakeRobot()
         wm->_cooperationLevel = getCoop();
         wm->_desiredRotationalVelocity = 0;
         wm->setAlive(false);
+        isWalked(wm->getId() + gRobotIndexStartOffset);
         i++;
     }
 

@@ -249,8 +249,13 @@ void CoopFixed2AnalysisWorldObserver::resetEnvironment()
     robot->setCoord(xrob, yrob);
     robot->setCoordReal(xrob, yrob);
     robot->registerRobot();
-    //dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->opp = dynamic_cast<CoopFixed2Opportunity*>(gPhysicalObjects[0]);
+
+    //Register our robot on the spot
+    robot->callObserverPost();
+    registerRobotsOnOpportunities();
     computeOpportunityImpact();
+    assert(dynamic_cast<CoopFixed2WorldModel *>(robot->getWorldModel())->opp == gPhysicalObjects[0]);
+    assert(dynamic_cast<CoopFixed2AnalysisOpportunity *>(gPhysicalObjects[0])->getNbNearbyRobots() == m_curnbrob + 1);
 
     if (CoopFixed2SharedData::tpToNewObj)
     {
