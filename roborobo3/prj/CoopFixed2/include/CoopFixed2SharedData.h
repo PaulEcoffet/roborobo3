@@ -58,6 +58,7 @@ public:
     static double frictionInflexionPoint;
     static int fitnessUnlockedIter;
     static double tpProba;
+    static bool fakeCoefMulSym;
 
     static void initSharedData();
 

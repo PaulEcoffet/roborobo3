@@ -60,19 +60,34 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
 
     variabilityCoef.resize(m_nbIndividuals, 0);
     boost::math::normal normal(1, CoopFixed2SharedData::fakeCoefStd);
-    double minquantile = boost::math::cdf(normal, 1./ CoopFixed2SharedData::fakeCoef);
-    double maxquantile = boost::math::cdf(normal, 1);
-    double stepquantile = (maxquantile - minquantile) / ((m_nbIndividuals / 2) - 1);
-    double curquantile = minquantile;
-    for (int i = 0; i < m_nbIndividuals / 2 ; i++)
-    {
-        variabilityCoef[i] = boost::math::quantile(normal, curquantile);
-        curquantile += stepquantile;
+
+
+    if (CoopFixed2SharedData::fakeCoefMulSym) {
+        double minquantile = boost::math::cdf(normal, 1./ CoopFixed2SharedData::fakeCoef);
+        double maxquantile = boost::math::cdf(normal, 1);
+        double stepquantile = (maxquantile - minquantile) / ((m_nbIndividuals / 2) - 1);
+        double curquantile = minquantile;
+        for (int i = 0; i < m_nbIndividuals / 2; i++) {
+
+            variabilityCoef[i] = boost::math::quantile(normal, curquantile);
+            curquantile += stepquantile;
+        }
+        for (int i = 0; i < m_nbIndividuals / 2; i++) {
+            variabilityCoef[m_nbIndividuals - i] = 1. / variabilityCoef[i];
+        }
     }
-    for (int i = 0; i < m_nbIndividuals / 2; i++)
-    {
-        variabilityCoef[m_nbIndividuals - i] = 1. / variabilityCoef[i];
+    else {
+        double minquantile = boost::math::cdf(normal, 1 - CoopFixed2SharedData::fakeCoef);
+        double maxquantile = boost::math::cdf(normal, 1 + CoopFixed2SharedData::fakeCoef);
+        double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals  - 1);
+        double curquantile = minquantile;
+        for (int i = 0; i < m_nbIndividuals; i++) {
+            variabilityCoef[i] = boost::math::quantile(normal, curquantile);
+            curquantile += stepquantile;
+        }
+
     }
+
 
 }
 
