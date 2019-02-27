@@ -34,6 +34,9 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
         assert(!CoopFixed2SharedData::fixRobotNb);
     }
 
+    // Assert that no object can be covered twice by the proximity teleport, proximityTeleport == 0 means no constraint
+    assert(CoopFixed2SharedData::proximityTeleport >= 0 && CoopFixed2SharedData::proximityTeleport <= (gNbOfPhysicalObjects/2) - 1);
+
     // Log files
 
     std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";

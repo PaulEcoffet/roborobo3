@@ -59,9 +59,9 @@ public:
     static int fitnessUnlockedIter;
     static double tpProba;
     static bool fakeCoefMulSym;
+    static int proximityTeleport;
 
     static void initSharedData();
-
 
 
 };
