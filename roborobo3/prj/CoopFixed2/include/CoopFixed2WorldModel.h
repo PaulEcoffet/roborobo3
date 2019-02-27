@@ -61,6 +61,7 @@ public:
     double punishment;
     double spite;
     bool toBeTeleported = false;
+    int prevopp = -1;
 };
 
 

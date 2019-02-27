@@ -60,6 +60,7 @@ double CoopFixed2SharedData::frictionInflexionPoint = 2.5;
 int CoopFixed2SharedData::fitnessUnlockedIter = 0;
 double CoopFixed2SharedData::tpProba = 1;
 bool CoopFixed2SharedData::fakeCoefMulSym = true;
+int CoopFixed2SharedData::proximityTeleport = 0;
 
 
 void CoopFixed2SharedData::initSharedData()
@@ -115,6 +116,7 @@ void CoopFixed2SharedData::initSharedData()
     GETVAL(fitnessUnlockedIter);
     GETVAL(tpProba);
     GETVAL(fakeCoefMulSym);
+    GETVAL(proximityTeleport);
 }
 
 

@@ -66,6 +66,12 @@ void CoopFixed2AgentObserver::stepPost()
                 }
             }
         }
+        else if (CoopFixed2SharedData::proximityTeleport != 0 && m_wm->prevopp != -1)
+        {
+            std::uniform_int_distribution<int> dis(-CoopFixed2SharedData::proximityTeleport, CoopFixed2SharedData::proximityTeleport);
+            dest_obj = (gNbOfPhysicalObjects + m_wm->prevopp + dis(engine)) % gNbOfPhysicalObjects;
+            //std::cout << m_wm->getId() << " move from " << m_wm->prevopp << " to " << dest_obj << "\n";
+        }
         else
         {
             std::uniform_int_distribution<int> dis(0, gNbOfPhysicalObjects-1);
@@ -104,6 +110,7 @@ void CoopFixed2AgentObserver::stepPost()
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         gPhysicalObjects[targetIndex]->isWalked(m_wm->getId() + gRobotIndexStartOffset);
+        m_wm->prevopp = targetIndex;
         if (m_wm->teleport && dest_obj != -1 && targetIndex != dest_obj)
         {
             std::cerr << "ERROR: " << targetIndex << " " << dest_obj << "\n";
