@@ -50,22 +50,20 @@ do
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
-analysisIterationPerRep=100
-analysisNbRep=3
+analysisIterationPerRep=1
+analysisNbRep=1
 """ >> $tmpdir/conf$i.properties
 
   # time to launch
   if [ $findgen = 1 ]
   then
     lastfilename=`ls -tr ${path}/genomes*.txt | tail -n 1`
-    echo ${path}/genomes*.txt
-    echo $lastfilename
     real=`basename $lastfilename`
     gen=`echo $real | sed -e "s/[^0-9]//g"`
     echo $gen
   fi
 
-  echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
+  echo "./roborobo -l $tmpdir/conf$i.properties -b -o $path +genAnalysis $gen >> $log 2>&1 &"
   if [ $debug = true ]
   then
     echo 'debug mode'
@@ -74,14 +72,11 @@ analysisNbRep=3
     break
   elif [ $fake = true ]
   then
-    if [[ $- == *i* ]]  # Interactive shell
-    then
       echo 'press enter to continue'
       read
-    fi
     continue
   else
-    ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
+    ./roborobo -l $tmpdir/conf$i.properties -b -o $path +genAnalysis $gen  >> $log 2>&1 &
   fi
 
   # only run analyses 10 by 10
