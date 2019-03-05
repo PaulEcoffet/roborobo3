@@ -48,8 +48,8 @@ do
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
-analysisIterationPerRep=100
-analysisNbRep=3
+analysisIterationPerRep=1
+analysisNbRep=1
 """ >> $tmpdir/conf$i.properties
 
   # time to launch
@@ -60,7 +60,7 @@ analysisNbRep=3
     gen=`echo $real | sed -e "s/[^0-9]//g"`
   fi
 
-  echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
+  echo "./roborobo -l $tmpdir/conf$i.properties -b -o $path +genAnalysis $gen >> $log 2>&1 &"
   if [ $debug = true ]
   then
     echo 'debug mode'
@@ -73,10 +73,9 @@ analysisNbRep=3
     then
       echo 'press enter to continue'
       read
-    fi
     continue
   else
-    ./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &
+    ./roborobo -l $tmpdir/conf$i.properties -b -o $path +genAnalysis $gen  >> $log 2>&1 &
   fi
 
   # only run analyses 10 by 10
@@ -88,6 +87,7 @@ analysisNbRep=3
     i=0
   fi
 done
+
 wait
 
 # clean up

@@ -42,7 +42,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
     m_genomesIt = m_genomesJson.begin();
 
     m_log.open(gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt");
-    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\tspite\n";
+    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\tspite\tteleport\n";
 
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
@@ -55,7 +55,7 @@ CoopFixed2AnalysisWorldObserver::CoopFixed2AnalysisWorldObserver(World *__world)
     m_curInd = 0;
     m_curCoop = 0;
     m_curnbrob = 0;
-    m_stepCoop = 1;
+    m_stepCoop = 0.1;
 
     gMaxIt = -1;
 }
@@ -150,7 +150,8 @@ void CoopFixed2AnalysisWorldObserver::monitorPopulation()
     out << m_curCoop << "\t";
     out << m_curnbrob << "\t";
     out << wm->_cooperationLevel << "\t";
-    out << wm->spite << "\n";
+    out << wm->spite << "\t";
+    out << wm->teleport << "\n";
     m_log << out.str();
 }
 
