@@ -29,11 +29,9 @@ else
 fi
 
 
-echo $debug
 
 tmpdir=$(mktemp -d)
 mkdir -p batch_log/
-echo $$
 log=batch_log/log_$$.txt
 
 shift
@@ -58,11 +56,8 @@ analysisNbRep=3
   if [ $findgen = 1 ]
   then
     lastfilename=`ls -tr ${path}/genomes*.txt | tail -n 1`
-    echo ${path}/genomes*.txt
-    echo $lastfilename
     real=`basename $lastfilename`
     gen=`echo $real | sed -e "s/[^0-9]//g"`
-    echo $gen
   fi
 
   echo "./roborobo -l $tmpdir/conf$i.properties -o $path +genAnalysis $gen -b >> $log 2>&1 &"
@@ -74,7 +69,7 @@ analysisNbRep=3
     break
   elif [ $fake = true ]
   then
-    if [[ $- == *i* ]]  # Interactive shell
+    if [[ -t 1 ]]  # Interactive shell
     then
       echo 'press enter to continue'
       read

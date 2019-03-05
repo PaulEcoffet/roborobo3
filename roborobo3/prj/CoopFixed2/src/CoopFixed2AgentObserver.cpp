@@ -68,9 +68,10 @@ void CoopFixed2AgentObserver::stepPost()
         }
         else if (CoopFixed2SharedData::proximityTeleport != 0 && m_wm->prevopp != -1)
         {
-            std::uniform_int_distribution<int> dis(-CoopFixed2SharedData::proximityTeleport, CoopFixed2SharedData::proximityTeleport);
-            dest_obj = (gNbOfPhysicalObjects + m_wm->prevopp + dis(engine)) % gNbOfPhysicalObjects;
-            //std::cout << m_wm->getId() << " move from " << m_wm->prevopp << " to " << dest_obj << "\n";
+            std::uniform_int_distribution<int> dis(1, CoopFixed2SharedData::proximityTeleport);
+            std::uniform_int_distribution<int> signdis(0, 1);
+            int sign = signdis(engine) * 2 - 1;
+            dest_obj = (gNbOfPhysicalObjects + m_wm->prevopp + sign * dis(engine)) % gNbOfPhysicalObjects;
         }
         else
         {
