@@ -66,6 +66,29 @@ void CoopFixed2AgentObserver::stepPost()
                 }
             }
         }
+        else if (CoopFixed2SharedData::nbCluster > 1 && m_wm->prevopp != -1)
+        {
+            const int nbCluster = CoopFixed2SharedData::nbCluster;
+            const int objpercluster = gNbOfPhysicalObjects / nbCluster;
+            int cur_cluster = m_wm->prevopp / objpercluster;
+            double p_stayincluster = (CoopFixed2SharedData::pStayInCluster != -1)? CoopFixed2SharedData::pStayInCluster : 1 - (1.0 / (gNbOfPhysicalObjects / nbCluster));
+            if (random() < p_stayincluster) // Stay in the same cluster
+            {
+                int curloc = m_wm->prevopp % objpercluster;
+                std::uniform_int_distribution<int> dis(0, objpercluster-1 -1);
+                int newloc = dis(engine);
+                if (newloc >= curloc) newloc += 1; // exclude the current location from the draw
+                dest_obj = cur_cluster * objpercluster + newloc;
+            }
+            else
+            {
+                std::uniform_int_distribution<int> dis(0, nbCluster-1 -1);
+                std::uniform_int_distribution<int> disInCluster(0, objpercluster-1);
+                int newclus = dis(engine);
+                if (newclus >= cur_cluster) newclus += 1; // exclude the current location from the draw
+                dest_obj = newclus * objpercluster + disInCluster(engine);
+            }
+        }
         else if (CoopFixed2SharedData::proximityTeleport != 0 && m_wm->prevopp != -1)
         {
             std::uniform_int_distribution<int> dis(1, CoopFixed2SharedData::proximityTeleport);

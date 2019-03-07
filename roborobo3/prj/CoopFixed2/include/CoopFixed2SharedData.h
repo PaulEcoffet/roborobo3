@@ -60,8 +60,11 @@ public:
     static double tpProba;
     static bool fakeCoefMulSym;
     static int proximityTeleport;
+    static int nbCluster;
+    static double pStayInCluster;
 
     static void initSharedData();
+
 
 
 };
