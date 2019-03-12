@@ -87,7 +87,6 @@ void CoopFixed2AgentObserver::stepPost()
                 int newclus = dis(engine);
                 if (newclus >= cur_cluster) newclus += 1; // exclude the current location from the draw
                 dest_obj = newclus * objpercluster + disInCluster(engine);
-                std::cout << m_wm->getId() << " moved to a new cluster, " << m_wm->prevopp << "->" << dest_obj << "\n";
             }
         }
         else if (CoopFixed2SharedData::proximityTeleport != 0 && m_wm->prevopp != -1)
