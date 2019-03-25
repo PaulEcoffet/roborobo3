@@ -108,14 +108,14 @@ void CoopFixed2AgentObserver::stepPost()
             rob->unregisterRobot();
             rob->setCoord(
                     static_cast<int>(physobj->getXCenterPixel() +
-                                     cos(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2)),
+                                     cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)),
                     static_cast<int>(physobj->getYCenterPixel() +
-                                     sin(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2)));
+                                     sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)));
             rob->setCoordReal(
                     static_cast<int>(physobj->getXCenterPixel() +
-                                     cos(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2)),
+                                     cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)),
                     static_cast<int>(physobj->getYCenterPixel() +
-                                     sin(angle) * (1 + gPhysicalObjectDefaultRadius + gRobotWidth / 2)));
+                                     sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)));
             rob->getWorldModel()->_agentAbsoluteOrientation = 0;
             rob->registerRobot();
         }
@@ -137,7 +137,7 @@ void CoopFixed2AgentObserver::stepPost()
         m_wm->prevopp = targetIndex;
         if (m_wm->teleport && dest_obj != -1 && targetIndex != dest_obj)
         {
-            std::cerr << "ERROR: " << targetIndex << " " << dest_obj << "\n";
+            std::cerr << "Not on opp for tp : " << m_wm->getId() << " :" << targetIndex << " " << dest_obj << "\n";
             m_wm->setRobotLED_colorValues(0, 0, 0);
             //exit(1);
         }
