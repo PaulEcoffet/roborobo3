@@ -35,6 +35,7 @@ mkdir -p batch_log/
 log=batch_log/log_$$.txt
 
 shift
+
 for path in "$@"
 do
   echo "$i : $path"
@@ -74,6 +75,7 @@ analysisNbRep=1
     then
       echo 'press enter to continue'
       read
+    fi
     continue
   else
     ./roborobo -l $tmpdir/conf$i.properties -b -o $path +genAnalysis $gen  >> $log 2>&1 &
