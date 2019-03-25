@@ -46,6 +46,7 @@ do
   sed -i.bak '/import(.*/d' "$tmpdir/conf$i.properties"
   sed -i.bak 's/gRandomSeed.*/gRandomSeed=-1/' "$tmpdir/conf$i.properties"
   sed -i.bak 's/gInitialNumberOfRobots.*/gInitialNumberOfRobots=1/' "$tmpdir/conf$i.properties"
+  sed -i.bak 's/maxCoop.*/maxCoop=10/' "$tmpdir/conf$i.properties"
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
