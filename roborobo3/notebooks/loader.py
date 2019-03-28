@@ -46,7 +46,13 @@ def getgenomes(paths, gens=None, forgiving=True):
         autogen = False
     for cond in paths:
         if autogen:
-            gens = [max([int(re.search('genomes_(\d+)', fname).group(1)) for fname in glob.glob(join(cond, 'genomes*'))])]
+            try:
+                gens = [max([int(re.search('genomes_(\d+)', fname).group(1)) for fname in glob.glob(join(cond, 'genomes*'))])]
+            except Exception as e:
+                if forgiving:
+                    continue
+                else:
+                    raise e
             stop = False
         for gen in gens:
             try:
