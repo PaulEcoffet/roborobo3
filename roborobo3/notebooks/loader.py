@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import json
+from pathlib import Path
 import glob
 import re
 import os.path
@@ -35,8 +36,7 @@ def getfitness(paths):
         except Exception:
             print("erreur, pas de run")
             continue
-        fitsum = fit.groupby(['gen', 'ind'], as_index=False).sum()
-        yield fitsum
+        yield fit
 
 
 def getgenomes(paths, gens=None, forgiving=True):
@@ -67,4 +67,3 @@ def getgenomes(paths, gens=None, forgiving=True):
                     continue
                 else:
                     raise e
-        
