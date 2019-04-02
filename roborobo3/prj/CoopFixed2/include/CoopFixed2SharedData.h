@@ -66,7 +66,7 @@ public:
     static void initSharedData();
 
 
-
+    static double temperature;
 };
 
 

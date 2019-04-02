@@ -63,6 +63,7 @@ bool CoopFixed2SharedData::fakeCoefMulSym = true;
 int CoopFixed2SharedData::proximityTeleport = 0;
 int CoopFixed2SharedData::nbCluster = 1;
 double CoopFixed2SharedData::pStayInCluster = -1;
+double CoopFixed2SharedData::temperature = -1;
 
 void CoopFixed2SharedData::initSharedData()
 {
@@ -120,6 +121,7 @@ void CoopFixed2SharedData::initSharedData()
     GETVAL(proximityTeleport);
     GETVAL(nbCluster);
     GETVAL(pStayInCluster);
+    GETVAL(temperature);
 }
 
 
