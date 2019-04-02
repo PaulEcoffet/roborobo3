@@ -36,7 +36,8 @@ class MuLambdaEvolutionStrategy():
             if nb_mutant == self.mutation_rate:
                 break
             igen = np.random.choice(children.shape[1], size=1, replace=False)
-            children[ichild][igen] = np.random.uniform(self.minb, self.maxb, size=1)
+            rand = np.random.uniform(self.minb[igen[0]], self.maxb[igen[0]], size=1)
+            children[ichild][igen] = rand
             nb_mutant += 1
         new_solutions = np.concatenate((parents, children))
         return new_solutions
@@ -50,7 +51,10 @@ class MuLambdaEvolutionStrategy():
         return self.iter >= self.maxiter
 
     def _init_solutions(self, genome_guess, full_random_begin):
-        nb_weights = len(genome_guess)
+        try:
+            nb_weights = len(genome_guess)
+        except TypeError:
+            return [genome_guess() for i in range(self.popsize)]
         if full_random_begin:
             out = np.random.uniform(
                 self.minb, self.maxb, size=(self.popsize, nb_weights))
