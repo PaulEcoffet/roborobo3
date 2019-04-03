@@ -10,12 +10,13 @@ NORMAL = 2
 class FitPropEvolutionStrategy():
     """Fitness Proportionate with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False):
+                 bounds, path, full_random_begin=False, normalmut=0.1):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
         self.log_every = 500
+        self.normalmut = normalmut
 
         # boundaries are the same for all the dimension for now
         bounds = np.asarray(bounds)
@@ -47,7 +48,8 @@ class FitPropEvolutionStrategy():
             mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
-            mutations = np.random.normal(0, 0.1, size=(mutation_mask == NORMAL).sum())
+            mutations = np.random.normal(0, self.normalmut, size=(mutation_mask == NORMAL).sum())
+            print(mutations)
             new_solutions[mutation_mask == NORMAL] += mutations
         np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
