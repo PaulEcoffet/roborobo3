@@ -69,6 +69,7 @@ def main():
     ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda', 'oneone'],
                     required=True)
     ap.add_argument('-m', '--mu', type=int, default=1)
+    ap.add_argument('--normalmut', type=float, default=0.1)
     ap.add_argument('-s', '--sigma', type=float, default=0.01)
     ap.add_argument('--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
@@ -117,7 +118,7 @@ def main():
         es = getES(argout.evolution,
                        lambda: np.random.uniform(init_min, init_max),
                        argout.sigma,
-                       evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu)
+                       evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu, normalmut=argout.normalmut)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
