@@ -312,15 +312,15 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
             reputation = m_wm->getOtherReputation(entityId - gRobotIndexStartOffset);
             nbplays = m_wm->getNbPlays(entityId - gRobotIndexStartOffset);
         }
-        inputs[i++] = m_wm->getDistanceValueFromCameraSensor(j) / m_wm->getCameraSensorMaximumDistanceValue(j);
-        inputs[i++] = static_cast<double> (Agent::isInstanceOf(entityId));
+        double dist = m_wm->getDistanceValueFromCameraSensor(j) / m_wm->getCameraSensorMaximumDistanceValue(j);
+        inputs[i++] = (Agent::isInstanceOf(entityId)) ? dist : 1;
         if (CoopFixed2SharedData::reputation)
         {
             inputs[i++] = reputation / CoopFixed2SharedData::maxCoop;
             inputs[i++] = nbplays;
         }
-        inputs[i++] = static_cast<double> (entityId == WALL_ID);
-        inputs[i++] = static_cast<double> (isOpportunity);
+        inputs[i++] =  (entityId == WALL_ID) ? dist : 1;
+        inputs[i++] =  (isOpportunity) ? dist : 1;
         inputs[i++] = nbOnOpp;
 
         if (CoopFixed2SharedData::reputation)
@@ -338,14 +338,14 @@ void CoopFixed2Controller::fillNames()
 {
     if (inputnames.empty()) {
         for (int j = 0; j < m_wm->_cameraSensorsNb; j++) {
-            inputnames.emplace_back("dist " + std::to_string(j));
-            inputnames.emplace_back("is robot");
+            //inputnames.emplace_back("dist " + std::to_string(j));
+            inputnames.emplace_back("dist robot");
             if (CoopFixed2SharedData::reputation) {
                 inputnames.emplace_back("reputation");
                 inputnames.emplace_back("nb plays");
             }
-            inputnames.emplace_back("is wall");
-            inputnames.emplace_back("is obj");
+            inputnames.emplace_back("dist wall");
+            inputnames.emplace_back("dist obj");
             inputnames.emplace_back("nb on obj");
             if (CoopFixed2SharedData::reputation) {
                 inputnames.emplace_back("last inv on opp");
@@ -498,7 +498,7 @@ unsigned int CoopFixed2Controller::getNbGameInputs() const
 unsigned int CoopFixed2Controller::getNbCameraInputs() const
 {
     const unsigned int nbCameraInputs = static_cast<const unsigned int>(
-            m_wm->_cameraSensorsNb * (5 + 3 * (int) CoopFixed2SharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
+            m_wm->_cameraSensorsNb * (4 + 3 * (int) CoopFixed2SharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
     return nbCameraInputs;
 }
 

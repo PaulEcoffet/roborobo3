@@ -49,7 +49,6 @@ class FitPropEvolutionStrategy():
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
             mutations = np.random.normal(0, self.normalmut, size=(mutation_mask == NORMAL).sum())
-            print(mutations)
             new_solutions[mutation_mask == NORMAL] += mutations
         np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
