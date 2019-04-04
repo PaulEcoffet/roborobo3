@@ -55,7 +55,7 @@ def make_video(curdir, nbjobs=1):
                 filesbygen[gen].append(fname)
         for gen, files in filesbygen.items():
             print("making movie for {}".format(gen))
-            outname = j(curdir, 'mov_{}.mp4'.format(gen))
+            outname = j(curdir, '../mov_{}.mp4'.format(gen))
             try:
                 newmov = ImageSequenceClip(sorted(files), fps=60)
             except:
