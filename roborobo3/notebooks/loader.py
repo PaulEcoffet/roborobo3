@@ -67,3 +67,13 @@ def getgenomes(paths, gens=None, forgiving=True):
                     continue
                 else:
                     raise e
+
+def getlastgen(paths, forgiving=True):
+    for cond in paths:
+        try:
+            yield max([int(re.search('genomes_(\d+)', fname).group(1)) for fname in glob.glob(join(cond, 'genomes*'))])
+        except Exception as e:
+            if forgiving:
+                continue
+            else:
+                raise e
