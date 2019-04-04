@@ -74,6 +74,9 @@ def main():
     ap.add_argument('--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
     ap.add_argument('-g', '--generations', type=int, default=30000)
+    ap.add_argument('--movie', dest='movie', action='store_true')
+    ap.add_argument('--no-movie', dest='movie', action='store_false')
+    ap.set_defaults(movie=True)
     argout, forwarded = ap.parse_known_args()
     outdir = Path(argout.output)
     sys.stdout.write("\x1b]2;{}\x07".format(outdir.name))  # Change the terminal title
@@ -85,7 +88,7 @@ def main():
         # Forward the args received by pyevoroborobo to roborobo and add the port information
         print("Forwarded:", forwarded)
         if not argout.server_only:
-            movie = "true" # output movie only for the first one
+            movie = str(argout.movie) # output movie only for the first one
             for i in range(argout.parallel_rep):
                 subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
                                  ['-o', str(outdir / 'rep{:02}'.format(i))] + forwarded + ['+takeVideo', movie])
