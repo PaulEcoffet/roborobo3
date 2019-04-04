@@ -62,7 +62,7 @@ def getgenomes(paths, gens=None, forgiving=True):
                     props = f.read()
                     maxcoop = float(re.search('maxCoop=(.*)', props).group(1))
                 yield dat[:, 0] * maxcoop
-            except FileNotFoundError as e:
+            except Exception as e:
                 if forgiving:
                     continue
                 else:
