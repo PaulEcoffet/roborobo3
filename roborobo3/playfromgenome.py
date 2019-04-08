@@ -7,7 +7,10 @@ import matplotlib.pyplot as plt
 import subprocess
 import sys
 import argparse
+import tempfile
 from os.path import join
+import shutil
+import os
 
 
 def recv_msg(sock, encoding='utf8'):
@@ -62,32 +65,41 @@ def main():
     ap.add_argument('-o', '--output', type=str, default='logs/')
     ap.add_argument('-g', '--genome', type=str, required=True)
     ap.add_argument('-s', '--server-only', action='store_true')
+    ap.add_argument('-l', dest='conf')
     argout, forwarded = ap.parse_known_args()
     outdir = argout.output
-    with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv_s:
-        desired_port = 1703
-        port = connect_to_open_port(serv_s, desired_port)
-        print("Open on port {}".format(port))
-        serv_s.listen(1)
-        # Forward the args received by pyevoroborobo to roborobo and add the port information
-        if not argout.server_only:
-            subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
-                             ['-o', outdir] + forwarded)
-        conn, cliend_data = serv_s.accept()  # connect to roborobo
-        # Wait for roborobo to give information about the simulation
-        evo_info = loads(recv_msg(conn)) # These info are ditched out because no learning happens
-        with open(argout.genome) as f:
-            genomes = load(f)
-        for i in range(4):
-            solutions = genomes
-            send_msg(conn, dumps(solutions, primitives=True))
-            ####################################
-            # Roborobo simulation is done here #
-            ####################################
-            fit_jsonstr = recv_msg(conn)
-        # Close connection with roborobo (will trigger roborobo shutdown)
-        conn.shutdown(socket.SHUT_RDWR)
-        conn.close()
+    with tempfile.TemporaryDirectory() as tmpdirname:
+        newconfname = os.path.join(tmpdirname, 'conf.properties')
+        with open(argout.conf) as orgconf:
+            with open(newconfname, 'w') as conffile:
+                for line in orgconf:
+                    if not line.startswith('import'):
+                        conffile.write(line)
+
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv_s:
+            desired_port = 1703
+            port = connect_to_open_port(serv_s, desired_port)
+            print("Open on port {}".format(port))
+            serv_s.listen(1)
+            # Forward the args received by pyevoroborobo to roborobo and add the port information
+            if not argout.server_only:
+                subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
+                                 ['-o', outdir, '-l', newconfname] + forwarded)
+            conn, cliend_data = serv_s.accept()  # connect to roborobo
+            # Wait for roborobo to give information about the simulation
+            evo_info = loads(recv_msg(conn)) # These info are ditched out because no learning happens
+            with open(argout.genome) as f:
+                genomes = load(f)
+            for i in range(4):
+                solutions = genomes
+                send_msg(conn, dumps(solutions, primitives=True))
+                ####################################
+                # Roborobo simulation is done here #
+                ####################################
+                fit_jsonstr = recv_msg(conn)
+            # Close connection with roborobo (will trigger roborobo shutdown)
+            conn.shutdown(socket.SHUT_RDWR)
+            conn.close()
 
 
 main()
