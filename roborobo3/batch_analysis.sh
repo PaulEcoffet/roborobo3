@@ -50,7 +50,7 @@ do
   echo """
 analysis = True
 gPhysicalObjectDefaultType = 10 # Coop Fixed 2 Analysis object
-analysisIterationPerRep=1
+analysisIterationPerRep=100
 analysisNbRep=1
 """ >> $tmpdir/conf$i.properties
 
