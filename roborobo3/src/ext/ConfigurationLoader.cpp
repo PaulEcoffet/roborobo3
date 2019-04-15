@@ -18,6 +18,7 @@
 #include "Config/CoopFixed2ConfigurationLoader.h"
 #include "Config/CorrectRepartitionConfigurationLoader.h"
 #include "Config/DebugCollConfigurationLoader.h"
+#include "Config/LionConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -145,10 +146,16 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 		return new DebugCollConfigurationLoader();
 	}
 #endif
-    //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
-	else
-	{
-		return NULL;
-	}
+#if defined PRJ_LION || !defined MODULAR
+    else if (configurationLoaderObjectName == "LionConfigurationLoader")
+    {
+        return new LionConfigurationLoader();
+    }
+#endif
+        //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
+    else
+    {
+        return NULL;
+    }
 
 }
