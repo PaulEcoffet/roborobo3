@@ -37,8 +37,6 @@ public:
     void stepPost() override;
 
 
-    void addRobotToTeleport(int robotId);
-
     void addObjectToTeleport(int id);
 
     static double payoff(double invest, double totalInvest, int n, double a, double b);
@@ -66,7 +64,6 @@ protected:
 
     void loadGenomesInRobots(const std::vector<std::vector<double>> &genomes);
 
-    std::set<int> robotsToTeleport;
     std::set<int> objectsToTeleport;
     std::ofstream m_logall;
     std::vector<double> variabilityCoef;

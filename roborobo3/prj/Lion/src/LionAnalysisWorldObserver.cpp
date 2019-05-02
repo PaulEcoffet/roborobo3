@@ -42,7 +42,7 @@ LionAnalysisWorldObserver::LionAnalysisWorldObserver(World *__world) : WorldObse
     m_genomesIt = m_genomesJson.begin();
 
     m_log.open(gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt");
-    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\tspite\tteleport\n";
+    m_log << "ind\trep\tit\toppId\toppCoop\toppNb\townCoop\tteleport\n";
 
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
@@ -129,11 +129,13 @@ void LionAnalysisWorldObserver::stepPost()
 
 void LionAnalysisWorldObserver::registerRobotsOnOpportunities()
 {
+    /*
     for (auto *physicalObject : gPhysicalObjects)
     {
         auto *opp = dynamic_cast<LionOpportunity *>(physicalObject);
         opp->registerNewRobots();
     }
+     */
 }
 
 void LionAnalysisWorldObserver::monitorPopulation()
@@ -153,14 +155,14 @@ void LionAnalysisWorldObserver::monitorPopulation()
     out << oppLifeId << "\t";
     out << m_curCoop << "\t";
     out << m_curnbrob << "\t";
-    out << wm->_cooperationLevel << "\t";
-    out << wm->spite << "\t";
+    out << wm->getCoop(m_curnbrob - 1) << "\t";
     out << wm->teleport << "\n";
     m_log << out.str();
 }
 
 void LionAnalysisWorldObserver::computeOpportunityImpact()
 {
+    /*
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < _world->getNbOfRobots(); i++)
     {
@@ -186,17 +188,6 @@ void LionAnalysisWorldObserver::computeOpportunityImpact()
             wm->nbOnOpp = opp->getNbNearbyRobots();
 
             // Add information about his previous investment
-            wm->appendOwnInvest(wm->_cooperationLevel);
-            if (LionSharedData::onlyOtherInTotalInv)
-            {
-                wm->appendTotalInvest(opp->getCoop());
-            }
-            else
-            {
-                wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
-            }
-            wm->appendToCommonKnowledgeReputation(wm->_cooperationLevel);
-
             //Reward him
             ctl->increaseFitness(0);
             if (index == 0)
@@ -205,11 +196,13 @@ void LionAnalysisWorldObserver::computeOpportunityImpact()
             }
         }
     }
+     */
 }
 
 void LionAnalysisWorldObserver::resetEnvironment()
 {
-    /* Put all robots in a hidden place */
+    /*
+    / Put all robots in a hidden place
     for (int i = 0; i < gNbOfRobots; i++)
     {
         Robot *robot = gWorld->getRobot(i);
@@ -221,17 +214,17 @@ void LionAnalysisWorldObserver::resetEnvironment()
     for (auto *obj : gPhysicalObjects)
     {
 
-        /* register objects */
+        /* register objects
         obj->unregisterObject();
         obj->resetLocation();
         obj->registerObject();
 
-        /* Make them ESS */
+        /* Make them ESS
         auto *opp = dynamic_cast<LionAnalysisOpportunity *>(obj);
         opp->setCoopValue(2.5);
     }
 
-    /* set up the target opportunity */
+    /* set up the target opportunity
     auto *opp = dynamic_cast<LionAnalysisOpportunity *>(gPhysicalObjects[0]);
     opp->setCoopValue(m_curCoop);
     opp->setNbFakeRobots(m_curnbrob);
@@ -246,7 +239,7 @@ void LionAnalysisWorldObserver::resetEnvironment()
         opp->placeFakeRobot();
     }
 
-    /* place robot on target */
+    /* place robot on target
     Robot *robot = gWorld->getRobot(0);
     robot->unregisterRobot();
     dynamic_cast<LionWorldModel *>(robot->getWorldModel())->reset();
@@ -263,50 +256,15 @@ void LionAnalysisWorldObserver::resetEnvironment()
     assert(dynamic_cast<LionWorldModel *>(robot->getWorldModel())->opp == gPhysicalObjects[0]);
     assert(dynamic_cast<LionAnalysisOpportunity *>(gPhysicalObjects[0])->getNbNearbyRobots() == m_curnbrob + 1);
 
-    if (LionSharedData::tpToNewObj)
-    {
-        robot->getWorldModel()->_agentAbsoluteOrientation = 0;
-    }
-    dynamic_cast<LionWorldModel *>(robot->getWorldModel())->selfA = LionSharedData::meanA;
+    robot->getWorldModel()->_agentAbsoluteOrientation = 0;
 
+    dynamic_cast<LionWorldModel *>(robot->getWorldModel())->selfA = LionSharedData::meanA;
+*/
 
 }
 
 void LionAnalysisWorldObserver::initObjects() const
 {
-    /*int i = 0;
-    int objPerCoop = (int) ceil((double) gNbOfPhysicalObjects / 12); // coop : 0, 1, .., 10 + obj without ind
-    int nbRob = 0;
-    int coop = 0;
-    for (auto *phys : gPhysicalObjects)
-    {
-        auto *opp = dynamic_cast<LionAnalysisOpportunity *>(phys);
-        opp->setCoopValue(coop);
-        opp->setNbFakeRobots(nbRob);
-        if (nbRob > 0)
-        {
-            std::shared_ptr<Robot> rob = std::make_shared<Robot>(gWorld);
-            rob->getWorldModel()->_cameraSensorsNb = 0;
-            gWorld->addRobot(rob.get());
-            opp->fakerobot = rob;
-        }
-        i++;
-        if (i % objPerCoop == 0)
-        {
-            if (nbRob == 0)
-            {
-                nbRob = 1;
-            }
-            else
-            {
-                coop += LionSharedData::maxCoop / 10;
-            }
-        }
-        phys->unregisterObject();
-        phys->resetLocation();
-        phys->registerObject();
-        opp->placeFakeRobot();
-    }*/
 
     /* Robots creation */
     for (int i = 0; i < m_maxrobnb + gNbOfPhysicalObjects; i++)

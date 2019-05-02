@@ -22,74 +22,28 @@ enum
     ELMAN_ID = 2
 };
 
-std::vector<std::string> LionController::inputnames;
-
 LionController::LionController(RobotWorldModel *wm)
 {
     m_wm = dynamic_cast<LionWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
-    unsigned int nbCamInputs = getNbCameraInputs();
-    unsigned int nbGameInputs = getNbGameInputs();
-
-    unsigned int nbMoveOutput = 1 + (int) !LionSharedData::tpToNewObj;
-    unsigned int nbGameOutput = (int) !LionSharedData::fixCoop + (int) LionSharedData::punishment;
-
-    fill_names = true;
-    fillNames();
+    std::vector<unsigned int> nbNeurons2 = std::vector<unsigned int>(1, 2);
     switch (LionSharedData::controllerType)
     {
         case MLP_ID:
-            if (LionSharedData::splitNetwork && !LionSharedData::onlyNforGame)
-            {
-                std::vector<unsigned int> nbNeurons2 = {2}; // TODO 2 should not be hardcode
-                m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, nbNeurons2, true, false, 1.0);
-            }
-            else if (LionSharedData::onlyNforGame)
-            {
-                assert(LionSharedData::splitNetwork);
-                assert(!LionSharedData::fixCoop);
-                std::vector<unsigned int> nbNeurons2 = {2}; // best value for the fit
-                m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput,
+                m_nn = new MLP(weights, 4, 1,
                                nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new MLP(weights2, 1, 1, nbNeurons2, true, false, 1.0);
-            }
-            else
-            {
-                m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput,
-                               nbNeuronsPerHiddenLayers, true);
-            }
+                m_nn2 = new MLP(weights, 1, 1, nbNeurons2, true);
+
             break;
         case PERCEPTRON_ID:
-            if (LionSharedData::splitNetwork)
-            {
-                m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput);
-                m_nn2 = new Perceptron(weights2, nbGameOutput, nbGameOutput);
-            }
-            else if (LionSharedData::onlyNforGame)
-            {
-                throw std::string("Not implemented");
-            }
-            else
-            {
-                m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput);
-            }
+                m_nn = new Perceptron(weights, 4, 1);
+                m_nn2 = new Perceptron(weights, 1, 1);
             break;
         case ELMAN_ID:
-            if (LionSharedData::splitNetwork)
-            {
-                m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new Elman(weights2, nbGameOutput, nbGameOutput, 2, true);
-            }
-            else if (LionSharedData::onlyNforGame)
-            {
-                throw std::string("Not implemented");
-            }
-            else
-            {
-                m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput,
+                m_nn = new Elman(weights, 4, 1,
                                  nbNeuronsPerHiddenLayers, true);
-            }
+                m_nn2 = new Elman(weights, 4, 1,
+                                 nbNeurons2, true);
             break;
         default:
             std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
@@ -98,12 +52,8 @@ LionController::LionController(RobotWorldModel *wm)
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
     m_nn->setWeights(weights);
-
-    if (LionSharedData::splitNetwork)
-    {
-        weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
-        m_nn2->setWeights(weights);
-    }
+    weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
+    m_nn2->setWeights(weights2);
 
     resetFitness();
 }
@@ -128,20 +78,43 @@ void LionController::step()
     LionOpportunity *best = nullptr;
     double bestscore = -9999;
 
-    int curoppid = (m_wm->opp) ? m_wm->getId() : -1;
+    int curoppid = (m_wm->opp) ? m_wm->opp->getId() : -1;
+    std::vector<double> inputs(4, 0);
+    int i = 0;
+
     for (auto *opp : gPhysicalObjects)
     {
         auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
-        double cost = opp->getId() == curoppid;
-
-        std::vector<double> inputs = getInputs();
+        double cost = opp->getId() != curoppid;
+        double onopp = 1 - cost;
+        double nbopp = lionopp->countCurrentRobots() - onopp;
+        double owncoop = m_wm->getCoop(nbopp);
+        double coop = 0;
+        if (onopp)
+        {
+            coop = (lionopp->getCurInv() - owncoop);
+        }
+        else
+        {
+            coop = lionopp->getIfNewPartInv();
+        }
+        i = 0;
+        inputs[i++] = cost;
+        inputs[i++] = nbopp / gNbOfRobots;
+        inputs[i++] = coop / LionSharedData::maxCoop;
+        inputs[i] = owncoop / LionSharedData::maxCoop;
         m_nn->setInputs(inputs);
+
         m_nn->step();
         std::vector<double> outputs = m_nn->readOut();
+        if (m_wm->getId() == 0)
+        {
+            //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << outputs[0] << std::endl;
+        }
         if (outputs[0] > bestscore)
         {
             bestscore = outputs[0];
-            best = opp;
+            best = lionopp;
         }
     }
 
@@ -150,16 +123,12 @@ void LionController::step()
 
     m_wm->_desiredTranslationalValue = 0;
     m_wm->_desiredRotationalVelocity = 0;
-    m_wm->teleport = best_spot;
-
-
-    m_wm->_cooperationLevel = hardcoop; // Range between [0; maxCoop]
-
+    m_wm->teleport = best->getId();
 
     if (m_wm->fakeCoef < 0.8)
     {
         m_wm->setRobotLED_colorValues(126, 55, 49);
-        if (m_wm->onOpportunity && (!LionSharedData::fixRobotNb || m_wm->arrival <= 2))
+        if (m_wm->onOpportunity)
         {
             m_wm->setRobotLED_colorValues(169, 96, 89);
         }
@@ -167,7 +136,7 @@ void LionController::step()
     else if (m_wm->fakeCoef < 1.2)
     {
         m_wm->setRobotLED_colorValues(0, 0, 255);
-        if (m_wm->onOpportunity && (!LionSharedData::fixRobotNb || m_wm->arrival <= 2))
+        if (m_wm->onOpportunity)
         {
             m_wm->setRobotLED_colorValues(100, 100, 255);
         }
@@ -175,12 +144,11 @@ void LionController::step()
     else
     {
         m_wm->setRobotLED_colorValues(115, 182, 234);
-        if (m_wm->onOpportunity && (!LionSharedData::fixRobotNb || m_wm->arrival <= 2))
+        if (m_wm->onOpportunity)
         {
             m_wm->setRobotLED_colorValues(185, 218, 244);
         }
     }
-
 }
 
 std::vector<unsigned int> LionController::getNbNeuronsPerHiddenLayers() const
@@ -200,257 +168,40 @@ LionController::~LionController()
     delete m_nn;
 }
 
-std::vector<double> LionController::getInputs()
-{
-    size_t i;
-    std::vector<double> inputs;
-    inputs = getCameraInputs();
-
-    const std::vector<double> game_inputs(getGameInputs());
-    inputs.insert(inputs.end(), game_inputs.begin(), game_inputs.end());
-    fill_names = false;
-
-    assert((LionSharedData::splitNetwork && inputs.size() == m_nn->getNbInputs() + m_nn2->getNbInputs()) ||
-           inputs.size() == m_nn->getNbInputs());
-    assert(inputnames.size() == inputs.size());
-    return inputs;
-}
-
-std::vector<double> LionController::getCameraInputs() const
-{
-    size_t i = 0;
-    std::vector<double> inputs(getNbCameraInputs(), 0);
-    const int WALL_ID = 0;
-    /*
-     * Camera inputs
-     */
-    for (int j = 0; j < m_wm->_cameraSensorsNb; j++)
-    {
-        bool isOpportunity = false;
-        double nbOnOpp = 0;
-        double lastInvOnOpp = 0;
-        double reputation = 0;
-        int nbplays = 0;
-        auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(j));
-
-        if (entityId >= gPhysicalObjectIndexStartOffset &&
-            entityId < gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects) // is an Object
-        {
-            auto *opportunity = dynamic_cast<LionOpportunity *>(
-                    gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
-            isOpportunity = true;
-            if (opportunity == m_wm->opp)
-            {
-                nbOnOpp = m_wm->nbOnOpp;
-                lastInvOnOpp = m_wm->meanLastTotalInvest();
-            }
-            else
-            {
-                nbOnOpp = opportunity->getNbNearbyRobots();
-                lastInvOnOpp = opportunity->curInv;
-            }
-        }
-        else if (Agent::isInstanceOf(entityId))
-        {
-            reputation = m_wm->getOtherReputation(entityId - gRobotIndexStartOffset);
-            nbplays = m_wm->getNbPlays(entityId - gRobotIndexStartOffset);
-        }
-        double dist = m_wm->getDistanceValueFromCameraSensor(j) / m_wm->getCameraSensorMaximumDistanceValue(j);
-        inputs[i++] = (Agent::isInstanceOf(entityId)) ? dist : 1;
-        if (LionSharedData::reputation)
-        {
-            inputs[i++] = reputation / LionSharedData::maxCoop;
-            inputs[i++] = nbplays;
-        }
-        inputs[i++] = (entityId == WALL_ID) ? dist : 1;
-        inputs[i++] = (isOpportunity) ? dist : 1;
-        inputs[i++] = nbOnOpp;
-
-        if (LionSharedData::reputation)
-        {
-            inputs[i++] = lastInvOnOpp / LionSharedData::maxCoop;
-        }
-
-    }
-
-    return inputs;
-}
-
-
-void LionController::fillNames()
-{
-    if (inputnames.empty())
-    {
-        for (int j = 0; j < m_wm->_cameraSensorsNb; j++)
-        {
-            //inputnames.emplace_back("dist " + std::to_string(j));
-            inputnames.emplace_back("dist robot");
-            if (LionSharedData::reputation)
-            {
-                inputnames.emplace_back("reputation");
-                inputnames.emplace_back("nb plays");
-            }
-            inputnames.emplace_back("dist wall");
-            inputnames.emplace_back("dist obj");
-            inputnames.emplace_back("nb on obj");
-            if (LionSharedData::reputation)
-            {
-                inputnames.emplace_back("last inv on opp");
-            }
-        }
-
-        inputnames.emplace_back("playing");
-        inputnames.emplace_back("on opp");
-        inputnames.emplace_back("nb on opp");
-        if (LionSharedData::arrivalAsInput)
-        {
-            inputnames.emplace_back("arrival");
-        }
-        if (LionSharedData::totalInvAsInput)
-        {
-            inputnames.emplace_back("mean total inv");
-
-        }
-        if (LionSharedData::ownInvAsInput)
-        {
-            inputnames.emplace_back("mean own inv");
-        }
-
-        if (LionSharedData::punishmentAsInput)
-        {
-            inputnames.emplace_back("punishment");
-        }
-
-        /*
-         * introspection inputs
-         */
-        if (LionSharedData::selfAAsInput)
-        {
-            inputnames.emplace_back("own A");
-        }
-        fill_names = false;
-    }
-}
-
-std::vector<double> LionController::getGameInputs() const
-{
-    /*
-     * Opportunity inputs
-     */
-
-    std::vector<double> inputs(getNbGameInputs(), 0);
-    size_t i = 0;
-    bool playing = m_wm->isPlaying();
-    inputs[i++] = (int) playing;
-    inputs[i++] = m_wm->onOpportunity;
-
-    double nb_playing = 0;
-    if (playing)
-    {
-        nb_playing = m_wm->nbOnOpp - 1;
-        if (LionSharedData::fixRobotNb and nb_playing > 1)
-        {
-            nb_playing = 1;
-        }
-    }
-    inputs[i++] = nb_playing;
-
-    if (LionSharedData::arrivalAsInput)
-    {
-        inputs[i++] = m_wm->arrival;
-    }
-    if (LionSharedData::totalInvAsInput)
-    {
-        inputs[i++] = m_wm->meanLastTotalInvest() / LionSharedData::maxCoop;
-    }
-    if (LionSharedData::ownInvAsInput)
-    {
-        inputs[i++] = m_wm->meanLastOwnInvest() / LionSharedData::maxCoop;
-    }
-
-    if (LionSharedData::punishmentAsInput)
-    {
-        inputs[i++] = m_wm->punishment / LionSharedData::maxCoop;
-    }
-
-    /*
-     * introspection inputs
-     */
-    if (LionSharedData::selfAAsInput)
-    {
-        inputs[i++] = (m_wm->selfA - LionSharedData::meanA) / LionSharedData::stdA;
-    }
-    return inputs;
-}
 
 void LionController::loadNewGenome(const std::vector<double> &newGenome)
 {
-    int coopgene = 0;
-    if (LionSharedData::fixCoop)
+
+    auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights();
+    if (m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
     {
-        coopgene = 1;
+        std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
+                  << newGenome.size() << std::endl;
+        exit(-1);
     }
-    if (!LionSharedData::splitNetwork)
-    {
-        if (m_nn->getRequiredNumberOfWeights() + coopgene != newGenome.size())
-        {
-            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
-                      << newGenome.size() << std::endl;
-            exit(-1);
-        }
-        weights = std::vector<double>(newGenome.begin() + coopgene, newGenome.end());
-        m_nn->setWeights(weights);
-    }
-    else
-    {
-        if (coopgene + m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
-        {
-            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
-                      << newGenome.size() << std::endl;
-            exit(-1);
-        }
-        auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights() + coopgene;
-        weights = std::vector<double>(newGenome.begin() + coopgene, split);
-        weights2 = std::vector<double>(split, newGenome.end());
-        m_nn->setWeights(weights);
-        m_nn2->setWeights(weights2);
-    }
-    if (LionSharedData::fixCoop)
-    {
-        hardcoop = newGenome[0] * LionSharedData::maxCoop;
-    }
+    weights = std::vector<double>(newGenome.begin(), split);
+    weights2 = std::vector<double>(split, newGenome.end());
+    m_nn->setWeights(weights);
+    m_nn2->setWeights(weights2);
+
     if (LionSharedData::controllerType == ELMAN_ID)
     {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
+    }
+    std::vector<double> inputs(1, 0);
+    for(int i = 0; i < gNbOfRobots; i++)
+    {
+        inputs[0] = i;
+        m_nn2->setInputs(inputs);
+        m_nn2->step();
+        auto output = m_nn2->readOut();
+        m_wm->setCoop(i, (double)((output[0] + 1)) / 2.0 * LionSharedData::maxCoop);
     }
 }
 
 unsigned int LionController::getNbInputs() const
 {
-    return getNbCameraInputs() + getNbGameInputs();
-}
-
-unsigned int LionController::getNbGameInputs() const
-{
-    const auto nbGameInputs = static_cast<const unsigned int>(
-            1 // playing
-            + 1 // on Opp
-            + 1 // nbOnOpportunity
-            + LionSharedData::arrivalAsInput
-            + LionSharedData::totalInvAsInput
-            + LionSharedData::ownInvAsInput
-            + LionSharedData::selfAAsInput
-            + LionSharedData::punishmentAsInput
-    );
-    return nbGameInputs;
-}
-
-unsigned int LionController::getNbCameraInputs() const
-{
-    const unsigned int nbCameraInputs = static_cast<const unsigned int>(
-            m_wm->_cameraSensorsNb * (4 + 3 *
-                                          (int) LionSharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
-    return nbCameraInputs;
+    return 3;
 }
 
 
@@ -486,113 +237,42 @@ std::string LionController::inspect(std::string prefix)
     if (verbose == 0)
     {
         out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
-        std::set<int> seen;
-        for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
-        {
-            seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
-        }
 
-        out << prefix << "Seen objects:\n";
-        for (int entityId : seen)
+        if (m_wm->opp)
         {
-            if (entityId == 0)
-            {
-                out << "\tA wall\n";
-            }
-            else if (Agent::isInstanceOf(entityId))
-            {
-                out << "\tAnother agent\n";
-            }
-            else if (entityId >= gPhysicalObjectIndexStartOffset)
-            {
-                out << "\tA cooperation opportunity ";
-                auto coop = dynamic_cast<LionOpportunity *>(gPhysicalObjects[entityId -
-                                                                             gPhysicalObjectIndexStartOffset]);
-                out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
-            }
-        }
-        if (m_wm->onOpportunity)
-        {
-            out << prefix << "On opportunity with " << m_wm->nbOnOpp << ". I arrived " << m_wm->arrival << ".\n";
+            out << prefix << "WARNING: THE DISPLAYED VALUES DO NOT CORRESPOND TO WHAT HAS REALLY BEEN PLAYED\n";
+            out << prefix << "On opportunity with " << m_wm->opp->countCurrentRobots() - 1 << ".\n";
             out << prefix << "\tLast own invest: ";
-            for (auto ownInvest : m_wm->lastOwnInvest)
-            {
-                out << ownInvest << " ";
-            }
-            out << "(" << m_wm->meanLastOwnInvest() << ")";
+            out <<  m_wm->getCoop(m_wm->opp->countCurrentRobots() - 1) << " (" << m_wm->getCoop(m_wm->opp->countCurrentRobots() - 1, true) << ")";
             out << "\n";
             out << prefix << "\tLast total invest: ";
-            for (auto totInvest : m_wm->lastTotalInvest)
-            {
-                out << totInvest << " ";
-            }
-            out << "(" << m_wm->meanLastTotalInvest() << ")";
+            out << m_wm->opp->getCurInv();
             out << "\n";
 
         }
         out << prefix << "a coeff: " << m_wm->selfA << "\n";
-        out << prefix << "last coop: " << m_wm->_cooperationLevel << "\n";
-        out << prefix << "reputation : " << m_wm->meanLastCommonKnowledgeReputation() << "\n";
-        out << prefix << "received punishment : " << m_wm->punishment << "\n";
-        out << prefix << "sent punishment : " << m_wm->spite << "\n";
-
         out << prefix << "Actual fitness: " << getFitness() << "\n";
     }
     if (verbose == 1)
     {
-        auto inputs = getInputs();
-        out << prefix << "inputs:\n";
-        for (int i = 0; i < inputs.size(); i++)
-        {
-            out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
-        }
-        out << prefix << "outputs:\n";
-        auto &outputs = m_nn->readOut();
-        for (auto &output : outputs)
-        {
-            out << prefix << "\t" << output << "\n"; // TODO Crash without reason
-        }
-        if (LionSharedData::splitNetwork)
-        {
-            auto &outputs = m_nn2->readOut();
-            for (auto &output : outputs)
-            {
-                out << prefix << "\t" << output << "\n"; // TODO Crash without reason
-            }
-        }
-    }
-    if (verbose == 2)
-    {
         out << m_nn->toString() << std::endl;
-        if (LionSharedData::splitNetwork)
-        {
-            out << m_nn2->toString() << std::endl;
-        }
+        out << m_nn2->toString() << std::endl;
     }
-    verbose++;
+    verbose = (verbose + 1) % 2;
     return out.str();
 }
 
 const std::vector<double> LionController::getWeights() const
 {
     std::vector<double> allweights;
-    if (LionSharedData::fixCoop)
-    {
-        allweights.push_back(hardcoop);
-    }
-    allweights.insert(allweights.end(), weights.begin(), weights.end());
 
-    if (LionSharedData::splitNetwork)
-    {
-        allweights.insert(allweights.end(), weights2.begin(), weights2.end());
-    }
+    allweights.insert(allweights.end(), weights.begin(), weights.end());
+    allweights.insert(allweights.end(), weights2.begin(), weights2.end());
+
     return allweights;
 }
 
 unsigned int LionController::getNbOutputs() const
 {
-    return 1
-           + (unsigned int) !LionSharedData::tpToNewObj // Motor commands
-           + (unsigned int) !LionSharedData::fixCoop  // Cooperation value
-           + (unsigned int) LionSharedData::punishment;
+    return 1;
 }

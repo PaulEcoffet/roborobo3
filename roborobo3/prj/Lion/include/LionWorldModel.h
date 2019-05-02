@@ -10,36 +10,12 @@
 #include <deque>
 #include "LionOpportunity.h"
 
+class LionOpportunity;
+
 class LionWorldModel : public RobotWorldModel
 {
 public:
     LionWorldModel();
-
-    std::deque<double> lastOwnInvest;
-    std::deque<double> lastTotalInvest;
-    std::deque<double> lastCommonKnowledgeReputation;
-
-    double meanLastTotalInvest();
-
-    double meanLastOwnInvest();
-
-    double meanLastCommonKnowledgeReputation();
-
-    void appendOwnInvest(const double invest);
-
-    void appendTotalInvest(const double invest);
-
-    void appendToCommonKnowledgeReputation(const double d);
-
-    void updateOtherReputation(int robid, double invest);
-
-    bool isPlaying();
-
-    double getOtherReputation(int robid);
-
-    int getNbPlays(int robid);
-
-    void initOtherReputations();
 
     double nbOnOpp = 0;
     bool onOpportunity;
@@ -53,16 +29,21 @@ public:
     bool fake;
     double fakeCoef;
 
-    std::vector<double> otherReputations;
-    std::vector<int> nbPlays;
-
     void reset();
 
-    bool teleport;
-    double punishment;
-    double spite;
-    bool toBeTeleported = false;
-    int prevopp = -1;
+    int teleport = -1;
+
+    bool isPlaying();
+
+    LionOpportunity *prevopp = nullptr;
+
+    double getCoop(int nbpart, bool truecoop=false);
+    void setCoop(int nbpart, double val);
+
+
+protected:
+    std::vector<double> coopCache;
+
 };
 
 

@@ -2,6 +2,8 @@
 #include <PartnerChoice/include/PartnerChoiceOpportunity.h>
 #include <PartnerControl/include/PartnerControlOpportunity.h>
 #include <CoopFixed2/include/CoopFixed2AnalysisOpportunity.h>
+#include <Lion/include/LionAnalysisOpportunity.h>
+#include <Lion/include/LionOpportunity.h>
 #include <CorrectRepartition/include/CorrectRepartitionOpportunity.h>
 #include <DebugColl/include/DebugCollObj.h>
 #include "World/PhysicalObjectFactory.h"
@@ -106,6 +108,16 @@ void PhysicalObjectFactory::makeObject( int type )
                 std::cout << "[INFO] Debug Coll obj created (type = 12).\n";
             gPhysicalObjects.push_back(new DebugCollObj(id));
             break;
+        case 13:
+            if (gVerbose)
+                std::cout << "[INFO] Lion obj created (type = 13).\n";
+            gPhysicalObjects.push_back(new LionOpportunity(id));
+            break;
+        case 14:
+            if (gVerbose)
+                std::cout << "[INFO] Lion analysis obj created (type = 14).\n";
+            gPhysicalObjects.push_back(new LionAnalysisOpportunity(id));
+            break;
         // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;
@@ -115,7 +127,7 @@ void PhysicalObjectFactory::makeObject( int type )
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 12;
+    return 14;
 }
 
 

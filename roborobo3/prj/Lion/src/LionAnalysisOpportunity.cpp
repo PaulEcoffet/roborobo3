@@ -27,7 +27,7 @@ void LionAnalysisOpportunity::step()
     {
         RobotWorldModel *wm = fakerobot->getWorldModel();
         wm->_desiredTranslationalValue = 0;
-        wm->_cooperationLevel = getCoop();
+        wm->_cooperationLevel = getCoop(); // TODO WRONG COOP
         wm->_desiredRotationalVelocity = 0;
     }
 }
@@ -87,7 +87,7 @@ void LionAnalysisOpportunity::placeFakeRobot()
         RobotWorldModel *wm = fakerobot->getWorldModel();
         wm->_desiredTranslationalValue = 0;
         wm->_agentAbsoluteOrientation = 0;
-        wm->_cooperationLevel = getCoop();
+        wm->_cooperationLevel = getCoop(); // TODO wrong coop
         wm->_desiredRotationalVelocity = 0;
         wm->setAlive(false);
         isWalked(wm->getId() + gRobotIndexStartOffset);

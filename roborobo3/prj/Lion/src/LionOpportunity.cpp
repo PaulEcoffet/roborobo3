@@ -11,7 +11,10 @@
 LionOpportunity::LionOpportunity(int __id) : RoundObject(__id)
 {
     setType(9);
+    curA = 5;
     lifeid = __id;
+    curInv = 0;
+    ifNewPartInv = 0;
     if (LionSharedData::oppDecay > 0)
     {
         lifeExpectancy = 1. / LionSharedData::oppDecay;
@@ -22,54 +25,31 @@ LionOpportunity::LionOpportunity(int __id) : RoundObject(__id)
     }
 }
 
-int LionOpportunity::getNbNearbyRobots() const
+
+void LionOpportunity::removeRobot(int id)
 {
-    return static_cast<int>(nearbyRobotIndexes.size());
+    auto *wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(id)->getWorldModel());
+    nearbyMap.erase(id);
+    curInv = this->sumCoop(countCurrentRobots());
+    ifNewPartInv = sumCoop(std::min(countCurrentRobots(), gInitialNumberOfRobots - 1));
+    assert(curInv >= -1e10);
+    assert(ifNewPartInv >= -1e10);
 }
 
-int LionOpportunity::getNbNewNearbyRobots() const
-{
-    return static_cast<int>(newNearbyRobotIndexes.size());
-}
-
-void LionOpportunity::isWalked(int id)
+void LionOpportunity::isWalked(const int id)
 {
     const int rid = id - gRobotIndexStartOffset;
-    if (std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end())
-    { // if not already in the list
-        newNearbyRobotIndexes.push_back(rid);
-    }
-    //std::cout << "Coucou, c'est " << _id <<", " << rid << " vient d'arriver. On est maintenant " << newNearbyRobotIndexes.size() << "\n";
+    auto* wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(rid)->getWorldModel());
+    nearbyMap.emplace(rid, wm);
+    curInv = this->sumCoop(countCurrentRobots() - 1);
+    assert(curInv - (ifNewPartInv + wm->getCoop(countCurrentRobots() - 1) < 1e10));
+    ifNewPartInv = sumCoop(std::min(countCurrentRobots(), gInitialNumberOfRobots - 1));
+
 }
 
-const std::vector<int> &LionOpportunity::getNearbyRobotIndexes() const
+int LionOpportunity::countCurrentRobots()
 {
-    return nearbyRobotIndexes;
-}
-
-void LionOpportunity::registerNewRobots()
-{
-    std::vector<int> out;
-    // Look for the robot that were here last turn and are still here. Keep the order of arrival.
-    for (const auto rid : nearbyRobotIndexes)
-    {
-        auto pos = std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid);
-        if (pos != newNearbyRobotIndexes.end()) // we found something
-        {
-            out.push_back(rid);
-            *pos = -1; /* mark as already taken into account */
-        }
-    }
-    for (const auto rid: newNearbyRobotIndexes)
-    {
-        if (rid != -1) // This rid hasn't been processed yet
-        {
-            out.push_back(rid);
-        }
-    }
-
-    nearbyRobotIndexes = out;
-    newNearbyRobotIndexes.clear();
+    return static_cast<int>(nearbyMap.size());
 }
 
 
@@ -86,8 +66,7 @@ void LionOpportunity::step()
 void LionOpportunity::kill()
 {
     auto *wobs = dynamic_cast<LionWorldObserver *>(gWorld->getWorldObserver());
-    nearbyRobotIndexes.clear();
-    newNearbyRobotIndexes.clear();
+    nearbyMap.clear();
     curA = 0;
     curInv = 0;
     wobs->addObjectToTeleport(_id);
@@ -95,7 +74,7 @@ void LionOpportunity::kill()
 
 void LionOpportunity::updateColor()
 {
-    if (getNbNearbyRobots() == 0)
+    if (countCurrentRobots() == 0)
     {
         _displayColorRed = 152;
         _displayColorGreen = 200;
@@ -128,11 +107,40 @@ std::string LionOpportunity::inspect(std::string prefix)
 {
     std::stringstream out;
     out << prefix << "Last inv: " << curInv << ".\n";
-    out << prefix << "I have " << getNbNearbyRobots() << " robots on me: ";
+    out << prefix << "I have " << countCurrentRobots() << " robots on me: ";
     for (auto index : nearbyRobotIndexes)
     {
         out << index << ",";
     }
     out << "\n";
     return out.str();
+}
+
+double LionOpportunity::getCurInv() const
+{
+    return curInv;
+}
+
+double LionOpportunity::getIfNewPartInv() const
+{
+    return ifNewPartInv;
+}
+
+double LionOpportunity::sumCoop(int i)
+{
+    assert(i >= 0 && i < gNbOfRobots);
+    double tot = 0;
+    for(auto elem : nearbyMap)
+    {
+        tot += elem.second->getCoop(i);
+    }
+    return tot;
+}
+
+void LionOpportunity::reset()
+{
+    nearbyMap.clear();
+    curInv = 0;
+    ifNewPartInv = 0;
+
 }
