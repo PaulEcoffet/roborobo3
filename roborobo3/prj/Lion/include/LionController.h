@@ -45,7 +45,7 @@ public:
     const std::vector<double> getWeights() const;
 
 
-    std::vector<double> getInputs();
+
 
 protected:
     LionWorldModel *m_wm;
@@ -56,29 +56,15 @@ protected:
     std::vector<double> weights;
     std::vector<double> weights2;
 
-
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
-    void fillNames();
 
     unsigned int getNbInputs() const;
 
     unsigned int getNbOutputs() const;
 
-    static std::vector<std::string> inputnames;
-
-    std::vector<double> getGameInputs() const;
-
-    unsigned int getNbCameraInputs() const;
-
-    unsigned int getNbGameInputs() const;
-
-    std::vector<double> getCameraInputs() const;
-
-    bool fill_names = false;
 
     int verbose = 0;
-    double hardcoop;
 };
 
 

@@ -19,7 +19,7 @@ using boost::algorithm::clamp;
 
 
 LionWorldObserver::LionWorldObserver(World *__world) :
-        WorldObserver(__world), robotsToTeleport(), objectsToTeleport(), variabilityCoef()
+        WorldObserver(__world), objectsToTeleport(), variabilityCoef()
 {
     m_world = __world;
     m_curEvaluationIteration = 0;
@@ -28,21 +28,6 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 
     LionSharedData::initSharedData();
 
-    /********************/
-    /* Coherence checks */
-    /********************/
-    if (LionSharedData::frictionCoef != 0)
-    {
-        assert(!LionSharedData::fixRobotNb);
-    }
-
-    // Assert that no object can be covered twice by the proximity teleport, proximityTeleport == 0 means no constraint
-    assert(LionSharedData::proximityTeleport >= 0 &&
-           LionSharedData::proximityTeleport <= (gNbOfPhysicalObjects / 2) - 1);
-    assert(gNbOfPhysicalObjects % LionSharedData::nbCluster == 0);
-
-
-    ///////////////////////////////////////////////////////////////////////////
 
     // Log files
 
@@ -71,41 +56,18 @@ LionWorldObserver::LionWorldObserver(World *__world) :
     variabilityCoef.resize(m_nbIndividuals, 0);
     boost::math::normal normal(1, LionSharedData::fakeCoefStd);
 
-
-    if (LionSharedData::fakeCoefMulSym)
+    double minquantile = boost::math::cdf(normal, 1 - LionSharedData::fakeCoef);
+    double maxquantile = boost::math::cdf(normal, 1 + LionSharedData::fakeCoef);
+    double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
+    double curquantile = minquantile;
+    for (int i = 0; i < m_nbIndividuals; i++)
     {
-        double minquantile = boost::math::cdf(normal, 1. / LionSharedData::fakeCoef);
-        double maxquantile = boost::math::cdf(normal, 1);
-        double stepquantile = (maxquantile - minquantile) / ((m_nbIndividuals / 2) - 1);
-        double curquantile = minquantile;
-        for (int i = 0; i < m_nbIndividuals / 2; i++)
-        {
+        variabilityCoef[i] = boost::math::quantile(normal, curquantile);
+        assert(variabilityCoef[i] <= 1 + LionSharedData::fakeCoef + 0.1);
+        assert(variabilityCoef[i] >= 1 - LionSharedData::fakeCoef - 0.1);
 
-            variabilityCoef[i] = boost::math::quantile(normal, curquantile);
-            curquantile += stepquantile;
-        }
-        for (int i = 0; i < m_nbIndividuals / 2; i++)
-        {
-            variabilityCoef[m_nbIndividuals - i] = 1. / variabilityCoef[i];
-        }
+        curquantile += stepquantile;
     }
-    else
-    {
-        double minquantile = boost::math::cdf(normal, 1 - LionSharedData::fakeCoef);
-        double maxquantile = boost::math::cdf(normal, 1 + LionSharedData::fakeCoef);
-        double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
-        double curquantile = minquantile;
-        for (int i = 0; i < m_nbIndividuals; i++)
-        {
-            variabilityCoef[i] = boost::math::quantile(normal, curquantile);
-            assert(variabilityCoef[i] <= 1 + LionSharedData::fakeCoef + 0.1);
-            assert(variabilityCoef[i] >= 1 - LionSharedData::fakeCoef - 0.1);
-
-            curquantile += stepquantile;
-        }
-
-    }
-
 
 }
 
@@ -113,7 +75,7 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 LionWorldObserver::~LionWorldObserver()
 {
     delete m_fitnessLogManager;
-};
+}
 
 void LionWorldObserver::reset()
 {
@@ -129,13 +91,10 @@ void LionWorldObserver::reset()
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
 
-    if (LionSharedData::fixCoop)
-    {
-        minbounds[0] = 0;
-        maxbounds[0] = 1;
-        minguess[0] = 0;
-        maxguess[0] = 0.00001;
-    }
+    /* Investment starts close to 0 */
+    minguess[0] = -10;
+    maxguess[0] = -9.99;
+
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);
@@ -175,42 +134,9 @@ void LionWorldObserver::stepPre()
 void LionWorldObserver::stepPost()
 {
     /* Plays */
-    registerRobotsOnOpportunities();
-    computeOpportunityImpacts();
+   /* registerRobotsOnOpportunities();
+    computeOpportunityImpacts(); */
 
-    /* Move */
-    /* Teleport robots */
-    if (LionSharedData::teleportRobots)
-    {
-        for (auto rid: robotsToTeleport)
-        {
-            m_world->getRobot(rid)->unregisterRobot();
-            m_world->getRobot(rid)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                                       gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
-            m_world->getRobot(rid)->registerRobot();
-        }
-    }
-
-    /*if (LionSharedData::tpToNewObj)
-    {
-        auto randomPhys = std::uniform_int_distribution<int>(0, gNbOfPhysicalObjects - 1);
-        for (int i = 0; i < m_world->getNbOfRobots(); i++)
-        {
-            auto *rob = m_world->getRobot(i);
-            if (dynamic_cast<LionWorldModel* >(rob->getWorldModel())->teleport) {
-                int dest_obj = randomPhys(engine);
-                double angle = (float) i / gNbOfRobots * 2 * M_PI;
-                PhysicalObject *physobj = gPhysicalObjects[dest_obj];
-                rob->unregisterRobot();
-                rob->setCoord(physobj->getXCenterPixel()+ cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2),
-                              physobj->getYCenterPixel()+ sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2));
-                rob->setCoordReal(physobj->getXCenterPixel()+ cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2),
-                                  physobj->getYCenterPixel()+ sin(angle) *(gPhysicalObjectDefaultRadius + gRobotWidth / 2));
-                rob->getWorldModel()->_agentAbsoluteOrientation = 0;
-                rob->registerRobot();
-            }
-        }
-    }*/
 
     for (auto id: objectsToTeleport)
     {
@@ -219,7 +145,6 @@ void LionWorldObserver::stepPost()
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
-    robotsToTeleport.clear();
 
     if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
     {
@@ -235,16 +160,12 @@ void LionWorldObserver::stepPost()
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
             m_logall
-                    << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
+                    << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
             auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
             double nbOnOpp = wm->nbOnOpp;
-            if (LionSharedData::fixRobotNb && nbOnOpp > 2)
-            {
-                nbOnOpp = 2;
-            }
             m_logall << m_curEvaluationInGeneration << "\t"
                      << m_curEvaluationIteration << "\t"
                      << i << "\t"
@@ -253,11 +174,8 @@ void LionWorldObserver::stepPost()
                      << wm->isPlaying() << "\t"
                      << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
                      << nbOnOpp << "\t"
-                     << wm->_cooperationLevel * wm->fakeCoef << "\t"
-                     << wm->meanLastOwnInvest() << "\t"
-                     << wm->meanLastTotalInvest() << "\t"
-                     << wm->punishment << "\t"
-                     << wm->spite
+                     << wm->getCoop(nbOnOpp - 1, true)
+                     << wm->opp->getCurInv() - wm->getCoop(nbOnOpp - 1)
                      << "\n";
         }
     }
@@ -327,8 +245,6 @@ void LionWorldObserver::resetEnvironment()
     {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
-        auto *rwm = dynamic_cast<LionWorldModel *>(robot->getWorldModel());
-        rwm->lastCommonKnowledgeReputation.clear();
     }
 
 
@@ -336,6 +252,8 @@ void LionWorldObserver::resetEnvironment()
     {
         object->resetLocation();
         object->registerObject();
+        auto* lionobj = dynamic_cast<LionOpportunity*>(object);
+        lionobj->reset();
     }
 
     // Randomize the fakeList so that the last fakeRobots aren't necessarily the ones who cooperate the most.
@@ -345,16 +263,15 @@ void LionWorldObserver::resetEnvironment()
     {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
-        if (LionSharedData::tpToNewObj)
-        {
-            robot->getWorldModel()->_agentAbsoluteOrientation = 0;
-        }
+        robot->getWorldModel()->_agentAbsoluteOrientation = 0;
+
         auto *wm = dynamic_cast<LionWorldModel *>(robot->getWorldModel());
+        wm->reset();
         if (LionSharedData::fakeRobots)
         {
             wm->fakeCoef = variabilityCoef[iRobot];
-            assert(LionSharedData::fakeCoefMulSym || wm->fakeCoef <= 1 + LionSharedData::fakeCoef + 0.1);
-            assert(LionSharedData::fakeCoefMulSym || wm->fakeCoef >= 1 - LionSharedData::fakeCoef - 0.1);
+            assert(wm->fakeCoef <= 1 + LionSharedData::fakeCoef + 0.1);
+            assert(wm->fakeCoef >= 1 - LionSharedData::fakeCoef - 0.1);
         }
         else
         {
@@ -364,141 +281,6 @@ void LionWorldObserver::resetEnvironment()
     }
 }
 
-void LionWorldObserver::computeOpportunityImpacts()
-{
-    const double b = LionSharedData::b;
-    double sum_payoff = 0;
-    int nb_payoffs = 0;
-
-    // Mark all robots as not on an cooperation opportunity
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
-    {
-        auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
-        wm->onOpportunity = false;
-        wm->opp = nullptr;
-        wm->nbOnOpp = 0;
-        wm->arrival = 0;
-        wm->punishment = 0;
-    }
-
-    for (auto *physicalObject : gPhysicalObjects)
-    {
-        double totalInvest = 0;
-        double totalA = 0;
-        auto *opp = dynamic_cast<LionOpportunity *>(physicalObject);
-        auto itmax = opp->getNearbyRobotIndexes().end();
-
-        int n = opp->getNbNearbyRobots();
-        if (LionSharedData::fixRobotNb && n > 2)
-        {
-            n = 2;
-        }
-
-        int arrival = 1;
-        for (auto index : opp->getNearbyRobotIndexes())
-        {
-            auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(index)->getWorldModel());
-            wm->onOpportunity = true;
-            wm->opp = opp;
-            wm->nbOnOpp = opp->getNbNearbyRobots();
-            wm->arrival = arrival;
-            arrival++;
-        }
-
-        // If we only give reward for the first two robots
-        if (LionSharedData::fixRobotNb && opp->getNbNearbyRobots() > 2)
-        {
-            itmax = opp->getNearbyRobotIndexes().begin() + 2;
-        }
-
-        for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
-        {
-            const auto *const wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(*index)->getWorldModel());
-            double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, LionSharedData::maxCoop);
-            if (LionSharedData::meanA == 0) // TODO SUPER UGLY, make parameter
-            {
-                coop = clamp(wm->_cooperationLevel + (wm->fakeCoef - 1) * 5, 0, LionSharedData::maxCoop);
-            }
-            totalInvest += coop;
-            totalA += wm->selfA;
-            for (auto oindex = opp->getNearbyRobotIndexes().begin(); oindex != itmax; oindex++)
-            {
-                if (oindex == index)
-                { continue; }
-                auto *owm = dynamic_cast<LionWorldModel *>(m_world->getRobot(*oindex)->getWorldModel());
-                owm->updateOtherReputation(wm->_id, coop + randgaussian() * LionSharedData::reputationNoise);
-            }
-        }
-
-        for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
-        {
-            auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(*index)->getWorldModel());
-            double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, LionSharedData::maxCoop);
-            if (LionSharedData::meanA == 0) // TODO SUPER UGLY, make parameter
-            {
-                coop = clamp(wm->_cooperationLevel + (wm->fakeCoef - 1) * 5, 0, LionSharedData::maxCoop);
-            }
-            wm->appendOwnInvest(coop);
-            if (n >= 2)
-            {
-                wm->appendToCommonKnowledgeReputation(coop);
-            }
-            if (LionSharedData::onlyOtherInTotalInv)
-            {
-                wm->appendTotalInvest(totalInvest - coop);
-            }
-            else
-            {
-                wm->appendTotalInvest(totalInvest);
-            }
-            double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
-                               (LionSharedData::evaluationTime - LionSharedData::fitnessUnlockedIter);
-            if (m_curEvaluationIteration >= LionSharedData::fitnessUnlockedIter)
-            {
-                wm->_fitnessValue += curpayoff;
-            }
-            sum_payoff += curpayoff;
-            nb_payoffs += 1;
-        }
-
-        if (LionSharedData::punishment)
-        {
-            for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
-            {
-                auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(*index)->getWorldModel());
-                const double spite = clamp(wm->spite, 0, LionSharedData::maxCoop);
-                for (auto other = opp->getNearbyRobotIndexes().begin(); other != itmax; other++)
-                {
-                    auto *o_wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(*other)->getWorldModel());
-                    if (other != index) // if it's a different robot
-                    {
-                        o_wm->punishment += spite;
-                        o_wm->_fitnessValue -= spite * 3; // TODO Make punishment coef variable
-                    }
-                    else
-                    {
-                        wm->_fitnessValue -= spite; // cost of punishing someone
-                    }
-                }
-            }
-        }
-
-
-        // Set the cur total invest for coloring
-        opp->curInv = totalInvest;
-        opp->curA = totalA / n;
-    }
-
-    // Give reward for all the lonely walkers
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
-    {
-        auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
-        if (!wm->isPlaying())
-        {
-            wm->_fitnessValue += std::min(LionSharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
-        }
-    }
-}
 
 static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
 {
@@ -507,38 +289,21 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 
 
 double LionWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
-                                 const double b)
+        const double b)
 {
     double res = 0;
     const double x0 = (totalInvest - invest);
-    if (LionSharedData::atLeastTwo and n < 2)
-    {
-        res = 0; // No payoff if you are alone
-    }
-    else
-    {
-        res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
-    }
+
+    res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
+
     if (LionSharedData::frictionCoef > 0)
     {
         res *= (1 - sigmoid(n, 0, 1, LionSharedData::frictionCoef, LionSharedData::frictionInflexionPoint));
     }
-    if (LionSharedData::temperature > 0)
-    {
-        res = std::exp(res / LionSharedData::temperature);
-    }
+
     return res;
 }
 
-
-void LionWorldObserver::registerRobotsOnOpportunities()
-{
-    for (auto *physicalObject : gPhysicalObjects)
-    {
-        auto *opp = dynamic_cast<LionOpportunity *>(physicalObject);
-        opp->registerNewRobots();
-    }
-}
 
 void LionWorldObserver::clearRobotFitnesses()
 {
@@ -558,11 +323,6 @@ void LionWorldObserver::loadGenomesInRobots(const std::vector<std::vector<double
         ctl->loadNewGenome(genomes[i]);
     }
 
-}
-
-void LionWorldObserver::addRobotToTeleport(int robotId)
-{
-    robotsToTeleport.insert(robotId);
 }
 
 void LionWorldObserver::addObjectToTeleport(int id)

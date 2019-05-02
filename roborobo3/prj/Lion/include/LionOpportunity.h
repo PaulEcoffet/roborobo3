@@ -7,7 +7,10 @@
 
 
 #include "World/RoundObject.h"
+#include "Lion/include/LionWorldModel.h"
 #include <set>
+
+class LionWorldModel;
 
 class LionOpportunity : public RoundObject
 {
@@ -15,16 +18,16 @@ public:
     explicit LionOpportunity(int __id);
 
     void step() override;
+    void reset();
 
-    virtual const std::vector<int> &getNearbyRobotIndexes() const;
-
-    virtual void registerNewRobots();
 
     void isWalked(int id) override;
 
-    virtual int getNbNearbyRobots() const;
+    virtual double getCurInv() const;
 
-    virtual int getNbNewNearbyRobots() const;
+    int countCurrentRobots();
+    void removeRobot(int id);
+
 
     virtual void kill();
 
@@ -32,16 +35,21 @@ public:
 
     double curInv = 0;
     double curA = 0;
+    double ifNewPartInv = 0;
     int lifeid;
     double lifeExpectancy;
+    double getIfNewPartInv() const;
+
 
 
 protected:
     std::vector<int> nearbyRobotIndexes;
-    std::vector<int> newNearbyRobotIndexes;
+    std::map<int, LionWorldModel*> nearbyMap;
 
     virtual void updateColor();
 
+
+    double sumCoop(int i);
 };
 
 
