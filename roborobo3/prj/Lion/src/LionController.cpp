@@ -116,7 +116,6 @@ void LionController::step()
             assert(score < 1000000 && score > -1000000); // ensure score is never infinite
         } else{
             m_nn->setInputs(inputs);
-
             m_nn->step();
             std::vector<double> outputs = m_nn->readOut();
             score = outputs[0];
@@ -214,7 +213,7 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     std::vector<double> inputs(1, 0);
     for(int i = 0; i < gNbOfRobots; i++)
     {
-        inputs[0] = i;
+        inputs[0] = i / gNbOfRobots;
         m_nn2->setInputs(inputs);
         m_nn2->step();
         auto output = m_nn2->readOut();
