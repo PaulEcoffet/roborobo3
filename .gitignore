@@ -2,6 +2,7 @@
 *.[oa]
 logs/
 !roborobo3/roborobo
+roborobo3/log
 .DS_Store
 *.swp
 *.[oe][123456789]*

@@ -35,8 +35,12 @@ public:
     static double frictionCoef;
     static double frictionInflexionPoint;
     static double tpProba;
+    static double cost;
+    static bool optimalPlay;
 
     static void initSharedData();
+
+
 
 };
 
