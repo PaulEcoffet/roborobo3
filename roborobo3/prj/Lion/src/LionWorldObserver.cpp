@@ -129,29 +129,10 @@ void LionWorldObserver::stepPre()
         stepEvolution();
         m_generationCount++;
     }
-}
 
-void LionWorldObserver::stepPost()
-{
-    /* Plays */
-   /* registerRobotsOnOpportunities();
-    computeOpportunityImpacts(); */
-
-
-    for (auto id: objectsToTeleport)
-    {
-        gPhysicalObjects[id]->unregisterObject();
-        gPhysicalObjects[id]->resetLocation();
-        gPhysicalObjects[id]->registerObject();
-    }
-    objectsToTeleport.clear();
-
+    /* Shall we log? */
     if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
     {
-        if (LionSharedData::takeVideo and m_curEvaluationInGeneration == 0)
-        {
-            saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
-        }
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
         {
             if (m_logall.is_open())
@@ -162,31 +143,55 @@ void LionWorldObserver::stepPost()
             m_logall
                     << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
         }
-        for (int i = 0; i < m_world->getNbOfRobots(); i++)
-        {
-            auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
-            double nbOnOpp = wm->nbOnOpp;
-            m_logall << m_curEvaluationInGeneration << "\t"
-                     << m_curEvaluationIteration << "\t"
-                     << i << "\t"
-                     << wm->selfA << "\t"
-                     << wm->fakeCoef << "\t"
-                     << wm->isPlaying() << "\t"
-                     << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
-                     << nbOnOpp << "\t"
-                     << wm->getCoop(nbOnOpp - 1, true)
-                     << wm->opp->getCurInv() - wm->getCoop(nbOnOpp - 1)
-                     << "\n";
-        }
     }
-    else if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
+    else if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 1 && m_logall.is_open())
     {
-        m_logall.flush(); // Let's flush now that we have written everything.
         m_logall.close();
     }
-
 }
 
+
+void LionWorldObserver::logAgent(LionWorldModel *wm)
+{
+    if (!m_logall.is_open())
+    {
+        return;
+    }
+
+    int nbOnOpp = wm->opp->countCurrentRobots();
+    m_logall << m_curEvaluationInGeneration << "\t"
+             << m_curEvaluationIteration << "\t"
+             << wm->getId() << "\t"
+             << wm->selfA << "\t"
+             << wm->fakeCoef << "\t"
+             << wm->isPlaying() << "\t"
+             << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
+             << nbOnOpp << "\t"
+             << wm->getCoop(nbOnOpp - 1, true) << "\t"
+             << wm->opp->getCurInv() - wm->getCoop(nbOnOpp - 1)
+             << "\n";
+}
+
+
+void LionWorldObserver::stepPost()
+{
+    /* Plays */
+
+    for (auto id: objectsToTeleport)
+    {
+        gPhysicalObjects[id]->unregisterObject();
+        gPhysicalObjects[id]->resetLocation();
+        gPhysicalObjects[id]->registerObject();
+    }
+    objectsToTeleport.clear();
+    if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
+    {
+        if (LionSharedData::takeVideo and m_curEvaluationInGeneration == 0)
+        {
+            saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
+        }
+    }
+}
 
 void LionWorldObserver::stepEvolution()
 {
