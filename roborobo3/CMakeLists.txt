@@ -83,6 +83,8 @@ include_directories(${SDL2_INCLUDE_DIRS} )
 
 add_executable(roborobo ${SOURCE_FILES})
 
+Message(${SDL2_LIBRARIES})
+
 target_link_libraries(roborobo
         ${SDL2_LIBRARIES}
         #${SDL2_IMAGE_LIBRARIES}

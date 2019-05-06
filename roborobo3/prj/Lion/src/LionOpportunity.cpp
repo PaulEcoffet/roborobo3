@@ -28,9 +28,8 @@ LionOpportunity::LionOpportunity(int __id) : RoundObject(__id)
 
 void LionOpportunity::removeRobot(int id)
 {
-    auto *wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(id)->getWorldModel());
     nearbyMap.erase(id);
-    curInv = this->sumCoop(countCurrentRobots());
+    curInv = sumCoop(countCurrentRobots());
     ifNewPartInv = sumCoop(std::min(countCurrentRobots(), gInitialNumberOfRobots - 1));
     assert(curInv >= -1e10);
     assert(ifNewPartInv >= -1e10);
@@ -41,7 +40,7 @@ void LionOpportunity::isWalked(const int id)
     const int rid = id - gRobotIndexStartOffset;
     auto* wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(rid)->getWorldModel());
     nearbyMap.emplace(rid, wm);
-    curInv = this->sumCoop(countCurrentRobots() - 1);
+    curInv = sumCoop(countCurrentRobots() - 1);
     assert(curInv - (ifNewPartInv + wm->getCoop(countCurrentRobots() - 1) < 1e10));
     ifNewPartInv = sumCoop(std::min(countCurrentRobots(), gInitialNumberOfRobots - 1));
 
@@ -66,9 +65,7 @@ void LionOpportunity::step()
 void LionOpportunity::kill()
 {
     auto *wobs = dynamic_cast<LionWorldObserver *>(gWorld->getWorldObserver());
-    nearbyMap.clear();
-    curA = 0;
-    curInv = 0;
+    reset();
     wobs->addObjectToTeleport(_id);
 }
 
@@ -108,9 +105,9 @@ std::string LionOpportunity::inspect(std::string prefix)
     std::stringstream out;
     out << prefix << "Last inv: " << curInv << ".\n";
     out << prefix << "I have " << countCurrentRobots() << " robots on me: ";
-    for (auto index : nearbyRobotIndexes)
+    for (auto elem : nearbyMap)
     {
-        out << index << ",";
+        out << elem.first << ",";
     }
     out << "\n";
     return out.str();

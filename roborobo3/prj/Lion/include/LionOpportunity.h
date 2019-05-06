@@ -34,7 +34,7 @@ public:
     std::string inspect(std::string prefix) override;
 
     double curInv = 0;
-    double curA = 0;
+    double curA = 5;
     double ifNewPartInv = 0;
     int lifeid;
     double lifeExpectancy;

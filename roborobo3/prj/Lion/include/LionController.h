@@ -65,6 +65,8 @@ protected:
 
 
     int verbose = 0;
+
+    void play_and_fitness();
 };
 
 

@@ -31,6 +31,8 @@ double LionSharedData::fakeCoefStd = 0;
 double LionSharedData::frictionCoef = 0;
 double LionSharedData::frictionInflexionPoint = 2.5;
 double LionSharedData::tpProba = 1;
+double LionSharedData::cost = 5;
+bool LionSharedData::optimalPlay = false;
 
 void LionSharedData::initSharedData()
 {
@@ -58,6 +60,8 @@ void LionSharedData::initSharedData()
     GETVAL(frictionCoef);
     GETVAL(frictionInflexionPoint);
     GETVAL(tpProba);
+    GETVAL(optimalPlay);
+    GETVAL(cost);
 }
 
 
