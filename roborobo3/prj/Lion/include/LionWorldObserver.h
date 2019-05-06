@@ -24,6 +24,10 @@ public:
 
     void reset() override;
 
+
+    void logAgent(LionWorldModel *wm);
+
+
     void stepEvolution();
 
     std::vector<std::pair<int, double>> getSortedFitnesses() const;

@@ -90,9 +90,9 @@ void LionController::step()
     for (auto *opp : gPhysicalObjects)
     {
         auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
-        double cost = opp->getId() != curoppid;
-        double onopp = 1 - cost;
-        double nbopp = lionopp->countCurrentRobots() - onopp;
+        bool onopp = opp->getId() == curoppid;
+        double cost = (onopp)? 0 : 1;
+        int nbopp = lionopp->countCurrentRobots() - onopp;
         double owncoop = m_wm->getCoop(nbopp);
         double coop = 0;
         if (onopp)
@@ -105,10 +105,10 @@ void LionController::step()
         }
         i = 0;
         inputs[i++] = cost;
-        inputs[i++] = nbopp / gNbOfRobots;
+        inputs[i++] = (double) nbopp / gNbOfRobots;
         inputs[i++] = coop / LionSharedData::maxCoop;
         inputs[i] = owncoop / LionSharedData::maxCoop;
-        double score = -9999;
+        double score;
         if (LionSharedData::optimalPlay)
         {
             score = LionWorldObserver::payoff(owncoop, coop + owncoop, (nbopp + 1), LionSharedData::meanA, LionSharedData::b)
@@ -388,5 +388,5 @@ void LionController::play_and_fitness() {
         std::cout << "opp: " << m_wm->opp->getId()  << ", total inv:" << totalinv << ", n:" << n << ", owncoop: " <<  m_wm->getCoop(n - 1) << ", payoff:" << payoff << std::endl;
     }
     m_wm->_fitnessValue += payoff - cost;
-
+    dynamic_cast<LionWorldObserver*>(gWorld->getWorldObserver())->logAgent(m_wm);
 }
