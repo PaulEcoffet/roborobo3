@@ -80,19 +80,17 @@ void LionController::step()
         return;
     }
 
-    LionOpportunity *best = nullptr;
+    LionOpportunity *best = dynamic_cast<LionOpportunity*>(gPhysicalObjects[0]);
     double bestscore = -9999;
 
     int curoppid = (m_wm->opp) ? m_wm->opp->getId() : -1;
-    std::vector<double> inputs(4, 0);
-    int i = 0;
 
     for (auto *opp : gPhysicalObjects)
     {
         auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
         bool onopp = opp->getId() == curoppid;
-        double cost = (onopp)? 0 : 1;
-        int nbopp = lionopp->countCurrentRobots() - onopp;
+        int cost = (onopp)? 0 : 1;
+        int nbopp = lionopp->countCurrentRobots() - (int)onopp;
         double owncoop = m_wm->getCoop(nbopp);
         double coop = 0;
         if (onopp)
@@ -103,26 +101,10 @@ void LionController::step()
         {
             coop = lionopp->getIfNewPartInv();
         }
-        i = 0;
-        inputs[i++] = cost;
-        inputs[i++] = (double) nbopp / gNbOfRobots;
-        inputs[i++] = coop / LionSharedData::maxCoop;
-        inputs[i] = owncoop / LionSharedData::maxCoop;
-        double score;
-        if (LionSharedData::optimalPlay)
-        {
-            score = LionWorldObserver::payoff(owncoop, coop + owncoop, (nbopp + 1), LionSharedData::meanA, LionSharedData::b)
-                        - cost * LionSharedData::cost;
-            assert(score < 1000000 && score > -1000000); // ensure score is never infinite
-        } else{
-            m_nn->setInputs(inputs);
-            m_nn->step();
-            std::vector<double> outputs = m_nn->readOut();
-            score = outputs[0];
-        }
+        double score = computeScore(cost, nbopp, owncoop, coop);
         if (m_wm->getId() == 0 && gVerbose)
         {
-            std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
+            //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
         }
         if (score > bestscore)
         {
@@ -138,7 +120,7 @@ void LionController::step()
     m_wm->_desiredRotationalVelocity = 0;
     if (m_wm->getId() == 0 && gVerbose)
     {
-        std::cout << "best: " << best->getId() << std::endl;
+        //std::cout << "best: " << best->getId() << std::endl;
     }
     m_wm->teleport = best->getId();
 
@@ -213,7 +195,7 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     std::vector<double> inputs(1, 0);
     for(int i = 0; i < gNbOfRobots; i++)
     {
-        inputs[0] = i / gNbOfRobots;
+        inputs[0] = (double)i / gNbOfRobots;
         m_nn2->setInputs(inputs);
         m_nn2->step();
         auto output = m_nn2->readOut();
@@ -384,8 +366,44 @@ void LionController::play_and_fitness() {
     int n = m_wm->opp->countCurrentRobots();
     double payoff = LionWorldObserver::payoff(m_wm->getCoop(n - 1), totalinv, n, LionSharedData::meanA, LionSharedData::b);
     if (m_wm->getId() == 0 && gVerbose) {
-        std::cout << "opp: " << m_wm->opp->getId()  << ", total inv:" << totalinv << ", n:" << n << ", owncoop: " <<  m_wm->getCoop(n - 1) << ", payoff:" << payoff << std::endl;
+        //std::cout << "opp: " << m_wm->opp->getId()  << ", total inv:" << totalinv << ", n:" << n << ", owncoop: " <<  m_wm->getCoop(n - 1) << ", payoff:" << payoff << std::endl;
     }
     m_wm->_fitnessValue += payoff - cost;
     dynamic_cast<LionWorldObserver*>(gWorld->getWorldObserver())->logAgent(m_wm);
+}
+
+double LionController::getCoop(int i)
+{
+    double coop = m_wm->getCoop(i);
+    return coop;
+}
+
+double LionController::computeScore(int cost, int nbPart, double owncoop, double totothercoop)
+{
+    assert(cost == 0 || cost == 1);
+    assert(nbPart >= 0 && nbPart <= gInitialNumberOfRobots);
+    assert(owncoop >= 0 && owncoop <= LionSharedData::maxCoop * (1 + LionSharedData::fakeCoef + 0.01));
+    assert(totothercoop >= 0 && totothercoop <= nbPart * LionSharedData::maxCoop * (1 + LionSharedData::fakeCoef + 0.01));
+    std::vector<double> inputs(4, 0);
+    int i = 0;
+    inputs[i++] = cost;
+    inputs[i++] = (double) nbPart / gNbOfRobots;
+    inputs[i++] = totothercoop / (LionSharedData::maxCoop * std::max(nbPart, 1));
+    inputs[i] = owncoop / LionSharedData::maxCoop;
+
+    double score = 0;
+
+    if (LionSharedData::optimalPlay)
+    {
+        score = LionWorldObserver::payoff(owncoop, totothercoop + owncoop, (nbPart + 1), LionSharedData::meanA, LionSharedData::b)
+                - cost * LionSharedData::cost;
+        assert(score < 1000000 && score > -1000000); // ensure score is never infinite
+    } else{
+        m_nn->setInputs(inputs);
+        m_nn->step();
+        std::vector<double> outputs = m_nn->readOut();
+        score = outputs[0];
+        assert(score >= -1 && score <= 1);
+    }
+    return score;
 }

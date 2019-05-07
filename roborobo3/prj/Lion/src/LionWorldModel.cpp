@@ -49,6 +49,8 @@ bool LionWorldModel::isPlaying()
 
 double LionWorldModel::getCoop(int nbpart, bool truecoop)
 {
+    assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
+    assert(coopCache[nbpart] >= 0 && coopCache[nbpart] <= LionSharedData::maxCoop);
     if (truecoop)
         return coopCache[nbpart];
     else

@@ -21,48 +21,16 @@ class LionAnalysisWorldObserver : public WorldObserver
 public:
     explicit LionAnalysisWorldObserver(World *__world);
 
-    void stepPre() override;
-
-    void stepPost() override;
 
     void reset() override;
 
-    void registerRobotsOnOpportunities();
-
-    void addObjectToTeleport(int id);
-
 
 protected:
-    double m_curCoop;
-    int m_curnbrob;
-    int m_maxrobnb;
     json m_genomesJson;
-
-    int m_curIterationInRep;
-    int m_curRep;
-    int m_curInd;
-
-
     std::ofstream m_log;
 
-    void monitorPopulation();
-
-    void resetEnvironment();
-
-    json::iterator m_genomesIt;
-
-    void loadGenome(const std::vector<double> &weights);
-
-    int m_nbIterationPerRep;
-    int m_nbRep;
-    double m_stepCoop;
-
-    void computeOpportunityImpact();
 
 
-    std::set<int> objectsToTeleport;
-
-    void initObjects() const;
 };
 
 
