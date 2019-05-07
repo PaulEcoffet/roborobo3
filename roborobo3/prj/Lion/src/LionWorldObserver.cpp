@@ -301,6 +301,10 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
 
     res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
 
+    if (gVerbose)
+    {
+        std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
+    }
     if (LionSharedData::frictionCoef > 0)
     {
         res *= (1 - sigmoid(n, 0, 1, LionSharedData::frictionCoef, LionSharedData::frictionInflexionPoint));
