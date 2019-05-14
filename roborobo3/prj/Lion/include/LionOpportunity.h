@@ -39,6 +39,8 @@ public:
     int lifeid;
     double lifeExpectancy;
     double getIfNewPartInv() const;
+    bool isRobotOnOpp(const int id);
+
 
 
 
@@ -50,6 +52,7 @@ protected:
 
 
     double sumCoop(int i);
+
 };
 
 
