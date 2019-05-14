@@ -49,7 +49,7 @@ void LionAnalysisWorldObserver::reset()
         ctl->resetFitness();
         for (int cost = 0; cost < 2; cost++)
         {
-            for (int nbonopp = 0; nbonopp < gInitialNumberOfRobots - 1; nbonopp++)
+            for (int nbonopp = 0; nbonopp < gInitialNumberOfRobots; nbonopp++)
             {
                 double owncoop = ctl->getCoop(nbonopp);
                 for(int k = 0; k <= 20; k++)
@@ -66,7 +66,8 @@ void LionAnalysisWorldObserver::reset()
                     }
             }
         }
+        i_gen++;
     }
-
+    m_log.close();
     exit(0);
 }

@@ -53,6 +53,10 @@ int LionOpportunity::countCurrentRobots()
     return static_cast<int>(nearbyMap.size());
 }
 
+bool LionOpportunity::isRobotOnOpp(const int id)
+{
+    return nearbyMap.count(id) > 0;
+}
 
 void LionOpportunity::step()
 {
@@ -142,6 +146,10 @@ double LionOpportunity::sumCoop(int nbonopp)
 
 void LionOpportunity::reset()
 {
+    for (auto rob: nearbyMap)
+    {
+        dynamic_cast<LionWorldModel*>(gWorld->getRobot(rob.first)->getWorldModel())->opp = nullptr;
+    }
     nearbyMap.clear();
     curInv = 0;
     ifNewPartInv = 0;

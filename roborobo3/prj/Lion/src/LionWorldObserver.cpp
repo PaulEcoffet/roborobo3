@@ -91,10 +91,6 @@ void LionWorldObserver::reset()
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
 
-    /* Investment starts close to 0 */
-    minguess[0] = -10;
-    maxguess[0] = -9.99;
-
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);

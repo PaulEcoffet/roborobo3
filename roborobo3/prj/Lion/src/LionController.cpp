@@ -31,14 +31,12 @@ LionController::LionController(RobotWorldModel *wm)
 {
     m_wm = dynamic_cast<LionWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
-    std::vector<unsigned int> nbNeurons2 = std::vector<unsigned int>(1, 2);
+    std::vector<unsigned int> nbNeurons2 = std::vector<unsigned int>(1, 3);
     switch (LionSharedData::controllerType)
     {
         case MLP_ID:
                 m_nn = new MLP(weights, 4, 1,
                                nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new MLP(weights, 1, 1, nbNeurons2, true);
-
             break;
         case PERCEPTRON_ID:
                 m_nn = new Perceptron(weights, 4, 1);
@@ -57,8 +55,7 @@ LionController::LionController(RobotWorldModel *wm)
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
     m_nn->setWeights(weights);
-    weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
-    m_nn2->setWeights(weights2);
+    weights2.resize(12, 0);
 
     resetFitness();
 }
@@ -83,35 +80,28 @@ void LionController::step()
     LionOpportunity *best = dynamic_cast<LionOpportunity*>(gPhysicalObjects[0]);
     double bestscore = -9999;
 
-    int curoppid = (m_wm->opp) ? m_wm->opp->getId() : -1;
 
-    for (auto *opp : gPhysicalObjects)
+    /*if (!LionSharedData::stayOrNot)*/
     {
-        auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
-        bool onopp = opp->getId() == curoppid;
-        int cost = (onopp)? 0 : 1;
-        int nbopp = lionopp->countCurrentRobots() - (int)onopp;
-        double owncoop = m_wm->getCoop(nbopp);
-        double coop = 0;
-        if (onopp)
+        for (auto *opp : gPhysicalObjects)
         {
-            coop = (lionopp->getCurInv() - owncoop);
-        }
-        else
-        {
-            coop = lionopp->getIfNewPartInv();
-        }
-        double score = computeScore(cost, nbopp, owncoop, coop);
-        if (m_wm->getId() == 0 && gVerbose)
-        {
-            //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
-        }
-        if (score > bestscore)
-        {
-            bestscore = score;
-            best = lionopp;
+            auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
+            double score = computeScoreFromOpp(lionopp, m_wm->opp);
+            if (m_wm->getId() == 0 && gVerbose)
+            {
+                //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
+            }
+            if (score > bestscore)
+            {
+                bestscore = score;
+                best = lionopp;
+            }
         }
     }
+    /* else
+     * {
+     * }
+     * */
 
 
     /* Reading the output of the networks */
@@ -155,6 +145,24 @@ void LionController::step()
     }
 }
 
+double LionController::computeScoreFromOpp(LionOpportunity* testopp, LionOpportunity* curopp)
+{
+    int onopp = testopp->isRobotOnOpp(m_wm->getId());
+    int cost = (onopp)? 0: 1;
+    int nbpart = testopp->countCurrentRobots() - onopp;
+    double owncoop = getCoop(nbpart);
+    double othercoop = 0;
+    if (onopp)
+    {
+        othercoop = testopp->getCurInv() - owncoop;
+    }
+    else
+    {
+        othercoop = testopp->getIfNewPartInv();
+    }
+    return computeScore(cost, nbpart, owncoop, othercoop);
+}
+
 std::vector<unsigned int> LionController::getNbNeuronsPerHiddenLayers() const
 {
     auto nbHiddenLayers = static_cast<unsigned int>(LionSharedData::nbHiddenLayers);
@@ -177,7 +185,7 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
 {
 
     auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights();
-    if (m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
+    if (m_nn->getRequiredNumberOfWeights() + weights2.size() != newGenome.size())
     {
         std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
                   << newGenome.size() << std::endl;
@@ -186,7 +194,6 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     weights = std::vector<double>(newGenome.begin(), split);
     weights2 = std::vector<double>(split, newGenome.end());
     m_nn->setWeights(weights);
-    m_nn2->setWeights(weights2);
 
     if (LionSharedData::controllerType == ELMAN_ID)
     {
@@ -195,11 +202,25 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     std::vector<double> inputs(1, 0);
     for(int i = 0; i < gNbOfRobots; i++)
     {
-        inputs[0] = (double)i / gNbOfRobots;
-        m_nn2->setInputs(inputs);
-        m_nn2->step();
-        auto output = m_nn2->readOut();
-        m_wm->setCoop(i, (output[0] + 1) / 2.0 * LionSharedData::maxCoop);
+        /* interpolate coop */
+        std::vector<double> index = {0, 1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 100};
+        for (size_t j = 0; j < index.size() - 1; j++)
+        {
+            if (index[j + 1] > i)
+            {
+                double coef = (double) (i - index[j]) / (index[j + 1] - index[j]);
+                double genomecoop = (1 - coef) * weights2[j] + coef * weights2[j + 1];
+                //std::cout << i << ", j:" << j << "::: coef: " << coef <<  ", weight[j]:" << weights2[j] <<
+                //            ", weights[j+1]" << weights[j+1] << std::endl;
+                double normalizecoop = (genomecoop - (-10)) / 20;
+                //std::cout << "coop: " << normalizecoop << std::endl;
+                assert(normalizecoop >= 0 && normalizecoop <= 1);
+                m_wm->setCoop(i, normalizecoop * LionSharedData::maxCoop);
+                break;
+            }
+        }
+
+
     }
 }
 
@@ -272,9 +293,15 @@ std::string LionController::inspect(std::string prefix)
             }
             i++;
         }
-        out << m_nn2->toString() << std::endl;
     }
-    verbose = (verbose + 1) % 2;
+    if (verbose == 2)
+    {
+        for (int i = 0; i < gInitialNumberOfRobots; i++)
+        {
+            out << prefix << i << ": " <<  m_wm->getCoop(i) << "(" << m_wm->getCoop(i, true) << ")\n";
+        }
+    }
+    verbose = (verbose + 1) % 3;
     return out.str();
 }
 
