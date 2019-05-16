@@ -63,7 +63,7 @@ void LionAnalysisWorldObserver::reset()
                           << owncoop << "\t"
                           << partcoop << "\t"
                           << score << "\n";
-                    }
+                }
             }
         }
         i_gen++;
