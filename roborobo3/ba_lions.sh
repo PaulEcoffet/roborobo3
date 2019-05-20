@@ -44,6 +44,7 @@ do
   # copy it and remove useless import
   cp $conf $tmpdir/conf$i.properties
   sed -i.bak '/import(.*/d' "$tmpdir/conf$i.properties"
+  sed -i.bak '/tournament.*/d' "$tmpdir/conf$i.properties"
   sed -i.bak 's/gRandomSeed.*/gRandomSeed=-1/' "$tmpdir/conf$i.properties"
   echo """
 analysis = True
