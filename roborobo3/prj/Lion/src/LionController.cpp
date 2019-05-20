@@ -37,6 +37,7 @@ LionController::LionController(RobotWorldModel *wm)
         case MLP_ID:
                 m_nn = new MLP(weights, 4, 1,
                                nbNeuronsPerHiddenLayers, true);
+                m_nn2 = new MLP(weights, 1, 1, nbNeurons2, true);
             break;
         case PERCEPTRON_ID:
                 m_nn = new Perceptron(weights, 4, 1);
@@ -55,7 +56,8 @@ LionController::LionController(RobotWorldModel *wm)
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
     m_nn->setWeights(weights);
-    weights2.resize(12, 0);
+    weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
+    m_nn2->setWeights(weights2);
 
     resetFitness();
 }
@@ -194,33 +196,22 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     weights = std::vector<double>(newGenome.begin(), split);
     weights2 = std::vector<double>(split, newGenome.end());
     m_nn->setWeights(weights);
+    m_nn2->setWeights(weights2);
 
     if (LionSharedData::controllerType == ELMAN_ID)
     {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
     }
+
     std::vector<double> inputs(1, 0);
-    for(int i = 0; i < gNbOfRobots; i++)
+    for(int i = 0; i < gInitialNumberOfRobots; i++)
     {
-        /* interpolate coop */
-        std::vector<double> index = {0, 1, 2, 3, 4, 5, 10, 20, 30, 40, 50, 100};
-        for (size_t j = 0; j < index.size() - 1; j++)
-        {
-            if (index[j + 1] > i)
-            {
-                double coef = (double) (i - index[j]) / (index[j + 1] - index[j]);
-                double genomecoop = (1 - coef) * weights2[j] + coef * weights2[j + 1];
-                //std::cout << i << ", j:" << j << "::: coef: " << coef <<  ", weight[j]:" << weights2[j] <<
-                //            ", weights[j+1]" << weights[j+1] << std::endl;
-                double normalizecoop = (genomecoop - (-10)) / 20;
-                //std::cout << "coop: " << normalizecoop << std::endl;
-                assert(normalizecoop >= 0 && normalizecoop <= 1);
-                m_wm->setCoop(i, normalizecoop * LionSharedData::maxCoop);
-                break;
-            }
-        }
-
-
+        inputs[0] = (double)i / gInitialNumberOfRobots;
+        m_nn2->setInputs(inputs);
+        m_nn2->step();
+        auto& output = m_nn2->readOut();
+        double coop = ((output[0] + 1) / 2) * LionSharedData::maxCoop;
+        m_wm->setCoop(i, coop);
     }
 }
 

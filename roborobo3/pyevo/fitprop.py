@@ -28,7 +28,11 @@ class FitPropEvolutionStrategy():
         self.logger = FitPropLogger(self, path)
 
     def ask(self):
-        fitnesses = np.clip(self.lastfitnesses, 1, None)
+        #fitnesses = np.clip(self.lastfitnesses, 1, None)
+        fitnesses = self.lastfitnesses
+        if np.min(fitnesses) < 0:
+            fitnesses -= (np.min(self.lastfitnesses) - 1)
+        assert(np.all(fitnesses > 0))
         new_pop_index = np.random.choice(len(self.solutions),
                                          self.popsize,
                                          p=(fitnesses/np.sum(fitnesses)))
