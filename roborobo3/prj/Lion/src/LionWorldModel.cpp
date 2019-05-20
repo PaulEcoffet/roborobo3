@@ -59,5 +59,7 @@ double LionWorldModel::getCoop(int nbpart, bool truecoop)
 
 void LionWorldModel::setCoop(int nbpart, double val)
 {
+    assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
+    assert(val >= 0 && val <= LionSharedData::maxCoop);
     coopCache[nbpart] = val;
 }

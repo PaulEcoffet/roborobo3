@@ -4,6 +4,7 @@
 
 #include <RoboroboMain/main.h>
 #include <Lion/include/LionAnalysisWorldObserver.h>
+#include <Lion/include/LionTournamentWorldObserver.h>
 #include "Lion/include/LionWorldObserver.h"
 #include "Lion/include/LionWorldModel.h"
 #include "Lion/include/LionAgentObserver.h"
@@ -13,7 +14,13 @@
 WorldObserver *LionConfigurationLoader::make_WorldObserver(World *wm)
 {
     bool analysis = false;
+    bool tournament = false;
     gProperties.checkAndGetPropertyValue("analysis", &analysis, false);
+    gProperties.checkAndGetPropertyValue("tournament", &tournament, false);
+    if (tournament)
+    {
+        return new LionTournamentWorldObserver(wm);
+    }
     if (analysis)
     {
         return new LionAnalysisWorldObserver(wm);
