@@ -53,22 +53,34 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 
     /* build variability coef distribution */
 
-    variabilityCoef.resize(m_nbIndividuals, 0);
-    boost::math::normal normal(1, LionSharedData::fakeCoefStd);
+    variabilityCoef.resize(m_nbIndividuals, 1);
 
-    double minquantile = boost::math::cdf(normal, 1 - LionSharedData::fakeCoef);
-    double maxquantile = boost::math::cdf(normal, 1 + LionSharedData::fakeCoef);
-    double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
-    double curquantile = minquantile;
-    for (int i = 0; i < m_nbIndividuals; i++)
+
+    if (LionSharedData::normalCoef)
     {
-        variabilityCoef[i] = boost::math::quantile(normal, curquantile);
-        assert(variabilityCoef[i] <= 1 + LionSharedData::fakeCoef + 0.1);
-        assert(variabilityCoef[i] >= 1 - LionSharedData::fakeCoef - 0.1);
+        boost::math::normal normal(1, LionSharedData::fakeCoefStd);
+        double minquantile = boost::math::cdf(normal, 1 - LionSharedData::fakeCoef);
+        double maxquantile = boost::math::cdf(normal, 1 + LionSharedData::fakeCoef);
+        double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
+        double curquantile = minquantile;
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
+            variabilityCoef[i] = boost::math::quantile(normal, curquantile);
+            assert(variabilityCoef[i] <= 1 + LionSharedData::fakeCoef + 0.1);
+            assert(variabilityCoef[i] >= 1 - LionSharedData::fakeCoef - 0.1);
 
-        curquantile += stepquantile;
+            curquantile += stepquantile;
+        }
     }
-
+    else
+    {
+        double min = 1 - LionSharedData::fakeCoef;
+        double max = 1 - LionSharedData::fakeCoef;
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
+            variabilityCoef[i] = min + (max - min) * (double)i / (m_nbIndividuals - 1);
+        }
+    }
 }
 
 
@@ -296,10 +308,14 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     const double x0 = (totalInvest - invest);
 
     res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
+    if (LionSharedData::maxTwo && n > 2)
+    {
+        res = 0;
+    }
 
     if (gVerbose)
     {
-        std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
+        //std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
     }
     if (LionSharedData::frictionCoef > 0)
     {
