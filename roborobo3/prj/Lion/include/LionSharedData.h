@@ -37,6 +37,8 @@ public:
     static double tpProba;
     static double cost;
     static bool optimalPlay;
+    static bool maxTwo;
+    static bool normalCoef;
 
     static void initSharedData();
 

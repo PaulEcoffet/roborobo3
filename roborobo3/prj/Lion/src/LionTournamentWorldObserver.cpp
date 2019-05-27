@@ -101,8 +101,8 @@ void LionTournamentWorldObserver::reset()
 
     std::uniform_int_distribution<int> randomNbOpp(0, gInitialNumberOfRobots - 1);
     std::uniform_real_distribution<double> randomInvPerAg(0, LionSharedData::maxCoop);
-    std::bernoulli_distribution randomCost(0.5);
-
+    std::normal_distribution<double> randomSmallVar(0, 1);
+    std::normal_distribution<double> randomSmallN(0, 3);
     do {
         if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
         {
@@ -121,15 +121,15 @@ void LionTournamentWorldObserver::reset()
 
                 int nbOnOpp1 = randomNbOpp(engine);
                 double invPerAg1 = randomInvPerAg(engine);
-                bool cost1 = randomCost(engine);
+                bool cost1 = false;
                 double ownInv1 = ctl->getCoop(nbOnOpp1);
                 double score1 = ctl->computeScore(cost1, nbOnOpp1, ownInv1, invPerAg1 * nbOnOpp1);
                 double payoff1 = LionWorldObserver::payoff(ownInv1, invPerAg1 * nbOnOpp1 + ownInv1, nbOnOpp1 + 1,
                                                            LionSharedData::meanA, LionSharedData::b) - cost1 * LionSharedData::cost;
 
-                int nbOnOpp2 = randomNbOpp(engine);
-                double invPerAg2 = randomInvPerAg(engine);
-                bool cost2 = randomCost(engine);
+                int nbOnOpp2 = clamp(nbOnOpp1 + std::round(randomSmallN(engine)), 0, gInitialNumberOfRobots - 1);
+                double invPerAg2 = clamp(invPerAg1 + randomSmallVar(engine), 0, LionSharedData::maxCoop);
+                bool cost2 = false;
                 double ownInv2 = ctl->getCoop(nbOnOpp2);
                 double score2 = ctl->computeScore(cost2, nbOnOpp2, ownInv2, invPerAg2 * nbOnOpp2);
                 double payoff2 = LionWorldObserver::payoff(ownInv2, invPerAg2 * nbOnOpp2 + ownInv2, nbOnOpp2 + 1,
