@@ -75,7 +75,7 @@ LionWorldObserver::LionWorldObserver(World *__world) :
     else
     {
         double min = 1 - LionSharedData::fakeCoef;
-        double max = 1 - LionSharedData::fakeCoef;
+        double max = 1 + LionSharedData::fakeCoef;
         for (int i = 0; i < m_nbIndividuals; i++)
         {
             variabilityCoef[i] = min + (max - min) * (double)i / (m_nbIndividuals - 1);
