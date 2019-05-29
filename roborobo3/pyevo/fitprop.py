@@ -33,7 +33,7 @@ class FitPropEvolutionStrategy():
         assert(not np.any(np.isnan(fitnesses)))
         if np.min(fitnesses) <= 0:
             fitnesses -= (np.min(self.lastfitnesses) - 1)
-        assert(np.all(fitnesses > 0))
+        assert(np.all(fitnesses >= 0) and np.any(fitnesses > 0))  # all positive and at least one not nul
         new_pop_index = np.random.choice(len(self.solutions),
                                          self.popsize,
                                          p=(fitnesses/np.sum(fitnesses)))
