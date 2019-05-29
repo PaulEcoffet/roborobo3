@@ -391,7 +391,9 @@ void LionController::play_and_fitness() {
     if (m_wm->getId() == 0 && gVerbose) {
         //std::cout << "opp: " << m_wm->opp->getId()  << ", total inv:" << totalinv << ", n:" << n << ", owncoop: " <<  m_wm->getCoop(n - 1) << ", payoff:" << payoff << std::endl;
     }
+    assert(payoff - cost == payoff - cost); // Test if payoff not NaN
     m_wm->_fitnessValue += payoff - cost;
+    assert(m_wm->_fitnessValue == m_wm->_fitnessValue); // Test if payoff not NaN
     dynamic_cast<LionWorldObserver*>(gWorld->getWorldObserver())->logAgent(m_wm);
 }
 
