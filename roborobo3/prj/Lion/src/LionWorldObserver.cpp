@@ -184,6 +184,13 @@ void LionWorldObserver::logAgent(LionWorldModel *wm)
 void LionWorldObserver::stepPost()
 {
     /* Plays */
+    if(!LionSharedData::asyncPlay)
+    {
+        for (int i = 0; i < gNbOfRobots; i++)
+        {
+            dynamic_cast<LionController *>(gWorld->getRobot(i)->getController())->play_and_fitness();
+        }
+    }
 
     for (auto id: objectsToTeleport)
     {

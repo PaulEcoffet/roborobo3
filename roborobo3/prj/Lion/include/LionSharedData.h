@@ -39,12 +39,12 @@ public:
     static bool optimalPlay;
     static bool maxTwo;
     static bool normalCoef;
+    static bool asyncPlay;
+
 
     static void initSharedData();
 
 
-
 };
-
 
 #endif //ROBOROBO3_LIONSHAREDDATA_H
