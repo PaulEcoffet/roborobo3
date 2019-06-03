@@ -49,6 +49,8 @@ public:
 
     double computeScore(int cost, int nbPart, double owncoop, double totothercoop);
 
+    void play_and_fitness();
+
 protected:
     LionWorldModel *m_wm;
 
@@ -68,9 +70,9 @@ protected:
 
     int verbose = 0;
 
-    void play_and_fitness();
-
     double computeScoreFromOpp(LionOpportunity *testopp, LionOpportunity *curopp);
+
+    void move();
 };
 
 

@@ -117,9 +117,12 @@ void LionController::step()
     m_wm->teleport = best->getId();
 
 
-    /* TRIGGER PAYOFF TO PREVENT ASYNC ISSUES */
-    play_and_fitness();
 
+    move();
+    if(LionSharedData::asyncPlay)
+    {
+        play_and_fitness();
+    }
 
     if (m_wm->fakeCoef < 0.8)
     {
@@ -311,7 +314,8 @@ unsigned int LionController::getNbOutputs() const
     return 1;
 }
 
-void LionController::play_and_fitness() {
+void LionController::move()
+{
     int dest_obj = m_wm->teleport;
     double angle = ((double)m_wm->getId() / gNbOfRobots) * 2 * M_PI;
     if (dest_obj != -1)
@@ -376,9 +380,11 @@ void LionController::play_and_fitness() {
             //exit(1);
         }
     }
+    m_wm->newopp = newopp;
+}
 
-
-    double cost = (newopp)? LionSharedData::cost : 0;
+void LionController::play_and_fitness() {
+    double cost = (m_wm->newopp)? LionSharedData::cost : 0;
 
     auto totalinv = m_wm->opp->getCurInv();
     int n = m_wm->opp->countCurrentRobots();
