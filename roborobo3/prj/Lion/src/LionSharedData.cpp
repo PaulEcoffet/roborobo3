@@ -35,7 +35,8 @@ double LionSharedData::cost = 5;
 bool LionSharedData::optimalPlay = false;
 bool LionSharedData::maxTwo = false;
 bool LionSharedData::normalCoef = false;
-bool LionSharedData::asyncPlay = true;
+bool LionSharedData::asyncPlay = false;
+bool LionSharedData::independantCoop = false;
 
 
 void LionSharedData::initSharedData()
@@ -69,6 +70,7 @@ void LionSharedData::initSharedData()
     GETVAL(maxTwo);
     GETVAL(normalCoef);
     GETVAL(asyncPlay);
+    GETVAL(independantCoop);
 }
 
 

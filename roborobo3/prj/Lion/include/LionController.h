@@ -62,6 +62,8 @@ protected:
 
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
+    double cachedEmptyOpp = -1;
+
 
     unsigned int getNbInputs() const;
 

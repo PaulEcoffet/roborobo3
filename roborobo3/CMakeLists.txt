@@ -11,7 +11,7 @@ file(
         prj/*
 )
 
-
+set(SDL2_STATIC)
 
 include_directories(include)
 include_directories(include/contrib)
@@ -22,6 +22,7 @@ include_directories(prj)
 
 set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
 endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -74,6 +75,12 @@ IF (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
 endif()
 
+if (SDL2_FOUND)
+    include_directories(${SDL2_INCLUDE_DIR})
+endif()
+
+message(${SDL2_LIBRARY})
+
 Set(ZLIB_DIR /usr/local/opt/zlib/)
 
 find_package( ZLIB REQUIRED PATH ZLIB_DIR )
@@ -83,7 +90,6 @@ include_directories(${SDL2_INCLUDE_DIRS} )
 
 add_executable(roborobo ${SOURCE_FILES})
 
-Message(${SDL2_LIBRARIES})
 
 target_link_libraries(roborobo
         ${SDL2_LIBRARIES}
