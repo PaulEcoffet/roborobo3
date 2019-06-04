@@ -11,7 +11,6 @@ file(
         prj/*
 )
 
-set(SDL2_STATIC)
 
 include_directories(include)
 include_directories(include/contrib)
@@ -79,7 +78,7 @@ if (SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIR})
 endif()
 
-message(${SDL2_LIBRARY})
+message(${SDL2_LIBRARIES})
 
 Set(ZLIB_DIR /usr/local/opt/zlib/)
 
