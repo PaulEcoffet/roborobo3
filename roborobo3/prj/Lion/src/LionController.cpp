@@ -56,9 +56,15 @@ LionController::LionController(RobotWorldModel *wm)
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
     m_nn->setWeights(weights);
-    weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
-    m_nn2->setWeights(weights2);
-
+    if (!LionSharedData::independantCoop)
+    {
+        weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
+        m_nn2->setWeights(weights2);
+    }
+    else
+    {
+        weights2.clear();
+    }
     resetFitness();
 }
 
@@ -157,6 +163,10 @@ double LionController::computeScoreFromOpp(LionOpportunity* testopp, LionOpportu
     int nbpart = testopp->countCurrentRobots() - onopp;
     double owncoop = getCoop(nbpart);
     double othercoop = 0;
+    if (cost && nbpart == 0)
+    {
+        return cachedEmptyOpp;
+    }
     if (onopp)
     {
         othercoop = testopp->getCurInv() - owncoop;
@@ -207,15 +217,31 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     }
 
     std::vector<double> inputs(1, 0);
-    for(int i = 0; i < gInitialNumberOfRobots; i++)
+    if (LionSharedData::independantCoop)
     {
-        inputs[0] = (double)i / gInitialNumberOfRobots;
-        m_nn2->setInputs(inputs);
-        m_nn2->step();
-        auto& output = m_nn2->readOut();
-        double coop = ((output[0] + 1) / 2) * LionSharedData::maxCoop;
-        m_wm->setCoop(i, coop);
+        m_wm->setCoop(0, 5);
+        if (m_wm->fakeCoef < 1)
+        {
+            m_wm->setCoop(1, 2.5);
+        }
+        else
+        {
+            m_wm->setCoop(1, 6.5);
+        }
     }
+    else
+    {
+        for(int i = 0; i < gInitialNumberOfRobots; i++)
+        {
+            inputs[0] = (double)i / gInitialNumberOfRobots;
+            m_nn2->setInputs(inputs);
+            m_nn2->step();
+            auto& output = m_nn2->readOut();
+            double coop = ((output[0] + 1) / 2) * LionSharedData::maxCoop;
+            m_wm->setCoop(i, coop);
+        }
+    }
+    cachedEmptyOpp = computeScore(1, 0, m_wm->getCoop(0), 0);
 }
 
 unsigned int LionController::getNbInputs() const
@@ -424,6 +450,10 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
 
     double score = 0;
 
+    if (nbPart >= 2)
+    {
+        return -1.1;
+    }
     if (LionSharedData::optimalPlay)
     {
         score = LionWorldObserver::payoff(owncoop, totothercoop + owncoop, (nbPart + 1), LionSharedData::meanA, LionSharedData::b)
@@ -436,5 +466,6 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
         score = outputs[0];
         assert(score >= -1 && score <= 1);
     }
+
     return score;
 }
