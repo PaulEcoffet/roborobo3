@@ -40,9 +40,11 @@ public:
     static bool maxTwo;
     static bool normalCoef;
     static bool asyncPlay;
+    static bool independantCoop;
 
 
     static void initSharedData();
+
 
 
 };

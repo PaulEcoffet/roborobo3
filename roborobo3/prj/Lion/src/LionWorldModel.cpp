@@ -51,10 +51,14 @@ double LionWorldModel::getCoop(int nbpart, bool truecoop)
 {
     assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
     assert(coopCache[nbpart] >= 0 && coopCache[nbpart] <= LionSharedData::maxCoop);
-    if (truecoop)
+    if (truecoop || LionSharedData::independantCoop)
         return coopCache[nbpart];
-    else
-        return coopCache[nbpart] * fakeCoef;
+    else {
+        if (LionSharedData::meanA != 0)
+            return coopCache[nbpart] * fakeCoef;
+        else
+            return boost::algorithm::clamp(coopCache[nbpart] + fakeCoef - 1, 0, LionSharedData::maxCoop);
+    }
 }
 
 void LionWorldModel::setCoop(int nbpart, double val)
