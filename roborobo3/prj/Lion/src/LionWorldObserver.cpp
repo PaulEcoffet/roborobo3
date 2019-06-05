@@ -315,7 +315,7 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     const double x0 = (totalInvest - invest);
 
     res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
-    if (LionSharedData::maxTwo && n > 2)
+    if (LionSharedData::maxTwo && n != 2)
     {
         res = 0;
     }
