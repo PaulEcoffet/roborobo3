@@ -36,7 +36,7 @@ bool LionSharedData::optimalPlay = false;
 bool LionSharedData::maxTwo = false;
 bool LionSharedData::normalCoef = false;
 bool LionSharedData::asyncPlay = false;
-bool LionSharedData::independantCoop = false;
+int LionSharedData::independantCoop = 0;
 
 
 void LionSharedData::initSharedData()
