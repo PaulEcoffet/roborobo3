@@ -217,7 +217,7 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     }
 
     std::vector<double> inputs(1, 0);
-    if (LionSharedData::independantCoop)
+    if (LionSharedData::independantCoop == 1)
     {
         m_wm->setCoop(0, 5);
         if (m_wm->fakeCoef < 1)
@@ -228,6 +228,13 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
         {
             m_wm->setCoop(1, 6.5);
         }
+    }
+    else if (LionSharedData::independantCoop == 2)
+    {
+        const double coefrange = 2 * LionSharedData::fakeCoef;
+        double coef = m_wm->fakeCoef - (1 - LionSharedData::fakeCoef) / coefrange;
+        m_wm->setCoop(0, 5);
+        m_wm->setCoop(1, 2.5 * (1-coef) + 6.5 * coef);
     }
     else
     {
