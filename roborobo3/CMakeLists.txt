@@ -21,8 +21,10 @@ include_directories(prj)
 
 set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
+    #set_target_properties(icarus PROPERTIES LINK_SEARCH_START_STATIC 1)
+    #set_target_properties(icarus PROPERTIES LINK_SEARCH_END_STATIC 1)
     SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
+    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++ -static")  # use static libstdc++ which is not buggy
 endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
