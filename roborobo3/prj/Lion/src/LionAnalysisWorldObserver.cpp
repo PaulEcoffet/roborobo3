@@ -51,18 +51,21 @@ void LionAnalysisWorldObserver::reset()
         {
             for (int nbonopp = 0; nbonopp < gInitialNumberOfRobots; nbonopp++)
             {
-                double owncoop = ctl->getCoop(nbonopp);
-                for(int k = 0; k <= 20; k++)
+                for (int j = 0; j <= 20; j++)
                 {
-                    double partcoop = k * 0.5;
-                    double totothercoop = partcoop * nbonopp;
-                    double score = ctl->computeScore(cost, nbonopp, owncoop, totothercoop);
-                    m_log << i_gen << "\t"
-                          << cost << "\t"
-                          << nbonopp << "\t"
-                          << owncoop << "\t"
-                          << partcoop << "\t"
-                          << score << "\n";
+                    double owncoop = j * 0.5;
+                    for(int k = 0; k <= 20; k++)
+                    {
+                        double partcoop = k * 0.5;
+                        double totothercoop = partcoop * nbonopp;
+                        double score = ctl->computeScore(cost, nbonopp, owncoop, totothercoop);
+                        m_log << i_gen << "\t"
+                              << cost << "\t"
+                              << nbonopp << "\t"
+                              << owncoop << "\t"
+                              << partcoop << "\t"
+                              << score << "\n";
+                    }
                 }
             }
         }
