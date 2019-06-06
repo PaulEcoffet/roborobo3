@@ -49,7 +49,8 @@ void LionAnalysisWorldObserver::reset()
         ctl->resetFitness();
         for (int cost = 0; cost < 2; cost++)
         {
-            for (int nbonopp = 0; nbonopp < gInitialNumberOfRobots; nbonopp++)
+            int maxrob = (LionSharedData::maxTwo)?2:gInitialNumberOfRobots;
+            for (int nbonopp = 0; nbonopp < maxrob; nbonopp++)
             {
                 for (int j = 0; j <= 20; j++)
                 {
