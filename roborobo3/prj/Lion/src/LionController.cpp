@@ -20,6 +20,8 @@
 
 
 
+int getNbInputs();
+
 enum
 {
     MLP_ID = 0,
@@ -35,18 +37,18 @@ LionController::LionController(RobotWorldModel *wm)
     switch (LionSharedData::controllerType)
     {
         case MLP_ID:
-                m_nn = new MLP(weights, 4, 1,
+                m_nn = new MLP(weights, getNbInputs(), 1,
                                nbNeuronsPerHiddenLayers, true);
                 m_nn2 = new MLP(weights, 1, 1, nbNeurons2, true);
             break;
         case PERCEPTRON_ID:
-                m_nn = new Perceptron(weights, 4, 1);
+                m_nn = new Perceptron(weights, getNbInputs(), 1);
                 m_nn2 = new Perceptron(weights, 1, 1);
             break;
         case ELMAN_ID:
-                m_nn = new Elman(weights, 4, 1,
+                m_nn = new Elman(weights, getNbInputs(), 1,
                                  nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new Elman(weights, 4, 1,
+                m_nn2 = new Elman(weights, 1, 1,
                                  nbNeurons2, true);
             break;
         default:
@@ -235,7 +237,6 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
         const double ess = LionSharedData::meanA / 2;
         const double so = LionSharedData::meanA + LionSharedData::b / 2;
         double coef = (m_wm->fakeCoef - (1 - LionSharedData::fakeCoef)) / coefrange;
-        std::cout << m_wm->fakeCoef << ". " << coef << " . " << ess * (1-coef) + so * coef << std::endl;
         m_wm->setCoop(0, LionSharedData::meanA);
         m_wm->setCoop(1, ess * (1-coef) + so * coef);
     }
@@ -451,9 +452,11 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     assert(nbPart >= 0 && nbPart <= gInitialNumberOfRobots);
     assert(owncoop >= 0 && owncoop <= LionSharedData::maxCoop * (1 + LionSharedData::fakeCoef + 0.01));
     assert(totothercoop >= 0 && totothercoop <= nbPart * LionSharedData::maxCoop * (1 + LionSharedData::fakeCoef + 0.01));
-    std::vector<double> inputs(4, 0);
+    std::vector<double> inputs(getNbInputs(), 0);
     int i = 0;
-    inputs[i++] = cost;
+    if (LionSharedData::costAsInput) {
+        inputs[i++] = cost;
+    }
     inputs[i++] = (double) nbPart / gNbOfRobots;
     inputs[i++] = totothercoop / (LionSharedData::maxCoop * std::max(nbPart, 1));
     inputs[i] = owncoop / LionSharedData::maxCoop;
@@ -478,4 +481,13 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     }
 
     return score;
+}
+
+int getNbInputs()
+{
+    return (int) LionSharedData::costAsInput
+            + 1 // nb part
+            + 1 // other inv
+            + 1 // own coop
+            ;
 }
