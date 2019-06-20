@@ -41,6 +41,8 @@ public:
     static bool normalCoef;
     static bool asyncPlay;
     static int independantCoop;
+    static bool costAsInput;
+    static bool additiveVar;
 
 
     static void initSharedData();
