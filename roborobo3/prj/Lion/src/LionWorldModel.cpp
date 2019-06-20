@@ -54,7 +54,7 @@ double LionWorldModel::getCoop(int nbpart, bool truecoop)
     if (truecoop || LionSharedData::independantCoop)
         return coopCache[nbpart];
     else {
-        if (LionSharedData::meanA != 0)
+        if (!LionSharedData::additiveVar)
             return coopCache[nbpart] * fakeCoef;
         else
             return boost::algorithm::clamp(coopCache[nbpart] + fakeCoef - 1, 0, LionSharedData::maxCoop);
