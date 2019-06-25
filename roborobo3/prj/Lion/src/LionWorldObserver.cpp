@@ -308,6 +308,15 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 }
 
 
+static const double invsqrt2pi = 1.0 / std::sqrt(2 * M_PI);
+
+static double bellcurve(double x, double mu, double sigma)
+{
+
+    return invsqrt2pi * 1.0 / sigma * std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
+}
+
+
 double LionWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
         const double b)
 {
@@ -324,9 +333,13 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     {
         //std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
     }
-    if (LionSharedData::frictionCoef > 0)
+    if (LionSharedData::nControl == 1)
     {
         res *= (1 - sigmoid(n, 0, 1, LionSharedData::frictionCoef, LionSharedData::frictionInflexionPoint));
+    }
+    else if (LionSharedData::nControl == 2)
+    {
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
 
     return res;

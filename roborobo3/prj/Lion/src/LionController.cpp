@@ -463,10 +463,6 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
 
     double score = 0;
 
-    if (nbPart >= 2)
-    {
-        return -1.1;
-    }
     if (LionSharedData::optimalPlay)
     {
         score = LionWorldObserver::payoff(owncoop, totothercoop + owncoop, (nbPart + 1), LionSharedData::meanA, LionSharedData::b)
