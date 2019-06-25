@@ -43,6 +43,9 @@ public:
     static int independantCoop;
     static bool costAsInput;
     static bool additiveVar;
+    static int nControl;
+    static double nOpti;
+    static double nTolerance;
 
 
     static void initSharedData();

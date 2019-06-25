@@ -39,6 +39,11 @@ bool LionSharedData::asyncPlay = false;
 int LionSharedData::independantCoop = 0;
 bool LionSharedData::costAsInput = true;
 bool LionSharedData::additiveVar = false;
+int LionSharedData::nControl = 0;
+double LionSharedData::nOpti = 2;
+double LionSharedData::nTolerance = 1.5;
+
+
 
 
 void LionSharedData::initSharedData()
@@ -75,6 +80,12 @@ void LionSharedData::initSharedData()
     GETVAL(independantCoop);
     GETVAL(costAsInput);
     GETVAL(additiveVar);
+    GETVAL(nControl);
+    GETVAL(nOpti);
+    GETVAL(nTolerance);
+
+
+    assert((maxTwo && nControl == 0) || !maxTwo); // if maxtwo then no ncontrol
 }
 
 
