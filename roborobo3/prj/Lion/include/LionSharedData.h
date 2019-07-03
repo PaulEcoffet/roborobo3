@@ -46,6 +46,7 @@ public:
     static int nControl;
     static double nOpti;
     static double nTolerance;
+    static bool hardCoop;
 
 
     static void initSharedData();

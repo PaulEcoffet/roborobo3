@@ -219,7 +219,22 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     }
 
     std::vector<double> inputs(1, 0);
-    if (LionSharedData::independantCoop == 1)
+    if (LionSharedData::hardCoop)
+    {
+        assert(LionSharedData::independantCoop == 0);
+        for(int i = 0; i < gInitialNumberOfRobots; i++)
+        {
+            int nbPlayers = i + 1;
+            double coop = 0;
+            if (getCoopWeight() < 0) {
+                coop = LionSharedData::meanA / nbPlayers;
+            } else {
+                coop = LionSharedData::meanA + (LionSharedData::b * (nbPlayers - 1)) / nbPlayers;
+            }
+            m_wm->setCoop(i, coop);
+        }
+    }
+    else if (LionSharedData::independantCoop == 1)
     {
         m_wm->setCoop(0, LionSharedData::meanA);
         if (m_wm->fakeCoef < 1)
@@ -444,6 +459,11 @@ double LionController::getCoop(int i)
 {
     double coop = m_wm->getCoop(i);
     return coop;
+}
+
+double LionController::getCoopWeight()
+{
+    return weights2[0];
 }
 
 double LionController::computeScore(int cost, int nbPart, double owncoop, double totothercoop)
