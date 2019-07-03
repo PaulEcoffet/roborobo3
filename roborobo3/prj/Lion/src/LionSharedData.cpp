@@ -42,7 +42,7 @@ bool LionSharedData::additiveVar = false;
 int LionSharedData::nControl = 0;
 double LionSharedData::nOpti = 2;
 double LionSharedData::nTolerance = 1.5;
-
+bool LionSharedData::hardCoop = false;
 
 
 
@@ -83,8 +83,10 @@ void LionSharedData::initSharedData()
     GETVAL(nControl);
     GETVAL(nOpti);
     GETVAL(nTolerance);
+    GETVAL(hardCoop);
 
 
+    assert((hardCoop && independantCoop == 0 && !fakeRobots) || !hardCoop); // if hardcoop then no independant coop or fake
     assert((maxTwo && nControl == 0) || !maxTwo); // if maxtwo then no ncontrol
 }
 
