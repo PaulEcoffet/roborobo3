@@ -308,12 +308,12 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 }
 
 
-static const double invsqrt2pi = 1.0 / std::sqrt(2 * M_PI);
+static const double Invsqrt2pi = 1.0 / std::sqrt(2 * M_PI);
 
 static double bellcurve(double x, double mu, double sigma)
 {
 
-    return invsqrt2pi * 1.0 / sigma * std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
+    return Invsqrt2pi * 1.0 / sigma * std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
 }
 
 
