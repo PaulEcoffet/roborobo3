@@ -47,7 +47,7 @@ public:
     static double nOpti;
     static double nTolerance;
     static bool hardCoop;
-
+    static bool splitedNbPartInput;
 
     static void initSharedData();
 
