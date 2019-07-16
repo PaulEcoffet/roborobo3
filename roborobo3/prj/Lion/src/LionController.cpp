@@ -20,7 +20,6 @@
 
 
 
-int getNbInputs();
 
 enum
 {
@@ -87,46 +86,34 @@ void LionController::step()
         return;
     }
 
-    LionOpportunity *best = dynamic_cast<LionOpportunity*>(gPhysicalObjects[0]);
+    auto *best = dynamic_cast<LionOpportunity *>(gPhysicalObjects[0]);
     double bestscore = -9999;
 
 
-    /*if (!LionSharedData::stayOrNot)*/
+    for (auto *opp : gPhysicalObjects)
     {
-        for (auto *opp : gPhysicalObjects)
+        auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
+        double score = computeScoreFromOpp(lionopp, m_wm->opp);
+        if (m_wm->getId() == 0 && gVerbose)
         {
-            auto *lionopp = dynamic_cast<LionOpportunity *>(opp);
-            double score = computeScoreFromOpp(lionopp, m_wm->opp);
-            if (m_wm->getId() == 0 && gVerbose)
-            {
-                //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
-            }
-            if (score > bestscore)
-            {
-                bestscore = score;
-                best = lionopp;
-            }
+            //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
+        }
+        if (score > bestscore)
+        {
+            bestscore = score;
+            best = lionopp;
         }
     }
-    /* else
-     * {
-     * }
-     * */
 
 
     /* Reading the output of the networks */
 
     m_wm->_desiredTranslationalValue = 0;
     m_wm->_desiredRotationalVelocity = 0;
-    if (m_wm->getId() == 0 && gVerbose)
-    {
-        //std::cout << "best: " << best->getId() << std::endl;
-    }
     m_wm->teleport = best->getId();
 
-
-
     move();
+
     if(LionSharedData::asyncPlay)
     {
         play_and_fitness();
@@ -272,7 +259,17 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
 
 unsigned int LionController::getNbInputs() const
 {
-    return 3;
+    int nbInput = 3;
+    if (LionSharedData::splitedNbPartInput)
+    {
+        nbInput++;
+    }
+    if (LionSharedData::costAsInput)
+    {
+        nbInput++;
+    }
+
+    return nbInput;
 }
 
 
@@ -466,18 +463,33 @@ double LionController::getCoopWeight()
     return weights2[0];
 }
 
+
+static inline double normalize(const double value, const double min=0, const double max=1)
+{
+    return ((value - min) / (max - min)) * 2 - 1;
+}
+
 double LionController::computeScore(int cost, int nbPart, double owncoop, double totothercoop)
 {
     assert(cost == 0 || cost == 1);
     assert(nbPart >= 0 && nbPart <= gInitialNumberOfRobots);
     assert(owncoop >= 0 && owncoop <= LionSharedData::maxCoop * (1 + LionSharedData::fakeCoef + 0.01));
     assert(totothercoop >= 0 && totothercoop <= nbPart * LionSharedData::maxCoop * (1 + LionSharedData::fakeCoef + 0.01));
+
     std::vector<double> inputs(getNbInputs(), 0);
     int i = 0;
     if (LionSharedData::costAsInput) {
         inputs[i++] = cost;
     }
-    inputs[i++] = (double) nbPart / gNbOfRobots;
+    if (LionSharedData::splitedNbPartInput)
+    {
+        inputs[i++] = normalize((double) (nbPart % 10) / 10.0);
+        inputs[i++] = normalize((double) (nbPart / 10)  / ((double) gInitialNumberOfRobots / 10.0));
+    }
+    else
+    {
+        inputs[i++] = (double) nbPart / gNbOfRobots;
+    }
     inputs[i++] = totothercoop / (LionSharedData::maxCoop * std::max(nbPart, 1));
     inputs[i] = owncoop / LionSharedData::maxCoop;
 
@@ -491,19 +503,9 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     } else{
         m_nn->setInputs(inputs);
         m_nn->step();
-        std::vector<double> outputs = m_nn->readOut();
-        score = outputs[0];
+        score = m_nn->readOut()[0];
         assert(score >= -1 && score <= 1);
     }
 
     return score;
-}
-
-int getNbInputs()
-{
-    return (int) LionSharedData::costAsInput
-            + 1 // nb part
-            + 1 // other inv
-            + 1 // own coop
-            ;
 }
