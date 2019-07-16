@@ -20,7 +20,6 @@
 
 
 
-int getNbInputs();
 
 enum
 {
@@ -260,7 +259,17 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
 
 unsigned int LionController::getNbInputs() const
 {
-    return 3;
+    int nbInput = 3;
+    if (LionSharedData::splitedNbPartInput)
+    {
+        nbInput++;
+    }
+    if (LionSharedData::costAsInput)
+    {
+        nbInput++;
+    }
+
+    return nbInput;
 }
 
 
@@ -454,6 +463,12 @@ double LionController::getCoopWeight()
     return weights2[0];
 }
 
+
+static inline double normalize(const double value, const double min=0, const double max=1)
+{
+    return ((value - min) / (max - min)) * 2 - 1;
+}
+
 double LionController::computeScore(int cost, int nbPart, double owncoop, double totothercoop)
 {
     assert(cost == 0 || cost == 1);
@@ -466,7 +481,15 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     if (LionSharedData::costAsInput) {
         inputs[i++] = cost;
     }
-    inputs[i++] = (double) nbPart / gNbOfRobots;
+    if (LionSharedData::splitedNbPartInput)
+    {
+        inputs[i++] = normalize((double) (nbPart % 10) / 10.0);
+        inputs[i++] = normalize((double) (nbPart / 10)  / ((double) gInitialNumberOfRobots / 10.0));
+    }
+    else
+    {
+        inputs[i++] = (double) nbPart / gNbOfRobots;
+    }
     inputs[i++] = totothercoop / (LionSharedData::maxCoop * std::max(nbPart, 1));
     inputs[i] = owncoop / LionSharedData::maxCoop;
 
@@ -485,13 +508,4 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     }
 
     return score;
-}
-
-int getNbInputs()
-{
-    return (int) LionSharedData::costAsInput
-            + 1 // nb part
-            + 1 // other inv
-            + 1 // own coop
-            ;
 }

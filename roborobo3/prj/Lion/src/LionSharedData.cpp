@@ -43,6 +43,7 @@ int LionSharedData::nControl = 0;
 double LionSharedData::nOpti = 2;
 double LionSharedData::nTolerance = 1.5;
 bool LionSharedData::hardCoop = false;
+bool LionSharedData::splitedNbPartInput = false;
 
 
 
@@ -84,6 +85,7 @@ void LionSharedData::initSharedData()
     GETVAL(nOpti);
     GETVAL(nTolerance);
     GETVAL(hardCoop);
+    GETVAL(splitedNbPartInput);
 
 
     assert((hardCoop && independantCoop == 0 && !fakeRobots) || !hardCoop); // if hardcoop then no independant coop or fake
