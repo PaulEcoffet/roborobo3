@@ -50,7 +50,7 @@ void LionAnalysisWorldObserver::reset()
         for (int cost = 0; cost < 2; cost++)
         {
             int maxrob = (LionSharedData::maxTwo)?4:gInitialNumberOfRobots;
-            for (int nbonopp = 0; nbonopp < maxrob; nbonopp++)
+            for (int nbonopp = 0; nbonopp < maxrob;)
             {
                 for (int j = 0; j <= 20; j++)
                 {
@@ -68,6 +68,14 @@ void LionAnalysisWorldObserver::reset()
                               << score << "\n";
                     }
                 }
+                if (nbonopp < 10)
+                {
+                    nbonopp++;
+                }
+                else if (nbonopp < 100)
+                    nbonopp += 10;
+                else
+                    nbonopp += 100;
             }
         }
         i_gen++;
