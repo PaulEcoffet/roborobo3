@@ -38,7 +38,7 @@ LionController::LionController(RobotWorldModel *wm)
         case MLP_ID:
                 m_nn = new MLP(weights, getNbInputs(), 1,
                                nbNeuronsPerHiddenLayers, true);
-                m_nn2 = new MLP(weights, 1, 1, nbNeurons2, true);
+                m_nn2 = new MLP(weights, 2, 1, nbNeurons2, true);
             break;
         case PERCEPTRON_ID:
                 m_nn = new Perceptron(weights, getNbInputs(), 1);
@@ -205,7 +205,7 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
     }
 
-    std::vector<double> inputs(1, 0);
+    std::vector<double> inputs(2, 0);
     if (LionSharedData::hardCoop)
     {
         assert(LionSharedData::independantCoop == 0);
@@ -246,7 +246,8 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     {
         for(int i = 0; i < gInitialNumberOfRobots; i++)
         {
-            inputs[0] = (double)i / gInitialNumberOfRobots;
+            inputs[0] = (double)(i % 10) / 10;  // Units counter
+            inputs[1] = (double) (i / 10) / ((double) gInitialNumberOfRobots / 10); // ten counter  -- NOLINT(bugprone-integer-division)
             m_nn2->setInputs(inputs);
             m_nn2->step();
             auto& output = m_nn2->readOut();
