@@ -43,7 +43,7 @@ int LionSharedData::nControl = 0;
 double LionSharedData::nOpti = 2;
 double LionSharedData::nTolerance = 1.5;
 bool LionSharedData::hardCoop = false;
-bool LionSharedData::splitedNbPartInput = false;
+bool LionSharedData::splitedNbPartInput = true;
 
 
 
