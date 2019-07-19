@@ -21,6 +21,8 @@ public:
 
     double meanLastTotalInvest();
 
+    double getCoop(bool trueValue=false) const;
+
     double meanLastOwnInvest();
 
     double meanLastCommonKnowledgeReputation();
