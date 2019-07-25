@@ -44,7 +44,7 @@ public:
 
     double getFitness() const;
 
-    const std::vector<double> getWeights() const;
+    std::vector<double> getWeights() const;
 
 
     std::vector<double> getInputs();

@@ -42,7 +42,7 @@ NegociateController::NegociateController(RobotWorldModel *wm)
     {
         case MLP_ID:
             m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
-            m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, nbNeurons2, true, false, 1.0);
+            m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, nbNeurons2, true);
             break;
         case PERCEPTRON_ID:
             if (NegociateSharedData::splitNetwork)
@@ -472,7 +472,7 @@ std::string NegociateController::inspect(std::string prefix) {
     {
         auto inputs = getInputs();
         out << prefix << "inputs:\n";
-        for (int i = 0; i < inputs.size(); i++)
+        for (size_t i = 0; i < inputs.size(); i++)
         {
             out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
         }
@@ -500,7 +500,7 @@ std::string NegociateController::inspect(std::string prefix) {
     return out.str();
 }
 
-const std::vector<double> NegociateController::getWeights() const
+std::vector<double> NegociateController::getWeights() const
 {
     std::vector<double> allweights;
     if (NegociateSharedData::fixCoop)

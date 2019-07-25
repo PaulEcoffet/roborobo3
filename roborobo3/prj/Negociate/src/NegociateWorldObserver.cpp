@@ -240,7 +240,7 @@ void NegociateWorldObserver::stepEvolution()
 std::vector<std::pair<int, double>> NegociateWorldObserver::getSortedFitnesses() const
 {
     std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
-    for (int i = 0; i < m_individuals.size(); i++)
+    for (size_t i = 0; i < m_individuals.size(); i++)
     {
         fitnesses[i].first = i;
         fitnesses[i].second = m_fitnesses[i];
