@@ -65,6 +65,8 @@ public:
     static double temperature;
     static bool additiveVar;
     static double tau;
+    static double mutRate;
+    static double mutCoop;
 
     static void initSharedData();
 

@@ -65,6 +65,10 @@ double NegociateSharedData::pStayInCluster = -1;
 double NegociateSharedData::temperature = -1;
 bool NegociateSharedData::additiveVar = false;
 double NegociateSharedData::tau = 100.0;
+double NegociateSharedData::mutRate = 0.01;
+double NegociateSharedData::mutCoop = 0.1;
+
+
 
 void NegociateSharedData::initSharedData()
 {
@@ -125,6 +129,8 @@ void NegociateSharedData::initSharedData()
     GETVAL(temperature);
     GETVAL(additiveVar);
     GETVAL(tau);
+    GETVAL(mutRate);
+    GETVAL(mutCoop);
 }
 
 #undef INITVAL

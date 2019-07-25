@@ -50,11 +50,12 @@ class FitPropEvolutionStrategy():
             # Uniform transformation
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
+            std_mask = np.tile(self.normalmut, (self.popsize - self.mu, 1))
             mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
-            mutations = np.random.normal(0, self.normalmut, size=(mutation_mask == NORMAL).sum())
-            new_solutions[mutation_mask == NORMAL] += mutations
+            mutations = np.random.normal(new_solutions[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
+            new_solutions[mutation_mask == NORMAL] = mutations
         np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
 
