@@ -41,6 +41,11 @@ public:
             const std::vector<double> &maxbounds, const std::vector<double> &minguess,
             const std::vector<double> &maxguess);
 
+    std::vector<std::vector<double>>
+    initCMA(int popsize, int parameters_dimension, const std::vector<double> &minbounds,
+            const std::vector<double> &maxbounds, const std::vector<double> &minguess,
+            const std::vector<double> &maxguess, const std::vector<double> &std);
+
     /**
      * Return the next generation of the population based on the fitnesses of the current generation.
      *
