@@ -36,9 +36,10 @@ public:
      * @param parameters_dimension The number of parameters for each individual
      * @return A vector of size `popsize` of the initial genomes for each individual
      */
-    std::vector<std::vector<double>> initCMA(int popsize, int parameters_dimension, std::vector<double>&minbounds,
-                                             std::vector<double>&maxbounds, std::vector<double>&minguess,
-                                             std::vector<double>&maxguess);
+    std::vector<std::vector<double>>
+    initCMA(int popsize, int parameters_dimension, const std::vector<double> &minbounds,
+            const std::vector<double> &maxbounds, const std::vector<double> &minguess,
+            const std::vector<double> &maxguess);
 
     /**
      * Return the next generation of the population based on the fitnesses of the current generation.
@@ -50,7 +51,8 @@ public:
      * getNextGeneration.
      * @return A vector the new genomes for each individual
      */
-    std::vector<std::vector<double>> getNextGeneration(std::vector<std::vector<double>>individuals, std::vector<double> fitnesses);
+    std::vector<std::vector<double>>
+    getNextGeneration(const std::vector<std::vector<double>> &individuals, const std::vector<double> &fitnesses);
 
     /**
      * Close the connection between the PyCMAES server and roborobo.
