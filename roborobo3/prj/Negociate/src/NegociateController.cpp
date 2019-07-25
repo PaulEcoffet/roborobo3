@@ -109,7 +109,7 @@ void NegociateController::step()
         m_wm->_desiredRotationalVelocity = 0;
         if (random() < 1.0 / NegociateSharedData::tau)
         {
-            m_wm->setAlive(true);
+            //m_wm->setAlive(true);
         }
         else
         {
