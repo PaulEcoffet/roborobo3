@@ -21,9 +21,10 @@ void PyevoInterface::connect(const std::string &ip, unsigned short port)
     ni.connect(ip, port);
 }
 
-std::vector<std::vector<double>> PyevoInterface::initCMA(int popsize, int parameters_dimension, std::vector<double>&minbounds,
-                                                         std::vector<double>&maxbounds, std::vector<double>&minguess,
-                                                         std::vector<double>&maxguess)
+std::vector<std::vector<double>>
+PyevoInterface::initCMA(int popsize, int parameters_dimension, const std::vector<double> &minbounds,
+                        const std::vector<double> &maxbounds, const std::vector<double> &minguess,
+                        const std::vector<double> &maxguess)
 {
     json params = {
             {"popsize", popsize},
@@ -44,7 +45,8 @@ std::vector<std::vector<double>> PyevoInterface::initCMA(int popsize, int parame
     return PyevoInterface::initCMA(popsize, parameters_dimension, minbounds, maxbounds, minbounds, maxbounds);
 }
 
-std::vector<std::vector<double>> PyevoInterface::getNextGeneration(std::vector<std::vector<double>>individuals, std::vector<double> fitnesses)
+std::vector<std::vector<double>> PyevoInterface::getNextGeneration(const std::vector<std::vector<double>> &individuals,
+                                                                   const std::vector<double> &fitnesses)
 {
     std::vector<std::vector<double>> genomes;
 
