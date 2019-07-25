@@ -103,8 +103,8 @@ void NegociateWorldObserver::reset()
     {
         minbounds[0] = 0;
         maxbounds[0] = 1;
-        minguess[0] = (NegociateSharedData::meanA / 2) / NegociateSharedData::maxCoop - 0.001;
-        maxguess[0] = (NegociateSharedData::meanA / 2) / NegociateSharedData::maxCoop + 0.001; // Max is below ESS selfish
+        minguess[0] = 0;
+        maxguess[0] = (NegociateSharedData::meanA / 4) / NegociateSharedData::maxCoop; // Max is below ESS selfish
     }
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess);
     m_fitnesses.resize(m_nbIndividuals, 0);
@@ -184,7 +184,7 @@ void NegociateWorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
+            m_logall << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\talive\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
@@ -205,8 +205,7 @@ void NegociateWorldObserver::stepPost()
                      << wm->_cooperationLevel * wm->fakeCoef << "\t"
                      << wm->meanLastOwnInvest() << "\t"
                      << wm->meanLastTotalInvest() << "\t"
-                     << wm->punishment << "\t"
-                     << wm->spite
+                     << wm->isAlive()
                      << "\n";
         }
     }
@@ -370,14 +369,18 @@ void NegociateWorldObserver::computeOpportunityImpacts()
 
                 if (everyone_agree and n > 1)
                 {
-                    double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b)  * NegociateSharedData::tau
-                            / (NegociateSharedData::evaluationTime - NegociateSharedData::fitnessUnlockedIter)
-                            / NegociateSharedData::nbEvaluationsPerGeneration;
+                    double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
+                                       NegociateSharedData::nbEvaluationsPerGeneration;
 
                     wm->_fitnessValue += curpayoff;
 
 
                     wm->setAlive(false);
+
+                    m_world->getRobot(*index)->unregisterRobot();
+                    m_world->getRobot(*index)->setCoord(0, 0);
+                    m_world->getRobot(*index)->setCoordReal(0, 0);
+                    m_world->getRobot(*index)->registerRobot();
                     opp->kill();
 
                 }
