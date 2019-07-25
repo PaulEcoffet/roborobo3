@@ -3,6 +3,11 @@ from copy import copy, deepcopy
 from json_tricks import dump
 
 
+NOTHING = 0
+UNIFORM = 1
+NORMAL = 2
+
+
 class MuLambdaEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
@@ -11,6 +16,7 @@ class MuLambdaEvolutionStrategy():
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
+        self.normalmut = 0.1 # TODO SHOULDNT BE FIXED
         self.mu = mu
 
         # boundaries are the same for all the dimension for now
@@ -31,14 +37,25 @@ class MuLambdaEvolutionStrategy():
         true_parent_indexes = np.random.choice(
             len(parents), size=self.popsize - self.mu)
         children = parents[true_parent_indexes].copy()
-        nb_mutant = 0
-        for ichild in range(children.shape[0]):
-            if nb_mutant == self.mutation_rate:
-                break
-            igen = np.random.choice(children.shape[1], size=1, replace=False)
-            rand = np.random.uniform(self.minb[igen[0]], self.maxb[igen[0]], size=1)
-            children[ichild][igen] = rand
-            nb_mutant += 1
+        p = self.mutation_rate
+        p_uni = 0.1 * p
+        p_normal = p - p_uni
+        mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=children.shape, p=[1 - p, p_uni, p_normal])
+        # Uniform transformation
+        min_mask = np.tile(self.minb, (self.popsize - self.mu, 1))
+        max_mask = np.tile(self.maxb, (self.popsize - self.mu, 1))
+        mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
+        children[mutation_mask == UNIFORM] = mutations
+        # normal transformation
+        mutations = np.random.normal(0, 0.05, size=(mutation_mask == NORMAL).sum())
+        children[mutation_mask == NORMAL] += mutations
+
+        # force coop mut (UGLY)
+        #### UGLY UGLY UGLY ####
+        children[:children.shape[0]//2 , 0] += np.random.normal(0, self.normalmut, size=children.shape[0]//2)
+        ########################
+
+        np.clip(children, min_mask, max_mask, out=children)
         new_solutions = np.concatenate((parents, children))
         return new_solutions
 
