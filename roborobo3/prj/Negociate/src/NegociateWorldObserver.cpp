@@ -94,8 +94,9 @@ void NegociateWorldObserver::reset()
 
     // create individuals
     int nbweights = dynamic_cast<NegociateController * >(m_world->getRobot(0)->getController())->getWeights().size();
-    std::vector<double> minbounds(nbweights, -10);
-    std::vector<double> maxbounds(nbweights, 10);
+    std::vector<double> minbounds(nbweights, -20);
+    std::vector<double> maxbounds(nbweights, 20);
+    std::vector<double> std(nbweights, NegociateSharedData::mutRate);
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
 
@@ -104,9 +105,10 @@ void NegociateWorldObserver::reset()
         minbounds[0] = 0;
         maxbounds[0] = 1;
         minguess[0] = 0;
-        maxguess[0] = (NegociateSharedData::meanA / 4) / NegociateSharedData::maxCoop; // Max is below ESS selfish
+        maxguess[0] = 1; // Max is below ESS selfish
+        std[0] = NegociateSharedData::mutCoop;
     }
-    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess);
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);
