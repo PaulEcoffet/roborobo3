@@ -35,7 +35,7 @@ NegociateController::NegociateController(RobotWorldModel *wm)
     unsigned int nbGameOutput = 1;
 
     fill_names = true;
-    std::vector<unsigned int> nbNeurons2 = {5}; // TODO 5 should not be hardcode
+    std::vector<unsigned int> nbNeurons2 = {3}; // TODO 5 should not be hardcode
 
     fillNames();
     switch (NegociateSharedData::controllerType)

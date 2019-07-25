@@ -69,7 +69,6 @@ def main():
     ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda', 'oneone'],
                     required=True)
     ap.add_argument('-m', '--mu', type=int, default=1)
-    ap.add_argument('--normalmut', type=float, default=0.1)
     ap.add_argument('-s', '--sigma', type=float, default=0.01)
     ap.add_argument('--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
@@ -118,10 +117,17 @@ def main():
             # Init bounds
             init_min = np.array([0] + [-1] * (evo_info['nb_weights'] - 1))
             init_max = np.array([0.01] + [1] * (evo_info['nb_weights'] -1))
+        normalmut = None
+        if 'std' in evo_info:
+            normalmut = evo_info['std']
+        else:
+            normalmut = np.array([0.1] * evo_info['nb_weights'])
+
         es = getES(argout.evolution,
-                       lambda: np.random.uniform(init_min, init_max),
-                       argout.sigma,
-                       evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu, normalmut=argout.normalmut)
+                   lambda: np.random.uniform(init_min, init_max),
+                   argout.sigma,
+                   evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu,
+                   normalmut=normalmut)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1

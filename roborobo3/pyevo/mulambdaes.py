@@ -11,12 +11,12 @@ NORMAL = 2
 class MuLambdaEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False, mu=1):
+                 bounds, path, normalmut=0.1, full_random_begin=False, mu=1):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
-        self.normalmut = 0.1 # TODO SHOULDNT BE FIXED
+        self.normalmut = normalmut
         self.mu = mu
 
         # boundaries are the same for all the dimension for now
@@ -44,15 +44,12 @@ class MuLambdaEvolutionStrategy():
         # Uniform transformation
         min_mask = np.tile(self.minb, (self.popsize - self.mu, 1))
         max_mask = np.tile(self.maxb, (self.popsize - self.mu, 1))
+        std_mask = np.tile(self.normalmut, (self.popsize - self.mu, 1))
         mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
         children[mutation_mask == UNIFORM] = mutations
         # normal transformation
-        mutations = np.random.normal(0, 0.05, size=(mutation_mask == NORMAL).sum())
-        children[mutation_mask == NORMAL] += mutations
-
-        # force coop mut (UGLY)
-        #### UGLY UGLY UGLY ####
-        children[:children.shape[0]//2 , 0] += np.random.normal(0, self.normalmut, size=children.shape[0]//2)
+        mutations = np.random.normal(children[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
+        children[mutation_mask == NORMAL] = mutations
         ########################
 
         np.clip(children, min_mask, max_mask, out=children)

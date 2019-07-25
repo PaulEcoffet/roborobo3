@@ -26,16 +26,8 @@ PyevoInterface::initCMA(int popsize, int parameters_dimension, const std::vector
                         const std::vector<double> &maxbounds, const std::vector<double> &minguess,
                         const std::vector<double> &maxguess)
 {
-    json params = {
-            {"popsize", popsize},
-            {"nb_weights", parameters_dimension},
-            {"min_bounds", minbounds},
-            {"max_bounds", maxbounds},
-            {"min_guess", minguess},
-            {"max_guess", maxguess}
-    };
-    ni.sendMessage(params.dump());
-    return getNextGeneration(std::vector<std::vector<double>>(), std::vector<double>());
+    std::vector<double> std(popsize, 0.1);
+    return initCMA(popsize, parameters_dimension, minbounds, maxbounds, minguess, maxguess, std);
 }
 
 std::vector<std::vector<double>> PyevoInterface::initCMA(int popsize, int parameters_dimension) {
@@ -77,6 +69,24 @@ std::vector<std::vector<double>> PyevoInterface::getNextGeneration(const std::ve
 void PyevoInterface::close()
 {
     ni.close();
+}
+
+std::vector<std::vector<double>>
+PyevoInterface::initCMA(int popsize, int parameters_dimension, const std::vector<double> &minbounds,
+                        const std::vector<double> &maxbounds, const std::vector<double> &minguess,
+                        const std::vector<double> &maxguess, const std::vector<double> &std)
+{
+    json params = {
+            {"popsize",    popsize},
+            {"nb_weights", parameters_dimension},
+            {"min_bounds", minbounds},
+            {"max_bounds", maxbounds},
+            {"min_guess",  minguess},
+            {"max_guess",  maxguess},
+            {"std",        std}
+    };
+    ni.sendMessage(params.dump());
+    return getNextGeneration(std::vector<std::vector<double>>(), std::vector<double>());
 }
 
 
