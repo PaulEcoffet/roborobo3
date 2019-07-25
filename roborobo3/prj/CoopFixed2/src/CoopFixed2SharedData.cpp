@@ -64,7 +64,9 @@ int CoopFixed2SharedData::proximityTeleport = 0;
 int CoopFixed2SharedData::nbCluster = 1;
 double CoopFixed2SharedData::pStayInCluster = -1;
 double CoopFixed2SharedData::temperature = -1;
-INITVAL(additiveVar, false);
+bool CoopFixed2SharedData::additiveVar = false;
+
+
 
 void CoopFixed2SharedData::initSharedData()
 {
@@ -127,3 +129,5 @@ void CoopFixed2SharedData::initSharedData()
 }
 
 
+#undef INITVAL
+#undef GETVAL
