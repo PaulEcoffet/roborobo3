@@ -11,8 +11,9 @@ NORMAL = 2
 class MuLambdaEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, normalmut=0.1, full_random_begin=False, mu=1):
+                 bounds, path, normalmut=0.1, full_random_begin=False, mu=1, percentuni=0.1):
         self.iter = 0
+        self.percentuni = percentuni
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
@@ -38,7 +39,7 @@ class MuLambdaEvolutionStrategy():
             len(parents), size=self.popsize - self.mu)
         children = parents[true_parent_indexes].copy()
         p = self.mutation_rate
-        p_uni = 0.1 * p
+        p_uni = self.percentuni * p
         p_normal = p - p_uni
         mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=children.shape, p=[1 - p, p_uni, p_normal])
         # Uniform transformation

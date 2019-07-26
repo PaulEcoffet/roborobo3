@@ -75,6 +75,7 @@ def main():
     ap.add_argument('-g', '--generations', type=int, default=30000)
     ap.add_argument('--movie', dest='movie', action='store_true')
     ap.add_argument('--no-movie', dest='movie', action='store_false')
+    ap.add_argument('--percentuni', type=float, default=0.1)
     ap.set_defaults(movie=True)
     argout, forwarded = ap.parse_known_args()
     outdir = Path(argout.output)
@@ -127,7 +128,7 @@ def main():
                    lambda: np.random.uniform(init_min, init_max),
                    argout.sigma,
                    evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu,
-                   normalmut=normalmut)
+                   normalmut=normalmut, percentuni=argout.percentuni)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1
