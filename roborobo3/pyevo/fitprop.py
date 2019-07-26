@@ -10,12 +10,13 @@ NORMAL = 2
 class FitPropEvolutionStrategy():
     """Fitness Proportionate with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False, normalmut=0.1):
+                 bounds, path, full_random_begin=False, normalmut=0.1, percentuni=0.1):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
         self.log_every = 500
+        self.percentuni = percentuni
         self.normalmut = normalmut
 
         # boundaries are the same for all the dimension for now
@@ -44,7 +45,7 @@ class FitPropEvolutionStrategy():
             new_solutions = np.random.normal(new_solutions, self.mutation_rate)
         else:  # pick few genes and uniform transformation on them or a normal one
             p = self.mutation_rate
-            p_uni = 0.1 * p
+            p_uni = self.percentuni * p
             p_normal = p - p_uni
             mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
             # Uniform transformation
