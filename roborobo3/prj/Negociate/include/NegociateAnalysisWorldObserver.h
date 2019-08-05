@@ -21,14 +21,8 @@ class NegociateAnalysisWorldObserver : public WorldObserver
 public:
     explicit NegociateAnalysisWorldObserver(World *__world);
 
-    void stepPre() override;
-
-    void stepPost() override;
 
     void reset() override;
-
-    void registerRobotsOnOpportunities();
-    void addObjectToTeleport(int id);
 
 
 protected:
@@ -44,24 +38,14 @@ protected:
 
     std::ofstream m_log;
 
-    void monitorPopulation();
-
-    void resetEnvironment();
-
     json::iterator m_genomesIt;
 
-    void loadGenome(const std::vector<double> &weights);
 
     int m_nbIterationPerRep;
     int m_nbRep;
     double m_stepCoop;
 
-    void computeOpportunityImpact();
-
-
     std::set<int> objectsToTeleport;
-
-    void initObjects() const;
 };
 
 
