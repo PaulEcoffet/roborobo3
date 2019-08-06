@@ -10,14 +10,13 @@ NORMAL = 2
 class FitPropEvolutionStrategy():
     """Fitness Proportionate with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False, normalmut=0.1, percentuni=0.1):
+                 bounds, path, full_random_begin=False, normalmut=0.1, percentuni=0.1, **kwargs):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
         self.log_every = 500
         self.percentuni = percentuni
-        self.normalmut = normalmut
 
         # boundaries are the same for all the dimension for now
         bounds = np.asarray(bounds)
@@ -25,6 +24,13 @@ class FitPropEvolutionStrategy():
         self.minb = np.asarray(bounds[0])
         self.maxb = np.asarray(bounds[1])
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
+        if np.isscalar(normalmut):
+            self.normalmut = np.asarray(np.tile(normalmut, np.asarray(self.solutions[0]).shape))
+        else:
+            self.normalmut = np.asarray(normalmut)
+        print(self.normalmut.shape)
+        print(np.asarray(self.solutions[0]).shape)
+        assert(self.normalmut.shape[0] == np.asarray(self.solutions[0]).shape[0])
         self.lastfitnesses = np.repeat(1, self.popsize)
         self.logger = FitPropLogger(self, path)
 
@@ -51,7 +57,7 @@ class FitPropEvolutionStrategy():
             # Uniform transformation
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
-            std_mask = np.tile(self.normalmut, (self.popsize - self.mu, 1))
+            std_mask = np.tile(self.normalmut, (self.popsize, 1))
             mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
