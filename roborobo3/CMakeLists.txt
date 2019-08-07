@@ -22,7 +22,6 @@ include_directories(prj)
 
 set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
 endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -67,6 +66,9 @@ list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/versi
 
 find_package(SDL2 COMPONENTS main image REQUIRED)
 #find_package(OpenCV)
+if (UNIX AND NOT APPLE)
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+endif()
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
 set (Boost_USE_STATIC_LIBS ON) # enable dynamic linking
