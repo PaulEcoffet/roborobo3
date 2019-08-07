@@ -26,7 +26,7 @@ PyevoInterface::initCMA(int popsize, int parameters_dimension, const std::vector
                         const std::vector<double> &maxbounds, const std::vector<double> &minguess,
                         const std::vector<double> &maxguess)
 {
-    std::vector<double> std(popsize, 0.1);
+    std::vector<double> std(parameters_dimension, 0.1);
     return initCMA(popsize, parameters_dimension, minbounds, maxbounds, minguess, maxguess, std);
 }
 
