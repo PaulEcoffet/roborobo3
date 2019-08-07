@@ -76,7 +76,7 @@ def main():
     ap.add_argument('--movie', dest='movie', action='store_true')
     ap.add_argument('--no-movie', dest='movie', action='store_false')
     ap.add_argument('--percentuni', type=float, default=0.1)
-    ap.set_defaults(movie=True)
+    ap.set_defaults(movie=False)
     argout, forwarded = ap.parse_known_args()
     outdir = Path(argout.output)
     sys.stdout.write("\x1b]2;{}\x07".format(outdir.name))  # Change the terminal title
