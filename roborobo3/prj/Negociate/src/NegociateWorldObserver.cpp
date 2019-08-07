@@ -14,7 +14,7 @@
 #include "Negociate/include/NegociateSharedData.h"
 #include <boost/algorithm/clamp.hpp>
 #include <boost/math/distributions/normal.hpp>
-#include <cv.hpp>
+//#include <cv.hpp>
 
 using boost::algorithm::clamp;
 
@@ -176,17 +176,18 @@ void NegociateWorldObserver::stepPost()
 
     if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0)
     {
-
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
         {
-            if (NegociateSharedData::takeVideo and m_curEvaluationInGeneration == 0)
+            if (NegociateSharedData::takeVideo)
             {
+                /*
                 std::cout <<  "VIDEO\n";
                 outvid.release();
                 getSnapshot(gSnapshot);
                 cv::Size S(gSnapshot->w, gSnapshot->h);
                 outvid.open(gLogDirectoryname + "/mov_" + std::to_string(m_generationCount) + ".mp4",
                             cv::VideoWriter::fourcc('a', 'v', 'c', '1'), 60, S, true);
+                */
             }
             if (m_logall.is_open())
             {
@@ -197,18 +198,21 @@ void NegociateWorldObserver::stepPost()
         }
         if(NegociateSharedData::takeVideo)
         {
+            saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
+        /*
             getSnapshot(gSnapshot);
             SDL_Surface* bgrsurf = SDL_ConvertSurfaceFormat(gSnapshot, SDL_PIXELFORMAT_BGRA8888, 0);
             saveImage(bgrsurf, "test");
             cv::Mat img(gSnapshot->w, gSnapshot->h, CV_8UC4, bgrsurf->pixels);
             cv::Mat imgNoAlpha;
-            cv::Mat mp4img;  /* MP4 needs Blue Green Red (BGR) channels for the mp4 file */
+            cv::Mat mp4img;  // MP4 needs Blue Green Red (BGR) channels for the mp4 file
             cv::cvtColor(img, imgNoAlpha, CV_BGRA2BGR);
 
 //            cv::cvtColor(imgNoAlpha, mp4img,CV_RGB2YUV_I420);
 
             outvid << imgNoAlpha; // append the frame to the video (should be YUV but do not work)
             SDL_FreeSurface(bgrsurf);
+            */
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
@@ -236,7 +240,7 @@ void NegociateWorldObserver::stepPost()
     else if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
     {
         m_logall.close();
-        outvid.release();
+        //outvid.release();
     }
 
 }

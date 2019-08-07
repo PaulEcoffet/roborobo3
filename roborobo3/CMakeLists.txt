@@ -66,7 +66,7 @@ list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/versi
 
 
 find_package(SDL2 COMPONENTS main image REQUIRED)
-find_package(OpenCV)
+#find_package(OpenCV)
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
 set (Boost_USE_STATIC_LIBS ON) # enable dynamic linking
@@ -87,8 +87,8 @@ Set(ZLIB_DIR /usr/local/opt/zlib/)
 find_package( ZLIB REQUIRED PATH ZLIB_DIR )
 find_library( GZSTREAM libgzstream.a)
 
-include_directories(${OpenCV_INCLUDE_DIRS})
-link_directories(${OpenCV_LIB_DIR})
+#include_directories(${OpenCV_INCLUDE_DIRS})
+#link_directories(${OpenCV_LIB_DIR})
 
 
 include_directories(${SDL2_INCLUDE_DIRS} )
@@ -104,6 +104,6 @@ target_link_libraries(roborobo
         Eigen3::Eigen
         ${GZSTREAM}
         ${ZLIB}
-        ${OpenCV_LIBS}
+        #${OpenCV_LIBS}
         # tbb
         )
