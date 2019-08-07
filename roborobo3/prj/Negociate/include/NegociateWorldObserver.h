@@ -13,10 +13,11 @@
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
 #include "NegociateController.h"
+/*
 #include <opencv2/core.hpp>  // Basic OpenCV structures (cv::Mat)
 #include <opencv2/videoio.hpp>  // VideoWriter
 #include <opencv2/imgproc/imgproc.hpp>  // channel manipulation
-
+*/
 using json = nlohmann::json;
 
 class NegociateWorldObserver : public WorldObserver
@@ -52,7 +53,7 @@ protected:
     World *m_world;
     LogManager *m_fitnessLogManager;
 
-    cv::VideoWriter outvid;
+    //cv::VideoWriter outvid;
 
     int m_curEvaluationInGeneration;
     int m_curEvaluationIteration;
