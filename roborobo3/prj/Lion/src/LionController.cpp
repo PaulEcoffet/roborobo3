@@ -438,18 +438,12 @@ void LionController::play_and_fitness() {
 
     auto totalinv = m_wm->opp->getCurInv();
     int n = m_wm->opp->countCurrentRobots();
-    if (n < 1)
-    {
-        std::cerr<< "n < 1, abort" << std::endl;
-        exit(1);
-    }
+    assert(n >= 1);
     double payoff = LionWorldObserver::payoff(m_wm->getCoop(n - 1), totalinv, n, LionSharedData::meanA, LionSharedData::b);
     if (m_wm->getId() == 0 && gVerbose) {
         //std::cout << "opp: " << m_wm->opp->getId()  << ", total inv:" << totalinv << ", n:" << n << ", owncoop: " <<  m_wm->getCoop(n - 1) << ", payoff:" << payoff << std::endl;
     }
-    assert(!std::isnan(payoff - cost)); // Test if payoff not NaN
-    m_wm->_fitnessValue += payoff - cost;
-    assert(!std::isnan(m_wm->_fitnessValue)); // Test if payoff not NaN
+    m_wm->_fitnessValue += (payoff - cost) / LionSharedData::evaluationTime; // Normalized with time
     dynamic_cast<LionWorldObserver*>(gWorld->getWorldObserver())->logAgent(m_wm);
 }
 
