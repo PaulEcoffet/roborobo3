@@ -8,7 +8,7 @@
 #include "CoopFixed2/include/CoopFixed2SharedData.h"
 
 #define GETVAL(name)  (gProperties.checkAndGetPropertyValue(#name, &CoopFixed2SharedData::name, false))
-
+#define INITVAL(name, val) auto CoopFixed2SharedData::name = val
 
 
 int CoopFixed2SharedData::evaluationTime = 1000;
@@ -64,6 +64,9 @@ int CoopFixed2SharedData::proximityTeleport = 0;
 int CoopFixed2SharedData::nbCluster = 1;
 double CoopFixed2SharedData::pStayInCluster = -1;
 double CoopFixed2SharedData::temperature = -1;
+bool CoopFixed2SharedData::additiveVar = false;
+
+
 
 void CoopFixed2SharedData::initSharedData()
 {
@@ -122,6 +125,9 @@ void CoopFixed2SharedData::initSharedData()
     GETVAL(nbCluster);
     GETVAL(pStayInCluster);
     GETVAL(temperature);
+    GETVAL(additiveVar);
 }
 
 
+#undef INITVAL
+#undef GETVAL
