@@ -263,7 +263,7 @@ unsigned int LionController::getNbInputs() const
     int nbInput = 3;
     if (LionSharedData::splitedNbPartInput)
     {
-        nbInput++;
+        nbInput += 2;
     }
     if (LionSharedData::costAsInput)
     {
@@ -484,8 +484,12 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     }
     if (LionSharedData::splitedNbPartInput)
     {
-        inputs[i++] = normalize((double) (nbPart % 10) / 10.0);
-        inputs[i++] = normalize((double) (nbPart / 10)  / ((double) gInitialNumberOfRobots / 10.0));
+        int curnbpart = nbPart;
+        for (int nbdec = 0; nbdec < 3; nbdec++)
+        {
+            inputs[i++] = (double) (nbPart % 10) / 10.0;  // split units, tens and hundreds
+            curnbpart = curnbpart / 10;
+        }
     }
     else
     {
