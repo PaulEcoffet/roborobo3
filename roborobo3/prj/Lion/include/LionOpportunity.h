@@ -51,7 +51,7 @@ protected:
     virtual void updateColor();
 
 
-    double sumCoop(int i);
+    double sumCoop(int nbonopp);
 
 };
 
