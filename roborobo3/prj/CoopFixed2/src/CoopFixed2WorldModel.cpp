@@ -9,6 +9,10 @@
 #include <CoopFixed2/include/CoopFixed2SharedData.h>
 #include <CoopFixed2/include/CoopFixed2WorldModel.h>
 #include <core/World/World.h>
+#include <boost/algorithm/clamp.hpp>
+
+
+using boost::algorithm::clamp;
 
 
 CoopFixed2WorldModel::CoopFixed2WorldModel()
@@ -149,5 +153,25 @@ int CoopFixed2WorldModel::getNbPlays(int robid)
 bool CoopFixed2WorldModel::isPlaying()
 {
     return onOpportunity && (arrival <= 2 || !CoopFixed2SharedData::fixRobotNb) && (!CoopFixed2SharedData::atLeastTwo || nbOnOpp >= 2);
+}
+
+double CoopFixed2WorldModel::getCoop(bool trueValue) const
+{
+    double coop = _cooperationLevel;
+    if (trueValue)
+    {
+        return coop;
+    }
+
+
+    if (CoopFixed2SharedData::additiveVar)
+    {
+        coop = clamp(_cooperationLevel + (fakeCoef - 1), 0, CoopFixed2SharedData::maxCoop);
+    }
+    else
+    {
+        coop = clamp(_cooperationLevel * fakeCoef, 0, CoopFixed2SharedData::maxCoop);
+    }
+    return coop;
 }
 

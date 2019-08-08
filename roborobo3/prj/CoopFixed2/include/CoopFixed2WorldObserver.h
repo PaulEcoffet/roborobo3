@@ -71,6 +71,11 @@ protected:
     std::ofstream m_logall;
     std::vector<double> variabilityCoef;
 
+    void reward_lonely(double sum_payoff, int nb_payoffs) const;
+
+    void mark_all_robots_as_alone() const;
+
+    void mark_robots_on_opp(CoopFixed2Opportunity *opp) const;
 };
 
 
