@@ -102,8 +102,10 @@ void LionWorldObserver::reset()
     std::vector<double> maxbounds(nbweights, 10);
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
+    std::vector<double> std(nbweights, LionSharedData::normalMut);
 
-    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess);
+
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);
