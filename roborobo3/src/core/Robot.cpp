@@ -545,7 +545,13 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 	// apply world dynamics onto this agent
 
 	// * compute real valued delta (convert to x/y delta coordinates)
-    
+
+    /* WARNING : STRONG EDIT, WHEN NOT ALIVE, NO PHYSIC */
+    if (!_wm->isAlive())
+    {
+        return;
+    }
+
 	applyDynamics();
 
 	// * save position

@@ -62,11 +62,10 @@ public:
     static int proximityTeleport;
     static int nbCluster;
     static double pStayInCluster;
+    static double temperature;
+    static bool additiveVar;
 
     static void initSharedData();
-
-
-    static double temperature;
 };
 
 
