@@ -19,6 +19,7 @@
 #include "Config/CorrectRepartitionConfigurationLoader.h"
 #include "Config/DebugCollConfigurationLoader.h"
 #include "Config/LionConfigurationLoader.h"
+#include "Config/NegociateConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -151,6 +152,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
     {
         return new LionConfigurationLoader();
     }
+#endif
+#if defined PRJ_NEGOCIATE || !defined MODULAR
+	else if (configurationLoaderObjectName == "NegociateConfigurationLoader" )
+	{
+		return new NegociateConfigurationLoader();
+	}
 #endif
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
     else

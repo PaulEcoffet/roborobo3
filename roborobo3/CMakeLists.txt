@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
 
-#set(CMAKE_BUILD_TYPE RelWithDebInfo)
+set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Wall -O3")
 
@@ -22,7 +22,6 @@ include_directories(prj)
 
 set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
 endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
@@ -66,6 +65,10 @@ list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/versi
 
 
 find_package(SDL2 COMPONENTS main image REQUIRED)
+#find_package(OpenCV)
+if (UNIX AND NOT APPLE)
+    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+endif()
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
 set (Boost_USE_STATIC_LIBS ON) # enable dynamic linking
@@ -86,6 +89,10 @@ Set(ZLIB_DIR /usr/local/opt/zlib/)
 find_package( ZLIB REQUIRED PATH ZLIB_DIR )
 find_library( GZSTREAM libgzstream.a)
 
+#include_directories(${OpenCV_INCLUDE_DIRS})
+#link_directories(${OpenCV_LIB_DIR})
+
+
 include_directories(${SDL2_INCLUDE_DIRS} )
 
 add_executable(roborobo ${SOURCE_FILES})
@@ -99,5 +106,6 @@ target_link_libraries(roborobo
         Eigen3::Eigen
         ${GZSTREAM}
         ${ZLIB}
+        #${OpenCV_LIBS}#
         # tbb
         )

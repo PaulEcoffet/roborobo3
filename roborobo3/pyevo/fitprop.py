@@ -10,13 +10,13 @@ NORMAL = 2
 class FitPropEvolutionStrategy():
     """Fitness Proportionate with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False, normalmut=0.1):
+                 bounds, path, full_random_begin=False, normalmut=0.1, percentuni=0.1, **kwargs):
         self.iter = 0
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
         self.log_every = 500
-        self.normalmut = normalmut
+        self.percentuni = percentuni
 
         # boundaries are the same for all the dimension for now
         bounds = np.asarray(bounds)
@@ -24,6 +24,13 @@ class FitPropEvolutionStrategy():
         self.minb = np.asarray(bounds[0])
         self.maxb = np.asarray(bounds[1])
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
+        if np.isscalar(normalmut):
+            self.normalmut = np.asarray(np.tile(normalmut, np.asarray(self.solutions[0]).shape))
+        else:
+            self.normalmut = np.asarray(normalmut)
+        print(self.normalmut.shape)
+        print(np.asarray(self.solutions[0]).shape)
+        assert(self.normalmut.shape[0] == np.asarray(self.solutions[0]).shape[0])
         self.lastfitnesses = np.repeat(1, self.popsize)
         self.logger = FitPropLogger(self, path)
 
@@ -44,17 +51,18 @@ class FitPropEvolutionStrategy():
             new_solutions = np.random.normal(new_solutions, self.mutation_rate)
         else:  # pick few genes and uniform transformation on them or a normal one
             p = self.mutation_rate
-            p_uni = 0.1 * p
+            p_uni = self.percentuni * p
             p_normal = p - p_uni
             mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
             # Uniform transformation
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
+            std_mask = np.tile(self.normalmut, (self.popsize, 1))
             mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
-            mutations = np.random.normal(0, self.normalmut, size=(mutation_mask == NORMAL).sum())
-            new_solutions[mutation_mask == NORMAL] += mutations
+            mutations = np.random.normal(new_solutions[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
+            new_solutions[mutation_mask == NORMAL] = mutations
         np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
         return deepcopy([solution for solution in new_solutions])
 
