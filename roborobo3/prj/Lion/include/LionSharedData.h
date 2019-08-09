@@ -48,6 +48,7 @@ public:
     static double nTolerance;
     static bool hardCoop;
     static bool splitedNbPartInput;
+    static double normalMut;
 
     static void initSharedData();
 

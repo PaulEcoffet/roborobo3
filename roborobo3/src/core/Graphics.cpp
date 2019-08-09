@@ -17,7 +17,7 @@ int gEnvironmentScreenshotIndex = 0;
 int gFootprintScreenshotIndex = 0;
 int gTrajectoryFileIndex = 0; // numbering trajectory images (used by saveTrajectoryImage(...))
 
-void saveImage ( SDL_Surface * image, std::string __prefix, std::string __comment ) // comment is optional
+void saveImage (SDL_Surface * image, std::string __prefix, std::string __comment ) // comment is optional
 {
     std::string sLog = gLogDirectoryname + "/screenshots/" + __prefix + "_" + gStartTime + "_" + getpidAsReadableString();
 
@@ -50,36 +50,47 @@ void saveCustomScreenshot ( std::string __comment )
     }
     
     // rendering
+
+    getSnapshot(gSnapshot);
+
+    // saving
     
-    SDL_FillRect( gSnapshot, &gSnapshot->clip_rect, SDL_MapRGBA( gSnapshot->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ); // clear screen
+    saveImage(gSnapshot,"screenshot_custom",snapshotIndexStr+"_"+__comment);
+    
+    gSnapshotIndex++;
+}
+
+void getSnapshot(SDL_Surface* fillrec)
+{
+    SDL_FillRect(fillrec, &fillrec->clip_rect, SDL_MapRGBA(fillrec->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ); // clear screen
 
     if ( gCustomSnapshot_niceRendering == true )
     {
         // nice snapshot
-        apply_surface( 0, 0, gFootprintImage, gSnapshot, &gCamera );
-        apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
+        apply_surface( 0, 0, gFootprintImage, fillrec, &gCamera );
+        apply_surface( 0, 0, gForegroundImage, fillrec, &gCamera );
     }
     else
     {
         // true snapshot
-        apply_surface( 0, 0, gEnvironmentImage, gSnapshot, &gCamera );
-        apply_surface( 0, 0, gForegroundImage, gSnapshot, &gCamera );
+        apply_surface( 0, 0, gEnvironmentImage, fillrec, &gCamera );
+        apply_surface( 0, 0, gForegroundImage, fillrec, &gCamera );
     }
 
     if ( gCustomSnapshot_showLandmarks == true )
     {
         for ( int i = 0 ; i != gNbOfLandmarks ; i++ )
             if ( gLandmarks[i]->isVisible() )
-                gLandmarks[i]->show(gSnapshot);
+                gLandmarks[i]->show(fillrec);
     }
-    
+
     if ( gCustomSnapshot_showObjects == true )
     {
         for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++ )
             if ( gPhysicalObjects[i]->isVisible() )
-                gPhysicalObjects[i]->show(gSnapshot);
+                gPhysicalObjects[i]->show(fillrec);
     }
-    
+
     if ( gCustomSnapshot_showRobots == true )
     {
         int backupDisplaySensorsValue = gDisplaySensors;
@@ -90,16 +101,10 @@ void saveCustomScreenshot ( std::string __comment )
         for ( int i = 0 ; i != gNbOfRobots ; i++ )
         {
             // Show agent(s) on the screen
-            gRobots[i]->show(gSnapshot);
+            gRobots[i]->show(fillrec);
         }
         gDisplaySensors = backupDisplaySensorsValue;
     }
-    
-    // saving
-    
-    saveImage(gSnapshot,"screenshot_custom",snapshotIndexStr+"_"+__comment);
-    
-    gSnapshotIndex++;
 }
 
 void saveTrajectoryImage ( std::string __comment )

@@ -16,14 +16,11 @@ def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath, **kwargs):
                                       'maxiter': maxiter
                                       })
     elif type_ == 'fitprop':
-        normalmut = kwargs.get('normalmut', 0.1)
         return FitPropEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
-                                        logpath, normalmut=normalmut)
+                                        logpath, **kwargs)
     elif type_ == 'mulambda':
-        mu = kwargs.get('mu', popsize//2)
         return MuLambdaEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
-                                         logpath,
-                                         mu=mu)
+                                         logpath, **kwargs)
     elif type_ == 'oneone':
         mu = kwargs.get('mu', (9*popsize)//10)
         return OneOneEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,

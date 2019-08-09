@@ -263,7 +263,7 @@ unsigned int LionController::getNbInputs() const
     int nbInput = 3;
     if (LionSharedData::splitedNbPartInput)
     {
-        nbInput++;
+        nbInput += 2;
     }
     if (LionSharedData::costAsInput)
     {
@@ -438,18 +438,12 @@ void LionController::play_and_fitness() {
 
     auto totalinv = m_wm->opp->getCurInv();
     int n = m_wm->opp->countCurrentRobots();
-    if (n < 1)
-    {
-        std::cerr<< "n < 1, abort" << std::endl;
-        exit(1);
-    }
+    assert(n >= 1);
     double payoff = LionWorldObserver::payoff(m_wm->getCoop(n - 1), totalinv, n, LionSharedData::meanA, LionSharedData::b);
     if (m_wm->getId() == 0 && gVerbose) {
         //std::cout << "opp: " << m_wm->opp->getId()  << ", total inv:" << totalinv << ", n:" << n << ", owncoop: " <<  m_wm->getCoop(n - 1) << ", payoff:" << payoff << std::endl;
     }
-    assert(!std::isnan(payoff - cost)); // Test if payoff not NaN
-    m_wm->_fitnessValue += payoff - cost;
-    assert(!std::isnan(m_wm->_fitnessValue)); // Test if payoff not NaN
+    m_wm->_fitnessValue += (payoff - cost) / LionSharedData::evaluationTime; // Normalized with time
     dynamic_cast<LionWorldObserver*>(gWorld->getWorldObserver())->logAgent(m_wm);
 }
 
@@ -484,8 +478,12 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     }
     if (LionSharedData::splitedNbPartInput)
     {
-        inputs[i++] = normalize((double) (nbPart % 10) / 10.0);
-        inputs[i++] = normalize((double) (nbPart / 10)  / ((double) gInitialNumberOfRobots / 10.0));
+        int curnbpart = nbPart;
+        for (int nbdec = 0; nbdec < 3; nbdec++)
+        {
+            inputs[i++] = (double) (nbPart % 10) / 10.0;  // split units, tens and hundreds
+            curnbpart = curnbpart / 10;
+        }
     }
     else
     {
