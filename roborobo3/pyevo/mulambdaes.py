@@ -3,14 +3,21 @@ from copy import copy, deepcopy
 from json_tricks import dump
 
 
+NOTHING = 0
+UNIFORM = 1
+NORMAL = 2
+
+
 class MuLambdaEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, full_random_begin=False, mu=1):
+                 bounds, path, normalmut=0.1, full_random_begin=False, mu=1, percentuni=0.1):
         self.iter = 0
+        self.percentuni = percentuni
         self.maxiter = maxiter
         self.mutation_rate = mutation_rate
         self.popsize = popsize
+        self.normalmut = normalmut
         self.mu = mu
 
         # boundaries are the same for all the dimension for now
@@ -31,14 +38,22 @@ class MuLambdaEvolutionStrategy():
         true_parent_indexes = np.random.choice(
             len(parents), size=self.popsize - self.mu)
         children = parents[true_parent_indexes].copy()
-        nb_mutant = 0
-        for ichild in range(children.shape[0]):
-            if nb_mutant == self.mutation_rate:
-                break
-            igen = np.random.choice(children.shape[1], size=1, replace=False)
-            rand = np.random.uniform(self.minb[igen[0]], self.maxb[igen[0]], size=1)
-            children[ichild][igen] = rand
-            nb_mutant += 1
+        p = self.mutation_rate
+        p_uni = self.percentuni * p
+        p_normal = p - p_uni
+        mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=children.shape, p=[1 - p, p_uni, p_normal])
+        # Uniform transformation
+        min_mask = np.tile(self.minb, (self.popsize - self.mu, 1))
+        max_mask = np.tile(self.maxb, (self.popsize - self.mu, 1))
+        std_mask = np.tile(self.normalmut, (self.popsize - self.mu, 1))
+        mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
+        children[mutation_mask == UNIFORM] = mutations
+        # normal transformation
+        mutations = np.random.normal(children[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
+        children[mutation_mask == NORMAL] = mutations
+        ########################
+
+        np.clip(children, min_mask, max_mask, out=children)
         new_solutions = np.concatenate((parents, children))
         return new_solutions
 

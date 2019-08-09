@@ -28,9 +28,23 @@ LionOpportunity::LionOpportunity(int __id) : RoundObject(__id)
 
 void LionOpportunity::removeRobot(int id)
 {
+    // REMOVE THE ROBOT
     nearbyMap.erase(id);
-    curInv = sumCoop(countCurrentRobots());
-    ifNewPartInv = sumCoop(std::min(countCurrentRobots() + 1, gInitialNumberOfRobots - 1));
+
+    // Keep track of what's going on
+    int nbonopp = countCurrentRobots();
+    int nbonoppifnewpart = nbonopp + 1;
+
+    if (nbonopp > 0)
+    {
+        curInv = sumCoop(nbonopp);
+        ifNewPartInv = sumCoop(std::min(nbonoppifnewpart, gInitialNumberOfRobots));
+    }
+    else
+    {
+        ifNewPartInv = 0;
+        curInv = 0;
+    }
     assert(curInv >= 0);
     assert(ifNewPartInv >= 0);
 }
@@ -39,13 +53,25 @@ void LionOpportunity::isWalked(const int id)
 {
     const int rid = id - gRobotIndexStartOffset;
     auto* wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(rid)->getWorldModel());
-    nearbyMap.emplace(rid, wm);
-    curInv = sumCoop(countCurrentRobots());
+    if (!isRobotOnOpp(rid))
+    {
+        nearbyMap.emplace(rid, wm);
+        int nbonopp = countCurrentRobots();
+        int nbpartnerperrobot = nbonopp - 1;
+        int nbonoppifnewpart = nbonopp + 1;
+        curInv = sumCoop(nbonopp);
 
-    assert(curInv - (ifNewPartInv + wm->getCoop(countCurrentRobots() - 1) < 1e10));
+        /*
+        std::cout << "*********\n";
+        std::cout << "oppid:" << _id << "\n";
+        std::cout << "cur robs: " << countCurrentRobots() << "\n";
+        std::cout << curInv << " = " << ifNewPartInv << " + " << wm->getCoop(nbpartnerperrobot) << "\n";
+        std::cout << curInv - (ifNewPartInv + wm->getCoop(nbpartnerperrobot)) << std::endl;
+         */
+        assert(fabs(curInv - (ifNewPartInv + wm->getCoop(nbpartnerperrobot))) < 1e-5);
 
-    ifNewPartInv = sumCoop(std::min(countCurrentRobots(), gInitialNumberOfRobots + 1));
-
+        ifNewPartInv = sumCoop(std::min(nbonoppifnewpart, gInitialNumberOfRobots));
+    }
 }
 
 int LionOpportunity::countCurrentRobots()

@@ -364,15 +364,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     int nb_payoffs = 0;
 
     // Mark all robots as not on an cooperation opportunity
-    for (int i = 0; i < m_world->getNbOfRobots(); i++)
-    {
-        auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
-        wm->onOpportunity = false;
-        wm->opp = nullptr;
-        wm->nbOnOpp = 0;
-        wm->arrival = 0;
-        wm->punishment = 0;
-    }
+    mark_all_robots_as_alone();
 
     for (auto *physicalObject : gPhysicalObjects)
     {
@@ -387,16 +379,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             n = 2;
         }
 
-        int arrival = 1;
-        for (auto index : opp->getNearbyRobotIndexes())
-        {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
-            wm->onOpportunity = true;
-            wm->opp = opp;
-            wm->nbOnOpp = opp->getNbNearbyRobots();
-            wm->arrival = arrival;
-            arrival++;
-        }
+        mark_robots_on_opp(opp);
 
         // If we only give reward for the first two robots
         if (CoopFixed2SharedData::fixRobotNb && opp->getNbNearbyRobots() > 2)
@@ -407,31 +390,26 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
         {
             const auto *const wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
-            double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, CoopFixed2SharedData::maxCoop);
-            if (CoopFixed2SharedData::meanA  == 0) // TODO SUPER UGLY, make parameter
-            {
-                coop = clamp(wm->_cooperationLevel + (wm->fakeCoef - 1) * 5, 0, CoopFixed2SharedData::maxCoop);
-            }
+            double coop = wm->getCoop();
             totalInvest += coop;
             totalA += wm->selfA;
-            for (auto oindex = opp->getNearbyRobotIndexes().begin(); oindex != itmax; oindex++)
+            if(CoopFixed2SharedData::reputation)
             {
-                if (oindex == index) continue;
-                auto* owm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*oindex)->getWorldModel());
-                owm->updateOtherReputation(wm->_id, coop + randgaussian() * CoopFixed2SharedData::reputationNoise);
+                for (auto oindex = opp->getNearbyRobotIndexes().begin(); oindex != itmax; oindex++)
+                {
+                    if (oindex == index) continue;
+                    auto *owm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*oindex)->getWorldModel());
+                    owm->updateOtherReputation(wm->_id, coop + randgaussian() * CoopFixed2SharedData::reputationNoise);
+                }
             }
         }
 
         for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
         {
             auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(*index)->getWorldModel());
-            double coop = clamp(wm->_cooperationLevel * wm->fakeCoef, 0, CoopFixed2SharedData::maxCoop);
-            if (CoopFixed2SharedData::meanA  == 0) // TODO SUPER UGLY, make parameter
-            {
-                coop = clamp(wm->_cooperationLevel + (wm->fakeCoef - 1) * 5, 0, CoopFixed2SharedData::maxCoop);
-            }
+            double coop = wm->getCoop();
             wm->appendOwnInvest(coop);
-            if (n >= 2)
+            if (CoopFixed2SharedData::reputation && n >= 2)
             {
                 wm->appendToCommonKnowledgeReputation(coop);
             }
@@ -481,14 +459,49 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
     }
 
     // Give reward for all the lonely walkers
+    if (CoopFixed2SharedData::sigma != 0)
+    {
+        reward_lonely(sum_payoff, nb_payoffs);
+    }
+}
+
+void CoopFixed2WorldObserver::mark_robots_on_opp(CoopFixed2Opportunity *opp) const
+{
+    int arrival = 1;
+    for (auto index : opp->getNearbyRobotIndexes())
+    {
+        auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(index)->getWorldModel());
+        wm->onOpportunity = true;
+        wm->opp = opp;
+        wm->nbOnOpp = opp->getNbNearbyRobots();
+        wm->arrival = arrival;
+        arrival++;
+    }
+}
+
+void CoopFixed2WorldObserver::mark_all_robots_as_alone() const
+{
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
-        if (!wm->isPlaying())
-        {
-            wm->_fitnessValue += std::min(CoopFixed2SharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
-        }
+        wm->onOpportunity = false;
+        wm->opp = nullptr;
+        wm->nbOnOpp = 0;
+        wm->arrival = 0;
+        wm->punishment = 0;
     }
+}
+
+void CoopFixed2WorldObserver::reward_lonely(double sum_payoff, int nb_payoffs) const
+{
+        for (int i = 0; i < m_world->getNbOfRobots(); i++)
+        {
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
+            if (!wm->isPlaying())
+            {
+                wm->_fitnessValue += std::min(CoopFixed2SharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
+            }
+        }
 }
 
 static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
