@@ -58,19 +58,21 @@ def connect_to_open_port(serv, desired_port, ip='127.0.0.1'):
             look_for_port = False
     return port
 
+import glob
 
 def main():
     # catch the output dir to put the evolution logs in it.
     ap = argparse.ArgumentParser()
-    ap.add_argument('-o', '--output', type=str, default='logs/')
-    ap.add_argument('-g', '--genome', type=str, required=True)
+    ap.add_argument('-o', '--output', type=str, default='logs/replay')
+    ap.add_argument('-p', '--path', type=str, required=True)
+    ap.add_argument('-g', '--generation', type=int, required=True)
     ap.add_argument('-s', '--server-only', action='store_true')
-    ap.add_argument('-l', dest='conf')
     argout, forwarded = ap.parse_known_args()
     outdir = argout.output
+    confpath = sorted(glob.glob(argout.path + '/properties*'))[0]
     with tempfile.TemporaryDirectory() as tmpdirname:
         newconfname = os.path.join(tmpdirname, 'conf.properties')
-        with open(argout.conf) as orgconf:
+        with open(confpath) as orgconf:
             with open(newconfname, 'w') as conffile:
                 for line in orgconf:
                     if not line.startswith('import'):
@@ -88,7 +90,8 @@ def main():
             conn, cliend_data = serv_s.accept()  # connect to roborobo
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conn)) # These info are ditched out because no learning happens
-            with open(argout.genome) as f:
+            genomepath = argout.path + "/genomes_{}.txt".format(argout.generation)
+            with open(genomepath) as f:
                 genomes = load(f)
             for i in range(4):
                 solutions = genomes

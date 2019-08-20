@@ -106,8 +106,18 @@ void NegociateWorldObserver::reset()
         minbounds[0] = 0;
         maxbounds[0] = 1;
         minguess[0] = 0;
-        maxguess[0] = 1; // Max is below ESS selfish
+        maxguess[0] = ((NegociateSharedData::meanA / 2) / NegociateSharedData::maxCoop); // Below ESS
         std[0] = NegociateSharedData::mutCoop;
+    }
+    bool train = false;
+    gProperties.checkAndGetPropertyValue("train", &train, false);
+    int split = dynamic_cast<NegociateController*>(gWorld->getRobot(0)->getController())->getSplit();
+    if(train)
+    {
+        for(unsigned long i = split; i < std.size(); i++)
+        {
+            std[i] = 0;
+        }
     }
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std);
     m_fitnesses.resize(m_nbIndividuals, 0);
@@ -122,9 +132,10 @@ void NegociateWorldObserver::stepPre()
 {
     m_curEvaluationIteration++;
 
-    if (m_curEvaluationIteration == NegociateSharedData::evaluationTime)
+    if (m_curEvaluationIteration == NegociateSharedData::evaluationTime || endEvaluationNow)
     {
         m_curEvaluationIteration = 0;
+        endEvaluationNow = false;
         for (int i = 0; i < m_nbIndividuals; i++)
         {
             auto *wm = dynamic_cast<NegociateWorldModel*>(m_world->getRobot(i)->getWorldModel());
@@ -295,6 +306,8 @@ void NegociateWorldObserver::logFitnesses(const std::vector<double> &curfitness)
 
 void NegociateWorldObserver::resetEnvironment()
 {
+    endEvaluationNow = false;
+    nbOfRobotsWhoPlayed = 0;
     for (auto object: gPhysicalObjects)
     {
         object->unregisterObject();
@@ -400,15 +413,36 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                     double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
                                        NegociateSharedData::nbEvaluationsPerGeneration;
 
-                    wm->_fitnessValue += curpayoff;
+                    if (NegociateSharedData::doNotKill)
+                    {
+                        if (wm->_fitnessValue == 0 && curpayoff != 0) // curpayoff is VERY unlikely to be exactly 0 but prevent bugs
+                        {
+                            wm->_fitnessValue = curpayoff;
+                            nbOfRobotsWhoPlayed++;
+                            if (nbOfRobotsWhoPlayed == m_nbIndividuals)
+                            {
+                                std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
+                                endEvaluationNow = true;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        wm->_fitnessValue = curpayoff;
+                        wm->setAlive(false);
+                        nbOfRobotsWhoPlayed++;
+                        if (nbOfRobotsWhoPlayed == m_nbIndividuals)
+                        {
+                            std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
+                            endEvaluationNow = true;
+                        }
 
+                        m_world->getRobot(*index)->unregisterRobot();
+                        m_world->getRobot(*index)->setCoord(0, 0);
+                        m_world->getRobot(*index)->setCoordReal(0, 0);
+                        m_world->getRobot(*index)->registerRobot();
+                    }
 
-                    wm->setAlive(false);
-
-                    m_world->getRobot(*index)->unregisterRobot();
-                    m_world->getRobot(*index)->setCoord(0, 0);
-                    m_world->getRobot(*index)->setCoordReal(0, 0);
-                    m_world->getRobot(*index)->registerRobot();
                     opp->kill();
 
                 }

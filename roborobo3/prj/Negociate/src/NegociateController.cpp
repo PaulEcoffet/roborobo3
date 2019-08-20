@@ -531,3 +531,8 @@ bool NegociateController::acceptPlay()
     auto output = m_nn2->readOut();
     return (output[0] > 0);
 }
+
+int NegociateController::getSplit()
+{
+    return (int)NegociateSharedData::fixCoop + m_nn->getRequiredNumberOfWeights();
+}

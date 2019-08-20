@@ -69,6 +69,7 @@ def main():
     ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda', 'oneone'],
                     required=True)
     ap.add_argument('-m', '--mu', type=int, default=1)
+    ap.add_argument('--guess', type=argparse.FileType())
     ap.add_argument('-s', '--sigma', type=float, default=0.01)
     ap.add_argument('--server-only', action='store_true')
     ap.add_argument('-p', '--parallel-rep', type=int, default=1)
@@ -124,8 +125,14 @@ def main():
         else:
             normalmut = np.array([0.1] * evo_info['nb_weights'])
 
+        if argout.guess:
+            guess = np.asarray(load(argout.guess))
+            assert((len(guess.shape) == 1 and guess.shape[0] == evo_info['nb_weights'])
+                   or (len(guess.shape) == 2 and guess.shape[1] == evo_info['nb_weights']))
+        else:
+            guess = lambda: np.random.uniform(init_min, init_max)
         es = getES(argout.evolution,
-                   lambda: np.random.uniform(init_min, init_max),
+                   guess,
                    argout.sigma,
                    evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu,
                    normalmut=normalmut, percentuni=argout.percentuni)

@@ -67,8 +67,10 @@ public:
     static double tau;
     static double mutRate;
     static double mutCoop;
+    static bool doNotKill;
 
     static void initSharedData();
+
 
 
 };

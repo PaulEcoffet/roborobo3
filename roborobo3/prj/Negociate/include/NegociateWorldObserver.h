@@ -65,7 +65,7 @@ protected:
     PyevoInterface pyevo;
 
 
-    void computeOpportunityImpacts();
+    virtual void computeOpportunityImpacts();
 
     void registerRobotsOnOpportunities();
 
@@ -83,6 +83,9 @@ protected:
     void mark_all_robots_as_alone() const;
 
     void mark_robots_on_opp(NegociateOpportunity *opp) const;
+
+    bool endEvaluationNow = false;
+    int nbOfRobotsWhoPlayed = 0;
 };
 
 
