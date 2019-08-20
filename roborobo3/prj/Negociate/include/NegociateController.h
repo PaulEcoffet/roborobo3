@@ -49,6 +49,8 @@ public:
 
     std::vector<double> getInputs();
 
+    int getSplit();
+
 protected:
     NegociateWorldModel *m_wm;
 
