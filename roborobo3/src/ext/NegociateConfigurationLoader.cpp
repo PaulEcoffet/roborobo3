@@ -4,6 +4,8 @@
 
 #include <RoboroboMain/main.h>
 #include <Negociate/include/NegociateAnalysisWorldObserver.h>
+#include <Negociate/include/NegociateTrainWorldObserver.h>
+
 #include "Negociate/include/NegociateWorldObserver.h"
 #include "Negociate/include/NegociateWorldModel.h"
 #include "Negociate/include/NegociateAgentObserver.h"
@@ -13,8 +15,14 @@
 WorldObserver *NegociateConfigurationLoader::make_WorldObserver(World *wm)
 {
     bool analysis = false;
+    bool train = false;
+    gProperties.checkAndGetPropertyValue("train", &train, false);
     gProperties.checkAndGetPropertyValue("analysis", &analysis, false);
-    if (analysis)
+    if (train)
+    {
+        return new NegociateTrainWorldObserver(wm);
+    }
+    else if (analysis)
     {
         return new NegociateAnalysisWorldObserver(wm);
     }

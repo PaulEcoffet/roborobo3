@@ -46,6 +46,7 @@ class MuLambdaEvolutionStrategy():
         min_mask = np.tile(self.minb, (self.popsize - self.mu, 1))
         max_mask = np.tile(self.maxb, (self.popsize - self.mu, 1))
         std_mask = np.tile(self.normalmut, (self.popsize - self.mu, 1))
+        mutation_mask[np.where(std_mask == 0)] = 0
         mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
         children[mutation_mask == UNIFORM] = mutations
         # normal transformation
@@ -66,15 +67,20 @@ class MuLambdaEvolutionStrategy():
         return self.iter >= self.maxiter
 
     def _init_solutions(self, genome_guess, full_random_begin):
-        try:
-            nb_weights = len(genome_guess)
-        except TypeError:
-            return [genome_guess() for i in range(self.popsize)]
-        if full_random_begin:
+        if callable(genome_guess):
+            out = np.array([genome_guess() for dummy in range(self.popsize)])
+        elif full_random_begin:
             out = np.random.uniform(
-                self.minb, self.maxb, size=(self.popsize, nb_weights))
+                -1, 1, size=(self.popsize, nb_weights))  # TODO Hard coded guess
         else:
-            out = np.tile(genome_guess, (self.popsize, 1))
+            if len(genome_guess.shape) == 1:
+                nbelem = 1
+            else:
+                nbelem = genome_guess.shape[0]
+            nbrep = self.popsize // nbelem # tile so that we have the whole population
+            if self.popsize % nbelem != 0:  # We need to add the remaining
+                nbrep += 1
+            out = np.tile(genome_guess, (nbrep, 1))[:self.popsize] # we remove the overflow
         return out
 
     def disp(self):

@@ -58,6 +58,7 @@ class FitPropEvolutionStrategy():
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
             std_mask = np.tile(self.normalmut, (self.popsize, 1))
+            mutation_mask[np.where(std_mask == 0)] = 0
             mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation
@@ -81,7 +82,14 @@ class FitPropEvolutionStrategy():
             out = np.random.uniform(
                 -1, 1, size=(self.popsize, nb_weights))  # TODO Hard coded guess
         else:
-            out = np.tile(genome_guess, (self.popsize, 1))
+            if len(genome_guess.shape) == 1:
+                nbelem = 1
+            else:
+                nbelem = genome_guess.shape[0]
+            nbrep = self.popsize // nbelem # tile so that we have the whole population
+            if self.popsize % nbelem != 0:  # We need to add the remaining
+                nbrep += 1
+            out = np.tile(genome_guess, (nbrep, 1))[:self.popsize] # we remove the overflow
         return out
 
     def disp(self):
