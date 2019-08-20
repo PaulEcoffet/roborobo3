@@ -67,6 +67,7 @@ bool NegociateSharedData::additiveVar = false;
 double NegociateSharedData::tau = 100.0;
 double NegociateSharedData::mutRate = 0.01;
 double NegociateSharedData::mutCoop = 0.1;
+bool NegociateSharedData::doNotKill = false;
 
 
 
@@ -131,6 +132,7 @@ void NegociateSharedData::initSharedData()
     GETVAL(tau);
     GETVAL(mutRate);
     GETVAL(mutCoop);
+    GETVAL(doNotKill);
 }
 
 #undef INITVAL
