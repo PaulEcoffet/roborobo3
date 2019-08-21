@@ -11,7 +11,7 @@ NORMAL = 2
 class MuLambdaEvolutionStrategy():
     """MuLambda ES with ask and tell interface."""
     def __init__(self, genome_guess, mutation_rate, popsize, maxiter,
-                 bounds, path, normalmut=0.1, full_random_begin=False, mu=1, percentuni=0.1):
+                 bounds, path, normalmut=0.1, full_random_begin=False, mu=1, percentuni=0.1, **kwargs):
         self.iter = 0
         self.percentuni = percentuni
         self.maxiter = maxiter
@@ -24,6 +24,11 @@ class MuLambdaEvolutionStrategy():
         assert(bounds[0] < bounds[1])
         self.minb = bounds[0]
         self.maxb = bounds[1]
+        if 'mutprob' in kwargs:
+            self.mutprob = kwargs['mutprob']
+            assert(len(self.mutprob) == len(self.minb))
+        else:
+            self.mutprob = np.repeat(1/(len(self.minb) * popsize), popsize)
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
         self.lastfitnesses = np.repeat(1, self.popsize)
         self.logger = MuLambdaLogger(self, path)
@@ -38,14 +43,15 @@ class MuLambdaEvolutionStrategy():
         true_parent_indexes = np.random.choice(
             len(parents), size=self.popsize - self.mu)
         children = parents[true_parent_indexes].copy()
-        p = self.mutation_rate
-        p_uni = self.percentuni * p
-        p_normal = p - p_uni
-        mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=children.shape, p=[1 - p, p_uni, p_normal])
-        # Uniform transformation
-        min_mask = np.tile(self.minb, (self.popsize - self.mu, 1))
-        max_mask = np.tile(self.maxb, (self.popsize - self.mu, 1))
-        std_mask = np.tile(self.normalmut, (self.popsize - self.mu, 1))
+        nbchildren = self.popsize - self.mu
+        p_uni = self.percentuni
+        p_normal = 1 - p_uni
+        mutation_mask_p = np.tile(self.mutprob, (nbchildren, 1))
+        mutation_mask = np.random.binomial(1, mutation_mask_p)
+        mutation_mask[mutation_mask == 1] = np.random.choice([UNIFORM, NORMAL], size=np.sum(mutation_mask), p=[p_uni, p_normal])        # Uniform transformation
+        min_mask = np.tile(self.minb, (nbchildren, 1))
+        max_mask = np.tile(self.maxb, (nbchildren, 1))
+        std_mask = np.tile(self.normalmut, (nbchildren, 1))
         mutation_mask[np.where(std_mask == 0)] = 0
         mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
         children[mutation_mask == UNIFORM] = mutations

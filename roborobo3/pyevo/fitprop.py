@@ -18,6 +18,7 @@ class FitPropEvolutionStrategy():
         self.log_every = 500
         self.percentuni = percentuni
 
+
         # boundaries are the same for all the dimension for now
         bounds = np.asarray(bounds)
         assert(np.all(bounds[0] < bounds[1]))
@@ -28,7 +29,12 @@ class FitPropEvolutionStrategy():
             self.normalmut = np.asarray(np.tile(normalmut, np.asarray(self.solutions[0]).shape))
         else:
             self.normalmut = np.asarray(normalmut)
-        print(self.normalmut.shape)
+
+        if 'mutprob' in kwargs:
+            self.mutprob = kwargs['mutprob']
+            assert(len(self.mutprob) == len(self.minb))
+        else:
+            self.mutprob = np.repeat(1/(len(self.minb) * popsize), popsize)
         print(np.asarray(self.solutions[0]).shape)
         assert(self.normalmut.shape[0] == np.asarray(self.solutions[0]).shape[0])
         self.lastfitnesses = np.repeat(1, self.popsize)
@@ -50,13 +56,11 @@ class FitPropEvolutionStrategy():
         if normal_trans:
             new_solutions = np.random.normal(new_solutions, self.mutation_rate)
         else:  # pick few genes and uniform transformation on them or a normal one
-            p = self.mutation_rate
-            p_uni = self.percentuni * p
-            p_normal = p - p_uni
-            coopgenmut=0.01
-            mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
-            mutation_mask[:, 0] = np.random.choice([NOTHING, UNIFORM, NORMAL], size=mutation_mask[:, 0].shape,
-                                                   p=[1-coopgenmut, coopgenmut*self.percentuni, coopgenmut*(1-self.percentuni)])
+            p_uni = self.percentuni
+            p_normal = 1 - p_uni
+            mutation_mask_p = np.tile(self.mutprob, (self.popsize, 1))
+            mutation_mask = np.random.binomial(1, mutation_mask_p)
+            mutation_mask[mutation_mask == 1] = np.random.choice([UNIFORM, NORMAL], size=np.sum(mutation_mask), p=[p_uni, p_normal])
             # Uniform transformation
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
