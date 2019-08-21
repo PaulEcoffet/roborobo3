@@ -53,12 +53,15 @@ class FitPropEvolutionStrategy():
             p = self.mutation_rate
             p_uni = self.percentuni * p
             p_normal = p - p_uni
+            coopgenmut=0.01
             mutation_mask = np.random.choice([NOTHING, UNIFORM, NORMAL], size=new_solutions.shape, p=[1 - p, p_uni, p_normal])
+            mutation_mask[:, 0] = np.random.choice([NOTHING, UNIFORM, NORMAL], size=mutation_mask[:, 0].shape,
+                                                   p=[1-coopgenmut, coopgenmut*self.percentuni, coopgenmut*(1-self.percentuni)])
             # Uniform transformation
             min_mask = np.tile(self.minb, (self.popsize, 1))
             max_mask = np.tile(self.maxb, (self.popsize, 1))
             std_mask = np.tile(self.normalmut, (self.popsize, 1))
-            mutation_mask[np.where(std_mask == 0)] = 0
+            mutation_mask[np.where(std_mask == 0)] = NOTHING
             mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
             new_solutions[mutation_mask == UNIFORM] = mutations
             # normal transformation

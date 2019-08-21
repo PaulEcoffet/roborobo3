@@ -44,6 +44,11 @@ NegociateAnalysisWorldObserver::NegociateAnalysisWorldObserver(World *__world) :
 void NegociateAnalysisWorldObserver::reset()
 {
     const double maxCoop = NegociateSharedData::maxCoop;
+    int gen = 0;
+    gProperties.checkAndGetPropertyValue("genAnalysis", &gen, true);
+
+    std::ofstream genlog(gLogDirectoryname + "/coop_" + std::to_string(gen) + ".txt");
+    genlog << "ind\tcoop\n";
     int curind = 0;
     while (m_genomesIt < m_genomesJson.end())
     {
@@ -72,12 +77,14 @@ void NegociateAnalysisWorldObserver::reset()
                       << accept << "\n";
             }
         }
+        genlog << curind << "\t" << wm->getCoop(true) << "\n";
         m_log.flush();
         curind++;
         m_genomesIt++;
     }
     m_genomesIt++;
     m_log.close();
+    genlog.close();
     exit(0);
 }
 
