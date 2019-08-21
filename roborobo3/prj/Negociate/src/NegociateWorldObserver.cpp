@@ -100,6 +100,7 @@ void NegociateWorldObserver::reset()
     std::vector<double> std(nbweights, NegociateSharedData::mutRate);
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
+    std::vector<double> mutprob(nbweights, NegociateSharedData::mutProb);
 
     if(NegociateSharedData::fixCoop)
     {
@@ -114,12 +115,26 @@ void NegociateWorldObserver::reset()
     int split = dynamic_cast<NegociateController*>(gWorld->getRobot(0)->getController())->getSplit();
     if(train)
     {
+        /* keep diversity in untrained part of the network */
+        mutprob[0] = 1;
+        minbounds[0] = minguess[0];
+        maxbounds[0] = maxguess[0];
         for(unsigned long i = split; i < std.size(); i++)
         {
-            std[i] = 0;
+            mutprob[i] = 1;
+            minbounds[i] = minguess[i];
+            maxbounds[i] = maxguess[i];
         }
     }
-    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std);
+    else
+    {
+        mutprob[0] = NegociateSharedData::mutProbCoop;
+        for(unsigned long i = split; i < std.size(); i++)
+        {
+            mutprob[i] = NegociateSharedData::mutProbNegociate;
+        }
+    }
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);

@@ -68,6 +68,9 @@ public:
     static double mutRate;
     static double mutCoop;
     static bool doNotKill;
+    static double mutProb;
+    static double mutProbCoop;
+    static double mutProbNegociate;
 
     static void initSharedData();
 
