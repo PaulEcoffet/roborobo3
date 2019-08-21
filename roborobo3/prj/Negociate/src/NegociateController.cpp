@@ -364,6 +364,7 @@ void NegociateController::loadNewGenome(const std::vector<double> &newGenome)
     if(NegociateSharedData::fixCoop)
     {
         hardcoop = newGenome[0] * NegociateSharedData::maxCoop;
+        m_wm->_cooperationLevel = hardcoop;
     }
     if (NegociateSharedData::controllerType == ELMAN_ID)
     {
