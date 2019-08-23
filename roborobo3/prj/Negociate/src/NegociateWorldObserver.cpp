@@ -83,6 +83,10 @@ NegociateWorldObserver::NegociateWorldObserver(World *__world) :
 
 NegociateWorldObserver::~NegociateWorldObserver()
 {
+    if (m_logall.is_open())
+    {
+        m_logall.close();
+    }
     delete m_fitnessLogManager;
 };
 
@@ -108,6 +112,7 @@ void NegociateWorldObserver::reset()
         maxbounds[0] = 1;
         minguess[0] = 0;
         maxguess[0] = ((NegociateSharedData::meanA / 2) / NegociateSharedData::maxCoop); // Below ESS
+        maxguess[0] = 1; // Actually, everything is in Nature
         std[0] = NegociateSharedData::mutCoop;
     }
     bool train = false;
@@ -145,8 +150,6 @@ void NegociateWorldObserver::reset()
 
 void NegociateWorldObserver::stepPre()
 {
-    m_curEvaluationIteration++;
-
     if (m_curEvaluationIteration == NegociateSharedData::evaluationTime || endEvaluationNow)
     {
         m_curEvaluationIteration = 0;
@@ -204,6 +207,9 @@ void NegociateWorldObserver::stepPost()
     {
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
         {
+            std::cout << "**********************************\n";
+            std::cout << "TIME TO LOG\n";
+            std::cout << "**********************************\n";
             if (NegociateSharedData::takeVideo)
             {
                 /*
@@ -220,7 +226,7 @@ void NegociateWorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\talive\n";
+            m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2\n";
         }
         if(NegociateSharedData::takeVideo)
         {
@@ -240,28 +246,6 @@ void NegociateWorldObserver::stepPost()
             SDL_FreeSurface(bgrsurf);
             */
         }
-        for (int i = 0; i < m_world->getNbOfRobots(); i++)
-        {
-            auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(i)->getWorldModel());
-            double nbOnOpp = wm->nbOnOpp;
-            if (NegociateSharedData::fixRobotNb && nbOnOpp > 2)
-            {
-                nbOnOpp = 2;
-            }
-            m_logall << m_curEvaluationInGeneration << "\t"
-                     << m_curEvaluationIteration << "\t"
-                     << i << "\t"
-                     << wm->selfA << "\t"
-                     << wm->fakeCoef << "\t"
-                     << wm->isPlaying() << "\t"
-                     << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
-                     << nbOnOpp << "\t"
-                     << wm->_cooperationLevel * wm->fakeCoef << "\t"
-                     << wm->meanLastOwnInvest() << "\t"
-                     << wm->meanLastTotalInvest() << "\t"
-                     << wm->isAlive()
-                     << "\n";
-        }
     }
     else if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
     {
@@ -269,6 +253,7 @@ void NegociateWorldObserver::stepPost()
         //outvid.release();
     }
 
+    m_curEvaluationIteration++;
 }
 
 
@@ -396,16 +381,22 @@ void NegociateWorldObserver::computeOpportunityImpacts()
             }
 
             bool everyone_agree = true;
+            std::vector<double> agentsCoop(n, 0);
+            std::vector<double> agentsFake(n, 0);
+            std::vector<bool> agentsAccept(n, false);
+            int i = 0;
 
             for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
             {
                 auto *const wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(*index)->getWorldModel());
-                auto *const ctl = dynamic_cast<NegociateController *>(m_world->getRobot(*index)->getController());
                 double coop = wm->getCoop();
+                agentsCoop[i] = wm->getCoop(true);
+                agentsFake[i] = wm->fakeCoef;
                 totalInvest += coop;
                 totalA += wm->selfA;
-                everyone_agree = everyone_agree && ctl->acceptPlay();
+                i++;
             }
+
 
 
             for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
@@ -422,47 +413,79 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                 {
                     wm->appendTotalInvest(totalInvest);
                 }
+            }
 
-                if (everyone_agree and n > 1)
+            i = 0;
+            for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+            {
+                auto *const ctl = dynamic_cast<NegociateController *>(m_world->getRobot(*index)->getController());
+                bool accept = ctl->acceptPlay();
+                agentsAccept[i] = accept;
+                everyone_agree = everyone_agree && accept;
+                i++;
+            }
+            if((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0
+               && n > 1)
+            {
+
+                m_logall << m_curEvaluationInGeneration << "\t"
+                         << m_curEvaluationIteration << "\t"
+                         << opp->getNearbyRobotIndexes()[0] << "\t"
+                         << agentsFake[0] << "\t"
+                         << agentsCoop[0] << "\t"
+                         << opp->getNearbyRobotIndexes()[1] << "\t"
+                         << agentsFake[1] << "\t"
+                         << agentsCoop[1] << "\t"
+                         << agentsAccept[0] << "\t"
+                         << agentsAccept[1] << std::endl;
+            }
+            for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+            {
+                if (n > 1)
                 {
-                    double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
-                                       NegociateSharedData::nbEvaluationsPerGeneration;
+                    opp->kill();
 
-                    if (NegociateSharedData::doNotKill)
+                    auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(*index)->getWorldModel());
+                    double coop = wm->getCoop();
+                    if (everyone_agree)
                     {
-                        if (wm->_fitnessValue == 0 && curpayoff != 0) // curpayoff is VERY unlikely to be exactly 0 but prevent bugs
+                        double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
+                                           NegociateSharedData::nbEvaluationsPerGeneration;
+
+                        if (NegociateSharedData::doNotKill)
+                        {
+                            if (wm->_fitnessValue == 0 &&
+                                curpayoff != 0) // curpayoff is VERY unlikely to be exactly 0 but prevent bugs
+                            {
+                                wm->_fitnessValue = curpayoff;
+                                nbOfRobotsWhoPlayed++;
+                                if (nbOfRobotsWhoPlayed == m_nbIndividuals)
+                                {
+                                    std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
+                                    endEvaluationNow = true;
+                                }
+                            }
+                        }
+                        else
                         {
                             wm->_fitnessValue = curpayoff;
+                            wm->setAlive(false);
                             nbOfRobotsWhoPlayed++;
                             if (nbOfRobotsWhoPlayed == m_nbIndividuals)
                             {
                                 std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
                                 endEvaluationNow = true;
                             }
-                        }
-                    }
-                    else
-                    {
-                        wm->_fitnessValue = curpayoff;
-                        wm->setAlive(false);
-                        nbOfRobotsWhoPlayed++;
-                        if (nbOfRobotsWhoPlayed == m_nbIndividuals)
-                        {
-                            std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
-                            endEvaluationNow = true;
+
+                            m_world->getRobot(*index)->unregisterRobot();
+                            m_world->getRobot(*index)->setCoord(0, 0);
+                            m_world->getRobot(*index)->setCoordReal(0, 0);
+                            m_world->getRobot(*index)->registerRobot();
                         }
 
-                        m_world->getRobot(*index)->unregisterRobot();
-                        m_world->getRobot(*index)->setCoord(0, 0);
-                        m_world->getRobot(*index)->setCoordReal(0, 0);
-                        m_world->getRobot(*index)->registerRobot();
                     }
-
-                    opp->kill();
-
                 }
             }
-
         }
 
         // Set the cur total invest for coloring

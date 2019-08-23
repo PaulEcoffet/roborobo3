@@ -67,6 +67,7 @@ def main():
     ap.add_argument('-p', '--path', type=str, required=True)
     ap.add_argument('-g', '--generation', type=int, required=True)
     ap.add_argument('-s', '--server-only', action='store_true')
+    ap.add_argument('-r', '--repeat', type=int, default=1)
     argout, forwarded = ap.parse_known_args()
     outdir = argout.output
     confpath = sorted(glob.glob(argout.path + '/properties*'))[0]
@@ -93,7 +94,7 @@ def main():
             genomepath = argout.path + "/genomes_{}.txt".format(argout.generation)
             with open(genomepath) as f:
                 genomes = load(f)
-            for i in range(4):
+            for i in range(argout.repeat):
                 solutions = genomes
                 send_msg(conn, dumps(solutions, primitives=True))
                 ####################################
