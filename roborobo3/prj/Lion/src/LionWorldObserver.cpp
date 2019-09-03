@@ -325,7 +325,8 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     double res = 0;
     const double x0 = (totalInvest - invest);
 
-    res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
+    // apply benefits
+    res = (a * totalInvest + b * x0) / n;
     if (LionSharedData::maxTwo && n != 2)
     {
         res = 0;
@@ -335,6 +336,8 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     {
         //std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
     }
+
+    // apply friction on benefits
     if (LionSharedData::nControl == 1)
     {
         res *= (1 - sigmoid(n, 0, 1, LionSharedData::frictionCoef, LionSharedData::frictionInflexionPoint));
@@ -344,6 +347,8 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
         // Divide by bellcurved normalized at 1 for nOpti
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance) / bellcurve(LionSharedData::nOpti, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
+    // Apply cost
+    res -= 0.5 * invest * invest;
 
     return res;
 }
