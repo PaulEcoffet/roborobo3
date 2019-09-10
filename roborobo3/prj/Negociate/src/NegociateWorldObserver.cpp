@@ -172,6 +172,25 @@ void NegociateWorldObserver::stepPre()
         stepEvolution();
         m_generationCount++;
     }
+
+    for (int i = 0; i < gInitialNumberOfRobots; i++)
+    {
+        auto* rob = m_world->getRobot(i);
+        auto* wm = rob->getWorldModel();
+        if (not wm->isAlive())
+        {
+            wm->_desiredTranslationalValue = 0;
+            wm->_desiredRotationalVelocity = 0;
+            if (NegociateSharedData::tau != 0 && random() < 1.0 / NegociateSharedData::tau)
+            {
+                wm->setAlive(true);
+                rob->findRandomLocation(gAgentsInitAreaX,
+                                        gAgentsInitAreaX + gAgentsInitAreaWidth,
+                                        gAgentsInitAreaY,
+                                        gAgentsInitAreaY + gAgentsInitAreaHeight);
+            }
+        }
+    }
 }
 
 void NegociateWorldObserver::stepPost()
@@ -196,8 +215,12 @@ void NegociateWorldObserver::stepPost()
 
     for (auto id: objectsToTeleport)
     {
+        double prevx = gPhysicalObjects[id]->getXReal();
+        double prevy = gPhysicalObjects[id]->getYReal();
         gPhysicalObjects[id]->unregisterObject();
-        gPhysicalObjects[id]->resetLocation();
+        gPhysicalObjects[id]->setCoordinates(emptyX, emptyY);
+        emptyX = prevx;
+        emptyY = prevy;
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
@@ -307,6 +330,8 @@ void NegociateWorldObserver::logFitnesses(const std::vector<double> &curfitness)
 void NegociateWorldObserver::resetEnvironment()
 {
     endEvaluationNow = false;
+    emptyX = 90;
+    emptyY = 90;
     nbOfRobotsWhoPlayed = 0;
     for (auto object: gPhysicalObjects)
     {
@@ -459,7 +484,7 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                             {
                                 wm->_fitnessValue = curpayoff;
                                 nbOfRobotsWhoPlayed++;
-                                if (nbOfRobotsWhoPlayed == m_nbIndividuals)
+                                if (nbOfRobotsWhoPlayed == m_nbIndividuals and NegociateSharedData::tau == 0)
                                 {
                                     std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
                                     endEvaluationNow = true;
@@ -468,10 +493,10 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                         }
                         else
                         {
-                            wm->_fitnessValue = curpayoff;
+                            wm->_fitnessValue += curpayoff;
                             wm->setAlive(false);
                             nbOfRobotsWhoPlayed++;
-                            if (nbOfRobotsWhoPlayed == m_nbIndividuals)
+                            if (nbOfRobotsWhoPlayed == m_nbIndividuals and NegociateSharedData::tau == 0)
                             {
                                 std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
                                 endEvaluationNow = true;

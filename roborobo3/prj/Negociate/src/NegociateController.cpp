@@ -35,19 +35,19 @@ NegociateController::NegociateController(RobotWorldModel *wm)
     unsigned int nbGameOutput = 1;
 
     fill_names = true;
-    std::vector<unsigned int> nbNeurons2 = {3}; // TODO 5 should not be hardcode
+    std::vector<unsigned int> nbNeurons2 = {3}; // TODO 3 should not be hardcode
 
     fillNames();
     switch (NegociateSharedData::controllerType)
     {
         case MLP_ID:
-            m_nn = new MLP(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
+            m_nn = new MLP(weights, nbCamInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
             m_nn2 = new MLP(weights2, nbGameInputs, nbGameOutput, nbNeurons2, true);
             break;
         case PERCEPTRON_ID:
             if (NegociateSharedData::splitNetwork)
             {
-                m_nn = new Perceptron(weights, nbCamInputs + nbGameInputs, nbMoveOutput);
+                m_nn = new Perceptron(weights, nbCamInputs, nbMoveOutput);
                 m_nn2 = new Perceptron(weights2, nbGameOutput, nbGameOutput);
             }
             else if (NegociateSharedData::onlyNforGame)
@@ -62,7 +62,7 @@ NegociateController::NegociateController(RobotWorldModel *wm)
         case ELMAN_ID:
             if (NegociateSharedData::splitNetwork)
             {
-                m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
+                m_nn = new Elman(weights, nbCamInputs, nbMoveOutput, nbNeuronsPerHiddenLayers, true);
                 m_nn2 = new Elman(weights2, nbGameOutput, nbGameOutput, 2, true);
             }
             else if (NegociateSharedData::onlyNforGame)
@@ -71,7 +71,7 @@ NegociateController::NegociateController(RobotWorldModel *wm)
             }
             else
             {
-                m_nn = new Elman(weights, nbCamInputs + nbGameInputs, nbMoveOutput + nbGameOutput,
+                m_nn = new Elman(weights, nbCamInputs, nbMoveOutput + nbGameOutput,
                                  nbNeuronsPerHiddenLayers, true);
             }
             break;
@@ -105,36 +105,12 @@ void NegociateController::step()
 
     if (not m_wm->isAlive())
     {
-        m_wm->_desiredTranslationalValue = 0;
-        m_wm->_desiredRotationalVelocity = 0;
-        if (random() < 1.0 / NegociateSharedData::tau)
-        {
-            //m_wm->setAlive(true);
-        }
-        else
-        {
-            if (m_wm->fakeCoef < -0.33*NegociateSharedData::fakeCoef)
-            {
-                m_wm->setRobotLED_colorValues(169,96,89);
-            }
-            else if (m_wm->fakeCoef < +0.33*NegociateSharedData::fakeCoef)
-            {
-                m_wm->setRobotLED_colorValues(100,100,255);
-            }
-            else {
-                m_wm->setRobotLED_colorValues(185,218,244);
-            }
-
             return;
-        }
     }
 
     std::vector<double> moveInputs = getCameraInputs();
     std::vector<double> gameInputs = getGameInputs();
-    std::vector<double> allInputs;
-    allInputs.insert(allInputs.end(), moveInputs.begin(), moveInputs.end());
-    allInputs.insert(allInputs.end(), gameInputs.begin(), gameInputs.end());
-    m_nn->setInputs(allInputs);
+    m_nn->setInputs(moveInputs);
     m_nn->step();
 
     /* Reading the output of the networks */
