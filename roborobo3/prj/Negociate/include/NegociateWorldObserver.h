@@ -86,6 +86,8 @@ protected:
 
     bool endEvaluationNow = false;
     int nbOfRobotsWhoPlayed = 0;
+    double emptyX = 90;
+    double emptyY = 90;
 };
 
 
