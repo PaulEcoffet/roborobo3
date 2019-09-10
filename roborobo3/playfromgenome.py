@@ -63,14 +63,17 @@ import glob
 def main():
     # catch the output dir to put the evolution logs in it.
     ap = argparse.ArgumentParser()
-    ap.add_argument('-o', '--output', type=str, default='logs/replay')
+    ap.add_argument('-o', '--output', type=str, default=None)
     ap.add_argument('-p', '--path', type=str, required=True)
     ap.add_argument('-g', '--generation', type=int, required=True)
     ap.add_argument('-s', '--server-only', action='store_true')
     ap.add_argument('-r', '--repeat', type=int, default=1)
     argout, forwarded = ap.parse_known_args()
-    outdir = argout.output
+
     confpath = sorted(glob.glob(argout.path + '/properties*'))[0]
+    outdir = argout.output
+    if outdir is None:
+        outdir = argout.path + '/replay'
     with tempfile.TemporaryDirectory() as tmpdirname:
         newconfname = os.path.join(tmpdirname, 'conf.properties')
         with open(confpath) as orgconf:
