@@ -503,8 +503,8 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                             }
 
                             m_world->getRobot(*index)->unregisterRobot();
-                            m_world->getRobot(*index)->setCoord(0, 0);
-                            m_world->getRobot(*index)->setCoordReal(0, 0);
+                            m_world->getRobot(*index)->setCoord(2, 2);
+                            m_world->getRobot(*index)->setCoordReal(2, 2);
                             m_world->getRobot(*index)->registerRobot();
                         }
 
