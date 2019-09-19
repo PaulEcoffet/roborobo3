@@ -19,8 +19,7 @@ using boost::algorithm::clamp;
 
 
 LionWorldObserver::LionWorldObserver(World *__world) :
-        WorldObserver(__world), objectsToTeleport(), variabilityCoef()
-{
+        WorldObserver(__world), objectsToTeleport(), variabilityCoef() {
     m_world = __world;
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
@@ -31,9 +30,9 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 
     // Log files
 
-    std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
-    m_fitnessLogManager = new LogManager(fitnessLogFilename);
-    m_fitnessLogManager->write("gen\tind\trep\tfake\tfitness\n");
+    std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt.gz";
+    m_fitnessLogManager.open(fitnessLogFilename.c_str());
+    m_fitnessLogManager << "gen\tind\trep\tfake\tfitness\n";
 
     std::vector<std::string> url;
     if (gRemote.empty())
@@ -86,7 +85,7 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 
 LionWorldObserver::~LionWorldObserver()
 {
-    delete m_fitnessLogManager;
+    ;
 }
 
 void LionWorldObserver::reset()
@@ -145,16 +144,13 @@ void LionWorldObserver::stepPre()
     {
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
         {
-            if (m_logall.is_open())
-            {
-                m_logall.close();
-            }
-            m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
+            m_logall.close();
+            m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
             m_logall
                     << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
         }
     }
-    else if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 1 && m_logall.is_open())
+    else if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 1)
     {
         m_logall.close();
     }
@@ -163,23 +159,21 @@ void LionWorldObserver::stepPre()
 
 void LionWorldObserver::logAgent(LionWorldModel *wm)
 {
-    if (!m_logall.is_open())
+    if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
     {
-        return;
+        int nbOnOpp = wm->opp->countCurrentRobots();
+        m_logall << m_curEvaluationInGeneration << "\t"
+                 << m_curEvaluationIteration << "\t"
+                 << wm->getId() << "\t"
+                 << wm->selfA << "\t"
+                 << wm->fakeCoef << "\t"
+                 << wm->isPlaying() << "\t"
+                 << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
+                 << nbOnOpp << "\t"
+                 << wm->getCoop(nbOnOpp - 1, true) << "\t"
+                 << wm->opp->getCurInv() - wm->getCoop(nbOnOpp - 1)
+                 << "\n";
     }
-
-    int nbOnOpp = wm->opp->countCurrentRobots();
-    m_logall << m_curEvaluationInGeneration << "\t"
-             << m_curEvaluationIteration << "\t"
-             << wm->getId() << "\t"
-             << wm->selfA << "\t"
-             << wm->fakeCoef << "\t"
-             << wm->isPlaying() << "\t"
-             << ((wm->opp != nullptr) ? wm->opp->getId() : -1) << "\t"
-             << nbOnOpp << "\t"
-             << wm->getCoop(nbOnOpp - 1, true) << "\t"
-             << wm->opp->getCurInv() - wm->getCoop(nbOnOpp - 1)
-             << "\n";
 }
 
 
@@ -253,8 +247,8 @@ void LionWorldObserver::logFitnesses(const std::vector<double> &curfitness)
             << cur_wm->fakeCoef << "\t"
             << curfitness[i] << "\n";
     }
-    m_fitnessLogManager->write(out.str());
-    m_fitnessLogManager->flush();
+    m_fitnessLogManager << out.str();
+    m_fitnessLogManager.flush();
 }
 
 void LionWorldObserver::resetEnvironment()
