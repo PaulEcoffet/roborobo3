@@ -289,12 +289,10 @@ std::vector<double> NegociateController::getGameInputs() const
     /*
      * Opportunity inputs
      */
-
     std::vector<double> inputs(getNbGameInputs(), 0);
     size_t i = 0;
-    bool playing = m_wm->isPlaying();
-    inputs[i++] = (int) playing;
 
+    inputs[i++] = m_wm->isPlaying();
     if (NegociateSharedData::arrivalAsInput)
     {
         inputs[i++] = m_wm->arrival;
@@ -305,7 +303,7 @@ std::vector<double> NegociateController::getGameInputs() const
     }
     if (NegociateSharedData::ownInvAsInput)
     {
-        inputs[i++] = m_wm->meanLastOwnInvest() / NegociateSharedData::maxCoop;
+        inputs[i++] = m_wm->getCoop() / NegociateSharedData::maxCoop;
     }
 
     /*
@@ -356,7 +354,7 @@ unsigned int NegociateController::getNbInputs() const
 unsigned int NegociateController::getNbGameInputs() const
 {
     const auto nbGameInputs = static_cast<const unsigned int>(
-            1 // playing
+            1
             + NegociateSharedData::arrivalAsInput
             + NegociateSharedData::totalInvAsInput
             + NegociateSharedData::ownInvAsInput
@@ -506,6 +504,12 @@ bool NegociateController::acceptPlay()
     m_nn2->setInputs(input);
     m_nn2->step();
     auto output = m_nn2->readOut();
+    std::cout << "My inputs: ";
+    for (auto in : input)
+    {
+        std::cout << in << ",";
+    }
+    std::cout << ": " << (output[0] > 0) << "\n";
     return (output[0] > 0);
 }
 
