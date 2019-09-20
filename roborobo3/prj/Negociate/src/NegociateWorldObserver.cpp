@@ -435,13 +435,16 @@ void NegociateWorldObserver::computeOpportunityImpacts()
             }
 
             i = 0;
-            for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+            if (n > 1)
             {
-                auto *const ctl = dynamic_cast<NegociateController *>(m_world->getRobot(*index)->getController());
-                bool accept = ctl->acceptPlay();
-                agentsAccept[i] = accept;
-                everyone_agree = everyone_agree && accept;
-                i++;
+                for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
+                {
+                    auto *const ctl = dynamic_cast<NegociateController *>(m_world->getRobot(*index)->getController());
+                    bool accept = ctl->acceptPlay();
+                    agentsAccept[i] = accept;
+                    everyone_agree = everyone_agree && accept;
+                    i++;
+                }
             }
             if((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0
                && n > 1)
@@ -470,7 +473,7 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                     {
                         double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
                                            NegociateSharedData::nbEvaluationsPerGeneration;
-
+                        std::cout << "payoff is : " << curpayoff << std::endl;
                         if (NegociateSharedData::doNotKill)
                         {
                             if (wm->_fitnessValue == 0 &&
