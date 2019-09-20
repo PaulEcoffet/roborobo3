@@ -78,13 +78,20 @@ void NegociateTrainWorldObserver::computeOpportunityImpacts()
 
                 if(n >= 2)
                 {
-                    wm->_fitnessValue++;
-                    /*wm->setAlive(false);h
+                    if (opp->getXCenterPixel() + opp->getYCenterPixel() * 100 != wm->lastvisit)
+                    {
+                        wm->_fitnessValue++;
+                    }
+                    wm->lastvisit = opp->getXCenterPixel() + opp->getYCenterPixel() * 100;
+
+                    /*
+                    wm->setAlive(false);
 
                     m_world->getRobot(*index)->unregisterRobot();
                     m_world->getRobot(*index)->setCoord(0, 0);
                     m_world->getRobot(*index)->setCoordReal(0, 0);
-                    m_world->getRobot(*index)->registerRobot();*/
+                    m_world->getRobot(*index)->registerRobot();
+                     */
                     opp->kill();
                 }
             }

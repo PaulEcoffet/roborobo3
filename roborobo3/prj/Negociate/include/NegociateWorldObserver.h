@@ -11,6 +11,7 @@
 #include <World/World.h>
 #include <network/PyevoInterface.h>
 #include <gzstream.h>
+#include <queue>
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
 #include "NegociateController.h"
@@ -89,8 +90,10 @@ protected:
 
     bool endEvaluationNow = false;
     int nbOfRobotsWhoPlayed = 0;
-    double emptyX = 90;
-    double emptyY = 90;
+    double emptyX = 122;
+    double emptyY = 38;
+    std::queue<std::pair<int, int>> availableslots;
+    std::queue<std::pair<int, int>> curavailableslots;
 };
 
 
