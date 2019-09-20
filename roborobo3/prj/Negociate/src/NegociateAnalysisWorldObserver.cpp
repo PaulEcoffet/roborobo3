@@ -35,7 +35,7 @@ NegociateAnalysisWorldObserver::NegociateAnalysisWorldObserver(World *__world) :
     genomeFile >> m_genomesJson;
     m_genomesIt = m_genomesJson.begin();
 
-    m_log.open(gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt");
+    m_log.open((gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt.gz").c_str());
     m_log << "ind\towncoop\tother\taccept\n";
 
     gMaxIt = -1;

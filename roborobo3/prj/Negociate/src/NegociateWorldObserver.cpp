@@ -46,9 +46,9 @@ NegociateWorldObserver::NegociateWorldObserver(World *__world) :
 
     // Log files
 
-    std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt";
-    m_fitnessLogManager = new LogManager(fitnessLogFilename);
-    m_fitnessLogManager->write("gen\tind\trep\tfake\tfitness\n");
+    std::string fitnessLogFilename = gLogDirectoryname + "/fitnesslog.txt.gz";
+    m_fitnessLogManager.open(fitnessLogFilename.c_str());
+    m_fitnessLogManager << "gen\tind\trep\tfake\tfitness\n";
 
     std::vector<std::string> url;
     if (gRemote.empty())
@@ -83,11 +83,7 @@ NegociateWorldObserver::NegociateWorldObserver(World *__world) :
 
 NegociateWorldObserver::~NegociateWorldObserver()
 {
-    if (m_logall.is_open())
-    {
-        m_logall.close();
-    }
-    delete m_fitnessLogManager;
+    m_logall.close();
 };
 
 void NegociateWorldObserver::reset()
@@ -244,11 +240,9 @@ void NegociateWorldObserver::stepPost()
                             cv::VideoWriter::fourcc('a', 'v', 'c', '1'), 60, S, true);
                 */
             }
-            if (m_logall.is_open())
-            {
-                m_logall.close();
-            }
-            m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
+
+            m_logall.close();
+            m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
             m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2\n";
         }
         if(NegociateSharedData::takeVideo)
@@ -323,8 +317,8 @@ void NegociateWorldObserver::logFitnesses(const std::vector<double> &curfitness)
             << cur_wm->fakeCoef << "\t"
             << curfitness[i] << "\n";
     }
-    m_fitnessLogManager->write(out.str());
-    m_fitnessLogManager->flush();
+    m_fitnessLogManager << out.str();
+    m_fitnessLogManager.flush();
 }
 
 void NegociateWorldObserver::resetEnvironment()

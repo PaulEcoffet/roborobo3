@@ -106,7 +106,7 @@ target_link_libraries(roborobo
         ${Boost_SYSTEM_LIBRARY}
         Eigen3::Eigen
         ${GZSTREAM}
-        ${ZLIB}
+        ${ZLIB_LIBRARIES}
         #${OpenCV_LIBS}#
         # tbb
         )
