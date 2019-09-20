@@ -34,6 +34,7 @@ NegociateAnalysisWorldObserver::NegociateAnalysisWorldObserver(World *__world) :
     std::ifstream genomeFile(genomePath);
     genomeFile >> m_genomesJson;
     m_genomesIt = m_genomesJson.begin();
+    std::cout << *m_genomesIt << "\n";
 
     m_log.open((gLogDirectoryname + "/analysis_log_" + std::to_string(gen) + ".txt.gz").c_str());
     m_log << "ind\towncoop\tother\taccept\n";
@@ -57,6 +58,7 @@ void NegociateAnalysisWorldObserver::reset()
         auto *wm = dynamic_cast<NegociateWorldModel *>(gWorld->getRobot(0)->getWorldModel());
         ctl->loadNewGenome(*m_genomesIt);
         ctl->resetFitness();
+        double gencoop = wm->getCoop(true);
         for (int icoop = 0; icoop < 20; icoop++)
         {
             double owncoop = (double) icoop / (20 - 1) * maxCoop;
@@ -69,6 +71,7 @@ void NegociateAnalysisWorldObserver::reset()
                 wm->lastTotalInvest.clear();
                 wm->nbOnOpp = 2;
                 wm->appendOwnInvest(owncoop);
+                wm->_cooperationLevel = owncoop;
                 wm->appendTotalInvest(othercoop);
                 bool accept = ctl->acceptPlay();
                 m_log << curind << "\t"
@@ -77,7 +80,7 @@ void NegociateAnalysisWorldObserver::reset()
                       << accept << "\n";
             }
         }
-        genlog << curind << "\t" << wm->getCoop(true) << "\n";
+        genlog << curind << "\t" << gencoop << "\n";
         m_log.flush();
         curind++;
         m_genomesIt++;

@@ -126,7 +126,6 @@ void LionWorldObserver::stepPre()
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
-        logFitnesses(m_curfitnesses);
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
 
@@ -134,13 +133,14 @@ void LionWorldObserver::stepPre()
     }
     if (m_curEvaluationInGeneration == LionSharedData::nbEvaluationsPerGeneration)
     {
+        logFitnesses(m_fitnesses);
         m_curEvaluationInGeneration = 0;
         stepEvolution();
         m_generationCount++;
     }
 
     /* Shall we log? */
-    if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
+    if (isLoggingTime())
     {
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
         {
@@ -156,10 +156,13 @@ void LionWorldObserver::stepPre()
     }
 }
 
+bool LionWorldObserver::isLoggingTime() const
+{ return (m_generationCount + 1) % LionSharedData::logEveryXGen == 0 && m_curEvaluationInGeneration < 25; }
+
 
 void LionWorldObserver::logAgent(LionWorldModel *wm)
 {
-    if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
+    if (isLoggingTime())
     {
         int nbOnOpp = wm->opp->countCurrentRobots();
         m_logall << m_curEvaluationInGeneration << "\t"
