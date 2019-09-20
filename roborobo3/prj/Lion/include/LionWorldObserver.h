@@ -72,6 +72,7 @@ protected:
     ogzstream m_logall;
     std::vector<double> variabilityCoef;
 
+    bool isLoggingTime() const;
 };
 
 
