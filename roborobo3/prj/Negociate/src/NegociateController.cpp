@@ -504,12 +504,14 @@ bool NegociateController::acceptPlay()
     m_nn2->setInputs(input);
     m_nn2->step();
     auto output = m_nn2->readOut();
+    /*
     std::cout << "My inputs: ";
     for (auto in : input)
     {
         std::cout << in << ",";
     }
     std::cout << ": " << (output[0] > 0) << "\n";
+     */
     return (output[0] > 0);
 }
 
