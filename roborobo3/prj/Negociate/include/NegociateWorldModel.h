@@ -64,6 +64,7 @@ public:
     double spite;
     bool toBeTeleported = false;
     int prevopp = -1;
+    int lastvisit = 0;
 };
 
 

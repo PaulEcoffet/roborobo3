@@ -78,18 +78,35 @@ NegociateWorldObserver::NegociateWorldObserver(World *__world) :
         assert(variabilityCoef[i] <= NegociateSharedData::fakeCoef + 0.1);
         assert(variabilityCoef[i] >= - NegociateSharedData::fakeCoef - 0.1);
     }
+
+    std::pair<int, int> coord(-1, -1);
+    bool run = true;
+    int i = 0;
+    while(run)
+    {
+        gProperties.checkAndGetPropertyValue("availableslot[" + std::to_string(i) + "].x", &coord.first, false);
+        gProperties.checkAndGetPropertyValue("availableslot[" + std::to_string(i) + "].y", &coord.second, false);
+        if(coord.first != -1)
+        {
+            availableslots.emplace(coord.first, coord.second);
+            coord.first = -1;
+            coord.second = -1;
+            i++;
+        } else{
+            run = false;
+        }
+    }
 }
 
 
 NegociateWorldObserver::~NegociateWorldObserver()
 {
     m_logall.close();
-};
+}
 
 void NegociateWorldObserver::reset()
 {
     m_nbIndividuals = gNbOfRobots;
-
     // Init fitness
     clearRobotFitnesses();
 
@@ -214,9 +231,9 @@ void NegociateWorldObserver::stepPost()
         double prevx = gPhysicalObjects[id]->getXReal();
         double prevy = gPhysicalObjects[id]->getYReal();
         gPhysicalObjects[id]->unregisterObject();
-        gPhysicalObjects[id]->setCoordinates(emptyX, emptyY);
-        emptyX = prevx;
-        emptyY = prevy;
+        gPhysicalObjects[id]->setCoordinates(curavailableslots.front().first, curavailableslots.front().second);
+        curavailableslots.pop();
+        curavailableslots.emplace(prevx, prevy);
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
@@ -324,8 +341,8 @@ void NegociateWorldObserver::logFitnesses(const std::vector<double> &curfitness)
 void NegociateWorldObserver::resetEnvironment()
 {
     endEvaluationNow = false;
-    emptyX = 90;
-    emptyY = 90;
+    curavailableslots = availableslots;
+
     nbOfRobotsWhoPlayed = 0;
     for (auto object: gPhysicalObjects)
     {
