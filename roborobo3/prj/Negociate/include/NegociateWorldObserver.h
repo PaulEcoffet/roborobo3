@@ -10,6 +10,7 @@
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
 #include <network/PyevoInterface.h>
+#include <gzstream.h>
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
 #include "NegociateController.h"
@@ -51,7 +52,7 @@ public:
 
 protected:
     World *m_world;
-    LogManager *m_fitnessLogManager;
+    ogzstream m_fitnessLogManager;
 
     //cv::VideoWriter outvid;
 
@@ -75,7 +76,9 @@ protected:
 
     std::set<int> robotsToTeleport;
     std::set<int> objectsToTeleport;
-    std::ofstream m_logall;
+    ogzstream m_logall;
+
+
     std::vector<double> variabilityCoef;
 
     void reward_lonely(double sum_payoff, int nb_payoffs) const;

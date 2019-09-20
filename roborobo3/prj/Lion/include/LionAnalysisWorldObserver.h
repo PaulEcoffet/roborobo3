@@ -10,6 +10,7 @@
 #include <Observers/WorldObserver.h>
 #include <json/json.hpp>
 #include <set>
+#include <gzstream.h>
 #include "World/World.h"
 #include "Agents/Robot.h"
 
@@ -27,7 +28,7 @@ public:
 
 protected:
     json m_genomesJson;
-    std::ofstream m_log;
+    ogzstream m_log;
 
 
 
