@@ -102,9 +102,10 @@ void LionWorldObserver::reset()
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
     std::vector<double> std(nbweights, LionSharedData::normalMut);
+    std::vector<double> mutprob(nbweights, LionSharedData::mutProb);
 
 
-    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std);
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob);
     m_fitnesses.resize(m_nbIndividuals, 0);
     m_curfitnesses.resize(m_nbIndividuals, 0);
     loadGenomesInRobots(m_individuals);
@@ -228,7 +229,7 @@ void LionWorldObserver::stepEvolution()
 std::vector<std::pair<int, double>> LionWorldObserver::getSortedFitnesses() const
 {
     std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
-    for (int i = 0; i < m_individuals.size(); i++)
+    for (size_t i = 0; i < m_individuals.size(); i++)
     {
         fitnesses[i].first = i;
         fitnesses[i].second = m_fitnesses[i];
