@@ -95,5 +95,3 @@ void LionSharedData::initSharedData()
     assert((hardCoop && independantCoop == 0 && !fakeRobots) || !hardCoop); // if hardcoop then no independant coop or fake
     assert((maxTwo && nControl == 0) || !maxTwo); // if maxtwo then no ncontrol
 }
-
-
