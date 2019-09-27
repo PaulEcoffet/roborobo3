@@ -49,7 +49,7 @@ public:
     static bool hardCoop;
     static bool splitedNbPartInput;
     static double normalMut;
-    static int mutProb;
+    static double mutProb;
 
     static void initSharedData();
 
