@@ -46,7 +46,7 @@ bool LionSharedData::hardCoop = false;
 bool LionSharedData::splitedNbPartInput = true;
 double LionSharedData::normalMut = 0.1;
 double LionSharedData::mutProb = 0.01;
-
+int LionSharedData::maxPlayer = 20;
 
 
 void LionSharedData::initSharedData()
@@ -90,6 +90,7 @@ void LionSharedData::initSharedData()
     GETVAL(splitedNbPartInput);
     GETVAL(normalMut);
     GETVAL(mutProb);
+    GETVAL(maxPlayer);
 
 
     assert((hardCoop && independantCoop == 0 && !fakeRobots) || !hardCoop); // if hardcoop then no independant coop or fake

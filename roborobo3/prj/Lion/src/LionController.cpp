@@ -80,7 +80,6 @@ void LionController::reset()
 void LionController::step()
 {
     verbose = 0;
-
     if (not m_wm->isAlive())
     {
         return;
@@ -434,6 +433,10 @@ void LionController::move()
 }
 
 void LionController::play_and_fitness() {
+    if (!m_wm->isAlive() or m_wm->opp == nullptr)
+    {
+        return;
+    }
     double cost = (m_wm->newopp)? LionSharedData::cost : 0;
 
     auto totalinv = m_wm->opp->getCurInv();

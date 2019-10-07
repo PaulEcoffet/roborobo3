@@ -27,6 +27,7 @@ public:
     LionOpportunity *opp = nullptr;
 
     bool fake;
+    bool ingame = false;
     double fakeCoef;
 
     void reset();

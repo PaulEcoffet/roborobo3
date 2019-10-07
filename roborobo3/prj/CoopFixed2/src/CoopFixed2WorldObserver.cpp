@@ -271,6 +271,7 @@ void CoopFixed2WorldObserver::stepEvolution()
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
+
     m_individuals = pyevo.getNextGeneration(m_individuals, m_fitnesses);
     if (m_individuals.empty())
     {
