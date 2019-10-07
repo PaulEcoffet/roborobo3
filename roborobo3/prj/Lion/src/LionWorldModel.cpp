@@ -17,6 +17,7 @@ LionWorldModel::LionWorldModel()
           selfA(0.5),
           opp(nullptr),
           fake(false),
+          ingame(false),
           fakeCoef(1),
           teleport(false),
           coopCache(gInitialNumberOfRobots)

@@ -50,6 +50,7 @@ public:
     static bool splitedNbPartInput;
     static double normalMut;
     static double mutProb;
+    static int maxPlayer;
 
     static void initSharedData();
 

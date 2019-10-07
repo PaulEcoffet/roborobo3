@@ -57,6 +57,9 @@ protected:
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
     std::vector<double> m_curfitnesses;
+    std::vector<int> m_curnbparticipation;
+    std::vector<bool> m_curparticipationindexes;
+
     PyevoInterface pyevo;
 
 
@@ -73,6 +76,8 @@ protected:
     std::vector<double> variabilityCoef;
 
     bool isLoggingTime() const;
+
+    void setWhichRobotsPlay();
 };
 
 
