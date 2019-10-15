@@ -88,7 +88,7 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 
 LionWorldObserver::~LionWorldObserver()
 {
-    ;
+    m_logall.close();
 }
 
 void LionWorldObserver::reset()
@@ -135,36 +135,33 @@ void LionWorldObserver::stepPre()
         }
         clearRobotFitnesses();
         m_curEvaluationInGeneration = *std::min_element(std::begin(m_curnbparticipation), std::end(m_curnbparticipation));
+        std::cout << "Cur Ev:" << m_curEvaluationInGeneration << std::endl;
         mustresetEnv = true;
     }
     if (m_curEvaluationInGeneration == LionSharedData::nbEvaluationsPerGeneration)
     {
+        m_logall.close();  // Cur log must necessarily be closed.
         logFitnesses(m_fitnesses);
         stepEvolution();
         m_curEvaluationInGeneration = 0;
         m_curnbparticipation = std::vector<int>(m_nbIndividuals, 0);
         m_generationCount++;
         mustresetEnv = true;
+        /* Shall we log? */
+        if (isLoggingTime())
+        {
+            if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
+            {
+                m_logall.close();
+                m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
+                m_logall
+                        << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
+            }
+        }
     }
     if(mustresetEnv)
         resetEnvironment();
 
-
-    /* Shall we log? */
-    if (isLoggingTime())
-    {
-        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
-        {
-            m_logall.close();
-            m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
-            m_logall
-                    << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
-        }
-    }
-    else if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 1)
-    {
-        m_logall.close();
-    }
 }
 
 bool LionWorldObserver::isLoggingTime() const
