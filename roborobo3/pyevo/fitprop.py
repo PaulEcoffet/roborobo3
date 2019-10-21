@@ -34,8 +34,8 @@ class FitPropEvolutionStrategy():
             self.mutprob = kwargs['mutprob']
             assert(len(self.mutprob) == len(self.minb))
         else:
-            self.mutprob = np.repeat(1/(len(self.minb) * popsize), popsize)
-        print(np.asarray(self.solutions[0]).shape)
+            self.mutprob = np.repeat(self.mutation_rate, popsize)
+        print(self.mutprob)
         assert(self.normalmut.shape[0] == np.asarray(self.solutions[0]).shape[0])
         self.lastfitnesses = np.repeat(1, self.popsize)
         self.logger = FitPropLogger(self, path)
