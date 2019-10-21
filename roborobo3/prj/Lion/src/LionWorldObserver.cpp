@@ -130,8 +130,12 @@ void LionWorldObserver::stepPre()
         for (int i = 0; i < m_nbIndividuals; i++)
         {
             auto *wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
-            m_fitnesses[i] += wm->_fitnessValue;
-            m_curfitnesses[i] = wm->_fitnessValue;
+            /* Only add fitness if the robot is in his participation run */
+            if (m_curnbparticipation[i] <= LionSharedData::nbEvaluationsPerGeneration)
+            {
+                m_fitnesses[i] += wm->_fitnessValue;
+                m_curfitnesses[i] = wm->_fitnessValue;
+            }
         }
         clearRobotFitnesses();
         m_curEvaluationInGeneration = *std::min_element(std::begin(m_curnbparticipation), std::end(m_curnbparticipation));
