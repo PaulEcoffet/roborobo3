@@ -48,6 +48,7 @@ public:
     static double nTolerance;
     static bool hardCoop;
     static bool splitedNbPartInput;
+    static bool otherInvAsInput;
     static double normalMut;
     static double mutProb;
     static int maxPlayer;
