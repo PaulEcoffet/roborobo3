@@ -490,7 +490,15 @@ double LionController::computeScore(int cost, int nbPart, double owncoop, double
     {
         inputs[i++] = (double) nbPart / gNbOfRobots;
     }
-    inputs[i++] = totothercoop / (LionSharedData::maxCoop * std::max(nbPart, 1));
+    if(LionSharedData::otherInvAsInput)
+    {
+        inputs[i++] = totothercoop / (LionSharedData::maxCoop * std::max(nbPart, 1));
+    }
+    else
+    {
+        inputs[i++] = 0;
+    }
+
     inputs[i] = owncoop / LionSharedData::maxCoop;
 
     double score = 0;

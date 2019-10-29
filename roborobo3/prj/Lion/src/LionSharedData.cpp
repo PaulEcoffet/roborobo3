@@ -44,6 +44,7 @@ double LionSharedData::nOpti = 2;
 double LionSharedData::nTolerance = 1.5;
 bool LionSharedData::hardCoop = false;
 bool LionSharedData::splitedNbPartInput = true;
+bool LionSharedData::otherInvAsInput = true;
 double LionSharedData::normalMut = 0.1;
 double LionSharedData::mutProb = 0.01;
 int LionSharedData::maxPlayer = 20;
@@ -91,8 +92,11 @@ void LionSharedData::initSharedData()
     GETVAL(normalMut);
     GETVAL(mutProb);
     GETVAL(maxPlayer);
+    GETVAL(otherInvAsInput);
 
 
     assert((hardCoop && independantCoop == 0 && !fakeRobots) || !hardCoop); // if hardcoop then no independant coop or fake
     assert((maxTwo && nControl == 0) || !maxTwo); // if maxtwo then no ncontrol
 }
+
+#undef GETVAL
