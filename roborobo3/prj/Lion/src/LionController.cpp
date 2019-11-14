@@ -28,7 +28,7 @@ enum
     ELMAN_ID = 2
 };
 
-LionController::LionController(RobotWorldModel *wm)
+LionController::LionController(RobotWorldModel *wm) : scorelogger(nullptr)
 {
     m_wm = dynamic_cast<LionWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -71,6 +71,7 @@ LionController::LionController(RobotWorldModel *wm)
 
 void LionController::reset()
 {
+    scorelogger = dynamic_cast<LionWorldObserver *>(gWorld->getWorldObserver())->getScoreLogger();
     if (LionSharedData::controllerType == ELMAN_ID)
     {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
@@ -144,7 +145,7 @@ void LionController::step()
     }
 }
 
-double LionController::computeScoreFromOpp(LionOpportunity* testopp, LionOpportunity* curopp)
+double LionController::computeScoreFromOpp(LionOpportunity *testopp, LionOpportunity *curopp, bool log)
 {
     int onopp = testopp->isRobotOnOpp(m_wm->getId());
     int cost = (onopp)? 0: 1;
@@ -163,7 +164,12 @@ double LionController::computeScoreFromOpp(LionOpportunity* testopp, LionOpportu
     {
         othercoop = testopp->getIfNewPartInv();
     }
-    return computeScore(cost, nbpart, owncoop, othercoop);
+    double score = computeScore(cost, nbpart, owncoop, othercoop);
+    if (log)
+    {
+        scorelogger->addScore(m_wm->getId(), cost, nbpart, owncoop, othercoop, score);
+    }
+    return score;
 }
 
 std::vector<unsigned int> LionController::getNbNeuronsPerHiddenLayers() const

@@ -123,7 +123,7 @@ void LionWorldObserver::stepPre()
 {
     m_curEvaluationIteration++;
     bool mustresetEnv = false;
-
+    /* NEW EVALUATION */
     if (m_curEvaluationIteration == LionSharedData::evaluationTime)
     {
         m_curEvaluationIteration = 0;
@@ -141,7 +141,10 @@ void LionWorldObserver::stepPre()
         m_curEvaluationInGeneration = *std::min_element(std::begin(m_curnbparticipation), std::end(m_curnbparticipation));
         std::cout << "Cur Ev:" << m_curEvaluationInGeneration << std::endl;
         mustresetEnv = true;
+
     }
+
+    /* NEW GENERATION */
     if (m_curEvaluationInGeneration == LionSharedData::nbEvaluationsPerGeneration)
     {
         m_logall.close();  // Cur log must necessarily be closed.
@@ -160,17 +163,27 @@ void LionWorldObserver::stepPre()
                 m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
                 m_logall
                         << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
+                scorelogger.openNewLog(m_generationCount);
+                scorelogger.updateEval(m_curEvaluationInGeneration);
             }
         }
     }
     if(mustresetEnv)
         resetEnvironment();
 
+    scorelogger.updateIter(m_curEvaluationIteration);
 }
 
 bool LionWorldObserver::isLoggingTime() const
-{ return (m_generationCount + 1) % LionSharedData::logEveryXGen == 0 && m_curEvaluationInGeneration < 5; }
+{
+    return (m_generationCount + 1) % LionSharedData::logEveryXGen == 0 && m_curEvaluationInGeneration < 5;
+}
 
+bool LionWorldObserver::isJustAfterLoggingTime() const
+{
+    return ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0 && m_curEvaluationInGeneration == 6);
+    // TODO Make the switch if less than 6 eval but new gen
+}
 
 void LionWorldObserver::logAgent(LionWorldModel *wm)
 {
@@ -386,7 +399,12 @@ void LionWorldObserver::clearRobotFitnesses()
 
 void LionWorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>> &genomes)
 {
-    assert(genomes.size() == m_nbIndividuals);
+
+    if (genomes.size() != m_nbIndividuals)
+    {
+        std::cout << "genomes: " << genomes.size() << ", m_nbIndividuals : " << m_nbIndividuals << "\n";
+        exit(1);
+    }
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
         auto *ctl = dynamic_cast<LionController *>(m_world->getRobot(i)->getController());
@@ -437,4 +455,9 @@ void LionWorldObserver::setWhichRobotsPlay() {
         m_curnbparticipation[*index]++;
 
     }
+}
+
+ScoreLogger *LionWorldObserver::getScoreLogger()
+{
+    return &scorelogger;
 }
