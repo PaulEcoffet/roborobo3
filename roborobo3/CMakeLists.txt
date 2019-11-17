@@ -12,7 +12,6 @@ file(
         prj/*
 )
 
-
 include_directories(include)
 include_directories(include/contrib)
 include_directories(include/core)
@@ -96,7 +95,7 @@ find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} )
 
-add_executable(roborobo ${SOURCE_FILES})
+add_executable(roborobo ${SOURCE_FILES} prj/Lion/src/ScoreLogger.cpp prj/Lion/include/ScoreLogger.h)
 
 
 target_link_libraries(roborobo

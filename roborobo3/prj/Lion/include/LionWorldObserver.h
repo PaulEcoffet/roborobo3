@@ -12,6 +12,8 @@
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
 #include "LionController.h"
+#include "ScoreLogger.h"
+#include "LionWorldModel.h"
 
 using json = nlohmann::json;
 
@@ -24,9 +26,7 @@ public:
 
     void reset() override;
 
-
     void logAgent(LionWorldModel *wm);
-
 
     void stepEvolution();
 
@@ -46,6 +46,14 @@ public:
     static double payoff(double invest, double totalInvest, int n, double a, double b);
 
 
+    ScoreLogger *getScoreLogger();
+
+    bool isJustAfterLoggingTime() const;
+    bool isLoggingTime() const;
+
+
+    bool logScore();
+
 protected:
     World *m_world;
     ogzstream m_fitnessLogManager;
@@ -59,13 +67,9 @@ protected:
     std::vector<double> m_curfitnesses;
     std::vector<int> m_curnbparticipation;
     std::vector<bool> m_curparticipationindexes;
+    ScoreLogger scorelogger;
 
     PyevoInterface pyevo;
-
-
-    void computeOpportunityImpacts();
-
-    void registerRobotsOnOpportunities();
 
     void clearRobotFitnesses();
 
@@ -75,9 +79,12 @@ protected:
     ogzstream m_logall;
     std::vector<double> variabilityCoef;
 
-    bool isLoggingTime() const;
 
     void setWhichRobotsPlay();
+
+    void cleanup();
+
+    int m_trueCurEvaluationInGeneration;
 };
 
 

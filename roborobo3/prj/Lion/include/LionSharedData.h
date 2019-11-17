@@ -52,6 +52,7 @@ public:
     static double normalMut;
     static double mutProb;
     static int maxPlayer;
+    static bool logScore;
 
     static void initSharedData();
 
