@@ -12,7 +12,6 @@ file(
         prj/*
 )
 
-
 include_directories(include)
 include_directories(include/contrib)
 include_directories(include/core)

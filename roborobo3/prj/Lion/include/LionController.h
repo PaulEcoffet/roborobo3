@@ -8,11 +8,16 @@
 
 #include <vector>
 #include "Controllers/Controller.h"
+#include "LionWorldObserver.h"
 #include "neuralnetworks/NeuralNetwork.h"
 #include "LionOpportunity.h"
 #include "LionWorldModel.h"
 #include "Utilities/Misc.h"
 #include "ScoreLogger.h"
+
+
+class LionWorldObserver;
+
 
 using namespace Neural;
 
@@ -56,6 +61,7 @@ public:
 
 protected:
     LionWorldModel *m_wm;
+    LionWorldObserver *m_wo;
 
     NeuralNetwork *m_nn;
     NeuralNetwork *m_nn2;

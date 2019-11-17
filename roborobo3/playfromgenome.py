@@ -88,6 +88,8 @@ def main():
             print("Open on port {}".format(port))
             serv_s.listen(1)
             # Forward the args received by pyevoroborobo to roborobo and add the port information
+            print(" ".join(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
+                                 ['-o', outdir, '-l', newconfname] + forwarded))
             if not argout.server_only:
                 subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
                                  ['-o', outdir, '-l', newconfname] + forwarded)

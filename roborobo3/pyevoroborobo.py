@@ -161,7 +161,7 @@ def main():
                 assert(np.allclose(back_json['ind'], np.array(solutions)))
                 fitnesses.append(back_json['fitness'])
             if not end:
-                fitnesses = np.asarray(fitnesses).sum(axis=0)
+                fitnesses = np.asarray(fitnesses).mean(axis=0)
                 es.tell(solutions, np.array([sign*fit for fit in fitnesses]))
                 es.disp()
                 es.logger.add()

@@ -24,6 +24,7 @@ LionWorldObserver::LionWorldObserver(World *__world) :
     m_world = __world;
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
+    m_trueCurEvaluationInGeneration = 0;
     m_generationCount = 0;
 
     LionSharedData::initSharedData();
@@ -88,7 +89,13 @@ LionWorldObserver::LionWorldObserver(World *__world) :
 
 LionWorldObserver::~LionWorldObserver()
 {
+    cleanup();
+}
+
+void LionWorldObserver::cleanup() {
+    std::cout << "Bien fermé pour le WorldObserver" << std::endl;
     m_logall.close();
+    scorelogger.close();
 }
 
 void LionWorldObserver::reset()
@@ -116,6 +123,21 @@ void LionWorldObserver::reset()
     loadGenomesInRobots(m_individuals);
 
     resetEnvironment();
+
+    if (isLoggingTime())
+    {
+        std::cout << "coucou" << std::endl;
+        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
+        {
+            std::cout << "lolilol" << std::endl;
+            m_logall.close();
+            m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
+            m_logall
+                    << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
+            scorelogger.openNewLog(m_generationCount);
+            scorelogger.updateEval(m_curEvaluationInGeneration);
+        }
+    }
 }
 
 
@@ -141,6 +163,8 @@ void LionWorldObserver::stepPre()
         m_curEvaluationInGeneration = *std::min_element(std::begin(m_curnbparticipation), std::end(m_curnbparticipation));
         std::cout << "Cur Ev:" << m_curEvaluationInGeneration << std::endl;
         mustresetEnv = true;
+        m_trueCurEvaluationInGeneration++;
+        scorelogger.updateEval(m_trueCurEvaluationInGeneration);
 
     }
 
@@ -148,9 +172,11 @@ void LionWorldObserver::stepPre()
     if (m_curEvaluationInGeneration == LionSharedData::nbEvaluationsPerGeneration)
     {
         m_logall.close();  // Cur log must necessarily be closed.
+        scorelogger.close();
         logFitnesses(m_fitnesses);
         stepEvolution();
         m_curEvaluationInGeneration = 0;
+        m_trueCurEvaluationInGeneration = 0;
         m_curnbparticipation = std::vector<int>(m_nbIndividuals, 0);
         m_generationCount++;
         mustresetEnv = true;
@@ -164,9 +190,15 @@ void LionWorldObserver::stepPre()
                 m_logall
                         << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
                 scorelogger.openNewLog(m_generationCount);
-                scorelogger.updateEval(m_curEvaluationInGeneration);
+                scorelogger.updateEval(m_trueCurEvaluationInGeneration);
             }
         }
+        else if (isJustAfterLoggingTime())
+        {
+            m_logall.close();
+            scorelogger.close();
+        }
+
     }
     if(mustresetEnv)
         resetEnvironment();
@@ -176,13 +208,12 @@ void LionWorldObserver::stepPre()
 
 bool LionWorldObserver::isLoggingTime() const
 {
-    return (m_generationCount + 1) % LionSharedData::logEveryXGen == 0 && m_curEvaluationInGeneration < 5;
+    return (((m_generationCount + 1) % LionSharedData::logEveryXGen == 0) && (m_curEvaluationInGeneration < 5));
 }
 
 bool LionWorldObserver::isJustAfterLoggingTime() const
 {
-    return ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0 && m_curEvaluationInGeneration == 6);
-    // TODO Make the switch if less than 6 eval but new gen
+    return ((m_generationCount + 1) % LionSharedData::logEveryXGen == 1);
 }
 
 void LionWorldObserver::logAgent(LionWorldModel *wm)
@@ -248,6 +279,7 @@ void LionWorldObserver::stepEvolution()
     m_individuals = pyevo.getNextGeneration(m_individuals, normfitness);
     if (m_individuals.empty())
     {
+        cleanup();
         exit(0);
     }
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
@@ -460,4 +492,8 @@ void LionWorldObserver::setWhichRobotsPlay() {
 ScoreLogger *LionWorldObserver::getScoreLogger()
 {
     return &scorelogger;
+}
+
+bool LionWorldObserver::logScore() {
+    return isLoggingTime() && LionSharedData::logScore;
 }

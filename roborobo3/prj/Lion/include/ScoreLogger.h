@@ -26,6 +26,7 @@ private:
     int m_eval;
     int m_iter;
 
+    std::string m_actupath;
 };
 
 
