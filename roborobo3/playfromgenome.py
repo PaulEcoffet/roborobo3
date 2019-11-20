@@ -3,7 +3,6 @@
 import socket
 from json_tricks import dump, dumps, load, loads, strip_comments
 import numpy as np
-import matplotlib.pyplot as plt
 import subprocess
 import sys
 import argparse
