@@ -3,7 +3,6 @@ import subprocess
 import sys
 import time
 import itertools
-import tempfile
 from typing import Sequence
 
 
@@ -26,31 +25,27 @@ gridconf['_percentuni'] = [0.001]
 
 gridconf['mutProbCoop'] = [0.2]
 gridconf['fakeRobots'] = [False, True]
-gridconf['fakecoef'] = [1]
+gridconf['fakeCoef'] = [1]
 gridconf['mutRate'] = [0.1]
 gridconf['mutCoop'] = [0.1]
-gridconf['donotkills'] = ['false']
+gridconf['doNotKill'] = ['false']
 gridconf['tau'] = [10000, 1000, 0]
 gridconf['nbEvaluationsPerGeneration'] = [1, 10]
 gridconf['gInitialNumberOfRobots'] = [150, 100, 50, 20]
 
 expandedgridconf = list(product_dict(**gridconf))
 print(len(expandedgridconf))
-iconf = int(sys.argv[1])
+iconf = int(sys.argv[1]) - 1
 
 true_type_conf = expandedgridconf[iconf]
 conf = {key: str(val) for key, val in true_type_conf.items()}
 
 
-groupname = f"negociate11tau{conf['tau']}/fake_{conf['fakeRobots']}_"\
-          + f"{conf['fakecoef']}-"
+groupname = f"negociate11/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
-logdirt = tempfile.TemporaryDirectory()
-logdir = str(logdirt)
 
 os.makedirs(logdir, exist_ok=True)
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
-pythonexec = "/Users/paulecoffet/opt/anaconda3/bin/python"
 
 
 nb_rep = 20
@@ -72,10 +67,6 @@ nb_rep = 20
 curruns = []
 
 for i in range(nb_rep):
-            #$python pyevoroborobo.py --no-movie -e mulambda --mu 10 --percentuni $percentuni -g 100 -s $sigma -l "config/negociate.properties"
-            #-p 4
-            #-o $logdir/$name/run_$i/ -b
-            #-- +oppDecay 0 +evaluationTime 100000 +gInitialNumberOfRobots $nbrob +fakeRobots $fakeRobots +fakeCoef $fakecoef +mutRate $mutRate +mutCoop $mutCoop +doNotKill $curconf +nbEvaluationsPerGeneration 500 +mutProb $sigma +mutProbCoop $mutProbCoop +mutProbNegociate $sigma +logEveryXGen 10 +tau $tau &
     name = '+'.join([str(key) + '_' + str(val)
                      for (key, val) in conf.items() if not key.startswith('_')])
     args = [pythonexec, 'pyevoroborobo.py',
@@ -84,10 +75,10 @@ for i in range(nb_rep):
             '--percentuni', conf['_percentuni'],
             '-g', conf['_generation'],
             '-s', conf['_sigma'],
-            '-l', conf['_confname'],
+            '-l', f'config/{conf["_confname"]}.properties',
             '-p', '1',
             '-o', logdir + '/' + name + f'/run_{i:02}/',
-            '-b',
+            #'-b',
             '--'
             ]
     # Lets add the option in + notation
@@ -98,8 +89,7 @@ for i in range(nb_rep):
     run = subprocess.Popen(args)
     curruns.append(run)
 
-    while count_running(curruns) >= 2:
-        print('wait 5')
+    while count_running(curruns) >= 24:
         time.sleep(5)
 
 print("Over")
