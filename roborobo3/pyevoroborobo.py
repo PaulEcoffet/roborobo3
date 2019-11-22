@@ -84,10 +84,10 @@ def main():
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as serv_s:
         desired_port = 1703
         port = connect_to_open_port(serv_s, desired_port)
-        print("Open on port {}".format(port))
+        print("Open on port {}".format(port), flush=True)
         serv_s.listen(10)
         # Forward the args received by pyevoroborobo to roborobo and add the port information
-        print("Forwarded:", forwarded)
+        print("Forwarded:", forwarded, flush=True)
         if not argout.server_only:
             movie = str(argout.movie) # output movie only for the first one
             for i in range(argout.parallel_rep):
@@ -97,11 +97,11 @@ def main():
         conns = []
         client_datas = []
         for i in range(argout.parallel_rep):
-            print("try to connect")
+            print("try to connect", flush=True)
             tmpconn, tmpclient_data = serv_s.accept()  # connect to roborobo
             conns.append(tmpconn)
             client_datas.append(tmpclient_data)
-            print('*************************connected to {}************************'.format(i))
+            print('*************************connected to {}************************'.format(i), flush=True)
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conns[i]))
         if 'min_bounds' in evo_info:
@@ -148,12 +148,14 @@ def main():
             solutions = [sol.tolist() for sol in es.ask()]
             for i in range(argout.parallel_rep):
                 send_msg(conns[i], dumps(solutions, primitives=True))
+                print("solution sent", flush=True)
             ########################################
             # Roborobo simulation(s) are done here #
             ########################################
             fitnesses = []
             for i in range(argout.parallel_rep):
                 back_jsonstr = recv_msg(conns[i])
+                print("response received", flush=True)
                 if back_jsonstr is None:
                     end = True
                     break
@@ -164,6 +166,7 @@ def main():
                 fitnesses = np.asarray(fitnesses).mean(axis=0)
                 es.tell(solutions, np.array([sign*fit for fit in fitnesses]))
                 es.disp()
+                sys.stdout.flush()
                 es.logger.add()
         # Close connection with roborobo (will trigger roborobo shutdown)
         for i in range(argout.parallel_rep):
