@@ -490,7 +490,6 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                     {
                         double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
                                            NegociateSharedData::nbEvaluationsPerGeneration;
-                        std::cout << "payoff is : " << curpayoff << std::endl;
                         if (NegociateSharedData::doNotKill)
                         {
                             if (wm->_fitnessValue == 0 &&
