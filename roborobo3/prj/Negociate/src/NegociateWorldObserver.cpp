@@ -184,6 +184,54 @@ void NegociateWorldObserver::stepPre()
         m_curEvaluationInGeneration = 0;
         stepEvolution();
         m_generationCount++;
+        if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0)
+        {
+            if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
+            {
+                std::cout << "**********************************\n";
+                std::cout << "TIME TO LOG\n";
+                std::cout << "**********************************\n";
+                if (NegociateSharedData::takeVideo)
+                {
+                    /*
+                    std::cout <<  "VIDEO\n";
+                    outvid.release();
+                    getSnapshot(gSnapshot);
+                    cv::Size S(gSnapshot->w, gSnapshot->h);
+                    outvid.open(gLogDirectoryname + "/mov_" + std::to_string(m_generationCount) + ".mp4",
+                                cv::VideoWriter::fourcc('a', 'v', 'c', '1'), 60, S, true);
+                    */
+                }
+
+                m_logall.close();
+                m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
+                m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2" << std::endl;
+            }
+            if(NegociateSharedData::takeVideo)
+            {
+                saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
+                /*
+                    getSnapshot(gSnapshot);
+                    SDL_Surface* bgrsurf = SDL_ConvertSurfaceFormat(gSnapshot, SDL_PIXELFORMAT_BGRA8888, 0);
+                    saveImage(bgrsurf, "test");
+                    cv::Mat img(gSnapshot->w, gSnapshot->h, CV_8UC4, bgrsurf->pixels);
+                    cv::Mat imgNoAlpha;
+                    cv::Mat mp4img;  // MP4 needs Blue Green Red (BGR) channels for the mp4 file
+                    cv::cvtColor(img, imgNoAlpha, CV_BGRA2BGR);
+
+        //            cv::cvtColor(imgNoAlpha, mp4img,CV_RGB2YUV_I420);
+
+                    outvid << imgNoAlpha; // append the frame to the video (should be YUV but do not work)
+                    SDL_FreeSurface(bgrsurf);
+                    */
+            }
+        }
+        else if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
+        {
+            m_logall.close();
+            //outvid.release();
+        }
+
     }
 
     for (int i = 0; i < gInitialNumberOfRobots; i++)
@@ -238,55 +286,6 @@ void NegociateWorldObserver::stepPost()
     }
     objectsToTeleport.clear();
     robotsToTeleport.clear();
-
-    if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0)
-    {
-        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
-        {
-            std::cout << "**********************************\n";
-            std::cout << "TIME TO LOG\n";
-            std::cout << "**********************************\n";
-            if (NegociateSharedData::takeVideo)
-            {
-                /*
-                std::cout <<  "VIDEO\n";
-                outvid.release();
-                getSnapshot(gSnapshot);
-                cv::Size S(gSnapshot->w, gSnapshot->h);
-                outvid.open(gLogDirectoryname + "/mov_" + std::to_string(m_generationCount) + ".mp4",
-                            cv::VideoWriter::fourcc('a', 'v', 'c', '1'), 60, S, true);
-                */
-            }
-
-            m_logall.close();
-            m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
-            m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2" << std::endl;
-        }
-        if(NegociateSharedData::takeVideo)
-        {
-            saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
-        /*
-            getSnapshot(gSnapshot);
-            SDL_Surface* bgrsurf = SDL_ConvertSurfaceFormat(gSnapshot, SDL_PIXELFORMAT_BGRA8888, 0);
-            saveImage(bgrsurf, "test");
-            cv::Mat img(gSnapshot->w, gSnapshot->h, CV_8UC4, bgrsurf->pixels);
-            cv::Mat imgNoAlpha;
-            cv::Mat mp4img;  // MP4 needs Blue Green Red (BGR) channels for the mp4 file
-            cv::cvtColor(img, imgNoAlpha, CV_BGRA2BGR);
-
-//            cv::cvtColor(imgNoAlpha, mp4img,CV_RGB2YUV_I420);
-
-            outvid << imgNoAlpha; // append the frame to the video (should be YUV but do not work)
-            SDL_FreeSurface(bgrsurf);
-            */
-        }
-    }
-    else if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 1 && m_curEvaluationIteration == 0)
-    {
-        m_logall.close();
-        //outvid.release();
-    }
-
     m_curEvaluationIteration++;
 }
 
