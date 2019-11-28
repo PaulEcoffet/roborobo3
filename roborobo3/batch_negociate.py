@@ -53,14 +53,18 @@ conf = {key: str(val) for key, val in true_type_conf.items()}
 
 groupname = f"negociate13highpoplowmut-{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
+pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
+nb_rep = 24
+batch = "-b"
 if platform.node().startswith('pecoffet'):
     logdir = f"/home/pecoffet/Document/work/roborobo3/roborobo3/logs/"
+    pythonexec="python"
+    nb_rep = 1
+    batch = ""
 
 os.makedirs(logdir, exist_ok=True)
-pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
 
 
-nb_rep = 24
 
 
 # First we train <3
@@ -78,30 +82,35 @@ nb_rep = 24
 
 curruns = []
 
-for i in range(nb_rep):
-    name = '+'.join([str(key) + '_' + str(val)
-                     for (key, val) in conf.items() if not key.startswith('_')])
-    args = [pythonexec, 'pyevoroborobo.py',
-            '--no-movie',
-            '-e', 'fitprop',
-            '--percentuni', conf['_percentuni'],
-            '-g', conf['_generation'],
-            '-s', conf['_sigma'],
-            '-l', f'config/{conf["_confname"]}.properties',
-            '-p', '1',
-            '-o', logdir + '/' + name + f'/run_{i:02}/',
-            #'-b',
-            '--'
-            ]
-    # Lets add the option in + notation
-    for key, val in conf.items():
-        if not key.startswith('_'):
-            args += ['+'+key, str(val)]
-    print(' '.join(args))
-    run = subprocess.Popen(args)
-    curruns.append(run)
+try:    
+    for i in range(nb_rep):
+        name = '+'.join([str(key) + '_' + str(val)
+                         for (key, val) in conf.items() if not key.startswith('_')])
+        args = [pythonexec, 'pyevoroborobo.py',
+                '--no-movie',
+                '-e', 'fitprop',
+                '--percentuni', conf['_percentuni'],
+                '-g', conf['_generation'],
+                '-s', conf['_sigma'],
+                '-l', f'config/{conf["_confname"]}.properties',
+                '-p', '1',
+                '-o', logdir + '/' + name + f'/run_{i:02}/',
+                batch,
+                '--'
+                ]
+        # Lets add the option in + notation
+        for key, val in conf.items():
+            if not key.startswith('_'):
+                args += ['+'+key, str(val)]
+        print(' '.join(args))
+        run = subprocess.Popen(args)
+        curruns.append(run)
 
-    while count_running(curruns) >= 24:
+        while count_running(curruns) >= 24:
+            time.sleep(5)
+    while not count_running(curruns) == 0:
         time.sleep(5)
-
+finally:
+    for run in curruns:
+        run.kill()
 print("Over")
