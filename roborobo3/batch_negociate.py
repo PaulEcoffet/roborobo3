@@ -4,6 +4,7 @@ import sys
 import time
 import itertools
 from typing import Sequence
+import platform
 
 
 def product_dict(**kwargs):
@@ -43,6 +44,8 @@ conf = {key: str(val) for key, val in true_type_conf.items()}
 
 groupname = f"negociate11/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
+if platform.node().startswith('pecoffet'):
+    logdir = f"/home/pecoffet/Document/work/roborobo3/roborobo3/logs/"
 
 os.makedirs(logdir, exist_ok=True)
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
