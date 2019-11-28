@@ -19,36 +19,45 @@ def count_running(runs: Sequence[subprocess.Popen]):
 
 gridconf = {}
 gridconf['_confname'] = ['negociate']
-gridconf['_generation'] = [100]
+gridconf['_generation'] = [203]
 gridconf['_sigma'] = [0.1]
 gridconf['_percentuni'] = [0.001]
 
-gridconf['mutProbCoop'] = [0.2]
+gridconf['nbEvaluationsPerGeneration'] = [1, 10]
+gridconf['mutProbCoop'] = [0.05]
 gridconf['fakeRobots'] = [False, True]
 gridconf['fakeCoef'] = [1]
 gridconf['mutRate'] = [0.1]
-gridconf['mutCoop'] = [0.1]
+gridconf['mutCoop'] = [0.05]
 gridconf['doNotKill'] = ['false']
-gridconf['tau'] = [10000, 1000, 0]
-gridconf['nbEvaluationsPerGeneration'] = [1, 10]
-gridconf['gInitialNumberOfRobots'] = [150, 100, 50, 20]
+gridconf['tau'] = [10000, 0, 20000]
+gridconf['gInitialNumberOfRobots'] = [150, 100, 50, 20, 10, 30, 40]
 
 expandedgridconf = list(product_dict(**gridconf))
+
+try:
+    curtime=time.localtime(int(sys.argv[2]))
+except Exception:
+    curtime=time.localtime(time.time())
+
 print(len(expandedgridconf))
+print(time.strftime('%Y-%m-%d-%H%M', curtime))
+if len(sys.argv) == 1:
+    sys.exit(0)
 iconf = int(sys.argv[1]) - 1
 
 true_type_conf = expandedgridconf[iconf]
 conf = {key: str(val) for key, val in true_type_conf.items()}
 
 
-groupname = f"negociate11/"
+groupname = f"negociate13highpoplowmut-{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
 
 os.makedirs(logdir, exist_ok=True)
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
 
 
-nb_rep = 20
+nb_rep = 24
 
 
 # First we train <3
