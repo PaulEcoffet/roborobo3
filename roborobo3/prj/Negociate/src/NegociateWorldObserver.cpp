@@ -260,7 +260,7 @@ void NegociateWorldObserver::stepPost()
 
             m_logall.close();
             m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
-            m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2\n";
+            m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2" << std::endl;
         }
         if(NegociateSharedData::takeVideo)
         {
