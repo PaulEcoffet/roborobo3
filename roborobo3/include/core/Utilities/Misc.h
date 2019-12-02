@@ -34,7 +34,7 @@ extern std::uniform_real_distribution<double> disRandom;
 extern std::uniform_int_distribution<int> disRandint;
 extern std::normal_distribution<> disNormal;
 
-#define random() disRandom(engine) // uniform in [0,1), return double
+#define random01() disRandom(engine) // uniform in [0,1), return double
 #define randint() disRandint(engine) // uniform in [0,max), returns int
 #define randgaussian() disNormal(engine) // normal distribution mean=0 and stddev=1 (use: mean+rand*stddev)
 

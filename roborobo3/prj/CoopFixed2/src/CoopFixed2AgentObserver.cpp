@@ -38,7 +38,7 @@ void CoopFixed2AgentObserver::stepPost()
         rob->setCoordReal(0,0);
         m_wm->toBeTeleported = true;
     }
-    if (m_wm->toBeTeleported && random() < CoopFixed2SharedData::tpProba)
+    if (m_wm->toBeTeleported && random01() < CoopFixed2SharedData::tpProba)
     {
         m_wm->toBeTeleported = false;
         double angle = (float) this->m_wm->getId() / gNbOfRobots * 2 * M_PI;
@@ -72,7 +72,7 @@ void CoopFixed2AgentObserver::stepPost()
             const int objpercluster = gNbOfPhysicalObjects / nbCluster;
             int cur_cluster = m_wm->prevopp / objpercluster;
             double p_stayincluster = (CoopFixed2SharedData::pStayInCluster != -1)? CoopFixed2SharedData::pStayInCluster : 1 - (1.0 / (gNbOfPhysicalObjects / nbCluster));
-            if (random() < p_stayincluster) // Stay in the same cluster
+            if (random01() < p_stayincluster) // Stay in the same cluster
             {
                 int curloc = m_wm->prevopp % objpercluster;
                 std::uniform_int_distribution<int> dis(0, objpercluster-1 -1);

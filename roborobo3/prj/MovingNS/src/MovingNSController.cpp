@@ -277,7 +277,7 @@ unsigned int MovingNSController::computeRequiredNumberOfWeights()
 
 void MovingNSController::performVariation()
 {
-    if ( MovingNSSharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if (MovingNSSharedData::gIndividualMutationRate > random01() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( MovingNSSharedData::gMutationOperator )
         {
@@ -389,7 +389,7 @@ void MovingNSController::initController()
     // Intialize genomes
     for ( unsigned int i = 0 ; i < nbGenes; i++ )
     {
-        _currentGenome.push_back((random()*2.0)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((random01() * 2.0) - 1.0); // weights: random init between -1 and +1
     }
     
     updatePhenotype();
@@ -410,11 +410,11 @@ void MovingNSController::reset()
 
 void MovingNSController::mutateSigmaValue()
 {
-    float dice = random();
+    float dice = random01();
     
     if ( dice <= MovingNSSharedData::gProbaMutation )
     {
-        dice = random();
+        dice = random01();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + MovingNSSharedData::gUpdateSigmaStep ); // increase sigma

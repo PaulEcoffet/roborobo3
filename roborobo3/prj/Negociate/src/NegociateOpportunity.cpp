@@ -72,7 +72,7 @@ void NegociateOpportunity::registerNewRobots()
 void NegociateOpportunity::step()
 {
     touchingrobotsSet.clear();
-    if(random() < lifeExpectancy)
+    if(random01() < lifeExpectancy)
     {
         kill();
     }

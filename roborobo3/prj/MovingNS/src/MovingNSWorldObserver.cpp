@@ -165,7 +165,7 @@ void MovingNSWorldObserver::stepEvaluation()
         int pick = -1;
         while (done == false) {
             pick = randint()%gNbOfRobots;
-            double draw = random()*totalFitness;
+            double draw = random01() * totalFitness;
             if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
             {
                 done = true;

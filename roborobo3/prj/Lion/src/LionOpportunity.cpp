@@ -86,7 +86,7 @@ bool LionOpportunity::isRobotOnOpp(const int id)
 
 void LionOpportunity::step()
 {
-    if (random() < lifeExpectancy)
+    if (random01() < lifeExpectancy)
     {
         kill();
     }

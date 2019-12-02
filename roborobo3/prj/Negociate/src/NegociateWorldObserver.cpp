@@ -194,7 +194,7 @@ void NegociateWorldObserver::stepPre()
         {
             wm->_desiredTranslationalValue = 0;
             wm->_desiredRotationalVelocity = 0;
-            if (NegociateSharedData::tau != 0 && random() < 1.0 / NegociateSharedData::tau)
+            if (NegociateSharedData::tau != 0 && random01() < 1.0 / NegociateSharedData::tau)
             {
                 wm->setAlive(true);
                 rob->findRandomLocation(gAgentsInitAreaX,

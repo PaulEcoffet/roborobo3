@@ -304,7 +304,7 @@ unsigned int MonoRobotController::computeRequiredNumberOfWeights()
 
 void MonoRobotController::performVariation()
 {
-    if ( MonoRobotSharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if (MonoRobotSharedData::gIndividualMutationRate > random01() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( MonoRobotSharedData::gMutationOperator )
         {
@@ -364,7 +364,7 @@ void MonoRobotController::mutateUniform() // mutate within bounds.
 {
     for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
     {
-        float randomValue = random(); // in [0,1[
+        float randomValue = random01(); // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
         
@@ -374,11 +374,11 @@ void MonoRobotController::mutateUniform() // mutate within bounds.
 
 void MonoRobotController::mutateSigmaValue()
 {
-    float dice = random();
+    float dice = random01();
     
     if ( dice <= MonoRobotSharedData::gProbaMutation )
     {
-        dice = random();
+        dice = random01();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + MonoRobotSharedData::gUpdateSigmaStep ); // increase sigma

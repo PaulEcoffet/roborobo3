@@ -254,7 +254,7 @@ void Robot::reset()
     }
 	else
 	{
-		_wm->_agentAbsoluteOrientation = random() * 360. - 180.;
+		_wm->_agentAbsoluteOrientation = random01() * 360. - 180.;
         //randomOrientation = true;
 	}
     
@@ -754,9 +754,9 @@ void Robot::show(SDL_Surface *surface) // display on screen
 			int dy = 10;
 			int xcenter = (int)_wm->_xReal + 0.5;
 			int ycenter = (int)_wm->_yReal + 0.5;
-			int r = 255.0 * random();
-			int g = 255.0 * random();
-			int b = 255.0 * random();
+			int r = 255.0 * random01();
+			int g = 255.0 * random01();
+			int b = 255.0 * random01();
 						
 			for ( int xTmp = xcenter - dx ; xTmp != xcenter + dx + 1 ; xTmp++ )
 			{

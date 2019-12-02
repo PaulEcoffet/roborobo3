@@ -319,7 +319,7 @@ unsigned int SingleGenomeController::computeRequiredNumberOfWeights()
 
 void SingleGenomeController::performVariation()
 {
-    if ( SingleGenomeSharedData::gIndividualMutationRate > random() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if (SingleGenomeSharedData::gIndividualMutationRate > random01() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
         switch ( SingleGenomeSharedData::gMutationOperator )
         {
@@ -389,11 +389,11 @@ void SingleGenomeController::mutateUniform() // mutate within bounds.
 
 void SingleGenomeController::mutateSigmaValue()
 {
-    float dice = random();
+    float dice = random01();
     
     if ( dice <= SingleGenomeSharedData::gProbaMutation )
     {
-        dice = random();
+        dice = random01();
         if ( dice < 0.5 )
         {
             _currentSigma = _currentSigma * ( 1 + SingleGenomeSharedData::gUpdateSigmaStep ); // increase sigma
