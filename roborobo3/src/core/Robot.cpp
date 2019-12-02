@@ -172,65 +172,14 @@ void Robot::reset()
 	}
 	else
 	{
-		bool success;
-
-		do {
-			success = true;
-		
-			// pick random coordinate
-			
-            x = (int)(random() * (double)(gAgentsInitAreaWidth - (2 * gRobotWidth))) + gRobotWidth + gAgentsInitAreaX;
-            y = (int)(random() * (double)(gAgentsInitAreaHeight - (2 * gRobotHeight))) + gRobotHeight + gAgentsInitAreaY;
-           
-			// check for agents superposition - ie. if picked position is valid vs. already located agents.
-			for ( int i = 0 ; i != _wm->getId() ; i++ )
-			{
-                if ( ( std::abs((double)x - gWorld->getRobot(i)->_wm->_xReal) <= gRobotWidth+1 ) && ( std::abs((double)y - gWorld->getRobot(i)->_wm->_yReal) <= gRobotHeight+1 ) ) // uses square boxes as location approximation
-				{
-					success = false;
-					break; // terminate for statement.
-				}
-			}
-
-			if ( success == false )
-			{
-				continue; // no need to perform next check...
-			}
-			
-			// check if position is valid in environment
-			
-			for ( int i = x - gRobotWidth/2 ; i <= x + gRobotWidth/2 ; i++ )
-			{
-				for ( int j = y - gRobotHeight/2 ; j <= y + gRobotHeight/2 ; j++ ) // && valid == true
-				{
-					// get pixel values
-					Uint8 r, g, b;
-					Uint32 pixel = getPixel32( gEnvironmentImage, i , j);
-					SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b); 
-					
-					int color = ((r<<16)+(g<<8)+b);
-					
-					// check if empty
-					if ( color != ((255<<16)+(255<<8)+255) ) // r=robot, g=obstacle/object, b=unused
-					{
-						success = false;
-					}
-				}
-			}
-
-			tries++;
-				
-		} while ( success == false && tries < gLocationFinderMaxNbOfTrials );
-			
+		tries = findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX+ gAgentsInitAreaWidth,
+                                   gAgentsInitAreaY, gAgentsInitAreaY+ gAgentsInitAreaHeight);
 		if ( tries == gLocationFinderMaxNbOfTrials )
 		{
             std::cerr << "[CRITICAL] Random initialization of initial position for agent #" << _wm->getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
 			exit(-1);
 		}
     }
-
-	setCoordReal(x,y);
-    setCoord(x,y);
 
     //Initialize coordinate and displacement
 	_xDelta = 0;
@@ -960,6 +909,44 @@ int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
 		setCoordReal(x, y);
 		tries++;
 	} while (isCollision() == true && tries < gLocationFinderMaxNbOfTrials);
+
+    if ( tries == gLocationFinderMaxNbOfTrials )
+    {
+        /**/
+        // New method 2019-11-29 -- more efficient, but horribly costly wrt computation. Test *all* possible position, pick a random one. Horrible.
+
+        std::cout << "[DEBUG] FindRandomLocation, Trying *horrible* method.\n";
+
+        tries = 0;
+        int nbLocations = 0;
+
+        std::vector<std::pair<int,int>> locations;
+
+        for (x = gPhysicalObjectsInitAreaX ; x < gPhysicalObjectsInitAreaWidth ; x++ )
+            for (y = gPhysicalObjectsInitAreaY ; y < gPhysicalObjectsInitAreaHeight ; y++ )
+            {
+                setCoord( x, y );
+                if ( isCollision() == false )
+                {
+                    locations.push_back(std::make_pair(x,y));
+                    nbLocations++;
+                }
+            }
+
+        if ( locations.empty() == false )
+        {
+            int randomIndex = (int)(locations.size() * random01());
+            std::pair<int,int> selectedLocation = locations.at(randomIndex);
+            setCoord(selectedLocation.first, selectedLocation.second);
+        }
+        else
+        {
+            tries = gLocationFinderMaxNbOfTrials; // Failed.
+        }
+
+        std::cout << "[DEBUG] FindRandomLocation, #positions: " << nbLocations << "\n";
+        /**/
+    }
 	if (tries == gLocationFinderMaxNbOfTrials)
 	{
 		std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
