@@ -3,7 +3,7 @@ from imageio import imwrite
 import sys
 from textwrap import dedent
 
-radius = 75
+radius = 100
 margin = 5
 arena_size = 2*radius + 2*margin
 center = arena_size // 2
