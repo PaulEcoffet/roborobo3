@@ -144,7 +144,7 @@ void Elman::step() {
 
 		// Tanh activation function
 		for(unsigned int i = 0; i < nbOutputs; i++)
-			tmp[i] = tanh(tmp[i]);
+			tmp[i] = activation(tmp[i]);
 
 		prec = tmp;
 

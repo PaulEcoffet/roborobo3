@@ -86,7 +86,7 @@ void EigenMLP::step() {
         tmp = mat * tmp;
         for (int i = 0; i < tmp.size(); i++)
         {
-            tmp[i] = std::tanh(tmp[i]);
+            tmp[i] = activation(tmp[i]);
         }
 
     }
