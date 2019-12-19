@@ -374,6 +374,7 @@ void NegociateWorldObserver::resetEnvironment()
             robot->getWorldModel()->_agentAbsoluteOrientation = 0;
         }
         auto *wm = dynamic_cast<NegociateWorldModel *>(robot->getWorldModel());
+        wm->setAlive(true);
         if (NegociateSharedData::fakeRobots)
         {
             wm->fakeCoef = variabilityCoef[iRobot];
