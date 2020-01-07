@@ -100,4 +100,8 @@ double LayeredNeuralNetwork::getBiasValue() const {
 	return _biasValue;
 }
 
+void LayeredNeuralNetwork::setActivation(double (*new_activation)(double))
+{
+    activation = new_activation;
+}
 
