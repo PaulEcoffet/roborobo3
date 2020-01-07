@@ -86,12 +86,12 @@ void MLP::step() {
 		// Do computation of the bias
 		if(_activeBias && (k==0 || !_onlyUseBiasForFirstHiddenLayer))
 			for(unsigned int j = 0; j < nbOutputs; j++)
-				//tmp[j] += tanh(_weights[weightsIndice++]) * .08;
+				//tmp[j] += activation(_weights[weightsIndice++]) * .08;
 				tmp[j] +=  _biasValue * _weights[weightsIndice++];
 
 		// Tanh activation function
 		for(unsigned int i = 0; i < nbOutputs; i++)
-			tmp[i] = tanh(tmp[i]);
+			tmp[i] = activation(tmp[i]);
 
 		prec = tmp;
 	}

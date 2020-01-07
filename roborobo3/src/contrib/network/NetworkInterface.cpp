@@ -46,6 +46,7 @@ namespace network
         sizestr << std::setw(8) << std::hex << out_size;
         boost::asio::write(socket, boost::asio::buffer(sizestr.str()));
         boost::asio::write(socket, boost::asio::buffer(msg));
+        std::cout << "roborobo: message sent" << std::endl;
     }
 
     std::string NetworkInterface::receiveMessage()
@@ -71,6 +72,7 @@ namespace network
             message = make_string(message_buf);
             message_buf.consume(bytes_read);
         }
+        std::cout << "roborobo: message received" << std::endl;
         return message;
     }
 

@@ -10,6 +10,7 @@
 #define LAYEREDNEURALNETWORK_H 
 
 #include <neuralnetworks/NeuralNetwork.h>
+#include <cmath>
 
 namespace Neural {
 
@@ -41,6 +42,9 @@ namespace Neural {
 
 			/** Values of bias neurons (typically 1) */
 			double _biasValue;
+
+			/** Activation function (typically tanh) */
+			double (*activation) (double) = tanh;
 
 
 		public :
@@ -87,7 +91,8 @@ namespace Neural {
 			 */
 			virtual std::string toString() const;
 
-	};
+        void setActivation(double (*new_activation)(double));
+    };
 
 
 

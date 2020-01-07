@@ -71,6 +71,7 @@ public:
     static double mutProb;
     static double mutProbCoop;
     static double mutProbNegociate;
+    static bool putOutOfGame;
 
     static void initSharedData();
 
