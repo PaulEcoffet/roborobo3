@@ -238,17 +238,20 @@ void NegociateWorldObserver::stepPre()
     {
         auto* rob = m_world->getRobot(i);
         auto* wm = rob->getWorldModel();
-        if (not wm->isAlive())
+        if (!wm->isAlive())
         {
             wm->_desiredTranslationalValue = 0;
             wm->_desiredRotationalVelocity = 0;
             if (NegociateSharedData::tau != 0 && random01() < 1.0 / NegociateSharedData::tau)
             {
                 wm->setAlive(true);
-                rob->findRandomLocation(gAgentsInitAreaX,
-                                        gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                        gAgentsInitAreaY,
-                                        gAgentsInitAreaY + gAgentsInitAreaHeight);
+                if (NegociateSharedData::putOutOfGame)
+                {
+                    rob->findRandomLocation(gAgentsInitAreaX,
+                                            gAgentsInitAreaX + gAgentsInitAreaWidth,
+                                            gAgentsInitAreaY,
+                                            gAgentsInitAreaY + gAgentsInitAreaHeight);
+                }
             }
         }
     }
@@ -273,19 +276,33 @@ void NegociateWorldObserver::stepPost()
         }
     }
 
+    std::set<int> toRetry;
 
     for (auto id: objectsToTeleport)
     {
         double prevx = gPhysicalObjects[id]->getXReal();
         double prevy = gPhysicalObjects[id]->getYReal();
         gPhysicalObjects[id]->unregisterObject();
-        gPhysicalObjects[id]->setCoordinates(curavailableslots.front().first, curavailableslots.front().second);
-        curavailableslots.pop();
-        curavailableslots.emplace(prevx, prevy);
+        if (NegociateSharedData::putOutOfGame)
+        {
+            gPhysicalObjects[id]->setCoordinates(curavailableslots.front().first, curavailableslots.front().second);
+            curavailableslots.pop();
+            curavailableslots.emplace(prevx, prevy);
+        }
+        else
+        {
+            int tries = gPhysicalObjects[id]->findRandomLocation();
+            if (tries == gLocationFinderMaxNbOfTrials)
+            {
+                toRetry.emplace(id);
+                gPhysicalObjects[id]->setCoordinates(prevx, prevy);
+            }
+        }
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
     robotsToTeleport.clear();
+    objectsToTeleport = toRetry;
     m_curEvaluationIteration++;
 }
 
@@ -506,7 +523,15 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                         }
                         else
                         {
-                            wm->_fitnessValue += curpayoff;
+                            if (NegociateSharedData::tau != 0)
+                            {
+                                wm->_fitnessValue +=
+                                        curpayoff * NegociateSharedData::tau / NegociateSharedData::evaluationTime;
+                            }
+                            else
+                            {
+                                wm->_fitnessValue += curpayoff;
+                            }
                             wm->setAlive(false);
                             nbOfRobotsWhoPlayed++;
                             if (nbOfRobotsWhoPlayed == m_nbIndividuals and NegociateSharedData::tau == 0)
@@ -514,11 +539,13 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                                 std::cout << "evaluation shorten, everyone has a payoff" << std::endl;
                                 endEvaluationNow = true;
                             }
-
-                            m_world->getRobot(*index)->unregisterRobot();
-                            m_world->getRobot(*index)->setCoord(2, 2);
-                            m_world->getRobot(*index)->setCoordReal(2, 2);
-                            m_world->getRobot(*index)->registerRobot();
+                            if (NegociateSharedData::putOutOfGame)
+                            {
+                                m_world->getRobot(*index)->unregisterRobot();
+                                m_world->getRobot(*index)->setCoord(2, 2);
+                                m_world->getRobot(*index)->setCoordReal(2, 2);
+                                m_world->getRobot(*index)->registerRobot();
+                            }
                         }
 
                     }

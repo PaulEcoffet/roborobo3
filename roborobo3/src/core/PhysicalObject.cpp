@@ -135,27 +135,27 @@ void PhysicalObject::init()
 int PhysicalObject::findRandomLocation( )
 {
     double x = 0.0, y = 0.0;
-    
+
     int tries = 0;
-    
+
     do {
         x = ( randint() % ( gPhysicalObjectsInitAreaWidth  ) ) + gPhysicalObjectsInitAreaX;
         y = ( randint() % ( gPhysicalObjectsInitAreaHeight ) ) + gPhysicalObjectsInitAreaY;
-        
+
         //x = (randint() % (gAreaWidth-20)) + 10;  // deprecated
         //y = (randint() % (gAreaHeight-20)) + 10; // deprecated
-        
+
         setCoordinates( x, y );
-        
+
         tries++;
     } while ( canRegister() == false && tries < gLocationFinderMaxNbOfTrials );
-    
+
     if ( tries == gLocationFinderMaxNbOfTrials )
     {
-        std::cerr << "[CRITICAL] Random initialization of initial position for physical object #" << getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
-        exit(-1);
+        //std::cerr << "[CRITICAL] Random initialization of initial position for physical object #" << getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
+        // exit(-1);
     }
-    
+
     return tries;
 }
 

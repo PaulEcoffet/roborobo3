@@ -71,6 +71,7 @@ bool NegociateSharedData::doNotKill = false;
 double NegociateSharedData::mutProb = 0.0001;
 double NegociateSharedData::mutProbCoop = 0.01;
 double NegociateSharedData::mutProbNegociate = 0.001;
+bool NegociateSharedData::putOutOfGame = true;
 
 
 
@@ -139,6 +140,7 @@ void NegociateSharedData::initSharedData()
     GETVAL(mutProb);
     GETVAL(mutProbCoop);
     GETVAL(mutProbNegociate);
+    GETVAL(putOutOfGame);
 }
 
 #undef INITVAL

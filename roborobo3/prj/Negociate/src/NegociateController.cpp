@@ -105,7 +105,8 @@ void NegociateController::step()
 
     if (not m_wm->isAlive())
     {
-            return;
+        m_wm->setRobotLED_colorValues(220, 220, 220);
+        return;
     }
 
     std::vector<double> moveInputs = getCameraInputs();
@@ -143,7 +144,6 @@ void NegociateController::step()
     else {
         m_wm->setRobotLED_colorValues(115,182,234);
     }
-
 }
 
 std::vector<unsigned int> NegociateController::getNbNeuronsPerHiddenLayers() const
