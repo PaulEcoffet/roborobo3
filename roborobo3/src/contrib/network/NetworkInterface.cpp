@@ -51,6 +51,7 @@ namespace network
 
     std::string NetworkInterface::receiveMessage()
     {
+        std::cout << "roborobo: Waiting for message" << std::endl;
         if (!is_open())
         {
             throw std::runtime_error("Connection is not open");
@@ -66,8 +67,10 @@ namespace network
         else
         {
             size_t message_length = static_cast<size_t>(std::stoul(header, nullptr, 16));
+            std::cout << "roborobo: Expecting " << message_length << " bytes" << std::endl;
             boost::asio::streambuf message_buf;
             size_t bytes_read = boost::asio::read(socket, message_buf.prepare(message_length), error);
+            assert(bytes_read == message_length);
             message_buf.commit(bytes_read);
             message = make_string(message_buf);
             message_buf.consume(bytes_read);
