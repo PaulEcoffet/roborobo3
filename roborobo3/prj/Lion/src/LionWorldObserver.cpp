@@ -376,12 +376,10 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 }
 
 
-static const double Invsqrt2pi = 1.0 / std::sqrt(2 * M_PI);
-
 static double bellcurve(double x, double mu, double sigma)
 {
 
-    return Invsqrt2pi * 1.0 / sigma * std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
+    return std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
 }
 
 
@@ -410,14 +408,14 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     }
     else if (LionSharedData::nControl == 2)
     {
-        // Divide by bellcurved normalized at 1 for nOpti
-        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance) / bellcurve(LionSharedData::nOpti, LionSharedData::nOpti, LionSharedData::nTolerance);
+        // Divide by bellcurve
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
     else if (LionSharedData::nControl == 3)
     {
         // Divide by bellcurve for the whole payoff, not only the benefits
         res -= 0.5 * invest * invest;
-        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance) / bellcurve(LionSharedData::nOpti, LionSharedData::nOpti, LionSharedData::nTolerance);
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
 
     // Apply cost
