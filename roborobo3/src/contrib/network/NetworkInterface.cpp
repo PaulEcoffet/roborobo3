@@ -32,6 +32,8 @@ namespace network
             endpoint(boost::asio::ip::address::from_string(ip), port),
             socket(io_service)
     {
+        boost::asio::socket_base::keep_alive option(true);
+        socket.set_option(option);
         socket.connect(endpoint);
     }
 
@@ -62,10 +64,12 @@ namespace network
         socket.read_some(boost::asio::buffer(header, 8), error);
         if (error == boost::asio::error::eof)
         {
+            std::cout << "roborobo: message eof" << std::endl;
             message = "";
         }
         else
         {
+            std::cout << "socker err=" << error << std::endl;
             size_t message_length = static_cast<size_t>(std::stoul(header, nullptr, 16));
             std::cout << "roborobo: Expecting " << message_length << " bytes" << std::endl;
             boost::asio::streambuf message_buf;

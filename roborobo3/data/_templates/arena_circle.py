@@ -3,7 +3,7 @@ from imageio import imwrite
 import sys
 from textwrap import dedent
 
-radius = 100
+radius = 200
 margin = 5
 arena_size = 2*radius + 2*margin
 center = arena_size // 2
@@ -56,7 +56,7 @@ with open(f'arena_circle_{radius*2}.properties', 'w') as f:
                 gPhysicalObjectsInitAreaWidth = {arena_size - 10 - 10}
                 gPhysicalObjectsInitAreaHeight = {arena_size - 10 - 10}
             """), file=f)
-    nb = 7
+    nb = 20
     for i in range(nb):
         r = radius - 15
         x = int(np.round(center + r * np.cos(2 * np.pi * i / nb)))
