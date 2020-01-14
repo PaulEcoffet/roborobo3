@@ -552,7 +552,7 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 		{
 			// special case: agent cannot not move at all - restore original coordinate (remember, _x/yReal are global and modified during recursive call).
 			_wm->_xReal=xReal_old;
-			_wm->_yReal=yReal_old;			
+			_wm->_yReal=yReal_old;
 			setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5);
 		}
 
@@ -920,24 +920,28 @@ int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
         tries = 0;
         int nbLocations = 0;
 
-        std::vector<std::pair<int,int>> locations;
+        std::vector<std::pair<int, int>> locations;
 
-        for (x = gPhysicalObjectsInitAreaX ; x < gPhysicalObjectsInitAreaWidth ; x++ )
-            for (y = gPhysicalObjectsInitAreaY ; y < gPhysicalObjectsInitAreaHeight ; y++ )
+        for (x = __xMin; x < __xMax; x++)
+        {
+            for (y = __yMin; y < __yMax; y++)
             {
-                setCoord( x, y );
-                if ( isCollision() == false )
+                setCoord(x, y);
+                setCoordReal(x, y);
+                if (!isCollision())
                 {
-                    locations.push_back(std::make_pair(x,y));
+                    locations.emplace_back(x, y);
                     nbLocations++;
                 }
             }
+        }
 
-        if ( locations.empty() == false )
+        if (!locations.empty())
         {
-            int randomIndex = (int)(locations.size() * random01());
-            std::pair<int,int> selectedLocation = locations.at(randomIndex);
+            int randomIndex = (int) (locations.size() * random01());
+            std::pair<int, int> selectedLocation = locations.at(randomIndex);
             setCoord(selectedLocation.first, selectedLocation.second);
+            setCoordReal(selectedLocation.first, selectedLocation.second);
         }
         else
         {
@@ -948,9 +952,10 @@ int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
         /**/
     }
 	if (tries == gLocationFinderMaxNbOfTrials)
-	{
-		std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
-	}
+    {
+        std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
+        exit(-1);
+    }
 //    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
 	return tries;
 }
