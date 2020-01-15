@@ -4,11 +4,12 @@ import socket
 from json_tricks import dump, dumps, load, loads, strip_comments
 import numpy as np
 
+
 import subprocess
 import sys
 import argparse
 from os.path import join
-import cma
+import tqdm
 from pathlib import Path
 
 from pyevo.pyevo import getES
@@ -146,6 +147,7 @@ def main():
             sign = -1
 
         end = False
+        prog = tqdm.tqdm(leave=False, position=0, total=argout.generations)
         while not es.stop() and not end:
             solutions = [sol.tolist() for sol in es.ask()]
             for i in range(argout.parallel_rep):
@@ -170,12 +172,13 @@ def main():
                 es.disp()
                 sys.stdout.flush()
                 es.logger.add()
+                prog.update(1)
         # Close connection with roborobo (will trigger roborobo shutdown)
         for i in range(argout.parallel_rep):
             conns[i].shutdown(socket.SHUT_RDWR)
             conns[i].close()
         with open(join(str(outdir), 'genome_end.txt'), 'w') as f:
             dump(solutions, f, primitives=True)
-
+        prog.close()
 
 main()
