@@ -417,9 +417,15 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
         res -= 0.5 * invest * invest;
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
+    else if (LionSharedData::nControl == 4)
+    {
+        res = b * x0 / (n - 1);
+        res -= 0.5 * invest * invest;
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
+    }
 
     // Apply cost
-    if (LionSharedData::nControl != 3)
+    if (LionSharedData::nControl < 3)
     {
         res -= 0.5 * invest * invest;
     }
