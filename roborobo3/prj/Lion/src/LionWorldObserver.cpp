@@ -376,12 +376,10 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 }
 
 
-static const double Invsqrt2pi = 1.0 / std::sqrt(2 * M_PI);
-
 static double bellcurve(double x, double mu, double sigma)
 {
 
-    return Invsqrt2pi * 1.0 / sigma * std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
+    return std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
 }
 
 
@@ -398,10 +396,6 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
         res = 0;
     }
 
-    if (gVerbose)
-    {
-        //std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
-    }
 
     // apply friction on benefits
     if (LionSharedData::nControl == 1)
@@ -410,21 +404,41 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     }
     else if (LionSharedData::nControl == 2)
     {
-        // Divide by bellcurved normalized at 1 for nOpti
-        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance) / bellcurve(LionSharedData::nOpti, LionSharedData::nOpti, LionSharedData::nTolerance);
+        // Divide by bellcurve
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
     else if (LionSharedData::nControl == 3)
     {
         // Divide by bellcurve for the whole payoff, not only the benefits
         res -= 0.5 * invest * invest;
-        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance) / bellcurve(LionSharedData::nOpti, LionSharedData::nOpti, LionSharedData::nTolerance);
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
+    }
+    else if (LionSharedData::nControl == 4)
+    {
+        /* True prisoner's dilemma */
+        if (n >= 2)
+            res = b * x0 / (n - 1);
+        else
+            res = 0;
+        res -= 0.5 * invest * invest;
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
+    }
+    else if (LionSharedData::nControl == 5)
+    {
+        /* True Prisoner's dilemma without friction */
+        if (n >= 2)
+            res = b * x0 / (n - 1);
+        else
+            res = 0;
+        res -= 0.5 * invest * invest;
     }
 
     // Apply cost
-    if (LionSharedData::nControl != 3)
+    if (LionSharedData::nControl < 3)
     {
         res -= 0.5 * invest * invest;
     }
+    assert(res == res); // Test if not nan
     return res;
 }
 
