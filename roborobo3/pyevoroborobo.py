@@ -89,10 +89,10 @@ def main():
         serv_s.listen(10)
         # Forward the args received by pyevoroborobo to roborobo and add the port information
         print("Forwarded:", forwarded, flush=True)
-        print(' '.join(['-r', '127.0.0.1:{}'.format(port)] +
-                                 ['-o', str(outdir / 'rep{:02}'.format(0))] + forwarded + ['+takeVideo', "False"]))
+        print(' '.join(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
+                       ['-o', str(outdir / 'rep{:02}'.format(0))] + forwarded + ['+takeVideo', 'false']))
         if not argout.server_only:
-            movie = str(argout.movie) # output movie only for the first one
+            movie = str(argout.movie)  # output movie only for the first one
             for i in range(argout.parallel_rep):
                 subprocess.Popen(['./roborobo', '-r', '127.0.0.1:{}'.format(port)] +
                                  ['-o', str(outdir / 'rep{:02}'.format(i))] + forwarded + ['+takeVideo', movie])
