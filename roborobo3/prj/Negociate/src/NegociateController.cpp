@@ -103,11 +103,53 @@ void NegociateController::step()
 {
     verbose = 0;
 
-    if (not m_wm->isAlive())
+    if (not m_wm->seeking)
     {
         m_wm->setRobotLED_colorValues(220, 220, 220);
+        if (NegociateSharedData::wander)
+        {
+            const double sensorlength = 30; // pixels
+            double meandistfront = (
+                                           m_wm->getCameraSensorValue(2, SENSOR_DISTANCEVALUE) +
+                                           m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE)
+                                   ) / 2;
+            if (meandistfront > sensorlength)
+            {
+                meandistfront = sensorlength;
+            }
+            m_wm->_desiredTranslationalValue = +2 - 2 * ((sensorlength - meandistfront) / sensorlength);
+
+            if (m_wm->getCameraSensorValue(0, SENSOR_DISTANCEVALUE) +
+                m_wm->getCameraSensorValue(1, SENSOR_DISTANCEVALUE) +
+                m_wm->getCameraSensorValue(2, SENSOR_DISTANCEVALUE) <
+                m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE) +
+                m_wm->getCameraSensorValue(4, SENSOR_DISTANCEVALUE) +
+                m_wm->getCameraSensorValue(5, SENSOR_DISTANCEVALUE))
+            {
+                m_wm->_desiredRotationalVelocity = +10;
+            }
+            else if (m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE) +
+                     m_wm->getCameraSensorValue(4, SENSOR_DISTANCEVALUE) +
+                     m_wm->getCameraSensorValue(5, SENSOR_DISTANCEVALUE) < 3 * gSensorRange)
+            {
+                m_wm->_desiredRotationalVelocity = -10;
+            }
+            else if (m_wm->_desiredRotationalVelocity > 0)
+            {
+                m_wm->_desiredRotationalVelocity--;
+            }
+            else if (m_wm->_desiredRotationalVelocity < 0)
+            {
+                m_wm->_desiredRotationalVelocity++;
+            }
+            else
+            {
+                m_wm->_desiredRotationalVelocity = 0.01 - (double) (randint() % 10) / 10. * 0.02;
+            }
+        }
         return;
     }
+
 
     std::vector<double> moveInputs = getCameraInputs();
     std::vector<double> gameInputs = getGameInputs();

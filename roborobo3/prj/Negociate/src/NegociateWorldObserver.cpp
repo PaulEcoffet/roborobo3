@@ -236,15 +236,20 @@ void NegociateWorldObserver::stepPre()
 
     for (int i = 0; i < gInitialNumberOfRobots; i++)
     {
-        auto* rob = m_world->getRobot(i);
-        auto* wm = rob->getWorldModel();
-        if (!wm->isAlive())
+        auto *rob = m_world->getRobot(i);
+        auto *wm = dynamic_cast<NegociateWorldModel *>(rob->getWorldModel());
+        if (!wm->seeking)
         {
-            wm->_desiredTranslationalValue = 0;
-            wm->_desiredRotationalVelocity = 0;
+            if (!NegociateSharedData::wander)
+            {
+                wm->_desiredTranslationalValue = 0;
+                wm->_desiredRotationalVelocity = 0;
+                wm->setAlive(false);
+            }
             if (NegociateSharedData::tau != 0 && random01() < 1.0 / NegociateSharedData::tau)
             {
                 wm->setAlive(true);
+                wm->seeking = true;
                 if (NegociateSharedData::putOutOfGame)
                 {
                     rob->findRandomLocation(gAgentsInitAreaX,
@@ -392,6 +397,7 @@ void NegociateWorldObserver::resetEnvironment()
         }
         auto *wm = dynamic_cast<NegociateWorldModel *>(robot->getWorldModel());
         wm->setAlive(true);
+        wm->seeking = true;
         if (NegociateSharedData::fakeRobots)
         {
             wm->fakeCoef = variabilityCoef[iRobot];
@@ -532,7 +538,7 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                             {
                                 wm->_fitnessValue += curpayoff;
                             }
-                            wm->setAlive(false);
+                            wm->seeking = false;
                             nbOfRobotsWhoPlayed++;
                             if (nbOfRobotsWhoPlayed == m_nbIndividuals and NegociateSharedData::tau == 0)
                             {

@@ -8,6 +8,7 @@
 #include "Negociate/include/NegociateSharedData.h"
 
 #define GETVAL(name)  (gProperties.checkAndGetPropertyValue(#name, &NegociateSharedData::name, false))
+#define IMPLIES(cond1, cond2) (!cond1 || (cond1 && cond2))
 
 
 int NegociateSharedData::evaluationTime = 1000;
@@ -72,6 +73,7 @@ double NegociateSharedData::mutProb = 0.0001;
 double NegociateSharedData::mutProbCoop = 0.01;
 double NegociateSharedData::mutProbNegociate = 0.001;
 bool NegociateSharedData::putOutOfGame = true;
+bool NegociateSharedData::wander = false;
 
 
 
@@ -141,6 +143,9 @@ void NegociateSharedData::initSharedData()
     GETVAL(mutProbCoop);
     GETVAL(mutProbNegociate);
     GETVAL(putOutOfGame);
+    GETVAL(wander);
+
+    assert(IMPLIES(wander, !putOutOfGame));
 }
 
 #undef INITVAL
