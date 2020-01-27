@@ -167,13 +167,19 @@ void NegociateWorldObserver::stepPre()
     {
         m_curEvaluationIteration = 0;
         endEvaluationNow = false;
+        std::vector<double> coop(m_nbIndividuals, 0);
         for (int i = 0; i < m_nbIndividuals; i++)
         {
-            auto *wm = dynamic_cast<NegociateWorldModel*>(m_world->getRobot(i)->getWorldModel());
+            auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(i)->getWorldModel());
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
+            coop[i] = wm->getCoop(true);
         }
         logFitnesses(m_curfitnesses);
+        std::sort(coop.begin(), coop.end());
+        std::cout << "coop: " << coop[0] << ", " << coop[m_nbIndividuals / 4] << ", "
+                  << coop[m_nbIndividuals / 2] << ", " << coop[3 * m_nbIndividuals / 4] << ", "
+                  << coop[m_nbIndividuals - 1] << std::endl;
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
 
@@ -288,7 +294,7 @@ void NegociateWorldObserver::stepPost()
         double prevx = gPhysicalObjects[id]->getXReal();
         double prevy = gPhysicalObjects[id]->getYReal();
         gPhysicalObjects[id]->unregisterObject();
-        if (NegociateSharedData::putOutOfGame)
+        if (!NegociateSharedData::randomObjectPositions)
         {
             gPhysicalObjects[id]->setCoordinates(curavailableslots.front().first, curavailableslots.front().second);
             curavailableslots.pop();
@@ -381,6 +387,10 @@ void NegociateWorldObserver::resetEnvironment()
     for (auto *object: gPhysicalObjects)
     {
         object->resetLocation();
+        if (NegociateSharedData::randomObjectPositions)
+        {
+            object->findRandomLocation();
+        }
         object->registerObject();
     }
 
