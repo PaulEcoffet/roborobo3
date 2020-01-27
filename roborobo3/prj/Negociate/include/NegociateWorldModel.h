@@ -65,6 +65,7 @@ public:
     bool toBeTeleported = false;
     int prevopp = -1;
     int lastvisit = 0;
+    bool seeking = true;
 };
 
 

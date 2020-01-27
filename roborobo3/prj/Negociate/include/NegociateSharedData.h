@@ -72,10 +72,10 @@ public:
     static double mutProbCoop;
     static double mutProbNegociate;
     static bool putOutOfGame;
+    static bool wander;
+    static bool randomObjectPositions;
 
     static void initSharedData();
-
-
 
 };
 

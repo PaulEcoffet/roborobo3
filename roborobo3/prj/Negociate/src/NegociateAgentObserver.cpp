@@ -29,7 +29,7 @@ void NegociateAgentObserver::stepPre()
 
 void NegociateAgentObserver::stepPost()
 {
-    if (!_wm->isAlive())
+    if (!m_wm->seeking)
     {
         return;
     }

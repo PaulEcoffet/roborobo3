@@ -387,15 +387,14 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
         const double b)
 {
     double res = 0;
-    const double x0 = (totalInvest - invest);
+    const double x0tot = (totalInvest - invest);
 
     // apply benefits
-    res = (a * totalInvest + b * x0) / n;
+    res = (a * totalInvest + b * x0tot) / n;
     if (LionSharedData::maxTwo && n != 2)
     {
         res = 0;
     }
-
 
     // apply friction on benefits
     if (LionSharedData::nControl == 1)
@@ -415,22 +414,33 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     }
     else if (LionSharedData::nControl == 4)
     {
-        /* True prisoner's dilemma */
+        /* True prisoner's dilemma with friction */
         if (n >= 2)
-            res = b * x0 / (n - 1);
-        else
+        {
+            res = b * x0tot / (n - 1);
+            res -= 0.5 * invest * invest;
+        }
+        else {
             res = 0;
-        res -= 0.5 * invest * invest;
+        }
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
     else if (LionSharedData::nControl == 5)
     {
         /* True Prisoner's dilemma without friction */
-        if (n >= 2)
-            res = b * x0 / (n - 1);
-        else
+        if (n >= 2) {
+            res = b * x0tot / (n - 1);
+            res -= 0.5 * invest * invest;
+        }
+        else {
             res = 0;
+        }
+    }
+    else if (LionSharedData::nControl == 6)
+    {
+        res = a * invest + b * x0tot / std::max(n - 1, 1);
         res -= 0.5 * invest * invest;
+        res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
 
     // Apply cost

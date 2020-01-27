@@ -167,13 +167,19 @@ void NegociateWorldObserver::stepPre()
     {
         m_curEvaluationIteration = 0;
         endEvaluationNow = false;
+        std::vector<double> coop(m_nbIndividuals, 0);
         for (int i = 0; i < m_nbIndividuals; i++)
         {
-            auto *wm = dynamic_cast<NegociateWorldModel*>(m_world->getRobot(i)->getWorldModel());
+            auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(i)->getWorldModel());
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
+            coop[i] = wm->getCoop(true);
         }
         logFitnesses(m_curfitnesses);
+        std::sort(coop.begin(), coop.end());
+        std::cout << "coop: " << coop[0] << ", " << coop[m_nbIndividuals / 4] << ", "
+                  << coop[m_nbIndividuals / 2] << ", " << coop[3 * m_nbIndividuals / 4] << ", "
+                  << coop[m_nbIndividuals - 1] << std::endl;
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
 
@@ -236,15 +242,20 @@ void NegociateWorldObserver::stepPre()
 
     for (int i = 0; i < gInitialNumberOfRobots; i++)
     {
-        auto* rob = m_world->getRobot(i);
-        auto* wm = rob->getWorldModel();
-        if (!wm->isAlive())
+        auto *rob = m_world->getRobot(i);
+        auto *wm = dynamic_cast<NegociateWorldModel *>(rob->getWorldModel());
+        if (!wm->seeking)
         {
-            wm->_desiredTranslationalValue = 0;
-            wm->_desiredRotationalVelocity = 0;
+            if (!NegociateSharedData::wander)
+            {
+                wm->_desiredTranslationalValue = 0;
+                wm->_desiredRotationalVelocity = 0;
+                wm->setAlive(false);
+            }
             if (NegociateSharedData::tau != 0 && random01() < 1.0 / NegociateSharedData::tau)
             {
                 wm->setAlive(true);
+                wm->seeking = true;
                 if (NegociateSharedData::putOutOfGame)
                 {
                     rob->findRandomLocation(gAgentsInitAreaX,
@@ -283,7 +294,7 @@ void NegociateWorldObserver::stepPost()
         double prevx = gPhysicalObjects[id]->getXReal();
         double prevy = gPhysicalObjects[id]->getYReal();
         gPhysicalObjects[id]->unregisterObject();
-        if (NegociateSharedData::putOutOfGame)
+        if (!NegociateSharedData::randomObjectPositions)
         {
             gPhysicalObjects[id]->setCoordinates(curavailableslots.front().first, curavailableslots.front().second);
             curavailableslots.pop();
@@ -376,6 +387,10 @@ void NegociateWorldObserver::resetEnvironment()
     for (auto *object: gPhysicalObjects)
     {
         object->resetLocation();
+        if (NegociateSharedData::randomObjectPositions)
+        {
+            object->findRandomLocation();
+        }
         object->registerObject();
     }
 
@@ -392,6 +407,7 @@ void NegociateWorldObserver::resetEnvironment()
         }
         auto *wm = dynamic_cast<NegociateWorldModel *>(robot->getWorldModel());
         wm->setAlive(true);
+        wm->seeking = true;
         if (NegociateSharedData::fakeRobots)
         {
             wm->fakeCoef = variabilityCoef[iRobot];
@@ -532,7 +548,7 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                             {
                                 wm->_fitnessValue += curpayoff;
                             }
-                            wm->setAlive(false);
+                            wm->seeking = false;
                             nbOfRobotsWhoPlayed++;
                             if (nbOfRobotsWhoPlayed == m_nbIndividuals and NegociateSharedData::tau == 0)
                             {
