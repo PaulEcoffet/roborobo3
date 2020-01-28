@@ -25,16 +25,17 @@ gridconf['_percentuni'] = [0.001]
 
 gridconf['logEveryXGen'] = [50]
 gridconf['nbEvaluationsPerGeneration'] = [1]
-gridconf['fakeRobots'] = [False, True]
+gridconf['fakeRobots'] = [True]
 gridconf['mutCoop'] = [0.1]
 gridconf['fakeCoef'] = [1]
 gridconf['mutRate'] = [0.1]
 gridconf['mutProbCoop'] = [0.01]
 gridconf['doNotKill'] = ['false']
-gridconf['tau'] = [0, 100, 500, 1000, 5000, 10000]
+gridconf['tau'] = [50000]
 gridconf['evaluationTime'] = [100000]
 gridconf['totalInvAsInput'] = [True]
-gridconf['gInitialNumberOfRobots'] = [10, 20, 50, 100, 200, 300, 500, 750, 1000]
+gridconf['gInitialNumberOfRobots'] = [750, 1000]
+gridconf['wander+putOutOfGame+randomObjectPositions'] = [(True, False, True), (False, True, False)]
 
 expandedgridconf = list(product_dict(**gridconf))
 
@@ -54,10 +55,10 @@ if len(sys.argv) == 1:
 iconf = int(sys.argv[1]) - 1
 
 true_type_conf = expandedgridconf[iconf]
-conf = {key: str(val) for key, val in true_type_conf.items()}
+conf = {key: val for key, val in true_type_conf.items()}
 
 
-groupname = f"negociate17-3tau/{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
+groupname = f"negociate21-bigarenawander/{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
 nb_rep = 24
@@ -90,31 +91,38 @@ curruns = []
 files = []
 try:
     for i in range(nb_rep):
-        name = '+'.join([str(key) + '_' + str(val)
-                         for (key, val) in conf.items() if not key.startswith('_')])
+        # Lets add the option in + notation
+        robargs = []
+        for key, val in conf.items():
+            if not key.startswith('_'):
+                if '+' in key:
+                    splitparams = key.split('+')
+                    curargs = [['+'+curkey, str(val[i])] for i, curkey in enumerate(splitparams)]
+                    curargs = itertools.chain.from_iterable(curargs)
+                    robargs += curargs
+                else:
+                    robargs += ['+'+key, str(val)]
+        name = '_'.join([arg[:7] if arg.startswith('+') else arg for arg in robargs])
         curpath = logdir + '/' + name + f'/run_{i:02}/'
         os.makedirs(curpath, exist_ok=True)
         outf = open(curpath + 'out.txt', 'w')
         errf = open(curpath + 'err.txt', 'w')
         files += [outf, errf]
+
         args = [pythonexec, 'pyevoroborobo.py',
                 '--no-movie',
                 '-e', 'fitprop',
-                '--percentuni', conf['_percentuni'],
-                '-g', conf['_generation'],
-                '-s', conf['_sigma'],
+                '--percentuni', str(conf['_percentuni']),
+                '-g', str(conf['_generation']),
+                '-s', str(conf['_sigma']),
                 '-l', conffile,
                 '-p', '1',
                 '-o', curpath,
                 batch,
                 '--'
                 ]
-        # Lets add the option in + notation
-        for key, val in conf.items():
-            if not key.startswith('_'):
-                args += ['+'+key, str(val)]
-        print(' '.join(args))
-        run = subprocess.Popen(args, stdout=outf, stderr=errf)
+        print(' '.join(args + robargs))
+        run = subprocess.Popen(args + robargs, stdout=outf, stderr=errf)
         curruns.append(run)
 
         while count_running(curruns) >= 24:
