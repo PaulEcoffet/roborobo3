@@ -174,6 +174,7 @@ void LionWorldObserver::stepPre()
         m_logall.close();  // Cur log must necessarily be closed.
         scorelogger.close();
         logFitnesses(m_fitnesses);
+        printCoopStats((int) LionSharedData::nOpti);
         stepEvolution();
         m_curEvaluationInGeneration = 0;
         m_trueCurEvaluationInGeneration = 0;
@@ -527,6 +528,21 @@ ScoreLogger *LionWorldObserver::getScoreLogger()
     return &scorelogger;
 }
 
-bool LionWorldObserver::logScore() {
+bool LionWorldObserver::logScore()
+{
     return isLoggingTime() && LionSharedData::logScore;
+}
+
+void LionWorldObserver::printCoopStats(int nbPart)
+{
+    std::vector<double> coops(m_nbIndividuals, 0);
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
+        auto *cur_wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
+        coops[i] = cur_wm->getCoop(2, true);
+    }
+    std::sort(coops.begin(), coops.end());
+    std::cout << "coop quartiles: " << coops[0] << ", " << coops[m_nbIndividuals / 4] << ", "
+              << coops[m_nbIndividuals / 2] << ", " << coops[3 * m_nbIndividuals / 4] << ", "
+              << coops[m_nbIndividuals - 1] << std::endl;
 }

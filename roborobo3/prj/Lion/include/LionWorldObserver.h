@@ -85,6 +85,8 @@ protected:
     void cleanup();
 
     int m_trueCurEvaluationInGeneration;
+
+    void printCoopStats(int i);
 };
 
 
