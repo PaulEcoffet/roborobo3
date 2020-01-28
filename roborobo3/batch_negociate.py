@@ -56,10 +56,11 @@ logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
 nb_rep = 24
 batch = "-b"
+cluster = not platform.node().startswith('pecoffet')
 
-if platform.node().startswith('pecoffet'):
+if not cluster:
     logdir = f"/home/pecoffet/Documents/work/roborobo3/roborobo3/logs/"
-    pythonexec="python"
+    pythonexec = "python"
     nb_rep = 1
     batch = ""
 
@@ -77,13 +78,17 @@ try:
                 curargs = itertools.chain.from_iterable(curargs)
                 robargs += curargs
             elif not key.startswith('_'):  # roborobo specific items do not start with _
-                robargs += ['+'+key, str(val)]
+                robargs += ['+' + key, str(val)]
 
         name = '_'.join([arg[:7] if arg.startswith('+') else arg for arg in robargs])
         curpath = logdir + '/' + name + f'/run_{i:02}/'
         os.makedirs(curpath, exist_ok=True)
-        outf = open(curpath + 'out.txt', 'w')
-        errf = open(curpath + 'err.txt', 'w')
+        if cluster:
+            outf = open(curpath + 'out.txt', 'w')
+            errf = open(curpath + 'err.txt', 'w')
+        else:
+            outf = None
+            errf = None
         files += [outf, errf]
 
         args = [pythonexec, 'pyevoroborobo.py',
@@ -112,6 +117,7 @@ finally:
         if run.poll() is None:
             run.kill()
     for file_ in files:
-        file_.close()
+        if file_ is not None:
+            file_.close()
 
 print("Over")
