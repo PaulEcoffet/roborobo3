@@ -21,10 +21,10 @@ def count_running(runs: Sequence[subprocess.Popen]):
 gridconf = {
     '_rep': list(range(24)),
     '_generation': [1500],
-    '_sigma' : [0.01],
-    '_percentuni' : [0.1],
+    '_sigma' : [0.01],
+    '_percentuni': [0.1],
     'b': [5],
-    'nTolerance': [0.5, 1, 2, 3, 5, 1e25]
+    'nTolerance': [0.5, 1, 2, 3, 5, 1e25],
     'nOpti': [2, 3, 4, 20],
     'meanA': [5, 1],
     'gNbOfPhysicalObjects': [10, 20, 40, 80, 100],
@@ -34,12 +34,19 @@ gridconf = {
 expandedgridconf = list(product_dict(gridconf))
 
 
+try:
+    curtime=time.localtime(int(sys.argv[2]))
+except IndexError:
+    curtime=time.localtime(time.time())
+
+
+
+cluster = not platform.node().startswith('pecoffet')
+nb_runs = 24
 groupname = f"lionscross24-mean5paperready/{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
 batch = "-b"
-cluster = not platform.node().startswith('pecoffet')
-nb_runs = 24
 if not cluster:
     logdir = f"/home/pecoffet/Documents/work/roborobo3/roborobo3/logs/"
     pythonexec = "python"
@@ -48,25 +55,22 @@ if not cluster:
     nb_runs = 1
 
 
-print(int(math.ceil(len(expandedgridconfnb_runs) / nb_runs))
+print(int((len(expandedgridconf) / nb_runs)))
 if len(sys.argv) == 1:
     sys.exit(0)
-    
-    
-iconf = (int(sys.argv[1]) - 1) // nb_runs
 
-try:
-    curtime=time.localtime(int(sys.argv[2]))
-except IndexError:
-    curtime=time.localtime(time.time())
+os.makedirs(logdir, exist_ok=True)
+
+
+
+iconf = (int(sys.argv[1]) - 1) // nb_runs
 
 try:
     conffile=sys.argv[3]
 except IndexError:
-    conffile="config/lions_megabig.properties"
+    conffile="config/lion_megabig.properties"
 
 
-os.makedirs(logdir, exist_ok=True)
 
 curruns = []
 files = []
@@ -123,5 +127,4 @@ finally:
     for file_ in files:
         if file_ is not None:
             file_.close()
-
 print("Over")
