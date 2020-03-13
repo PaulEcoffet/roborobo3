@@ -5,7 +5,7 @@ from textwrap import dedent
 
 radius = 200
 margin = 5
-arena_size = 2*radius + 2*margin
+arena_size = 2 * radius + 2 * margin + 1
 center = arena_size // 2
 
 arena = 255 * np.ones((arena_size, arena_size), dtype=np.uint8)

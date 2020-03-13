@@ -13,6 +13,7 @@ NegociateAgentObserver::NegociateAgentObserver(RobotWorldModel *wm)
 {
     m_wm = dynamic_cast<NegociateWorldModel *>(wm);
     _wm = wm;
+    m_seekTime = 0;
 }
 
 NegociateAgentObserver::~NegociateAgentObserver() = default;
@@ -27,12 +28,20 @@ void NegociateAgentObserver::stepPre()
     }
 }
 
+int NegociateAgentObserver::getSeekTime()
+{
+    return m_seekTime;
+}
+
 void NegociateAgentObserver::stepPost()
 {
     if (!m_wm->seeking)
     {
         return;
     }
+
+    m_seekTime++;
+
     Uint8 r, g, b;
     Uint32 pixel = getPixel32(gFootprintImage, static_cast<int>(_wm->_xReal + 0.5),
                               static_cast<int>(_wm->_yReal + 0.5));
@@ -53,4 +62,5 @@ void NegociateAgentObserver::stepPost()
 void NegociateAgentObserver::reset()
 {
     AgentObserver::reset();
+    m_seekTime = 0;
 }

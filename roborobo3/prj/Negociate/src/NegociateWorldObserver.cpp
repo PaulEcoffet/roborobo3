@@ -14,6 +14,7 @@
 #include "Negociate/include/NegociateSharedData.h"
 #include <boost/algorithm/clamp.hpp>
 #include <boost/math/distributions/normal.hpp>
+#include <Negociate/include/NegociateAgentObserver.h>
 //#include <cv.hpp>
 
 using boost::algorithm::clamp;
@@ -163,6 +164,7 @@ void NegociateWorldObserver::reset()
 
 void NegociateWorldObserver::stepPre()
 {
+    bool resetEnv = false;
     if (m_curEvaluationIteration == NegociateSharedData::evaluationTime || endEvaluationNow)
     {
         m_curEvaluationIteration = 0;
@@ -182,8 +184,7 @@ void NegociateWorldObserver::stepPre()
                   << coop[m_nbIndividuals - 1] << std::endl;
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
-
-        resetEnvironment();
+        resetEnv = true;
     }
     if (m_curEvaluationInGeneration == NegociateSharedData::nbEvaluationsPerGeneration)
     {
@@ -211,7 +212,9 @@ void NegociateWorldObserver::stepPre()
 
                 m_logall.close();
                 m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
-                m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2" << std::endl;
+                m_logall << "eval\titer\tid1\tfakeCoef1\ttrueCoop1\tid2\tfakeCoef2\ttrueCoop2\tAccept1\tAccept2"
+                         << std::endl;
+                logSeekTime();
             }
             if(NegociateSharedData::takeVideo)
             {
@@ -237,7 +240,10 @@ void NegociateWorldObserver::stepPre()
             m_logall.close();
             //outvid.release();
         }
-
+        if (resetEnv)
+        {
+            resetEnvironment();
+        }
     }
 
     for (int i = 0; i < gInitialNumberOfRobots; i++)
@@ -683,4 +689,18 @@ void NegociateWorldObserver::addRobotToTeleport(int robotId)
 void NegociateWorldObserver::addObjectToTeleport(int id)
 {
     objectsToTeleport.insert(id);
+}
+
+void NegociateWorldObserver::logSeekTime()
+{
+    std::cout << "Saving seek time" << std::endl;
+    ogzstream f_seektime((gLogDirectoryname + "/seektime_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
+    f_seektime << "id\tseekCount\n";
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
+        auto *rob = gWorld->getRobot(i);
+        auto *obs = dynamic_cast<NegociateAgentObserver *>(rob->getObserver());
+        f_seektime << i << "\t" << obs->getSeekTime() << "\n";
+    }
+    f_seektime.close();
 }
