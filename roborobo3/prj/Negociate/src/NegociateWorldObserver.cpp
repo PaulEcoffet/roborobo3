@@ -164,6 +164,7 @@ void NegociateWorldObserver::reset()
 
 void NegociateWorldObserver::stepPre()
 {
+    bool resetEnv = false;
     if (m_curEvaluationIteration == NegociateSharedData::evaluationTime || endEvaluationNow)
     {
         m_curEvaluationIteration = 0;
@@ -183,8 +184,7 @@ void NegociateWorldObserver::stepPre()
                   << coop[m_nbIndividuals - 1] << std::endl;
         clearRobotFitnesses();
         m_curEvaluationInGeneration++;
-
-        resetEnvironment();
+        resetEnv = true;
     }
     if (m_curEvaluationInGeneration == NegociateSharedData::nbEvaluationsPerGeneration)
     {
@@ -240,7 +240,10 @@ void NegociateWorldObserver::stepPre()
             m_logall.close();
             //outvid.release();
         }
-
+        if (resetEnv)
+        {
+            resetEnvironment();
+        }
     }
 
     for (int i = 0; i < gInitialNumberOfRobots; i++)
@@ -690,6 +693,7 @@ void NegociateWorldObserver::addObjectToTeleport(int id)
 
 void NegociateWorldObserver::logSeekTime()
 {
+    std::cout << "Saving seek time" << std::endl;
     ogzstream f_seektime((gLogDirectoryname + "/seektime_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
     f_seektime << "id\tseekCount\n";
     for (int i = 0; i < m_nbIndividuals; i++)
