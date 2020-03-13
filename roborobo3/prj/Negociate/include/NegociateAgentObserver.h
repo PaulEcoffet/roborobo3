@@ -23,9 +23,13 @@ public:
 
     void stepPost() override;
 
+    int getSeekTime();
+
 
 protected:
     NegociateWorldModel *m_wm;
+
+    int m_seekTime;
 
 };
 

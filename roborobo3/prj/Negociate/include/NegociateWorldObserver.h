@@ -94,6 +94,8 @@ protected:
     double emptyY = 38;
     std::queue<std::pair<int, int>> availableslots;
     std::queue<std::pair<int, int>> curavailableslots;
+
+    void logSeekTime();
 };
 
 

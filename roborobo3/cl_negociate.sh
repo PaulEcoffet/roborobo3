@@ -1,5 +1,5 @@
 #PBS -N negociate
-#PBS -l walltime=24:00:00
+#PBS -l walltime=124:00:00
 #PBS -l nodes=1:ppn=24
 #PBS -m n
 #PBS -d /home/ecoffet/robocoop/roborobo3/roborobo3/
