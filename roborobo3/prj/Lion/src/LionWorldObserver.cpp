@@ -439,6 +439,7 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     }
     else if (LionSharedData::nControl == 6)
     {
+        /* by product benefits */
         res = a * invest + b * x0tot / std::max(n - 1, 1);
         res -= 0.5 * invest * invest;
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
