@@ -2,8 +2,8 @@
 // Created by paul on 30/10/17.
 //
 
-#ifndef ROBOROBO3_LIONWORLDOBSERVER_H
-#define ROBOROBO3_LIONWORLDOBSERVER_H
+#ifndef ROBOROBO3_SKILLEDWORLDOBSERVER_H
+#define ROBOROBO3_SKILLEDWORLDOBSERVER_H
 
 
 #include <Observers/WorldObserver.h>
@@ -11,22 +11,21 @@
 #include <network/PyevoInterface.h>
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
-#include "LionController.h"
-#include "LionScoreLogger.h"
-#include "LionWorldModel.h"
+#include "SkilledController.h"
+#include "SkilledScoreLogger.h"
+#include "SkilledWorldModel.h"
 
 using json = nlohmann::json;
 
-class LionWorldObserver : public WorldObserver
-{
+class SkilledWorldObserver : public WorldObserver {
 public:
-    explicit LionWorldObserver(World *__world);
+    explicit SkilledWorldObserver(World *__world);
 
-    ~LionWorldObserver() override;
+    ~SkilledWorldObserver() override;
 
     void reset() override;
 
-    void logAgent(LionWorldModel *wm);
+    void logAgent(SkilledWorldModel *wm);
 
     void stepEvolution();
 
@@ -46,9 +45,10 @@ public:
     static double payoff(double invest, double totalInvest, int n, double a, double b);
 
 
-    LionScoreLogger *getScoreLogger();
+    SkilledScoreLogger *getScoreLogger();
 
     bool isJustAfterLoggingTime() const;
+
     bool isLoggingTime() const;
 
 
@@ -67,7 +67,7 @@ protected:
     std::vector<double> m_curfitnesses;
     std::vector<int> m_curnbparticipation;
     std::vector<bool> m_curparticipationindexes;
-    LionScoreLogger scorelogger;
+    SkilledScoreLogger scorelogger;
 
     PyevoInterface pyevo;
 
@@ -90,4 +90,4 @@ protected:
 };
 
 
-#endif //ROBOROBO3_LIONWORLDOBSERVER_H
+#endif //ROBOROBO3_SKILLEDWORLDOBSERVER_H

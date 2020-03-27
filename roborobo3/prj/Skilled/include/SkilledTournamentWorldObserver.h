@@ -2,8 +2,8 @@
 // Created by paul on 30/10/17.
 //
 
-#ifndef ROBOROBO3_LIONWORLDOBSERVER_H
-#define ROBOROBO3_LIONWORLDOBSERVER_H
+#ifndef ROBOROBO3_SKILLEDTOURNAMENTWORLDOBSERVER_H
+#define ROBOROBO3_SKILLEDTOURNAMENTWORLDOBSERVER_H
 
 
 #include <Observers/WorldObserver.h>
@@ -11,22 +11,21 @@
 #include <network/PyevoInterface.h>
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
-#include "LionController.h"
-#include "LionScoreLogger.h"
-#include "LionWorldModel.h"
+#include "SkilledController.h"
 
 using json = nlohmann::json;
 
-class LionWorldObserver : public WorldObserver
-{
+class SkilledTournamentWorldObserver : public WorldObserver {
 public:
-    explicit LionWorldObserver(World *__world);
+    explicit SkilledTournamentWorldObserver(World *__world);
 
-    ~LionWorldObserver() override;
+    ~SkilledTournamentWorldObserver() override;
 
     void reset() override;
 
-    void logAgent(LionWorldModel *wm);
+
+    void logAgent(SkilledWorldModel *wm);
+
 
     void stepEvolution();
 
@@ -46,17 +45,9 @@ public:
     static double payoff(double invest, double totalInvest, int n, double a, double b);
 
 
-    LionScoreLogger *getScoreLogger();
-
-    bool isJustAfterLoggingTime() const;
-    bool isLoggingTime() const;
-
-
-    bool logScore();
-
 protected:
     World *m_world;
-    ogzstream m_fitnessLogManager;
+    LogManager *m_fitnessLogManager;
 
     int m_curEvaluationInGeneration;
     int m_curEvaluationIteration;
@@ -65,29 +56,22 @@ protected:
     std::vector<std::vector<double>> m_individuals;
     std::vector<double> m_fitnesses;
     std::vector<double> m_curfitnesses;
-    std::vector<int> m_curnbparticipation;
-    std::vector<bool> m_curparticipationindexes;
-    LionScoreLogger scorelogger;
-
     PyevoInterface pyevo;
+
+
+    void computeOpportunityImpacts();
+
+    void registerRobotsOnOpportunities();
 
     void clearRobotFitnesses();
 
     void loadGenomesInRobots(const std::vector<std::vector<double>> &genomes);
 
     std::set<int> objectsToTeleport;
-    ogzstream m_logall;
+    std::ofstream m_logall;
     std::vector<double> variabilityCoef;
 
-
-    void setWhichRobotsPlay();
-
-    void cleanup();
-
-    int m_trueCurEvaluationInGeneration;
-
-    void printCoopStats(int i);
 };
 
 
-#endif //ROBOROBO3_LIONWORLDOBSERVER_H
+#endif //ROBOROBO3_SKILLEDTOURNAMENTWORLDOBSERVER_H

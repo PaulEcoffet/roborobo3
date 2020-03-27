@@ -3,33 +3,28 @@
 //
 
 #include <core/RoboroboMain/main.h>
-#include "Lion/include/ScoreLogger.h"
+#include "Lion/include/LionScoreLogger.h"
 
-void ScoreLogger::addScore(int id, int cost, int nbpart, double owncoop, double othercoop, double score)
-{
+void LionScoreLogger::addScore(int id, int cost, int nbpart, double owncoop, double othercoop, double score) {
     file << m_eval << "," << m_iter << "," << id << "," << cost << "," << nbpart << "," << owncoop << ","
          << othercoop << "," << score << "\n";
 }
 
-void ScoreLogger::close()
-{
+void LionScoreLogger::close() {
     file.flush();
     file.close();
     std::cout << "log " << m_actupath << " bien fermé" << std::endl;
 }
 
-void ScoreLogger::updateEval(int eval)
-{
+void LionScoreLogger::updateEval(int eval) {
     m_eval = eval;
 }
 
-void ScoreLogger::updateIter(int iter)
-{
+void LionScoreLogger::updateIter(int iter) {
     m_iter = iter;
 }
 
-void ScoreLogger::openNewLog(int gen)
-{
+void LionScoreLogger::openNewLog(int gen) {
     file.close();
     std::stringstream path;
     path << gLogDirectoryname;

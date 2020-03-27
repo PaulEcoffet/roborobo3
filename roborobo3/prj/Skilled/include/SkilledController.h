@@ -3,34 +3,33 @@
  * @date 2017-10-27
 */
 
-#ifndef ROBOROBO3_LIONCONTROLLER_H
-#define ROBOROBO3_LIONCONTROLLER_H
+#ifndef ROBOROBO3_SKILLEDCONTROLLER_H
+#define ROBOROBO3_SKILLEDCONTROLLER_H
 
 #include <vector>
 #include "Controllers/Controller.h"
-#include "LionWorldObserver.h"
+#include "SkilledWorldObserver.h"
 #include "neuralnetworks/NeuralNetwork.h"
-#include "LionOpportunity.h"
-#include "LionWorldModel.h"
+#include "SkilledOpportunity.h"
+#include "SkilledWorldModel.h"
 #include "Utilities/Misc.h"
-#include "LionScoreLogger.h"
+#include "SkilledScoreLogger.h"
 
 
-class LionWorldObserver;
+class SkilledWorldObserver;
 
 
 using namespace Neural;
 
 /**
- * Controller for the Lion experiment. Very similar to the LionController.
+ * Controller for the Skilled experiment. Very similar to the SkilledController.
  */
 
-class LionController : public Controller
-{
+class SkilledController : public Controller {
 public:
-    explicit LionController(RobotWorldModel *wm);
+    explicit SkilledController(RobotWorldModel *wm);
 
-    ~LionController() override;
+    ~SkilledController() override;
 
     void step() override;
 
@@ -60,8 +59,8 @@ public:
     void play_and_fitness();
 
 protected:
-    LionWorldModel *m_wm;
-    LionWorldObserver *m_wo;
+    SkilledWorldModel *m_wm;
+    SkilledWorldObserver *m_wo;
 
     NeuralNetwork *m_nn;
     NeuralNetwork *m_nn2;
@@ -71,7 +70,7 @@ protected:
 
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
-    LionScoreLogger *scorelogger;
+    SkilledScoreLogger *scorelogger;
 
 
     double cachedEmptyOpp = -1;
@@ -84,10 +83,10 @@ protected:
 
     int verbose = 0;
 
-    double computeScoreFromOpp(LionOpportunity *testopp, LionOpportunity *curopp, bool log = false);
+    double computeScoreFromOpp(SkilledOpportunity *testopp, SkilledOpportunity *curopp, bool log = false);
 
     void move();
 };
 
 
-#endif //ROBOROBO3_LIONCONTROLLER_H
+#endif //ROBOROBO3_SKILLEDCONTROLLER_H
