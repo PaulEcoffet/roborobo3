@@ -105,7 +105,12 @@ void SkilledWorldObserver::reset() {
     std::vector<double> maxguess(nbweights, 1);
     std::vector<double> std(nbweights, SkilledSharedData::normalMut);
     std::vector<double> mutprob(nbweights, SkilledSharedData::mutProb);
-
+    for (auto i = minbounds.size() - 1 - 3; i < minbounds.size(); i++) {
+        minbounds[i] = 0;
+        maxbounds[i] = 1;
+        minguess[i] = 0;
+        maxguess[i] = 0.1;
+    }
 
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob);
     m_fitnesses.resize(m_nbIndividuals, 0);
@@ -158,7 +163,7 @@ void SkilledWorldObserver::stepPre() {
         m_logall.close();  // Cur log must necessarily be closed.
         scorelogger.close();
         logFitnesses(m_fitnesses);
-        printCoopStats((int) SkilledSharedData::nOpti);
+        printCoopStats();
         stepEvolution();
         m_curEvaluationInGeneration = 0;
         m_trueCurEvaluationInGeneration = 0;
@@ -296,8 +301,9 @@ void SkilledWorldObserver::resetEnvironment() {
     for (auto *object: gPhysicalObjects) {
         object->resetLocation();
         object->registerObject();
-        auto *lionobj = dynamic_cast<SkilledOpportunity *>(object);
-        lionobj->reset();
+        auto *skillobj = dynamic_cast<SkilledOpportunity *>(object);
+        assert(skillobj != nullptr);
+        skillobj->reset();
     }
 
     // Randomize the fakeList so that the last fakeRobots aren't necessarily the ones who cooperate the most.
@@ -459,7 +465,7 @@ bool SkilledWorldObserver::logScore() {
     return isLoggingTime() && SkilledSharedData::logScore;
 }
 
-void SkilledWorldObserver::printCoopStats(int nbPart) {
+void SkilledWorldObserver::printCoopStats() {
     std::vector<double> coops(m_nbIndividuals, 0);
     for (int i = 0; i < m_nbIndividuals; i++) {
         auto *cur_wm = dynamic_cast<SkilledWorldModel *>(m_world->getRobot(i)->getWorldModel());

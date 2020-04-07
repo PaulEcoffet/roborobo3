@@ -7,6 +7,7 @@
 #include <CorrectRepartition/include/CorrectRepartitionOpportunity.h>
 #include <DebugColl/include/DebugCollObj.h>
 #include <Negociate/include/NegociateOpportunity.h>
+#include <Skilled/include/SkilledOpportunity.h>
 #include "World/PhysicalObjectFactory.h"
 #include "World/RoundObject.h"
 #include "World/EnergyItem.h"
@@ -24,11 +25,10 @@ void PhysicalObjectFactory::makeObject( int type )
 {
     int id = PhysicalObjectFactory::getNextId();
 
-    std::string s = "";
+    std::string s = "physicalObject[";
     std::stringstream out;
     out << id;
 
-    s = "physicalObject[";
     s += out.str();
     s += "].type";
     if ( gProperties.hasProperty( s ) )
@@ -121,19 +121,25 @@ void PhysicalObjectFactory::makeObject( int type )
             break;
         case 15:
             if (gVerbose)
-                std::cout << "[INFO] Lion analysis obj created (type = 14).\n";
+                std::cout << "[INFO] Negociate obj created (type = 15).\n";
             gPhysicalObjects.push_back(new NegociateOpportunity(id));
             break;
-        // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
+        case 16:
+            if (gVerbose)
+                std::cout << "[INFO] Skilled obj created (type = 15).\n";
+            gPhysicalObjects.push_back(new SkilledOpportunity(id));
+            break;
+            // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
-            std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")" << std::endl;
+            std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")"
+                      << std::endl;
             exit(-1);
     }
 }
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 15;
+    return 16;
 }
 
 

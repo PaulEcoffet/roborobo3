@@ -13,14 +13,14 @@
 
 SkilledWorldModel::SkilledWorldModel()
         : RobotWorldModel(),
+          arrival(0),
           onOpportunity(false),
           selfA(0.5),
           opp(nullptr),
           fake(false),
           ingame(false),
           fakeCoef(1),
-          teleport(false),
-          coopCache(gInitialNumberOfRobots) {
+          teleport(false) {
     setNewSelfA();
 }
 
@@ -45,19 +45,42 @@ bool SkilledWorldModel::isPlaying() {
 
 double SkilledWorldModel::getCoop(int nbpart, bool truecoop) {
     assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
-    assert(coopCache[nbpart] >= 0 && coopCache[nbpart] <= SkilledSharedData::maxCoop);
-    if (truecoop || SkilledSharedData::independantCoop)
-        return coopCache[nbpart];
-    else {
-        if (!SkilledSharedData::additiveVar)
-            return coopCache[nbpart] * fakeCoef;
-        else
-            return boost::algorithm::clamp(coopCache[nbpart] + fakeCoef - 1, 0, SkilledSharedData::maxCoop);
+    double coop;
+    if (nbpart == 0) {
+        coop = coopalone;
+    } else {
+        coop = cooppartner;
     }
+    if (!(truecoop || SkilledSharedData::independantCoop)) {
+        if (!SkilledSharedData::additiveVar)
+            coop *= fakeCoef;
+        else
+            coop += fakeCoef - 1;
+
+    }
+    return boost::algorithm::clamp(coop, 0, SkilledSharedData::maxCoop);
 }
 
-void SkilledWorldModel::setCoop(int nbpart, double val) {
-    assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
+void SkilledWorldModel::setCoopAlone(double val) {
     assert(val >= 0 && val <= SkilledSharedData::maxCoop);
-    coopCache[nbpart] = val;
+    coopalone = val;
+}
+
+void SkilledWorldModel::setCoopPartners(double val) {
+    assert(val >= 0 && val <= SkilledSharedData::maxCoop);
+    cooppartner = val;
+}
+
+void SkilledWorldModel::setCoops(double _coopalone, double _cooppartner) {
+    setCoopAlone(_coopalone);
+    setCoopPartners(_cooppartner);
+}
+
+double SkilledWorldModel::getSkill() const {
+    return skill;
+}
+
+void SkilledWorldModel::setSkill(double skill) {
+    assert(0 <= skill && skill <= 1);
+    SkilledWorldModel::skill = skill;
 }

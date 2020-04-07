@@ -47,7 +47,7 @@ public:
 
     double getFitness() const;
 
-    const std::vector<double> getWeights() const;
+    std::vector<double> getWeights() const;
 
 
     double getCoop(int i);
@@ -63,7 +63,6 @@ protected:
     SkilledWorldObserver *m_wo;
 
     NeuralNetwork *m_nn;
-    NeuralNetwork *m_nn2;
 
     std::vector<double> weights;
     std::vector<double> weights2;
@@ -71,7 +70,7 @@ protected:
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
     SkilledScoreLogger *scorelogger;
-
+    int verbose = 0;
 
     double cachedEmptyOpp = -1;
 
@@ -81,9 +80,7 @@ protected:
     unsigned int getNbOutputs() const;
 
 
-    int verbose = 0;
-
-    double computeScoreFromOpp(SkilledOpportunity *testopp, SkilledOpportunity *curopp, bool log = false);
+    double computeScoreFromOpp(SkilledOpportunity *testopp, bool log);
 
     void move();
 };

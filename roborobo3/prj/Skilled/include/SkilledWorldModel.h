@@ -39,13 +39,23 @@ public:
 
     double getCoop(int nbpart, bool truecoop = false);
 
-    void setCoop(int nbpart, double val);
+    void setCoopAlone(double val);
 
-    bool newopp;
+    void setCoopPartners(double val);
+
+    void setCoops(double _coopalone, double _cooppartner);
+
+    bool newopp{};
 
 
 protected:
-    std::vector<double> coopCache;
+    double coopalone = 0;
+    double cooppartner = 0;
+    double skill = 0;
+public:
+    double getSkill() const;
+
+    void setSkill(double skill);
 
 
 };

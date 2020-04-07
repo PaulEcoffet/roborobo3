@@ -25,39 +25,28 @@ enum {
     ELMAN_ID = 2
 };
 
-SkilledController::SkilledController(RobotWorldModel *wm) : scorelogger(nullptr) {
+SkilledController::SkilledController(RobotWorldModel *wm) : scorelogger(nullptr), m_wo(nullptr) {
     m_wm = dynamic_cast<SkilledWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
-    std::vector<unsigned int> nbNeurons2 = std::vector<unsigned int>(1, 3);
     switch (SkilledSharedData::controllerType) {
         case MLP_ID:
             m_nn = new MLP(weights, getNbInputs(), 1,
                            nbNeuronsPerHiddenLayers, true);
-            m_nn2 = new MLP(weights, 2, 1, nbNeurons2, true);
             break;
         case PERCEPTRON_ID:
             m_nn = new Perceptron(weights, getNbInputs(), 1);
-            m_nn2 = new Perceptron(weights, 1, 1);
             break;
         case ELMAN_ID:
             m_nn = new Elman(weights, getNbInputs(), 1,
                              nbNeuronsPerHiddenLayers, true);
-            m_nn2 = new Elman(weights, 1, 1,
-                              nbNeurons2, true);
             break;
         default:
             std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
                       << SkilledSharedData::controllerType << "\n";
             exit(-1);
     }
-    weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
+    weights.resize(m_nn->getRequiredNumberOfWeights() + 3, 0);  // 3 for coopalone, cooppart & skill
     m_nn->setWeights(weights);
-    if (SkilledSharedData::independantCoop == 0) {
-        weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
-        m_nn2->setWeights(weights2);
-    } else {
-        weights2.clear();
-    }
     resetFitness();
 }
 
@@ -79,10 +68,11 @@ void SkilledController::step() {
     auto *best = dynamic_cast<SkilledOpportunity *>(gPhysicalObjects[0]);
     double bestscore = -9999;
 
-
-    for (auto *opp : gPhysicalObjects) {
+    int maxopptodiscover = ceil(m_wm->getSkill() * gNbOfPhysicalObjects);
+    for (size_t i = 0; i < maxopptodiscover; i++) {
+        auto *opp = gPhysicalObjects[i];
         auto *lionopp = dynamic_cast<SkilledOpportunity *>(opp);
-        double score = computeScoreFromOpp(lionopp, m_wm->opp, m_wo->logScore());
+        double score = computeScoreFromOpp(lionopp, m_wo->logScore());
         if (m_wm->getId() == 0 && gVerbose) {
             //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
         }
@@ -123,7 +113,7 @@ void SkilledController::step() {
     }
 }
 
-double SkilledController::computeScoreFromOpp(SkilledOpportunity *testopp, SkilledOpportunity *curopp, bool log) {
+double SkilledController::computeScoreFromOpp(SkilledOpportunity *testopp, bool log) {
     int onopp = testopp->isRobotOnOpp(m_wm->getId());
     int cost = (onopp) ? 0 : 1;
     int nbpart = testopp->countCurrentRobots() - onopp;
@@ -163,58 +153,22 @@ SkilledController::~SkilledController() {
 void SkilledController::loadNewGenome(const std::vector<double> &newGenome) {
 
     auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights();
-    if (m_nn->getRequiredNumberOfWeights() + weights2.size() != newGenome.size()) {
+    if (m_nn->getRequiredNumberOfWeights() + 3 != newGenome.size()) {
         std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
                   << newGenome.size() << std::endl;
         exit(-1);
     }
     weights = std::vector<double>(newGenome.begin(), split);
     weights2 = std::vector<double>(split, newGenome.end());
+    assert(weights2.size() == 3);
     m_nn->setWeights(weights);
-    m_nn2->setWeights(weights2);
+    m_wm->setCoopAlone(weights2[0] * SkilledSharedData::maxCoop);
+    m_wm->setCoopPartners(weights2[1] * SkilledSharedData::maxCoop);
+    m_wm->setSkill(weights2[2]);
+
 
     if (SkilledSharedData::controllerType == ELMAN_ID) {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
-    }
-
-    std::vector<double> inputs(2, 0);
-    if (SkilledSharedData::hardCoop) {
-        assert(SkilledSharedData::independantCoop == 0);
-        for (int i = 0; i < gInitialNumberOfRobots; i++) {
-            int nbPlayers = i + 1;
-            double coop = 0;
-            if (getCoopWeight() < 0) {
-                coop = SkilledSharedData::meanA / nbPlayers;
-            } else {
-                coop = SkilledSharedData::meanA + (SkilledSharedData::b * (nbPlayers - 1)) / nbPlayers;
-            }
-            m_wm->setCoop(i, coop);
-        }
-    } else if (SkilledSharedData::independantCoop == 1) {
-        m_wm->setCoop(0, SkilledSharedData::meanA);
-        if (m_wm->fakeCoef < 1) {
-            m_wm->setCoop(1, SkilledSharedData::meanA / 2);
-        } else {
-            m_wm->setCoop(1, SkilledSharedData::meanA + SkilledSharedData::b / 2);
-        }
-    } else if (SkilledSharedData::independantCoop == 2) {
-        const double coefrange = 2 * SkilledSharedData::fakeCoef;
-        const double ess = SkilledSharedData::meanA / 2;
-        const double so = SkilledSharedData::meanA + SkilledSharedData::b / 2;
-        double coef = (m_wm->fakeCoef - (1 - SkilledSharedData::fakeCoef)) / coefrange;
-        m_wm->setCoop(0, SkilledSharedData::meanA);
-        m_wm->setCoop(1, ess * (1 - coef) + so * coef);
-    } else {
-        for (int i = 0; i < gInitialNumberOfRobots; i++) {
-            inputs[0] = (double) (i % 10) / 10;  // Units counter
-            inputs[1] = (double) (i / 10) /
-                        ((double) gInitialNumberOfRobots / 10); // ten counter  -- NOLINT(bugprone-integer-division)
-            m_nn2->setInputs(inputs);
-            m_nn2->step();
-            auto &output = m_nn2->readOut();
-            double coop = ((output[0] + 1) / 2) * SkilledSharedData::maxCoop;
-            m_wm->setCoop(i, coop);
-        }
     }
     cachedEmptyOpp = computeScore(1, 0, m_wm->getCoop(0), 0);
 }
@@ -295,7 +249,7 @@ std::string SkilledController::inspect(std::string prefix) {
     return out.str();
 }
 
-const std::vector<double> SkilledController::getWeights() const {
+std::vector<double> SkilledController::getWeights() const {
     std::vector<double> allweights;
 
     allweights.insert(allweights.end(), weights.begin(), weights.end());
@@ -317,22 +271,23 @@ void SkilledController::move() {
         rob->unregisterRobot();
         rob->setCoord(
                 static_cast<int>(physobj->getXCenterPixel() +
-                                 cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)),
+                                 cos(angle) * (gPhysicalObjectDefaultRadius + ((double) gRobotWidth / 2))),
                 static_cast<int>(physobj->getYCenterPixel() +
-                                 sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)));
+                                 sin(angle) * (gPhysicalObjectDefaultRadius + (double) gRobotWidth / 2)));
         rob->setCoordReal(
                 static_cast<int>(physobj->getXCenterPixel() +
-                                 cos(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)),
+                                 cos(angle) * (gPhysicalObjectDefaultRadius + (double) gRobotWidth / 2)),
                 static_cast<int>(physobj->getYCenterPixel() +
-                                 sin(angle) * (gPhysicalObjectDefaultRadius + gRobotWidth / 2)));
+                                 sin(angle) * (gPhysicalObjectDefaultRadius + (double) gRobotWidth / 2)));
         rob->getWorldModel()->_agentAbsoluteOrientation = 0;
         rob->registerRobot();
     }
 
 
     Uint8 r, g, b;
-    Uint32 pixel = getPixel32(gFootprintImage, static_cast<int>(m_wm->_xReal + 0.5),
-                              static_cast<int>(m_wm->_yReal + 0.5));
+    Uint32 pixel = getPixel32(gFootprintImage,
+                              static_cast<int>(m_wm->_xReal + 0.5),  // NOLINT(bugprone-incorrect-roundings)
+                              static_cast<int>(m_wm->_yReal + 0.5));  // NOLINT(bugprone-incorrect-roundings)
     SDL_GetRGB(pixel, gFootprintImage->format, &r, &g, &b);
     m_wm->_groundSensorValue[0] = (int) r;
     m_wm->_groundSensorValue[1] = (int) g;
@@ -354,10 +309,6 @@ void SkilledController::move() {
         if (!m_wm->opp || targetIndex != m_wm->opp->getId()) {
             newopp = true;
             if (m_wm->opp) {
-                if (gVerbose && false) {
-                    std::cout << m_wm->getId() << " moved from " << m_wm->opp->getId() << " to " << targetIndex
-                              << std::endl;
-                }
                 m_wm->opp->removeRobot(m_wm->getId());
             }
         }
