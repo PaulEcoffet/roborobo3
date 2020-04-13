@@ -49,6 +49,8 @@ double SkilledSharedData::normalMut = 0.1;
 double SkilledSharedData::mutProb = 0.01;
 int SkilledSharedData::maxPlayer = 20;
 bool SkilledSharedData::logScore = false;
+double SkilledSharedData::skillCost = 0;
+
 
 
 void SkilledSharedData::initSharedData() {
@@ -94,6 +96,7 @@ void SkilledSharedData::initSharedData() {
     GETVAL(maxPlayer);
     GETVAL(otherInvAsInput);
     GETVAL(logScore);
+    GETVAL(skillCost);
 
 
     assert((hardCoop && independantCoop == 0 && !fakeRobots) ||

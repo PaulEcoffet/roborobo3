@@ -328,13 +328,14 @@ void SkilledController::play_and_fitness() {
         return;
     }
     double cost = (m_wm->newopp) ? SkilledSharedData::cost : 0;
+    double skillcost = m_wm->getSkill() * SkilledSharedData::skillCost;
 
     auto totalinv = m_wm->opp->getCurInv();
     int n = m_wm->opp->countCurrentRobots();
     assert(n >= 1);
     double payoff = SkilledWorldObserver::payoff(m_wm->getCoop(n - 1), totalinv, n, SkilledSharedData::meanA,
                                                  SkilledSharedData::b);
-    m_wm->_fitnessValue += (payoff - cost) / SkilledSharedData::evaluationTime; // Normalized with time
+    m_wm->_fitnessValue += (payoff - cost - skillcost) / SkilledSharedData::evaluationTime; // Normalized with time
     dynamic_cast<SkilledWorldObserver *>(gWorld->getWorldObserver())->logAgent(m_wm);
 
 }

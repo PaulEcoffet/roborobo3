@@ -52,8 +52,10 @@ public:
     static double mutProb;
     static int maxPlayer;
     static bool logScore;
+    static double skillCost;
 
     static void initSharedData();
+
 
 
 };

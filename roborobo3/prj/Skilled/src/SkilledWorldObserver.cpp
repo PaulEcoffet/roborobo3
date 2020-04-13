@@ -297,13 +297,13 @@ void SkilledWorldObserver::resetEnvironment() {
         robot->unregisterRobot();
     }
 
-
     for (auto *object: gPhysicalObjects) {
         object->resetLocation();
         object->registerObject();
-        auto *skillobj = dynamic_cast<SkilledOpportunity *>(object);
-        assert(skillobj != nullptr);
-        skillobj->reset();
+        if(auto *skillobj = dynamic_cast<SkilledOpportunity *>(object))
+            skillobj->reset();
+        else
+            exit(-1);
     }
 
     // Randomize the fakeList so that the last fakeRobots aren't necessarily the ones who cooperate the most.
@@ -421,7 +421,7 @@ void SkilledWorldObserver::addObjectToTeleport(int id) {
 }
 
 void SkilledWorldObserver::setWhichRobotsPlay() {
-    std::vector<int> individuals_indexes(m_nbIndividuals); // vector with 100 ints.
+    std::vector<int> individuals_indexes(m_nbIndividuals);
     std::iota(std::begin(individuals_indexes), std::end(individuals_indexes), 0); // Fill with 0, 1, ..., 99.
     std::vector<int> individual_scores = individuals_indexes;
     std::shuffle(individual_scores.begin(), individual_scores.end(), engine);
