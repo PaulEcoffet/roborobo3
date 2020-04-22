@@ -25,7 +25,8 @@ using namespace Neural;
  * Controller for the Skilled experiment. Very similar to the SkilledController.
  */
 
-class SkilledController : public Controller {
+class SkilledController : public Controller
+{
 public:
     explicit SkilledController(RobotWorldModel *wm);
 

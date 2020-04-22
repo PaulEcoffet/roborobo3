@@ -7,24 +7,24 @@
 #include "World/World.h"
 
 
-TemplateWanderWorldObserver::TemplateWanderWorldObserver( World *__world ) : WorldObserver( __world )
+TemplateWanderWorldObserver::TemplateWanderWorldObserver(World *__world) : WorldObserver(__world)
 {
-	_world = __world;
+    _world = __world;
 }
 
 TemplateWanderWorldObserver::~TemplateWanderWorldObserver()
 {
-	// nothing to do.
+    // nothing to do.
 }
 
 void TemplateWanderWorldObserver::reset()
 {
-	// nothing to do.
+    // nothing to do.
 }
 
 void TemplateWanderWorldObserver::stepPre()
 {
-	// nothing to do.
+    // nothing to do.
 }
 
 void TemplateWanderWorldObserver::stepPost()

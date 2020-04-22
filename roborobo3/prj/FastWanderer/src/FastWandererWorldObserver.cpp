@@ -51,7 +51,7 @@ void FastWandererWorldObserver::reset()
 
 void FastWandererWorldObserver::stepPre()
 {
-    if (m_curEvalutionIteration  == FastWandererSharedData::evaluationTime)
+    if (m_curEvalutionIteration == FastWandererSharedData::evaluationTime)
     {
         logFitnesses(getSortedFitnesses());
         std::vector<double> fitness;
@@ -59,7 +59,8 @@ void FastWandererWorldObserver::stepPre()
         for (int i = 0; i < gWorld->getNbOfRobots(); i++)
         {
             fitness.push_back(gWorld->getRobot(i)->getWorldModel()->_fitnessValue);
-            individuals.push_back(dynamic_cast<FastWandererController*>(gWorld->getRobot(i)->getController())->getGenome());
+            individuals.push_back(
+                    dynamic_cast<FastWandererController *>(gWorld->getRobot(i)->getController())->getGenome());
         }
         std::vector<std::vector<double>> new_generation = pycma.getNextGeneration(individuals, fitness);
         if (new_generation.empty())
@@ -116,16 +117,16 @@ std::vector<std::pair<int, double>> FastWandererWorldObserver::getSortedFitnesse
         fitnesses[i].second = gWorld->getRobot(i)->getWorldModel()->_fitnessValue;
     }
     std::sort(fitnesses.begin(), fitnesses.end(),
-              [](std::pair<int, double>a, std::pair<int, double>b){return a.second < b.second;});
+              [](std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; });
     return fitnesses;
 }
 
-void FastWandererWorldObserver::logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses)
+void FastWandererWorldObserver::logFitnesses(const std::vector<std::pair<int, double>> &sortedFitnesses)
 {
     unsigned long size = sortedFitnesses.size();
 
     double sum = std::accumulate(sortedFitnesses.begin(), sortedFitnesses.end(), 0.0,
-                                 [](double a, const std::pair<int, double>& b) -> double {return a + b.second;});
+                                 [](double a, const std::pair<int, double> &b) -> double { return a + b.second; });
     double mean = sum / size;
 
     std::vector<double> diff(size);
@@ -138,10 +139,10 @@ void FastWandererWorldObserver::logFitnesses(const std::vector<std::pair<int, do
     out << _generationCount << "\t";
     out << size << "\t";
     out << sortedFitnesses[0].second << "\t"; // MIN
-    out << sortedFitnesses[size/4].second << "\t"; // 1st quartile
-    out << sortedFitnesses[size/2].second << "\t"; // 2nd quartile - Median
-    out << sortedFitnesses[(3*size)/4].second << "\t"; // 3rd quartile
-    out << sortedFitnesses[size-1].second << "\t"; // Max
+    out << sortedFitnesses[size / 4].second << "\t"; // 1st quartile
+    out << sortedFitnesses[size / 2].second << "\t"; // 2nd quartile - Median
+    out << sortedFitnesses[(3 * size) / 4].second << "\t"; // 3rd quartile
+    out << sortedFitnesses[size - 1].second << "\t"; // Max
     out << mean << "\t";
     out << variance << "\n";
     m_fitnessLogManager->write(out.str());
@@ -149,12 +150,14 @@ void FastWandererWorldObserver::logFitnesses(const std::vector<std::pair<int, do
 
 void FastWandererWorldObserver::resetEnvironment()
 {
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         robot->registerRobot();
@@ -164,8 +167,9 @@ void FastWandererWorldObserver::resetEnvironment()
 
 void FastWandererWorldObserver::clearRobotFitnesses()
 {
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-        auto* ctl = dynamic_cast<FastWandererController*>(gWorld->getRobot(iRobot)->getController());
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        auto *ctl = dynamic_cast<FastWandererController *>(gWorld->getRobot(iRobot)->getController());
         ctl->resetFitness();
     }
 }

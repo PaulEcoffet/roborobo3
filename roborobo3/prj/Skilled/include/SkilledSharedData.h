@@ -7,7 +7,8 @@
 #define ROBOROBO3_SKILLEDSHAREDDATA_H
 
 
-class SkilledSharedData {
+class SkilledSharedData
+{
 public:
     static int evaluationTime;
     static int nbEvaluationsPerGeneration;
@@ -55,7 +56,6 @@ public:
     static double skillCost;
 
     static void initSharedData();
-
 
 
 };

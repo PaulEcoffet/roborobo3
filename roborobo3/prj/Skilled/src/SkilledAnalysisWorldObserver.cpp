@@ -17,7 +17,8 @@
 
 using json = nlohmann::json;
 
-SkilledAnalysisWorldObserver::SkilledAnalysisWorldObserver(World *__world) : WorldObserver(__world) {
+SkilledAnalysisWorldObserver::SkilledAnalysisWorldObserver(World *__world) : WorldObserver(__world)
+{
     SkilledSharedData::initSharedData();
 
     int gen = 0;
@@ -25,7 +26,8 @@ SkilledAnalysisWorldObserver::SkilledAnalysisWorldObserver(World *__world) : Wor
 
     std::string genomePath(gLogDirectoryname + "/genomes_" + std::to_string(gen) + ".txt");
     gProperties.checkAndGetPropertyValue("genomePath", &genomePath, false);
-    if (!boost::filesystem::exists(genomePath)) {
+    if (!boost::filesystem::exists(genomePath))
+    {
         std::cerr << "The genome file path '" << genomePath << "' does not exist.\n";
         exit(-1);
     }
@@ -37,18 +39,24 @@ SkilledAnalysisWorldObserver::SkilledAnalysisWorldObserver(World *__world) : Wor
 
 }
 
-void SkilledAnalysisWorldObserver::reset() {
+void SkilledAnalysisWorldObserver::reset()
+{
     int i_gen = 0;
-    for (const auto &genome : m_genomesJson) {
+    for (const auto &genome : m_genomesJson)
+    {
         auto *ctl = dynamic_cast<SkilledController *>(gWorld->getRobot(0)->getController());
         ctl->loadNewGenome(genome);
         ctl->resetFitness();
-        for (int cost = 0; cost < 2; cost++) {
+        for (int cost = 0; cost < 2; cost++)
+        {
             int maxrob = (SkilledSharedData::maxTwo) ? 4 : gInitialNumberOfRobots;
-            for (int nbonopp = 0; nbonopp < maxrob;) {
-                for (int j = 0; j <= 20; j++) {
+            for (int nbonopp = 0; nbonopp < maxrob;)
+            {
+                for (int j = 0; j <= 20; j++)
+                {
                     double owncoop = j * 0.5;
-                    for (int k = 0; k <= 20; k++) {
+                    for (int k = 0; k <= 20; k++)
+                    {
                         double partcoop = k * 0.5;
                         double totothercoop = partcoop * nbonopp;
                         double score = ctl->computeScore(cost, nbonopp, owncoop, totothercoop);
@@ -60,9 +68,11 @@ void SkilledAnalysisWorldObserver::reset() {
                               << score << "\n";
                     }
                 }
-                if (nbonopp < 10) {
+                if (nbonopp < 10)
+                {
                     nbonopp++;
-                } else if (nbonopp < 100)
+                }
+                else if (nbonopp < 100)
                     nbonopp += 10;
                 else
                     nbonopp += 100;

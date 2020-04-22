@@ -18,11 +18,15 @@ class CorrectRepartitionWorldObserver : public WorldObserver
 {
 public:
     explicit CorrectRepartitionWorldObserver(World *__world);
+
     ~CorrectRepartitionWorldObserver() override;
 
     void stepPre() override;
+
     void stepPost() override;
+
     void reset() override;
+
     void stepEvolution();
 
 
@@ -31,7 +35,7 @@ public:
 protected:
     World *m_world;
     LogManager *m_fitnessLogManager;
-    LogManager* m_observer;
+    LogManager *m_observer;
     json m_genomesLogJson;
     int m_curEvaluationIteration;
     int m_nbIndividuals;
@@ -46,10 +50,15 @@ protected:
     PyevoInterface pycma;
 
     void computeOpportunityImpact();
+
     double payoff(const int nbRobots) const;
+
     void clearOpportunityNearbyRobots();
+
     void clearRobotFitnesses();
+
     void activateOnlyRobot(int batchIndex);
+
     void monitorPopulation() const;
 
     int m_batchSize = 0;

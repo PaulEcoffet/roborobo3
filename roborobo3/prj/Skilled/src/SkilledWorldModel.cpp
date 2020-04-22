@@ -20,17 +20,20 @@ SkilledWorldModel::SkilledWorldModel()
           fake(false),
           ingame(false),
           fakeCoef(1),
-          teleport(false) {
+          teleport(false)
+{
     setNewSelfA();
 }
 
-void SkilledWorldModel::setNewSelfA() {
+void SkilledWorldModel::setNewSelfA()
+{
 
     selfA = std::max(randgaussian() * SkilledSharedData::stdA + SkilledSharedData::meanA, 0.01);
 }
 
 
-void SkilledWorldModel::reset() {
+void SkilledWorldModel::reset()
+{
     onOpportunity = false;
     nbOnOpp = 0;
     arrival = 0;
@@ -38,20 +41,26 @@ void SkilledWorldModel::reset() {
     opp = nullptr;
 }
 
-bool SkilledWorldModel::isPlaying() {
+bool SkilledWorldModel::isPlaying()
+{
     return opp != nullptr;
 }
 
 
-double SkilledWorldModel::getCoop(int nbpart, bool truecoop) {
+double SkilledWorldModel::getCoop(int nbpart, bool truecoop)
+{
     assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
     double coop;
-    if (nbpart == 0) {
+    if (nbpart == 0)
+    {
         coop = coopalone;
-    } else {
+    }
+    else
+    {
         coop = cooppartner;
     }
-    if (!(truecoop || SkilledSharedData::independantCoop)) {
+    if (!(truecoop || SkilledSharedData::independantCoop))
+    {
         if (!SkilledSharedData::additiveVar)
             coop *= fakeCoef;
         else
@@ -61,26 +70,31 @@ double SkilledWorldModel::getCoop(int nbpart, bool truecoop) {
     return boost::algorithm::clamp(coop, 0, SkilledSharedData::maxCoop);
 }
 
-void SkilledWorldModel::setCoopAlone(double val) {
+void SkilledWorldModel::setCoopAlone(double val)
+{
     assert(val >= 0 && val <= SkilledSharedData::maxCoop);
     coopalone = val;
 }
 
-void SkilledWorldModel::setCoopPartners(double val) {
+void SkilledWorldModel::setCoopPartners(double val)
+{
     assert(val >= 0 && val <= SkilledSharedData::maxCoop);
     cooppartner = val;
 }
 
-void SkilledWorldModel::setCoops(double _coopalone, double _cooppartner) {
+void SkilledWorldModel::setCoops(double _coopalone, double _cooppartner)
+{
     setCoopAlone(_coopalone);
     setCoopPartners(_cooppartner);
 }
 
-double SkilledWorldModel::getSkill() const {
+double SkilledWorldModel::getSkill() const
+{
     return skill;
 }
 
-void SkilledWorldModel::setSkill(double skill) {
+void SkilledWorldModel::setSkill(double skill)
+{
     assert(0 <= skill && skill <= 1);
     SkilledWorldModel::skill = skill;
 }

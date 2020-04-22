@@ -52,8 +52,8 @@ bool SkilledSharedData::logScore = false;
 double SkilledSharedData::skillCost = 0;
 
 
-
-void SkilledSharedData::initSharedData() {
+void SkilledSharedData::initSharedData()
+{
     gProperties.checkAndGetPropertyValue("evaluationTime", &SkilledSharedData::evaluationTime, true);
     gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration",
                                          &SkilledSharedData::nbEvaluationsPerGeneration, true);

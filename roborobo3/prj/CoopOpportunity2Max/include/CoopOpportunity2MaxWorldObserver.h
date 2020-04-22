@@ -20,26 +20,33 @@ class CoopOpportunity2MaxWorldObserver : public WorldObserver
 {
 protected:
     virtual void updateEnvironment();
+
     virtual void updateMonitoring();
-    virtual void monitorPopulation( bool localVerbose = true );
-    
+
+    virtual void monitorPopulation(bool localVerbose = true);
+
     int _generationCount;
     int _generationItCount;
-    
+
     LogManager *_fitnessLogManager;
     LogManager *_genomeLogManager;
-    
+
 public:
     CoopOpportunity2MaxWorldObserver(World *world);
+
     ~CoopOpportunity2MaxWorldObserver();
-    
+
     virtual void reset();
+
     virtual void stepPre();
+
     void stepEvaluation();
-    
-    virtual int getGenerationItCount() { return _generationItCount; }
-    
-    int getGenerationCount() { return _generationCount; }
+
+    virtual int getGenerationItCount()
+    { return _generationItCount; }
+
+    int getGenerationCount()
+    { return _generationCount; }
 };
 
 #endif

@@ -20,7 +20,8 @@ using boost::algorithm::clamp;
 
 
 SkilledTournamentWorldObserver::SkilledTournamentWorldObserver(World *__world) :
-        WorldObserver(__world), objectsToTeleport(), variabilityCoef() {
+        WorldObserver(__world), objectsToTeleport(), variabilityCoef()
+{
     m_world = __world;
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
@@ -36,11 +37,14 @@ SkilledTournamentWorldObserver::SkilledTournamentWorldObserver(World *__world) :
     m_fitnessLogManager->write("gen\tind\trep\tfake\tfitness\n");
 
     std::vector<std::string> url;
-    if (gRemote.empty()) {
+    if (gRemote.empty())
+    {
         std::cerr << "[WARNING] gRemote needs to be defined.";
         url.emplace_back("127.0.0.1");
         url.emplace_back("1703");
-    } else {
+    }
+    else
+    {
         boost::split(url, gRemote, boost::is_any_of(":"));
     }
     pyevo.connect(url[0], static_cast<unsigned short>(std::stol(url[1])));
@@ -57,7 +61,8 @@ SkilledTournamentWorldObserver::SkilledTournamentWorldObserver(World *__world) :
     double maxquantile = boost::math::cdf(normal, 1 + SkilledSharedData::fakeCoef);
     double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
     double curquantile = minquantile;
-    for (int i = 0; i < m_nbIndividuals; i++) {
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
         variabilityCoef[i] = boost::math::quantile(normal, curquantile);
         assert(variabilityCoef[i] <= 1 + SkilledSharedData::fakeCoef + 0.1);
         assert(variabilityCoef[i] >= 1 - SkilledSharedData::fakeCoef - 0.1);
@@ -68,11 +73,13 @@ SkilledTournamentWorldObserver::SkilledTournamentWorldObserver(World *__world) :
 }
 
 
-SkilledTournamentWorldObserver::~SkilledTournamentWorldObserver() {
+SkilledTournamentWorldObserver::~SkilledTournamentWorldObserver()
+{
     delete m_fitnessLogManager;
 }
 
-void SkilledTournamentWorldObserver::reset() {
+void SkilledTournamentWorldObserver::reset()
+{
     m_nbIndividuals = gNbOfRobots;
 
     // Init fitness
@@ -96,8 +103,10 @@ void SkilledTournamentWorldObserver::reset() {
     std::uniform_real_distribution<double> randomInvPerAg(0, SkilledSharedData::maxCoop);
     std::normal_distribution<double> randomSmallVar(0, 1);
     std::normal_distribution<double> randomSmallN(0, 3);
-    do {
-        if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) {
+    do
+    {
+        if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0)
+        {
             std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
             std::ofstream genfile(path);
             genfile << json(m_individuals);
@@ -105,9 +114,11 @@ void SkilledTournamentWorldObserver::reset() {
 
         m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
         loadGenomesInRobots(m_individuals);
-        for (int i = 0; i < gInitialNumberOfRobots; i++) {
+        for (int i = 0; i < gInitialNumberOfRobots; i++)
+        {
             auto ctl = dynamic_cast<SkilledController *>(gWorld->getRobot(i)->getController());
-            for (int iter = 0; iter < SkilledSharedData::evaluationTime; iter++) {
+            for (int iter = 0; iter < SkilledSharedData::evaluationTime; iter++)
+            {
 
                 int nbOnOpp1 = randomNbOpp(engine);
                 double invPerAg1 = randomInvPerAg(engine);
@@ -136,9 +147,12 @@ void SkilledTournamentWorldObserver::reset() {
                           << ", cost2:" << cost2 << ", ownInv2: " << ownInv2 << "\n";
                 std::cout << "score2: " << score1 << ", payoff2: " << payoff2 << std::endl;
                  //*/
-                if (score1 > score2) {
+                if (score1 > score2)
+                {
                     m_fitnesses[i] += payoff1 >= payoff2;
-                } else {
+                }
+                else
+                {
                     m_fitnesses[i] += payoff2 >= payoff1;
                 }
             }
@@ -151,12 +165,15 @@ void SkilledTournamentWorldObserver::reset() {
 }
 
 
-void SkilledTournamentWorldObserver::stepPre() {
+void SkilledTournamentWorldObserver::stepPre()
+{
     m_curEvaluationIteration++;
 
-    if (m_curEvaluationIteration == SkilledSharedData::evaluationTime) {
+    if (m_curEvaluationIteration == SkilledSharedData::evaluationTime)
+    {
         m_curEvaluationIteration = 0;
-        for (int i = 0; i < m_nbIndividuals; i++) {
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
             auto *wm = dynamic_cast<SkilledWorldModel *>(m_world->getRobot(i)->getWorldModel());
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
@@ -167,30 +184,38 @@ void SkilledTournamentWorldObserver::stepPre() {
 
         resetEnvironment();
     }
-    if (m_curEvaluationInGeneration == SkilledSharedData::nbEvaluationsPerGeneration) {
+    if (m_curEvaluationInGeneration == SkilledSharedData::nbEvaluationsPerGeneration)
+    {
         m_curEvaluationInGeneration = 0;
         stepEvolution();
         m_generationCount++;
     }
 
     /* Shall we log? */
-    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) {
-        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
-            if (m_logall.is_open()) {
+    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0)
+    {
+        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
+        {
+            if (m_logall.is_open())
+            {
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
             m_logall
                     << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoopNoCoef\totherCoop\n";
         }
-    } else if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 1 && m_logall.is_open()) {
+    }
+    else if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 1 && m_logall.is_open())
+    {
         m_logall.close();
     }
 }
 
 
-void SkilledTournamentWorldObserver::logAgent(SkilledWorldModel *wm) {
-    if (!m_logall.is_open()) {
+void SkilledTournamentWorldObserver::logAgent(SkilledWorldModel *wm)
+{
+    if (!m_logall.is_open())
+    {
         return;
     }
 
@@ -209,30 +234,37 @@ void SkilledTournamentWorldObserver::logAgent(SkilledWorldModel *wm) {
 }
 
 
-void SkilledTournamentWorldObserver::stepPost() {
+void SkilledTournamentWorldObserver::stepPost()
+{
     /* Plays */
 
-    for (auto id: objectsToTeleport) {
+    for (auto id: objectsToTeleport)
+    {
         gPhysicalObjects[id]->unregisterObject();
         gPhysicalObjects[id]->resetLocation();
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
-    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) {
-        if (SkilledSharedData::takeVideo and m_curEvaluationInGeneration == 0) {
+    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0)
+    {
+        if (SkilledSharedData::takeVideo and m_curEvaluationInGeneration == 0)
+        {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
         }
     }
 }
 
-void SkilledTournamentWorldObserver::stepEvolution() {
-    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) {
+void SkilledTournamentWorldObserver::stepEvolution()
+{
+    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0)
+    {
         std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
     m_individuals = pyevo.getNextGeneration(m_individuals, m_fitnesses);
-    if (m_individuals.empty()) {
+    if (m_individuals.empty())
+    {
         exit(0);
     }
     m_fitnesses = std::vector<double>(m_nbIndividuals, 0);
@@ -240,9 +272,11 @@ void SkilledTournamentWorldObserver::stepEvolution() {
     clearRobotFitnesses();
 }
 
-std::vector<std::pair<int, double>> SkilledTournamentWorldObserver::getSortedFitnesses() const {
+std::vector<std::pair<int, double>> SkilledTournamentWorldObserver::getSortedFitnesses() const
+{
     std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
-    for (int i = 0; i < m_individuals.size(); i++) {
+    for (int i = 0; i < m_individuals.size(); i++)
+    {
         fitnesses[i].first = i;
         fitnesses[i].second = m_fitnesses[i];
     }
@@ -251,9 +285,11 @@ std::vector<std::pair<int, double>> SkilledTournamentWorldObserver::getSortedFit
     return fitnesses;
 }
 
-void SkilledTournamentWorldObserver::logFitnesses(const std::vector<double> &curfitness) {
+void SkilledTournamentWorldObserver::logFitnesses(const std::vector<double> &curfitness)
+{
     std::stringstream out;
-    for (int i = 0; i < m_nbIndividuals; i++) {
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
         auto *cur_wm = dynamic_cast<SkilledWorldModel *>(m_world->getRobot(i)->getWorldModel());
         out << m_generationCount << "\t"
             << i << "\t"
@@ -265,17 +301,21 @@ void SkilledTournamentWorldObserver::logFitnesses(const std::vector<double> &cur
     m_fitnessLogManager->flush();
 }
 
-void SkilledTournamentWorldObserver::resetEnvironment() {
-    for (auto object: gPhysicalObjects) {
+void SkilledTournamentWorldObserver::resetEnvironment()
+{
+    for (auto object: gPhysicalObjects)
+    {
         object->unregisterObject();
     }
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
 
 
-    for (auto *object: gPhysicalObjects) {
+    for (auto *object: gPhysicalObjects)
+    {
         object->resetLocation();
         object->registerObject();
         auto *lionobj = dynamic_cast<SkilledOpportunity *>(object);
@@ -285,18 +325,22 @@ void SkilledTournamentWorldObserver::resetEnvironment() {
     // Randomize the fakeList so that the last fakeRobots aren't necessarily the ones who cooperate the most.
     std::shuffle(variabilityCoef.begin(), variabilityCoef.end(), engine);
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         robot->getWorldModel()->_agentAbsoluteOrientation = 0;
 
         auto *wm = dynamic_cast<SkilledWorldModel *>(robot->getWorldModel());
         wm->reset();
-        if (SkilledSharedData::fakeRobots) {
+        if (SkilledSharedData::fakeRobots)
+        {
             wm->fakeCoef = variabilityCoef[iRobot];
             assert(wm->fakeCoef <= 1 + SkilledSharedData::fakeCoef + 0.1);
             assert(wm->fakeCoef >= 1 - SkilledSharedData::fakeCoef - 0.1);
-        } else {
+        }
+        else
+        {
             wm->fakeCoef = 1.0;
         }
         wm->setNewSelfA();
@@ -304,23 +348,27 @@ void SkilledTournamentWorldObserver::resetEnvironment() {
 }
 
 
-static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint) {
+static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
+{
     return lowerbound + (upperbound - lowerbound) / (1 + exp(-slope * (x - inflexionPoint)));
 }
 
 
 double
 SkilledTournamentWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
-                                       const double b) {
+                                       const double b)
+{
     double res = 0;
     const double x0 = (totalInvest - invest);
 
     res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
 
-    if (gVerbose) {
+    if (gVerbose)
+    {
         std::cout << "x:" << invest << ", x0:" << x0 << ", n:" << n << ", res:" << res << "\n";
     }
-    if (SkilledSharedData::frictionCoef > 0) {
+    if (SkilledSharedData::frictionCoef > 0)
+    {
         res *= (1 - sigmoid(n, 0, 1, SkilledSharedData::frictionCoef, SkilledSharedData::frictionInflexionPoint));
     }
 
@@ -328,22 +376,27 @@ SkilledTournamentWorldObserver::payoff(const double invest, const double totalIn
 }
 
 
-void SkilledTournamentWorldObserver::clearRobotFitnesses() {
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+void SkilledTournamentWorldObserver::clearRobotFitnesses()
+{
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         auto *ctl = dynamic_cast<SkilledController *>(gWorld->getRobot(iRobot)->getController());
         ctl->resetFitness();
     }
 }
 
-void SkilledTournamentWorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>> &genomes) {
+void SkilledTournamentWorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>> &genomes)
+{
     assert(genomes.size() == m_nbIndividuals);
-    for (int i = 0; i < m_world->getNbOfRobots(); i++) {
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
         auto *ctl = dynamic_cast<SkilledController *>(m_world->getRobot(i)->getController());
         ctl->loadNewGenome(genomes[i]);
     }
 
 }
 
-void SkilledTournamentWorldObserver::addObjectToTeleport(int id) {
+void SkilledTournamentWorldObserver::addObjectToTeleport(int id)
+{
     objectsToTeleport.insert(id);
 }

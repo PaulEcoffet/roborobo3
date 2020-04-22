@@ -28,6 +28,7 @@ public:
     void reset() override;
 
     void registerRobotsOnOpportunities();
+
     void addObjectToTeleport(int id);
 
 

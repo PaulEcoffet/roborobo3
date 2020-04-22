@@ -12,7 +12,8 @@
 #include "RoboroboMain/roborobo.h"
 #include <set>
 
-class SkilledAnalysisOpportunity : public SkilledOpportunity {
+class SkilledAnalysisOpportunity : public SkilledOpportunity
+{
 public:
     explicit SkilledAnalysisOpportunity(int __id);
 

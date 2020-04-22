@@ -18,6 +18,7 @@ public:
     explicit LionOpportunity(int __id);
 
     void step() override;
+
     void reset();
 
 
@@ -26,6 +27,7 @@ public:
     virtual double getCurInv() const;
 
     int countCurrentRobots();
+
     void removeRobot(int id);
 
 
@@ -38,15 +40,15 @@ public:
     double ifNewPartInv = 0;
     int lifeid;
     double lifeExpectancy;
+
     double getIfNewPartInv() const;
+
     bool isRobotOnOpp(const int id);
-
-
 
 
 protected:
     std::vector<int> nearbyRobotIndexes;
-    std::map<int, LionWorldModel*> nearbyMap;
+    std::map<int, LionWorldModel *> nearbyMap;
 
     virtual void updateColor();
 

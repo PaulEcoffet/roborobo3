@@ -49,6 +49,7 @@ public:
     LionScoreLogger *getScoreLogger();
 
     bool isJustAfterLoggingTime() const;
+
     bool isLoggingTime() const;
 
 

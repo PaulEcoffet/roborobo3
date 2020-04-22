@@ -12,7 +12,8 @@
 
 class SkilledOpportunity;
 
-class SkilledWorldModel : public RobotWorldModel {
+class SkilledWorldModel : public RobotWorldModel
+{
 public:
     SkilledWorldModel();
 

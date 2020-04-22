@@ -10,7 +10,8 @@
 #include "Skilled/include/SkilledWorldObserver.h"
 #include <SDL2/SDL.h>
 
-SkilledAgentObserver::SkilledAgentObserver(RobotWorldModel *wm) {
+SkilledAgentObserver::SkilledAgentObserver(RobotWorldModel *wm)
+{
     m_wm = dynamic_cast<SkilledWorldModel *>(wm);
     _wm = wm;
 }
@@ -18,14 +19,17 @@ SkilledAgentObserver::SkilledAgentObserver(RobotWorldModel *wm) {
 SkilledAgentObserver::~SkilledAgentObserver() = default;
 
 
-void SkilledAgentObserver::stepPre() {
+void SkilledAgentObserver::stepPre()
+{
 
 }
 
-void SkilledAgentObserver::stepPost() {
+void SkilledAgentObserver::stepPost()
+{
 
 }
 
-void SkilledAgentObserver::reset() {
+void SkilledAgentObserver::reset()
+{
     AgentObserver::reset();
 }

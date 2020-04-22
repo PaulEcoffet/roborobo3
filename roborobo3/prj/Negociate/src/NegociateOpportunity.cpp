@@ -31,7 +31,8 @@ int NegociateOpportunity::getNbNewNearbyRobots() const
 void NegociateOpportunity::isWalked(int id)
 {
     const int rid = id - gRobotIndexStartOffset;
-    if (std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end())
+    if (std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) ==
+        newNearbyRobotIndexes.end())
     { // if not already in the list
         newNearbyRobotIndexes.push_back(rid);
     }
@@ -72,7 +73,7 @@ void NegociateOpportunity::registerNewRobots()
 void NegociateOpportunity::step()
 {
     touchingrobotsSet.clear();
-    if(random01() < lifeExpectancy)
+    if (random01() < lifeExpectancy)
     {
         kill();
     }

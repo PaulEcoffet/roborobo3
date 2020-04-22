@@ -71,7 +71,7 @@ void CoopFixed2Opportunity::registerNewRobots()
 
 void CoopFixed2Opportunity::step()
 {
-    if(random01() < lifeExpectancy)
+    if (random01() < lifeExpectancy)
     {
         kill();
     }

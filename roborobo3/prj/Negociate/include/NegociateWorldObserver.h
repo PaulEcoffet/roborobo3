@@ -6,7 +6,6 @@
 #define ROBOROBO3_NEGOCIATEWORLDOBSERVER_H
 
 
-
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
 #include <network/PyevoInterface.h>

@@ -14,14 +14,17 @@
 #include "RoboroboMain/roborobo.h"
 #include "Skilled/include/SkilledAnalysisOpportunity.h"
 
-SkilledAnalysisOpportunity::SkilledAnalysisOpportunity(int __id) : SkilledOpportunity(__id) {
+SkilledAnalysisOpportunity::SkilledAnalysisOpportunity(int __id) : SkilledOpportunity(__id)
+{
     setType(10);
 }
 
 
-void SkilledAnalysisOpportunity::step() {
+void SkilledAnalysisOpportunity::step()
+{
     updateColor();
-    for (auto *fakerobot : fakerobots) {
+    for (auto *fakerobot : fakerobots)
+    {
         RobotWorldModel *wm = fakerobot->getWorldModel();
         wm->_desiredTranslationalValue = 0;
         wm->_cooperationLevel = getCoop(); // TODO WRONG COOP
@@ -29,26 +32,32 @@ void SkilledAnalysisOpportunity::step() {
     }
 }
 
-void SkilledAnalysisOpportunity::setCoopValue(double coop) {
+void SkilledAnalysisOpportunity::setCoopValue(double coop)
+{
     m_coop = coop;
     updateColor();
 }
 
-double SkilledAnalysisOpportunity::getCoop() const {
+double SkilledAnalysisOpportunity::getCoop() const
+{
     return m_coop;
 }
 
-void SkilledAnalysisOpportunity::setNbFakeRobots(int nbrobots) {
+void SkilledAnalysisOpportunity::setNbFakeRobots(int nbrobots)
+{
     nbFakeRobots = nbrobots;
 
 }
 
-int SkilledAnalysisOpportunity::getNbFakeRobots() {
+int SkilledAnalysisOpportunity::getNbFakeRobots()
+{
     return nbFakeRobots;
 }
 
-void SkilledAnalysisOpportunity::placeFakeRobot() {
-    if (nbFakeRobots < 1 || fakerobots.empty()) {
+void SkilledAnalysisOpportunity::placeFakeRobot()
+{
+    if (nbFakeRobots < 1 || fakerobots.empty())
+    {
         return;
     }
 
@@ -58,7 +67,8 @@ void SkilledAnalysisOpportunity::placeFakeRobot() {
     const int cy = getYCenterPixel();
     const double rotphase = fmod((double) _id / 50, 1);
     int i = 1;
-    for (auto *fakerobot : fakerobots) {
+    for (auto *fakerobot : fakerobots)
+    {
         const double pos = (double) i / (fakerobots.size() + 1);
         const double minrot = 1. / 6;
         const double maxrot = 5. / 6;
@@ -86,16 +96,22 @@ void SkilledAnalysisOpportunity::placeFakeRobot() {
 
 }
 
-void SkilledAnalysisOpportunity::updateColor() {
-    if (m_coop * nbFakeRobots < 5) {
+void SkilledAnalysisOpportunity::updateColor()
+{
+    if (m_coop * nbFakeRobots < 5)
+    {
         _displayColorRed = 189;
         _displayColorGreen = 131;
         _displayColorBlue = 126;
-    } else if (m_coop * nbFakeRobots < 10) {
+    }
+    else if (m_coop * nbFakeRobots < 10)
+    {
         _displayColorRed = 198;
         _displayColorGreen = 186;
         _displayColorBlue = 58;
-    } else {
+    }
+    else
+    {
         _displayColorRed = 44;
         _displayColorGreen = 83;
         _displayColorBlue = 120;

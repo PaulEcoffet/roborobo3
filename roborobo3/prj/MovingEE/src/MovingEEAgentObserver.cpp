@@ -13,7 +13,7 @@
 #include "MovingEE/include/MovingEEWorldObserver.h"
 #include <string>
 
-MovingEEAgentObserver::MovingEEAgentObserver( RobotWorldModel *wm ) : TemplateEEAgentObserver ( wm )
+MovingEEAgentObserver::MovingEEAgentObserver(RobotWorldModel *wm) : TemplateEEAgentObserver(wm)
 {
     // superclass constructor called before
 }
@@ -31,7 +31,7 @@ MovingEEAgentObserver::~MovingEEAgentObserver()
 void MovingEEAgentObserver::stepPre()
 {
     // * update fitness (if needed)
-    if ( _wm->isAlive() )
+    if (_wm->isAlive())
     {
         _wm->_fitnessValue = _wm->_fitnessValue + 1;
     }

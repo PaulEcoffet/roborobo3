@@ -13,12 +13,14 @@ class RobotWorldModel;
 
 class TemplateEEAgentObserver : public AgentObserver
 {
-	public:
-		TemplateEEAgentObserver(RobotWorldModel *wm);
-		~TemplateEEAgentObserver();
+public:
+    TemplateEEAgentObserver(RobotWorldModel *wm);
 
-		virtual void reset();
-		virtual void stepPre();
+    ~TemplateEEAgentObserver();
+
+    virtual void reset();
+
+    virtual void stepPre();
 
 };
 

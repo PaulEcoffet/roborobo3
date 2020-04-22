@@ -13,13 +13,16 @@ class CorrectRepartitionWorldModel : public RobotWorldModel
 {
 public:
     CorrectRepartitionWorldModel();
+
     std::deque<double> lastOwnInvest;
     std::deque<double> lastTotalInvest;
 
     double meanLastTotalInvest();
+
     double meanLastOwnInvest();
 
     void appendOwnInvest(const double invest);
+
     void appendTotalInvest(const double invest);
 
     bool onOpportunity;

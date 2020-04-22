@@ -13,13 +13,14 @@
 #include "PartnerControl/include/PartnerControlController.h"
 #include "PartnerControl/include/PartnerControlSharedData.h"
 
-enum {
+enum
+{
     MLP_ID = 0,
     PERCEPTRON_ID = 1,
     ELMAN_ID = 2
 };
 
-PartnerControlController::PartnerControlController(RobotWorldModel* wm)
+PartnerControlController::PartnerControlController(RobotWorldModel *wm)
 {
     m_wm = dynamic_cast<PartnerControlWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -40,7 +41,8 @@ PartnerControlController::PartnerControlController(RobotWorldModel* wm)
             std::cout << "Elman\n";
             break;
         default:
-            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< PartnerControlSharedData::controllerType << "\n";
+            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
+                      << PartnerControlSharedData::controllerType << "\n";
             exit(-1);
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
@@ -53,7 +55,7 @@ PartnerControlController::PartnerControlController(RobotWorldModel* wm)
 void PartnerControlController::reset()
 {
     if (PartnerControlSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 void PartnerControlController::step()
@@ -143,7 +145,7 @@ std::vector<double> PartnerControlController::getInputs()
 
 void PartnerControlController::loadNewGenome(const std::vector<double> &newGenome)
 {
-    if(m_nn->getRequiredNumberOfWeights() != newGenome.size())
+    if (m_nn->getRequiredNumberOfWeights() != newGenome.size())
     {
         std::cout << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
         exit(-1);
@@ -151,7 +153,7 @@ void PartnerControlController::loadNewGenome(const std::vector<double> &newGenom
     weights = newGenome;
     m_nn->setWeights(weights);
     if (PartnerControlSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 unsigned int PartnerControlController::getNbInputs() const
@@ -176,7 +178,7 @@ void PartnerControlController::resetFitness()
     updateFitness(0);
 }
 
-void PartnerControlController::updateFitness( double newFitness )
+void PartnerControlController::updateFitness(double newFitness)
 {
     if (newFitness < 0)
     {
@@ -186,9 +188,9 @@ void PartnerControlController::updateFitness( double newFitness )
     m_wm->_fitnessValue = newFitness;
 }
 
-void PartnerControlController::increaseFitness( double delta )
+void PartnerControlController::increaseFitness(double delta)
 {
-    updateFitness(m_wm->_fitnessValue+delta);
+    updateFitness(m_wm->_fitnessValue + delta);
 }
 
 std::string PartnerControlController::inspect(std::string prefix)
@@ -215,7 +217,8 @@ std::string PartnerControlController::inspect(std::string prefix)
         else if (entityId >= gPhysicalObjectIndexStartOffset)
         {
             out << "\tA cooperation opportunity ";
-            auto coop = dynamic_cast<PartnerControlOpportunity *>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            auto coop = dynamic_cast<PartnerControlOpportunity *>(gPhysicalObjects[entityId -
+                                                                                   gPhysicalObjectIndexStartOffset]);
             out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
         }
     }
@@ -251,7 +254,7 @@ unsigned int PartnerControlController::getNbOutputs() const
 {
     return 2    // Motor commands
            + 1  // Cooperation value
-    ;
+            ;
 }
 
 

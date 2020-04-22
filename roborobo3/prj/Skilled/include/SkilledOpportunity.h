@@ -12,7 +12,8 @@
 
 class SkilledWorldModel;
 
-class SkilledOpportunity : public RoundObject {
+class SkilledOpportunity : public RoundObject
+{
 public:
     explicit SkilledOpportunity(int __id);
 

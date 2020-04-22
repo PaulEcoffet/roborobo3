@@ -16,15 +16,17 @@
 
 class TemplateMovingController : public Controller
 {
-	public:
-		//Initializes the variables
-		TemplateMovingController( RobotWorldModel *__wm );
-		~TemplateMovingController();
-		
-		void reset();
-		void step();
-    
-        void monitorSensory();
+public:
+    //Initializes the variables
+    TemplateMovingController(RobotWorldModel *__wm);
+
+    ~TemplateMovingController();
+
+    void reset();
+
+    void step();
+
+    void monitorSensory();
 };
 
 

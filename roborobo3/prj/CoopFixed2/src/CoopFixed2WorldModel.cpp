@@ -94,7 +94,8 @@ double CoopFixed2WorldModel::meanLastCommonKnowledgeReputation()
 {
     if (not lastCommonKnowledgeReputation.empty())
     {
-        return std::accumulate(lastCommonKnowledgeReputation.begin(), lastCommonKnowledgeReputation.end(), 0.0) / lastCommonKnowledgeReputation.size();
+        return std::accumulate(lastCommonKnowledgeReputation.begin(), lastCommonKnowledgeReputation.end(), 0.0) /
+               lastCommonKnowledgeReputation.size();
     }
     else
     {
@@ -127,7 +128,7 @@ void CoopFixed2WorldModel::updateOtherReputation(int robid, double invest)
 {
     const double currep = otherReputations[robid];
     const int n = nbPlays[robid];
-    otherReputations[robid] = (currep * n + invest) / (n+1);
+    otherReputations[robid] = (currep * n + invest) / (n + 1);
     nbPlays[robid]++;
 }
 
@@ -135,7 +136,7 @@ double CoopFixed2WorldModel::getOtherReputation(int robid)
 {
     if (CoopFixed2SharedData::commonKnowledgeReputation)
     {
-        auto *o_wm = dynamic_cast<CoopFixed2WorldModel*>(gWorld->getRobot(robid)->getWorldModel());
+        auto *o_wm = dynamic_cast<CoopFixed2WorldModel *>(gWorld->getRobot(robid)->getWorldModel());
         return o_wm->meanLastCommonKnowledgeReputation();
     }
     return otherReputations[robid];
@@ -152,7 +153,8 @@ int CoopFixed2WorldModel::getNbPlays(int robid)
 
 bool CoopFixed2WorldModel::isPlaying()
 {
-    return onOpportunity && (arrival <= 2 || !CoopFixed2SharedData::fixRobotNb) && (!CoopFixed2SharedData::atLeastTwo || nbOnOpp >= 2);
+    return onOpportunity && (arrival <= 2 || !CoopFixed2SharedData::fixRobotNb) &&
+           (!CoopFixed2SharedData::atLeastTwo || nbOnOpp >= 2);
 }
 
 double CoopFixed2WorldModel::getCoop(bool trueValue) const

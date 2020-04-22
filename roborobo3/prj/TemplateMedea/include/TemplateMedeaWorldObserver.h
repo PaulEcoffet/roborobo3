@@ -14,9 +14,11 @@ class TemplateMedeaWorldObserver : public TemplateEEWorldObserver
 {
 public:
     TemplateMedeaWorldObserver(World *world);
+
     ~TemplateMedeaWorldObserver();
-    
+
     void stepPre();
+
     void stepPost();
 };
 

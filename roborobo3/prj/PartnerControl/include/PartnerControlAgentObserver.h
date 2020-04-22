@@ -14,9 +14,11 @@ class PartnerControlAgentObserver : public AgentObserver
 {
 public:
     PartnerControlAgentObserver(RobotWorldModel *wm);
+
     ~PartnerControlAgentObserver() override;
 
     void stepPre() override;
+
     void reset() override;
 
 protected:

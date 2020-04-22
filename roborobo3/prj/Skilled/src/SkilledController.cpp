@@ -19,16 +19,19 @@
 #include <core/Utilities/Graphics.h>
 
 
-enum {
+enum
+{
     MLP_ID = 0,
     PERCEPTRON_ID = 1,
     ELMAN_ID = 2
 };
 
-SkilledController::SkilledController(RobotWorldModel *wm) : scorelogger(nullptr), m_wo(nullptr) {
+SkilledController::SkilledController(RobotWorldModel *wm) : scorelogger(nullptr), m_wo(nullptr)
+{
     m_wm = dynamic_cast<SkilledWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
-    switch (SkilledSharedData::controllerType) {
+    switch (SkilledSharedData::controllerType)
+    {
         case MLP_ID:
             m_nn = new MLP(weights, getNbInputs(), 1,
                            nbNeuronsPerHiddenLayers, true);
@@ -50,18 +53,22 @@ SkilledController::SkilledController(RobotWorldModel *wm) : scorelogger(nullptr)
     resetFitness();
 }
 
-void SkilledController::reset() {
+void SkilledController::reset()
+{
     m_wo = dynamic_cast<SkilledWorldObserver *>(gWorld->getWorldObserver());
 
     scorelogger = m_wo->getScoreLogger();
-    if (SkilledSharedData::controllerType == ELMAN_ID) {
+    if (SkilledSharedData::controllerType == ELMAN_ID)
+    {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
     }
 }
 
-void SkilledController::step() {
+void SkilledController::step()
+{
     verbose = 0;
-    if (not m_wm->isAlive()) {
+    if (not m_wm->isAlive())
+    {
         return;
     }
 
@@ -69,14 +76,13 @@ void SkilledController::step() {
     double bestscore = -9999;
 
     int maxopptodiscover = ceil(m_wm->getSkill() * gNbOfPhysicalObjects);
-    for (size_t i = 0; i < maxopptodiscover; i++) {
+    for (size_t i = 0; i < maxopptodiscover; i++)
+    {
         auto *opp = gPhysicalObjects[i];
         auto *lionopp = dynamic_cast<SkilledOpportunity *>(opp);
         double score = computeScoreFromOpp(lionopp, m_wo->logScore());
-        if (m_wm->getId() == 0 && gVerbose) {
-            //std::cout << opp->getId() << ": cost:" << cost << ", nb:" << nbopp << ", coop:" << coop << ", own:" << owncoop << ", score :" << score << std::endl;
-        }
-        if (score > bestscore) {
+        if (score > bestscore)
+        {
             bestscore = score;
             best = lionopp;
         }
@@ -91,69 +97,89 @@ void SkilledController::step() {
 
     move();
 
-    if (SkilledSharedData::asyncPlay) {
+    if (SkilledSharedData::asyncPlay)
+    {
         play_and_fitness();
     }
 
-    if (m_wm->fakeCoef < 0.8) {
+    if (m_wm->fakeCoef < 0.8)
+    {
         m_wm->setRobotLED_colorValues(126, 55, 49);
-        if (m_wm->onOpportunity) {
+        if (m_wm->onOpportunity)
+        {
             m_wm->setRobotLED_colorValues(169, 96, 89);
         }
-    } else if (m_wm->fakeCoef < 1.2) {
+    }
+    else if (m_wm->fakeCoef < 1.2)
+    {
         m_wm->setRobotLED_colorValues(0, 0, 255);
-        if (m_wm->onOpportunity) {
+        if (m_wm->onOpportunity)
+        {
             m_wm->setRobotLED_colorValues(100, 100, 255);
         }
-    } else {
+    }
+    else
+    {
         m_wm->setRobotLED_colorValues(115, 182, 234);
-        if (m_wm->onOpportunity) {
+        if (m_wm->onOpportunity)
+        {
             m_wm->setRobotLED_colorValues(185, 218, 244);
         }
     }
 }
 
-double SkilledController::computeScoreFromOpp(SkilledOpportunity *testopp, bool log) {
+double SkilledController::computeScoreFromOpp(SkilledOpportunity *testopp, bool log)
+{
     int onopp = testopp->isRobotOnOpp(m_wm->getId());
     int cost = (onopp) ? 0 : 1;
     int nbpart = testopp->countCurrentRobots() - onopp;
     double owncoop = getCoop(nbpart);
     double totothercoop = 0;
-    if (cost && nbpart == 0) {
+    if (cost && nbpart == 0)
+    {
         return cachedEmptyOpp;
     }
-    if (onopp) {
+    if (onopp)
+    {
         totothercoop = testopp->getCurInv() - owncoop;
-    } else {
+    }
+    else
+    {
         totothercoop = testopp->getIfNewPartInv();
     }
     double score = computeScore(cost, nbpart, owncoop, totothercoop);
-    if (log) {
+    if (log)
+    {
         const double othercoopmean = totothercoop / std::max(1, nbpart);
         scorelogger->addScore(m_wm->getId(), cost, nbpart, owncoop, othercoopmean, score);
     }
     return score;
 }
 
-std::vector<unsigned int> SkilledController::getNbNeuronsPerHiddenLayers() const {
+std::vector<unsigned int> SkilledController::getNbNeuronsPerHiddenLayers() const
+{
     auto nbHiddenLayers = static_cast<unsigned int>(SkilledSharedData::nbHiddenLayers);
     std::vector<unsigned int> neuronsPerHiddenLayer(nbHiddenLayers);
-    for (auto &nbNeuro : neuronsPerHiddenLayer) {
+    for (auto &nbNeuro : neuronsPerHiddenLayer)
+    {
         nbNeuro = static_cast<unsigned int>(SkilledSharedData::nbNeuronsPerHiddenLayer);
     }
     return neuronsPerHiddenLayer;
 }
 
 
-SkilledController::~SkilledController() {
+SkilledController::~SkilledController()
+{
     delete m_nn;
 }
 
 
-void SkilledController::loadNewGenome(const std::vector<double> &newGenome) {
+void SkilledController::loadNewGenome(const std::vector<double> &newGenome)
+{
 
     auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights();
-    if (m_nn->getRequiredNumberOfWeights() + 3 != newGenome.size()) {
+    if (m_nn->getRequiredNumberOfWeights() + 3 != newGenome.size())
+    {
         std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
                   << newGenome.size() << std::endl;
         exit(-1);
@@ -167,18 +193,22 @@ void SkilledController::loadNewGenome(const std::vector<double> &newGenome) {
     m_wm->setSkill(weights2[2]);
 
 
-    if (SkilledSharedData::controllerType == ELMAN_ID) {
+    if (SkilledSharedData::controllerType == ELMAN_ID)
+    {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
     }
     cachedEmptyOpp = computeScore(1, 0, m_wm->getCoop(0), 0);
 }
 
-unsigned int SkilledController::getNbInputs() const {
+unsigned int SkilledController::getNbInputs() const
+{
     int nbInput = 3;
-    if (SkilledSharedData::splitedNbPartInput) {
+    if (SkilledSharedData::splitedNbPartInput)
+    {
         nbInput += 2;
     }
-    if (SkilledSharedData::costAsInput) {
+    if (SkilledSharedData::costAsInput)
+    {
         nbInput++;
     }
 
@@ -186,33 +216,41 @@ unsigned int SkilledController::getNbInputs() const {
 }
 
 
-double SkilledController::getFitness() const {
+double SkilledController::getFitness() const
+{
     return m_wm->_fitnessValue;
 }
 
 
-void SkilledController::resetFitness() {
+void SkilledController::resetFitness()
+{
     updateFitness(0);
 }
 
-void SkilledController::updateFitness(double newFitness) {
-    if (newFitness < 0) {
+void SkilledController::updateFitness(double newFitness)
+{
+    if (newFitness < 0)
+    {
         updateFitness(0);
         return;
     }
     m_wm->_fitnessValue = newFitness;
 }
 
-void SkilledController::increaseFitness(double delta) {
+void SkilledController::increaseFitness(double delta)
+{
     updateFitness(m_wm->_fitnessValue + delta);
 }
 
-std::string SkilledController::inspect(std::string prefix) {
+std::string SkilledController::inspect(std::string prefix)
+{
     std::stringstream out;
-    if (verbose == 0) {
+    if (verbose == 0)
+    {
         out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
 
-        if (m_wm->opp) {
+        if (m_wm->opp)
+        {
             out << prefix << "WARNING: THE DISPLAYED VALUES DO NOT CORRESPOND TO WHAT HAS REALLY BEEN PLAYED\n";
             out << prefix << "On opportunity with " << m_wm->opp->countCurrentRobots() - 1 << ".\n";
             out << prefix << "\tLast own invest: ";
@@ -227,21 +265,26 @@ std::string SkilledController::inspect(std::string prefix) {
         out << prefix << "a coeff: " << m_wm->selfA << "\n";
         out << prefix << "Actual fitness: " << getFitness() << "\n";
     }
-    if (verbose == 1) {
+    if (verbose == 1)
+    {
         out << m_nn->toString() << std::endl;
         auto &weights = m_nn->getWeigths();
         int i = 0;
-        for (auto &weight : weights) {
+        for (auto &weight : weights)
+        {
             out << weight << ",";
-            if (i == 10) {
+            if (i == 10)
+            {
                 out << "\n";
                 i = 0;
             }
             i++;
         }
     }
-    if (verbose == 2) {
-        for (int i = 0; i < gInitialNumberOfRobots; i++) {
+    if (verbose == 2)
+    {
+        for (int i = 0; i < gInitialNumberOfRobots; i++)
+        {
             out << prefix << i << ": " << m_wm->getCoop(i) << "(" << m_wm->getCoop(i, true) << ")\n";
         }
     }
@@ -249,7 +292,8 @@ std::string SkilledController::inspect(std::string prefix) {
     return out.str();
 }
 
-std::vector<double> SkilledController::getWeights() const {
+std::vector<double> SkilledController::getWeights() const
+{
     std::vector<double> allweights;
 
     allweights.insert(allweights.end(), weights.begin(), weights.end());
@@ -258,14 +302,17 @@ std::vector<double> SkilledController::getWeights() const {
     return allweights;
 }
 
-unsigned int SkilledController::getNbOutputs() const {
+unsigned int SkilledController::getNbOutputs() const
+{
     return 1;
 }
 
-void SkilledController::move() {
+void SkilledController::move()
+{
     int dest_obj = m_wm->teleport;
     double angle = ((double) m_wm->getId() / gNbOfRobots) * 2 * M_PI;
-    if (dest_obj != -1) {
+    if (dest_obj != -1)
+    {
         PhysicalObject *physobj = gPhysicalObjects[dest_obj];
         auto rob = gWorld->getRobot(this->m_wm->getId());
         rob->unregisterRobot();
@@ -296,9 +343,10 @@ void SkilledController::move() {
 
     int targetIndex = m_wm->getGroundSensorValue();
     bool newopp = false;
-
+    // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint,
+    // cf. groundsensorvalues image)
     if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset +
-                                                                        (int) gPhysicalObjects.size())   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
+                                                                        (int) gPhysicalObjects.size())
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         assert(targetIndex == dest_obj);
@@ -306,15 +354,18 @@ void SkilledController::move() {
         gPhysicalObjects[targetIndex]->isWalked(m_wm->getId() + gRobotIndexStartOffset); // callback on opportunity
 
 
-        if (!m_wm->opp || targetIndex != m_wm->opp->getId()) {
+        if (!m_wm->opp || targetIndex != m_wm->opp->getId())
+        {
             newopp = true;
-            if (m_wm->opp) {
+            if (m_wm->opp)
+            {
                 m_wm->opp->removeRobot(m_wm->getId());
             }
         }
         m_wm->opp = dynamic_cast<SkilledOpportunity *>(gPhysicalObjects[targetIndex]); // Agent is on this opp
 
-        if (m_wm->teleport && dest_obj != -1 && targetIndex != dest_obj) {
+        if (m_wm->teleport && dest_obj != -1 && targetIndex != dest_obj)
+        {
             std::cerr << "Not on opp for tp : " << m_wm->getId() << " :" << targetIndex << " " << dest_obj << "\n";
             m_wm->setRobotLED_colorValues(0, 0, 0);
             //exit(1);
@@ -323,8 +374,10 @@ void SkilledController::move() {
     m_wm->newopp = newopp;
 }
 
-void SkilledController::play_and_fitness() {
-    if (!m_wm->isAlive() or m_wm->opp == nullptr) {
+void SkilledController::play_and_fitness()
+{
+    if (!m_wm->isAlive() or m_wm->opp == nullptr)
+    {
         return;
     }
     double cost = (m_wm->newopp) ? SkilledSharedData::cost : 0;
@@ -340,21 +393,25 @@ void SkilledController::play_and_fitness() {
 
 }
 
-double SkilledController::getCoop(int i) {
+double SkilledController::getCoop(int i)
+{
     double coop = m_wm->getCoop(i);
     return coop;
 }
 
-double SkilledController::getCoopWeight() {
+double SkilledController::getCoopWeight()
+{
     return weights2[0];
 }
 
 
-static inline double normalize(const double value, const double min = 0, const double max = 1) {
+static inline double normalize(const double value, const double min = 0, const double max = 1)
+{
     return ((value - min) / (max - min)) * 2 - 1;
 }
 
-double SkilledController::computeScore(int cost, int nbPart, double owncoop, double totothercoop) {
+double SkilledController::computeScore(int cost, int nbPart, double owncoop, double totothercoop)
+{
     assert(cost == 0 || cost == 1);
     assert(nbPart >= 0 && nbPart <= gInitialNumberOfRobots);
     assert(owncoop >= 0 && owncoop <= SkilledSharedData::maxCoop * (1 + SkilledSharedData::fakeCoef + 0.01));
@@ -363,21 +420,29 @@ double SkilledController::computeScore(int cost, int nbPart, double owncoop, dou
 
     std::vector<double> inputs(getNbInputs(), 0);
     int i = 0;
-    if (SkilledSharedData::costAsInput) {
+    if (SkilledSharedData::costAsInput)
+    {
         inputs[i++] = cost;
     }
-    if (SkilledSharedData::splitedNbPartInput) {
+    if (SkilledSharedData::splitedNbPartInput)
+    {
         int curnbpart = nbPart;
-        for (int nbdec = 0; nbdec < 3; nbdec++) {
+        for (int nbdec = 0; nbdec < 3; nbdec++)
+        {
             inputs[i++] = (double) (nbPart % 10) / 10.0;  // split units, tens and hundreds
             curnbpart = curnbpart / 10;
         }
-    } else {
+    }
+    else
+    {
         inputs[i++] = (double) nbPart / gNbOfRobots;
     }
-    if (SkilledSharedData::otherInvAsInput) {
+    if (SkilledSharedData::otherInvAsInput)
+    {
         inputs[i++] = totothercoop / (SkilledSharedData::maxCoop * std::max(nbPart, 1));
-    } else {
+    }
+    else
+    {
         inputs[i++] = 0;
     }
 
@@ -385,12 +450,15 @@ double SkilledController::computeScore(int cost, int nbPart, double owncoop, dou
 
     double score = 0;
 
-    if (SkilledSharedData::optimalPlay) {
-        score = SkilledWorldObserver::payoff(owncoop, totothercoop + owncoop, (nbPart + 1), SkilledSharedData::meanA,
-                                             SkilledSharedData::b)
+    if (SkilledSharedData::optimalPlay)
+    {
+        score = SkilledWorldObserver::payoff(owncoop, totothercoop + owncoop, (nbPart + 1),
+                                             SkilledSharedData::meanA, SkilledSharedData::b)
                 - cost * SkilledSharedData::cost;
         assert(score < 1000000 && score > -1000000); // ensure score is never infinite
-    } else {
+    }
+    else
+    {
         m_nn->setInputs(inputs);
         m_nn->step();
         score = m_nn->readOut()[0];

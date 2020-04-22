@@ -20,26 +20,33 @@ class MovingNSWorldObserver : public WorldObserver
 {
 protected:
     virtual void updateEnvironment();
+
     virtual void updateMonitoring();
-    virtual void monitorPopulation( bool localVerbose = true );
-    
+
+    virtual void monitorPopulation(bool localVerbose = true);
+
     int _generationCount;
     int _generationItCount;
-    
+
     LogManager *_fitnessLogManager;
     LogManager *_genomeLogManager;
-    
+
 public:
     MovingNSWorldObserver(World *world);
+
     ~MovingNSWorldObserver();
-    
+
     virtual void reset();
+
     virtual void stepPre();
+
     void stepEvaluation();
-    
-    virtual int getGenerationItCount() { return _generationItCount; }
-    
-    int getGenerationCount() { return _generationCount; }
+
+    virtual int getGenerationItCount()
+    { return _generationItCount; }
+
+    int getGenerationCount()
+    { return _generationCount; }
 };
 
 #endif

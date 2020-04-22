@@ -8,7 +8,8 @@
 
 #include <gzstream.h>
 
-class LionScoreLogger {
+class LionScoreLogger
+{
 public:
     void addScore(int id, int cost, int nbpart, double owncoop, double othercoop, double score);
 

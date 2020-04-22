@@ -32,7 +32,7 @@ public:
     void updateColor() override;
 
 
-    std::vector<Robot*> fakerobots = {};
+    std::vector<Robot *> fakerobots = {};
 
 protected:
     double m_coop;

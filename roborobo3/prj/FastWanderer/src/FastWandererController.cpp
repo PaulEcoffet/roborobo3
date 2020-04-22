@@ -12,13 +12,14 @@
 #include "FastWanderer/include/FastWandererController.h"
 #include "FastWanderer/include/FastWandererSharedData.h"
 
-enum {
+enum
+{
     MLP_ID = 0,
     PERCEPTRON_ID = 1,
     ELMAN_ID = 2
 };
 
-FastWandererController::FastWandererController(RobotWorldModel* wm)
+FastWandererController::FastWandererController(RobotWorldModel *wm)
 {
     m_wm = wm;
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -37,7 +38,8 @@ FastWandererController::FastWandererController(RobotWorldModel* wm)
             m_nn = new Elman(m_genome, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             break;
         default:
-            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< FastWandererSharedData::controllerType << "\n";
+            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
+                      << FastWandererSharedData::controllerType << "\n";
             exit(-1);
     }
     m_genome.resize(m_nn->getRequiredNumberOfWeights(), 0);
@@ -48,7 +50,7 @@ FastWandererController::FastWandererController(RobotWorldModel* wm)
 void FastWandererController::reset()
 {
     if (FastWandererSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 void FastWandererController::step()
@@ -63,7 +65,7 @@ void FastWandererController::step()
     std::vector<double> outputs = m_nn->readOut();
 
 
-    m_wm->_desiredTranslationalValue = (outputs[0] + 1.0)/2.0 * gMaxTranslationalSpeed;
+    m_wm->_desiredTranslationalValue = (outputs[0] + 1.0) / 2.0 * gMaxTranslationalSpeed;
     m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
 }
 
@@ -106,7 +108,7 @@ void FastWandererController::loadNewGenome(const std::vector<double> &newGenome)
     m_genome = newGenome;
     m_nn->setWeights(m_genome);
     if (FastWandererSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 unsigned int FastWandererController::getNbInputs() const
@@ -128,7 +130,7 @@ void FastWandererController::resetFitness()
     updateFitness(0);
 }
 
-void FastWandererController::updateFitness( double newFitness )
+void FastWandererController::updateFitness(double newFitness)
 {
     if (newFitness < 0)
     {
@@ -138,9 +140,9 @@ void FastWandererController::updateFitness( double newFitness )
     m_wm->_fitnessValue = newFitness;
 }
 
-void FastWandererController::increaseFitness( double delta )
+void FastWandererController::increaseFitness(double delta)
 {
-    updateFitness(m_wm->_fitnessValue+delta);
+    updateFitness(m_wm->_fitnessValue + delta);
 }
 
 std::string FastWandererController::inspect(std::string prefix)
@@ -154,7 +156,7 @@ std::string FastWandererController::inspect(std::string prefix)
     return out.str();
 }
 
-const std::vector<double>& FastWandererController::getGenome() const
+const std::vector<double> &FastWandererController::getGenome() const
 {
     return m_genome;
 }
@@ -162,8 +164,8 @@ const std::vector<double>& FastWandererController::getGenome() const
 unsigned int FastWandererController::getNbOutputs() const
 {
     return 2    // Motor commands
-                // Cooperation value
-    ;
+        // Cooperation value
+            ;
 }
 
 

@@ -7,7 +7,7 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "World/PhysicalObject.h"
 
-TemplateVanillaEEAgentObserver::TemplateVanillaEEAgentObserver( RobotWorldModel *wm ) : TemplateEEAgentObserver ( wm )
+TemplateVanillaEEAgentObserver::TemplateVanillaEEAgentObserver(RobotWorldModel *wm) : TemplateEEAgentObserver(wm)
 {
     // superclass constructor called before
 }
@@ -26,7 +26,7 @@ TemplateVanillaEEAgentObserver::~TemplateVanillaEEAgentObserver()
 void TemplateVanillaEEAgentObserver::stepPre()
 {
     // * update fitness (if needed)
-    if ( _wm->isAlive() && PhysicalObject::isInstanceOf(_wm->getGroundSensorValue()) )
+    if (_wm->isAlive() && PhysicalObject::isInstanceOf(_wm->getGroundSensorValue()))
     {
         _wm->_fitnessValue = _wm->_fitnessValue + 1;
     }

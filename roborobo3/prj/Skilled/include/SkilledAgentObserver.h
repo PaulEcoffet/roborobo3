@@ -10,7 +10,8 @@
 #include "Observers/AgentObserver.h"
 #include "SkilledWorldModel.h"
 
-class SkilledAgentObserver : public AgentObserver {
+class SkilledAgentObserver : public AgentObserver
+{
 public:
     SkilledAgentObserver(RobotWorldModel *wm);
 

@@ -19,22 +19,26 @@ class PartnerControlWorldObserver : public WorldObserver
 {
 public:
     explicit PartnerControlWorldObserver(World *__world);
+
     ~PartnerControlWorldObserver() override;
 
     void reset() override;
+
     void stepEvolution();
 
     std::vector<std::pair<int, double>> getSortedFitnesses() const;
 
-    void logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses);
+    void logFitnesses(const std::vector<std::pair<int, double>> &sortedFitnesses);
+
     void resetEnvironment();
+
     void stepPre() override;
 
 
 protected:
     World *m_world;
     LogManager *m_fitnessLogManager;
-    LogManager* m_observer;
+    LogManager *m_observer;
 
     int m_curEvaluationInGeneration;
     int m_curInd;
@@ -47,11 +51,17 @@ protected:
 
 
     void initOpportunities();
+
     void computeOpportunityImpact();
+
     double payoff(const double invest, const double totalInvest) const;
+
     void clearOpportunityNearbyRobots();
+
     void clearRobotFitnesses();
+
     void activateOnlyRobot(int robotIndex);
+
     void monitorPopulation() const;
 
 };

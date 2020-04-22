@@ -10,12 +10,13 @@
 
 #include "TemplateEE/include/TemplateEESharedData.h"
 
-class TemplateVanillaEESharedData : TemplateEESharedData {
-    
+class TemplateVanillaEESharedData : TemplateEESharedData
+{
+
     // cf. super class for many parameter values.
     // Add here parameters that are specific to current implementation.
-    
-}; 
+
+};
 
 
 #endif

@@ -21,7 +21,7 @@ void CorrectRepartitionOpportunity::updateColor()
     }
     else if (getNbNearbyRobots() == 2)
     {
-        _displayColorRed =198;
+        _displayColorRed = 198;
         _displayColorGreen = 186;
         _displayColorBlue = 58;
     }
@@ -41,12 +41,13 @@ int CorrectRepartitionOpportunity::getNbNearbyRobots() const
 void CorrectRepartitionOpportunity::isPushed(int id, std::tuple<double, double> speed)
 {
     const int rid = id - gRobotIndexStartOffset;
-    if(std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end()) { // if not already in the list
+    if (std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid) == newNearbyRobotIndexes.end())
+    { // if not already in the list
         newNearbyRobotIndexes.push_back(rid);
     }
 }
 
-const std::vector<int> & CorrectRepartitionOpportunity::getNearbyRobotIndexes() const
+const std::vector<int> &CorrectRepartitionOpportunity::getNearbyRobotIndexes() const
 {
     return nearbyRobotIndexes;
 }
@@ -74,10 +75,11 @@ std::string CorrectRepartitionOpportunity::inspect(std::string prefix)
     return s.str();
 }
 
-void CorrectRepartitionOpportunity::registerNewNearbyRobots() {
+void CorrectRepartitionOpportunity::registerNewNearbyRobots()
+{
     std::vector<int> out;
     // Look for the robot that were here last turn and are still here. Keep the order of arrival.
-    for(const auto rid : nearbyRobotIndexes)
+    for (const auto rid : nearbyRobotIndexes)
     {
         auto pos = std::find(newNearbyRobotIndexes.begin(), newNearbyRobotIndexes.end(), rid);
         if (pos != newNearbyRobotIndexes.end()) // we found something

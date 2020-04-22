@@ -20,7 +20,8 @@ using boost::algorithm::clamp;
 
 
 SkilledWorldObserver::SkilledWorldObserver(World *__world) :
-        WorldObserver(__world), objectsToTeleport(), variabilityCoef() {
+        WorldObserver(__world), objectsToTeleport(), variabilityCoef()
+{
     m_world = __world;
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
@@ -37,11 +38,14 @@ SkilledWorldObserver::SkilledWorldObserver(World *__world) :
     m_fitnessLogManager << "gen\tind\trep\tfake\tfitness\n";
 
     std::vector<std::string> url;
-    if (gRemote.empty()) {
+    if (gRemote.empty())
+    {
         std::cerr << "[WARNING] gRemote needs to be defined.";
         url.emplace_back("127.0.0.1");
         url.emplace_back("1703");
-    } else {
+    }
+    else
+    {
         boost::split(url, gRemote, boost::is_any_of(":"));
     }
     pyevo.connect(url[0], static_cast<unsigned short>(std::stol(url[1])));
@@ -56,40 +60,48 @@ SkilledWorldObserver::SkilledWorldObserver(World *__world) :
     variabilityCoef.resize(m_nbIndividuals, 1);
 
 
-    if (SkilledSharedData::normalCoef) {
+    if (SkilledSharedData::normalCoef)
+    {
         boost::math::normal normal(1, SkilledSharedData::fakeCoefStd);
         double minquantile = boost::math::cdf(normal, 1 - SkilledSharedData::fakeCoef);
         double maxquantile = boost::math::cdf(normal, 1 + SkilledSharedData::fakeCoef);
         double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
         double curquantile = minquantile;
-        for (int i = 0; i < m_nbIndividuals; i++) {
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
             variabilityCoef[i] = boost::math::quantile(normal, curquantile);
             assert(variabilityCoef[i] <= 1 + SkilledSharedData::fakeCoef + 0.1);
             assert(variabilityCoef[i] >= 1 - SkilledSharedData::fakeCoef - 0.1);
 
             curquantile += stepquantile;
         }
-    } else {
+    }
+    else
+    {
         double min = 1 - SkilledSharedData::fakeCoef;
         double max = 1 + SkilledSharedData::fakeCoef;
-        for (int i = 0; i < m_nbIndividuals; i++) {
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
             variabilityCoef[i] = min + (max - min) * (double) i / (m_nbIndividuals - 1);
         }
     }
 }
 
 
-SkilledWorldObserver::~SkilledWorldObserver() {
+SkilledWorldObserver::~SkilledWorldObserver()
+{
     cleanup();
 }
 
-void SkilledWorldObserver::cleanup() {
+void SkilledWorldObserver::cleanup()
+{
     std::cout << "Bien fermé pour le WorldObserver" << std::endl;
     m_logall.close();
     scorelogger.close();
 }
 
-void SkilledWorldObserver::reset() {
+void SkilledWorldObserver::reset()
+{
     m_nbIndividuals = gNbOfRobots;
 
     // Init fitness
@@ -105,7 +117,8 @@ void SkilledWorldObserver::reset() {
     std::vector<double> maxguess(nbweights, 1);
     std::vector<double> std(nbweights, SkilledSharedData::normalMut);
     std::vector<double> mutprob(nbweights, SkilledSharedData::mutProb);
-    for (auto i = minbounds.size() - 1 - 3; i < minbounds.size(); i++) {
+    for (auto i = minbounds.size() - 1 - 3; i < minbounds.size(); i++)
+    {
         minbounds[i] = 0;
         maxbounds[i] = 1;
         minguess[i] = 0;
@@ -119,9 +132,11 @@ void SkilledWorldObserver::reset() {
 
     resetEnvironment();
 
-    if (isLoggingTime()) {
+    if (isLoggingTime())
+    {
         std::cout << "coucou" << std::endl;
-        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
+        if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
+        {
             std::cout << "lolilol" << std::endl;
             m_logall.close();
             m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
@@ -134,16 +149,20 @@ void SkilledWorldObserver::reset() {
 }
 
 
-void SkilledWorldObserver::stepPre() {
+void SkilledWorldObserver::stepPre()
+{
     m_curEvaluationIteration++;
     bool mustresetEnv = false;
     /* NEW EVALUATION */
-    if (m_curEvaluationIteration == SkilledSharedData::evaluationTime) {
+    if (m_curEvaluationIteration == SkilledSharedData::evaluationTime)
+    {
         m_curEvaluationIteration = 0;
-        for (int i = 0; i < m_nbIndividuals; i++) {
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
             auto *wm = dynamic_cast<SkilledWorldModel *>(m_world->getRobot(i)->getWorldModel());
             /* Only add fitness if the robot is in his participation run */
-            if (m_curnbparticipation[i] <= SkilledSharedData::nbEvaluationsPerGeneration) {
+            if (m_curnbparticipation[i] <= SkilledSharedData::nbEvaluationsPerGeneration)
+            {
                 m_fitnesses[i] += wm->_fitnessValue;
                 m_curfitnesses[i] = wm->_fitnessValue;
             }
@@ -159,7 +178,8 @@ void SkilledWorldObserver::stepPre() {
     }
 
     /* NEW GENERATION */
-    if (m_curEvaluationInGeneration == SkilledSharedData::nbEvaluationsPerGeneration) {
+    if (m_curEvaluationInGeneration == SkilledSharedData::nbEvaluationsPerGeneration)
+    {
         m_logall.close();  // Cur log must necessarily be closed.
         scorelogger.close();
         logFitnesses(m_fitnesses);
@@ -171,8 +191,10 @@ void SkilledWorldObserver::stepPre() {
         m_generationCount++;
         mustresetEnv = true;
         /* Shall we log? */
-        if (isLoggingTime()) {
-            if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0) {
+        if (isLoggingTime())
+        {
+            if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
+            {
                 m_logall.close();
                 m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
                 m_logall
@@ -180,7 +202,9 @@ void SkilledWorldObserver::stepPre() {
                 scorelogger.openNewLog(m_generationCount);
                 scorelogger.updateEval(m_trueCurEvaluationInGeneration);
             }
-        } else if (isJustAfterLoggingTime()) {
+        }
+        else if (isJustAfterLoggingTime())
+        {
             m_logall.close();
             scorelogger.close();
         }
@@ -192,16 +216,20 @@ void SkilledWorldObserver::stepPre() {
     scorelogger.updateIter(m_curEvaluationIteration);
 }
 
-bool SkilledWorldObserver::isLoggingTime() const {
+bool SkilledWorldObserver::isLoggingTime() const
+{
     return (((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) && (m_curEvaluationInGeneration < 5));
 }
 
-bool SkilledWorldObserver::isJustAfterLoggingTime() const {
+bool SkilledWorldObserver::isJustAfterLoggingTime() const
+{
     return ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 1);
 }
 
-void SkilledWorldObserver::logAgent(SkilledWorldModel *wm) {
-    if (isLoggingTime()) {
+void SkilledWorldObserver::logAgent(SkilledWorldModel *wm)
+{
+    if (isLoggingTime())
+    {
         int nbOnOpp = wm->opp->countCurrentRobots();
         m_logall << m_curEvaluationInGeneration << "\t"
                  << m_curEvaluationIteration << "\t"
@@ -218,39 +246,49 @@ void SkilledWorldObserver::logAgent(SkilledWorldModel *wm) {
 }
 
 
-void SkilledWorldObserver::stepPost() {
+void SkilledWorldObserver::stepPost()
+{
     /* Plays */
-    if (!SkilledSharedData::asyncPlay) {
-        for (int i = 0; i < gNbOfRobots; i++) {
+    if (!SkilledSharedData::asyncPlay)
+    {
+        for (int i = 0; i < gNbOfRobots; i++)
+        {
             dynamic_cast<SkilledController *>(gWorld->getRobot(i)->getController())->play_and_fitness();
         }
     }
 
-    for (auto id: objectsToTeleport) {
+    for (auto id: objectsToTeleport)
+    {
         gPhysicalObjects[id]->unregisterObject();
         gPhysicalObjects[id]->resetLocation();
         gPhysicalObjects[id]->registerObject();
     }
     objectsToTeleport.clear();
-    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) {
-        if (SkilledSharedData::takeVideo and m_curEvaluationInGeneration == 0) {
+    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0)
+    {
+        if (SkilledSharedData::takeVideo and m_curEvaluationInGeneration == 0)
+        {
             saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
         }
     }
 }
 
-void SkilledWorldObserver::stepEvolution() {
-    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0) {
+void SkilledWorldObserver::stepEvolution()
+{
+    if ((m_generationCount + 1) % SkilledSharedData::logEveryXGen == 0)
+    {
         std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
         std::ofstream genfile(path);
         genfile << json(m_individuals);
     }
     std::vector<double> normfitness(m_nbIndividuals);
-    for (int i = 0; i < m_nbIndividuals; i++) {
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
         normfitness[i] = m_fitnesses[i] / m_curnbparticipation[i];
     }
     m_individuals = pyevo.getNextGeneration(m_individuals, normfitness);
-    if (m_individuals.empty()) {
+    if (m_individuals.empty())
+    {
         cleanup();
         exit(0);
     }
@@ -263,9 +301,11 @@ void SkilledWorldObserver::stepEvolution() {
 
 }
 
-std::vector<std::pair<int, double>> SkilledWorldObserver::getSortedFitnesses() const {
+std::vector<std::pair<int, double>> SkilledWorldObserver::getSortedFitnesses() const
+{
     std::vector<std::pair<int, double>> fitnesses(m_individuals.size());
-    for (size_t i = 0; i < m_individuals.size(); i++) {
+    for (size_t i = 0; i < m_individuals.size(); i++)
+    {
         fitnesses[i].first = i;
         fitnesses[i].second = m_fitnesses[i];
     }
@@ -274,9 +314,11 @@ std::vector<std::pair<int, double>> SkilledWorldObserver::getSortedFitnesses() c
     return fitnesses;
 }
 
-void SkilledWorldObserver::logFitnesses(const std::vector<double> &curfitness) {
+void SkilledWorldObserver::logFitnesses(const std::vector<double> &curfitness)
+{
     std::stringstream out;
-    for (int i = 0; i < m_nbIndividuals; i++) {
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
         auto *cur_wm = dynamic_cast<SkilledWorldModel *>(m_world->getRobot(i)->getWorldModel());
         out << m_generationCount << "\t"
             << i << "\t"
@@ -288,19 +330,23 @@ void SkilledWorldObserver::logFitnesses(const std::vector<double> &curfitness) {
     m_fitnessLogManager.flush();
 }
 
-void SkilledWorldObserver::resetEnvironment() {
-    for (auto object: gPhysicalObjects) {
+void SkilledWorldObserver::resetEnvironment()
+{
+    for (auto object: gPhysicalObjects)
+    {
         object->unregisterObject();
     }
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
 
-    for (auto *object: gPhysicalObjects) {
+    for (auto *object: gPhysicalObjects)
+    {
         object->resetLocation();
         object->registerObject();
-        if(auto *skillobj = dynamic_cast<SkilledOpportunity *>(object))
+        if (auto *skillobj = dynamic_cast<SkilledOpportunity *>(object))
             skillobj->reset();
         else
             exit(-1);
@@ -309,18 +355,22 @@ void SkilledWorldObserver::resetEnvironment() {
     // Randomize the fakeList so that the last fakeRobots aren't necessarily the ones who cooperate the most.
     std::shuffle(variabilityCoef.begin(), variabilityCoef.end(), engine);
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
         robot->getWorldModel()->_agentAbsoluteOrientation = 0;
 
         auto *wm = dynamic_cast<SkilledWorldModel *>(robot->getWorldModel());
         wm->reset();
-        if (SkilledSharedData::fakeRobots) {
+        if (SkilledSharedData::fakeRobots)
+        {
             wm->fakeCoef = variabilityCoef[iRobot];
             assert(wm->fakeCoef <= 1 + SkilledSharedData::fakeCoef + 0.1);
             assert(wm->fakeCoef >= 1 - SkilledSharedData::fakeCoef - 0.1);
-        } else {
+        }
+        else
+        {
             wm->fakeCoef = 1.0;
         }
         wm->setNewSelfA();
@@ -331,56 +381,77 @@ void SkilledWorldObserver::resetEnvironment() {
 }
 
 
-static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint) {
+static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
+{
     return lowerbound + (upperbound - lowerbound) / (1 + exp(-slope * (x - inflexionPoint)));
 }
 
 
-static double bellcurve(double x, double mu, double sigma) {
+static double bellcurve(double x, double mu, double sigma)
+{
 
     return std::exp(-((x - mu) * (x - mu)) / (2 * sigma * sigma));
 }
 
 
 double SkilledWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
-                                    const double b) {
+                                    const double b)
+{
     double res = 0;
     const double x0tot = (totalInvest - invest);
 
     // apply benefits
     res = (a * totalInvest + b * x0tot) / n;
-    if (SkilledSharedData::maxTwo && n != 2) {
+    if (SkilledSharedData::maxTwo && n != 2)
+    {
         res = 0;
     }
 
     // apply friction on benefits
-    if (SkilledSharedData::nControl == 1) {
+    if (SkilledSharedData::nControl == 1)
+    {
         res *= (1 - sigmoid(n, 0, 1, SkilledSharedData::frictionCoef, SkilledSharedData::frictionInflexionPoint));
-    } else if (SkilledSharedData::nControl == 2) {
+    }
+    else if (SkilledSharedData::nControl == 2)
+    {
         // Divide by bellcurve
         res *= bellcurve(n, SkilledSharedData::nOpti, SkilledSharedData::nTolerance);
-    } else if (SkilledSharedData::nControl == 3) {
+    }
+    else if (SkilledSharedData::nControl == 3)
+    {
         // Divide by bellcurve for the whole payoff, not only the benefits
         res -= 0.5 * invest * invest;
         res *= bellcurve(n, SkilledSharedData::nOpti, SkilledSharedData::nTolerance);
-    } else if (SkilledSharedData::nControl == 4) {
+    }
+    else if (SkilledSharedData::nControl == 4)
+    {
         /* True prisoner's dilemma with friction */
-        if (n >= 2) {
+        if (n >= 2)
+        {
             res = b * x0tot / (n - 1);
             res -= 0.5 * invest * invest;
-        } else {
+        }
+        else
+        {
             res = 0;
         }
         res *= bellcurve(n, SkilledSharedData::nOpti, SkilledSharedData::nTolerance);
-    } else if (SkilledSharedData::nControl == 5) {
+    }
+    else if (SkilledSharedData::nControl == 5)
+    {
         /* True Prisoner's dilemma without friction */
-        if (n >= 2) {
+        if (n >= 2)
+        {
             res = b * x0tot / (n - 1);
             res -= 0.5 * invest * invest;
-        } else {
+        }
+        else
+        {
             res = 0;
         }
-    } else if (SkilledSharedData::nControl == 6) {
+    }
+    else if (SkilledSharedData::nControl == 6)
+    {
         /* by product benefits */
         res = a * invest + b * x0tot / std::max(n - 1, 1);
         res -= 0.5 * invest * invest;
@@ -388,7 +459,8 @@ double SkilledWorldObserver::payoff(const double invest, const double totalInves
     }
 
     // Apply cost
-    if (SkilledSharedData::nControl < 3) {
+    if (SkilledSharedData::nControl < 3)
+    {
         res -= 0.5 * invest * invest;
     }
     assert(res == res); // Test if not nan
@@ -396,31 +468,38 @@ double SkilledWorldObserver::payoff(const double invest, const double totalInves
 }
 
 
-void SkilledWorldObserver::clearRobotFitnesses() {
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+void SkilledWorldObserver::clearRobotFitnesses()
+{
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         auto *ctl = dynamic_cast<SkilledController *>(gWorld->getRobot(iRobot)->getController());
         ctl->resetFitness();
     }
 }
 
-void SkilledWorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>> &genomes) {
+void SkilledWorldObserver::loadGenomesInRobots(const std::vector<std::vector<double>> &genomes)
+{
 
-    if (genomes.size() != m_nbIndividuals) {
+    if (genomes.size() != m_nbIndividuals)
+    {
         std::cout << "genomes: " << genomes.size() << ", m_nbIndividuals : " << m_nbIndividuals << "\n";
         exit(1);
     }
-    for (int i = 0; i < m_world->getNbOfRobots(); i++) {
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
         auto *ctl = dynamic_cast<SkilledController *>(m_world->getRobot(i)->getController());
         ctl->loadNewGenome(genomes[i]);
     }
 
 }
 
-void SkilledWorldObserver::addObjectToTeleport(int id) {
+void SkilledWorldObserver::addObjectToTeleport(int id)
+{
     objectsToTeleport.insert(id);
 }
 
-void SkilledWorldObserver::setWhichRobotsPlay() {
+void SkilledWorldObserver::setWhichRobotsPlay()
+{
     std::vector<int> individuals_indexes(m_nbIndividuals);
     std::iota(std::begin(individuals_indexes), std::end(individuals_indexes), 0); // Fill with 0, 1, ..., 99.
     std::vector<int> individual_scores = individuals_indexes;
@@ -428,13 +507,16 @@ void SkilledWorldObserver::setWhichRobotsPlay() {
     /* Put the ones that have participated less first, then the ones who participated the most
      * If they participated the same amount, pick them randomly (score which is random) */
     std::sort(individuals_indexes.begin(), individuals_indexes.end(),
-              [individual_scores, this](int a, int b) {
-                  if (m_curnbparticipation[a] == m_curnbparticipation[b]) {
+              [individual_scores, this](int a, int b)
+              {
+                  if (m_curnbparticipation[a] == m_curnbparticipation[b])
+                  {
                       return individual_scores[a] < individual_scores[b];
                   }
                   return m_curnbparticipation[a] < m_curnbparticipation[b];
               });
-    for (size_t i = 0; i < gNbOfRobots; i++) {
+    for (size_t i = 0; i < gNbOfRobots; i++)
+    {
         auto wm = dynamic_cast<SkilledWorldModel *>(gWorld->getRobot(i)->getWorldModel());
         wm->setAlive(false);
         auto rob = gWorld->getRobot(i);
@@ -445,7 +527,8 @@ void SkilledWorldObserver::setWhichRobotsPlay() {
 
     }
     for (auto index = individuals_indexes.begin();
-         index != (individuals_indexes.begin() + SkilledSharedData::maxPlayer); index++) {
+         index != (individuals_indexes.begin() + SkilledSharedData::maxPlayer); index++)
+    {
         auto wm = dynamic_cast<SkilledWorldModel *>(gWorld->getRobot(*index)->getWorldModel());
         wm->setAlive(true);
         m_world->getRobot(*index)->unregisterRobot();
@@ -457,17 +540,21 @@ void SkilledWorldObserver::setWhichRobotsPlay() {
     }
 }
 
-SkilledScoreLogger *SkilledWorldObserver::getScoreLogger() {
+SkilledScoreLogger *SkilledWorldObserver::getScoreLogger()
+{
     return &scorelogger;
 }
 
-bool SkilledWorldObserver::logScore() {
+bool SkilledWorldObserver::logScore()
+{
     return isLoggingTime() && SkilledSharedData::logScore;
 }
 
-void SkilledWorldObserver::printCoopStats() {
+void SkilledWorldObserver::printCoopStats()
+{
     std::vector<double> coops(m_nbIndividuals, 0);
-    for (int i = 0; i < m_nbIndividuals; i++) {
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
         auto *cur_wm = dynamic_cast<SkilledWorldModel *>(m_world->getRobot(i)->getWorldModel());
         coops[i] = cur_wm->getCoop(2, true);
     }

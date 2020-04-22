@@ -175,16 +175,17 @@ void NegociateController::step()
 
     m_wm->_cooperationLevel = hardcoop; // Range between [0; maxCoop]
 
-    if (m_wm->fakeCoef < -0.33*NegociateSharedData::fakeCoef)
+    if (m_wm->fakeCoef < -0.33 * NegociateSharedData::fakeCoef)
     {
-        m_wm->setRobotLED_colorValues(126,55,49);
+        m_wm->setRobotLED_colorValues(126, 55, 49);
     }
-    else if (m_wm->fakeCoef < +0.33*NegociateSharedData::fakeCoef)
+    else if (m_wm->fakeCoef < +0.33 * NegociateSharedData::fakeCoef)
     {
-        m_wm->setRobotLED_colorValues(0,0,255);
+        m_wm->setRobotLED_colorValues(0, 0, 255);
     }
-    else {
-        m_wm->setRobotLED_colorValues(115,182,234);
+    else
+    {
+        m_wm->setRobotLED_colorValues(115, 182, 234);
     }
 }
 
@@ -263,8 +264,8 @@ std::vector<double> NegociateController::getCameraInputs() const
             inputs[i++] = reputation / NegociateSharedData::maxCoop;
             inputs[i++] = nbplays;
         }
-        inputs[i++] =  (entityId == WALL_ID) ? dist : 1;
-        inputs[i++] =  (isOpportunity) ? dist : 1;
+        inputs[i++] = (entityId == WALL_ID) ? dist : 1;
+        inputs[i++] = (isOpportunity) ? dist : 1;
         inputs[i++] = nbOnOpp;
 
         if (NegociateSharedData::reputation)
@@ -280,18 +281,22 @@ std::vector<double> NegociateController::getCameraInputs() const
 
 void NegociateController::fillNames()
 {
-    if (inputnames.empty()) {
-        for (int j = 0; j < m_wm->_cameraSensorsNb; j++) {
+    if (inputnames.empty())
+    {
+        for (int j = 0; j < m_wm->_cameraSensorsNb; j++)
+        {
             //inputnames.emplace_back("dist " + std::to_string(j));
             inputnames.emplace_back("dist robot");
-            if (NegociateSharedData::reputation) {
+            if (NegociateSharedData::reputation)
+            {
                 inputnames.emplace_back("reputation");
                 inputnames.emplace_back("nb plays");
             }
             inputnames.emplace_back("dist wall");
             inputnames.emplace_back("dist obj");
             inputnames.emplace_back("nb on obj");
-            if (NegociateSharedData::reputation) {
+            if (NegociateSharedData::reputation)
+            {
                 inputnames.emplace_back("last inv on opp");
             }
         }
@@ -319,7 +324,8 @@ void NegociateController::fillNames()
         /*
          * introspection inputs
          */
-        if (NegociateSharedData::selfAAsInput) {
+        if (NegociateSharedData::selfAAsInput)
+        {
             inputnames.emplace_back("own A");
         }
         fill_names = false;
@@ -368,7 +374,8 @@ void NegociateController::loadNewGenome(const std::vector<double> &newGenome)
 
     if (coopgene + m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
     {
-        std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+        std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
+                  << newGenome.size() << std::endl;
         exit(-1);
     }
     auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights() + coopgene;
@@ -377,7 +384,7 @@ void NegociateController::loadNewGenome(const std::vector<double> &newGenome)
     m_nn->setWeights(weights);
     m_nn2->setWeights(weights2);
 
-    if(NegociateSharedData::fixCoop)
+    if (NegociateSharedData::fixCoop)
     {
         hardcoop = newGenome[0] * NegociateSharedData::maxCoop;
         m_wm->_cooperationLevel = hardcoop;
@@ -408,7 +415,8 @@ unsigned int NegociateController::getNbGameInputs() const
 unsigned int NegociateController::getNbCameraInputs() const
 {
     const unsigned int nbCameraInputs = static_cast<const unsigned int>(
-            m_wm->_cameraSensorsNb * (4 + 3 * (int) NegociateSharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
+            m_wm->_cameraSensorsNb * (4 + 3 *
+                                          (int) NegociateSharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
     return nbCameraInputs;
 }
 
@@ -439,51 +447,63 @@ void NegociateController::increaseFitness(double delta)
     updateFitness(m_wm->_fitnessValue + delta);
 }
 
-std::string NegociateController::inspect(std::string prefix) {
+std::string NegociateController::inspect(std::string prefix)
+{
     std::stringstream out;
-    if (verbose == 0) {
-    out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
-    std::set<int> seen;
-    for (int i = 0; i < m_wm->_cameraSensorsNb; i++) {
-        seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
-    }
-
-    out << prefix << "Seen objects:\n";
-    for (int entityId : seen) {
-        if (entityId == 0) {
-            out << "\tA wall\n";
-        } else if (Agent::isInstanceOf(entityId)) {
-            out << "\tAnother agent\n";
-        } else if (entityId >= gPhysicalObjectIndexStartOffset) {
-            out << "\tA cooperation opportunity ";
-            auto coop = dynamic_cast<NegociateOpportunity *>(gPhysicalObjects[entityId -
-                                                                               gPhysicalObjectIndexStartOffset]);
-            out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
+    if (verbose == 0)
+    {
+        out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
+        std::set<int> seen;
+        for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
+        {
+            seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
         }
-    }
-    if (m_wm->onOpportunity) {
-        out << prefix << "On opportunity with " << m_wm->nbOnOpp << ". I arrived " << m_wm->arrival << ".\n";
-        out << prefix << "\tLast own invest: ";
-        for (auto ownInvest : m_wm->lastOwnInvest) {
-            out << ownInvest << " ";
-        }
-        out << "(mean : " << m_wm->meanLastOwnInvest() << ")";
-        out << "\n";
-        out << prefix << "\tLast total invest: ";
-        for (auto totInvest : m_wm->lastTotalInvest) {
-            out << totInvest << " ";
-        }
-        out << "(mean : " << m_wm->meanLastTotalInvest() << ")";
-        out << "\n";
 
-    }
-    out << prefix << "a coeff: " << m_wm->selfA << "\n";
-    out << prefix << "last coop: " << m_wm->getCoop() << " (true val: " << m_wm->getCoop(true) << ")\n";
-    out << prefix << "reputation : " << m_wm->meanLastCommonKnowledgeReputation() << "\n";
-    out << prefix << "received punishment : " << m_wm->punishment << "\n";
-    out << prefix << "sent punishment : " << m_wm->spite << "\n";
+        out << prefix << "Seen objects:\n";
+        for (int entityId : seen)
+        {
+            if (entityId == 0)
+            {
+                out << "\tA wall\n";
+            }
+            else if (Agent::isInstanceOf(entityId))
+            {
+                out << "\tAnother agent\n";
+            }
+            else if (entityId >= gPhysicalObjectIndexStartOffset)
+            {
+                out << "\tA cooperation opportunity ";
+                auto coop = dynamic_cast<NegociateOpportunity *>(gPhysicalObjects[entityId -
+                                                                                  gPhysicalObjectIndexStartOffset]);
+                out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
+            }
+        }
+        if (m_wm->onOpportunity)
+        {
+            out << prefix << "On opportunity with " << m_wm->nbOnOpp << ". I arrived " << m_wm->arrival << ".\n";
+            out << prefix << "\tLast own invest: ";
+            for (auto ownInvest : m_wm->lastOwnInvest)
+            {
+                out << ownInvest << " ";
+            }
+            out << "(mean : " << m_wm->meanLastOwnInvest() << ")";
+            out << "\n";
+            out << prefix << "\tLast total invest: ";
+            for (auto totInvest : m_wm->lastTotalInvest)
+            {
+                out << totInvest << " ";
+            }
+            out << "(mean : " << m_wm->meanLastTotalInvest() << ")";
+            out << "\n";
 
-    out << prefix << "Actual fitness: " << getFitness() << "\n";
+        }
+        out << prefix << "a coeff: " << m_wm->selfA << "\n";
+        out << prefix << "last coop: " << m_wm->getCoop() << " (true val: " << m_wm->getCoop(true) << ")\n";
+        out << prefix << "reputation : " << m_wm->meanLastCommonKnowledgeReputation() << "\n";
+        out << prefix << "received punishment : " << m_wm->punishment << "\n";
+        out << prefix << "sent punishment : " << m_wm->spite << "\n";
+
+        out << prefix << "Actual fitness: " << getFitness() << "\n";
     }
     if (verbose == 1)
     {
@@ -559,5 +579,5 @@ bool NegociateController::acceptPlay()
 
 int NegociateController::getSplit()
 {
-    return (int)NegociateSharedData::fixCoop + m_nn->getRequiredNumberOfWeights();
+    return (int) NegociateSharedData::fixCoop + m_nn->getRequiredNumberOfWeights();
 }

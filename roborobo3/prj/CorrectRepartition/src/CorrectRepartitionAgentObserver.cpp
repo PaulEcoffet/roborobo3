@@ -6,7 +6,7 @@
 
 CorrectRepartitionAgentObserver::CorrectRepartitionAgentObserver(RobotWorldModel *wm)
 {
-    m_wm = dynamic_cast<CorrectRepartitionWorldModel*>(wm);
+    m_wm = dynamic_cast<CorrectRepartitionWorldModel *>(wm);
 }
 
 CorrectRepartitionAgentObserver::~CorrectRepartitionAgentObserver() = default;

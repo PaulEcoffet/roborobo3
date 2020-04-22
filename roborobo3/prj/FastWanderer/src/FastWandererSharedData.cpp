@@ -18,10 +18,12 @@ void FastWandererSharedData::initSharedData()
 {
     gProperties.checkAndGetPropertyValue("evaluationTime", &FastWandererSharedData::evaluationTime, true);
     gProperties.checkAndGetPropertyValue("controllerType", &FastWandererSharedData::controllerType, true);
-    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &FastWandererSharedData::maxTranslationalValue, true);
+    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &FastWandererSharedData::maxTranslationalValue,
+                                         true);
     gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &FastWandererSharedData::maxRotationalVelocity, true);
     gProperties.checkAndGetPropertyValue("nbHiddenLayers", &FastWandererSharedData::nbHiddenLayers, true);
-    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &FastWandererSharedData::nbNeuronsPerHiddenLayer, true);
+    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &FastWandererSharedData::nbNeuronsPerHiddenLayer,
+                                         true);
 }
 
 

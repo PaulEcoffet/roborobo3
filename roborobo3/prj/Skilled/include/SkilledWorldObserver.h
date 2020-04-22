@@ -17,7 +17,8 @@
 
 using json = nlohmann::json;
 
-class SkilledWorldObserver : public WorldObserver {
+class SkilledWorldObserver : public WorldObserver
+{
 public:
     explicit SkilledWorldObserver(World *__world);
 

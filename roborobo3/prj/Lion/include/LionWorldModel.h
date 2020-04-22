@@ -38,8 +38,10 @@ public:
 
     LionOpportunity *prevopp = nullptr;
 
-    double getCoop(int nbpart, bool truecoop=false);
+    double getCoop(int nbpart, bool truecoop = false);
+
     void setCoop(int nbpart, double val);
+
     bool newopp;
 
 
