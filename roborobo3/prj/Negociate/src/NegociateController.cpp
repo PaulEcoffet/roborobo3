@@ -87,6 +87,8 @@ NegociateController::NegociateController(RobotWorldModel *wm)
     weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
     m_nn2->setWeights(weights);
 
+    std::cout << "number of weights nn1: " << m_nn->getRequiredNumberOfWeights() << std::endl;
+    std::cout << "number of weights nn2: " << m_nn2->getRequiredNumberOfWeights() << std::endl;
 
     resetFitness();
 }
@@ -102,55 +104,24 @@ void NegociateController::reset()
 void NegociateController::step()
 {
     verbose = 0;
+    m_wm->_cooperationLevel = hardcoop; // Range between [0; maxCoop]
 
     if (not m_wm->seeking)
     {
-        m_wm->setRobotLED_colorValues(220, 220, 220);
         if (NegociateSharedData::wander)
         {
-            const double sensorlength = 30; // pixels
-            double meandistfront = (
-                                           m_wm->getCameraSensorValue(2, SENSOR_DISTANCEVALUE) +
-                                           m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE)
-                                   ) / 2;
-            if (meandistfront > sensorlength)
-            {
-                meandistfront = sensorlength;
-            }
-            m_wm->_desiredTranslationalValue = +2 - 2 * ((sensorlength - meandistfront) / sensorlength);
-
-            if (m_wm->getCameraSensorValue(0, SENSOR_DISTANCEVALUE) +
-                m_wm->getCameraSensorValue(1, SENSOR_DISTANCEVALUE) +
-                m_wm->getCameraSensorValue(2, SENSOR_DISTANCEVALUE) <
-                m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE) +
-                m_wm->getCameraSensorValue(4, SENSOR_DISTANCEVALUE) +
-                m_wm->getCameraSensorValue(5, SENSOR_DISTANCEVALUE))
-            {
-                m_wm->_desiredRotationalVelocity = +10;
-            }
-            else if (m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE) +
-                     m_wm->getCameraSensorValue(4, SENSOR_DISTANCEVALUE) +
-                     m_wm->getCameraSensorValue(5, SENSOR_DISTANCEVALUE) < 3 * gSensorRange)
-            {
-                m_wm->_desiredRotationalVelocity = -10;
-            }
-            else if (m_wm->_desiredRotationalVelocity > 0)
-            {
-                m_wm->_desiredRotationalVelocity--;
-            }
-            else if (m_wm->_desiredRotationalVelocity < 0)
-            {
-                m_wm->_desiredRotationalVelocity++;
-            }
-            else
-            {
-                m_wm->_desiredRotationalVelocity = 0.01 - (double) (randint() % 10) / 10. * 0.02;
-            }
+            wander_behavior();
         }
-        return;
+    }
+    else
+    {
+        seeking_behavior();
     }
 
+}
 
+void NegociateController::seeking_behavior() const
+{
     std::vector<double> moveInputs = getCameraInputs();
     std::vector<double> gameInputs = getGameInputs();
     m_nn->setInputs(moveInputs);
@@ -160,7 +131,6 @@ void NegociateController::step()
     std::vector<double> outputs = m_nn->readOut();
 
 
-    assert(outputs.size() == getNbOutputs());
     if (NegociateSharedData::tpToNewObj)
     {
         m_wm->_desiredTranslationalValue = 0;
@@ -172,20 +142,47 @@ void NegociateController::step()
         m_wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
         m_wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
     }
+}
 
-    m_wm->_cooperationLevel = hardcoop; // Range between [0; maxCoop]
-
-    if (m_wm->fakeCoef < -0.33 * NegociateSharedData::fakeCoef)
+void NegociateController::wander_behavior() const
+{
+    const double sensorlength = 30; // pixels
+    double meandistfront = (
+                                   m_wm->getCameraSensorValue(2, SENSOR_DISTANCEVALUE) +
+                                   m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE)
+                           ) / 2;
+    if (meandistfront > sensorlength)
     {
-        m_wm->setRobotLED_colorValues(126, 55, 49);
+        meandistfront = sensorlength;
     }
-    else if (m_wm->fakeCoef < +0.33 * NegociateSharedData::fakeCoef)
+    m_wm->_desiredTranslationalValue = +2 - 2 * ((sensorlength - meandistfront) / sensorlength);
+
+    if (m_wm->getCameraSensorValue(0, SENSOR_DISTANCEVALUE) +
+        m_wm->getCameraSensorValue(1, SENSOR_DISTANCEVALUE) +
+        m_wm->getCameraSensorValue(2, SENSOR_DISTANCEVALUE) <
+        m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE) +
+        m_wm->getCameraSensorValue(4, SENSOR_DISTANCEVALUE) +
+        m_wm->getCameraSensorValue(5, SENSOR_DISTANCEVALUE))
     {
-        m_wm->setRobotLED_colorValues(0, 0, 255);
+        m_wm->_desiredRotationalVelocity = +10;
+    }
+    else if (m_wm->getCameraSensorValue(3, SENSOR_DISTANCEVALUE) +
+             m_wm->getCameraSensorValue(4, SENSOR_DISTANCEVALUE) +
+             m_wm->getCameraSensorValue(5, SENSOR_DISTANCEVALUE) < 3 * gSensorRange)
+    {
+        m_wm->_desiredRotationalVelocity = -10;
+    }
+    else if (m_wm->_desiredRotationalVelocity > 0)
+    {
+        m_wm->_desiredRotationalVelocity--;
+    }
+    else if (m_wm->_desiredRotationalVelocity < 0)
+    {
+        m_wm->_desiredRotationalVelocity++;
     }
     else
     {
-        m_wm->setRobotLED_colorValues(115, 182, 234);
+        m_wm->_desiredRotationalVelocity = 0.01 - (double) (randint() % 10) / 10. * 0.02;
     }
 }
 

@@ -44,7 +44,7 @@ namespace network
             throw std::runtime_error("Connection is not open");
         }
         std::stringstream sizestr;
-        size_t out_size = htonl(msg.size());
+        size_t out_size = msg.size();
         sizestr << std::setw(8) << std::hex << out_size;
         boost::asio::write(socket, boost::asio::buffer(sizestr.str()));
         boost::asio::write(socket, boost::asio::buffer(msg));

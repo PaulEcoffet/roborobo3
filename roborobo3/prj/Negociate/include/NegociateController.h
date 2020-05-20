@@ -83,6 +83,10 @@ protected:
 
     int verbose = 0;
     double hardcoop;
+
+    void wander_behavior() const;
+
+    void seeking_behavior() const;
 };
 
 
