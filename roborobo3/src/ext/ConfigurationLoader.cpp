@@ -21,6 +21,7 @@
 #include "Config/LionConfigurationLoader.h"
 #include "Config/NegociateConfigurationLoader.h"
 #include "Config/SkilledConfigurationLoader.h"
+#include "Config/NegociateGymConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -160,12 +161,20 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
     }
 #endif
 #if defined PRJ_SKILLED || !defined MODULAR
-    else if (configurationLoaderObjectName == "SkilledConfigurationLoader") {
+    else if (configurationLoaderObjectName == "SkilledConfigurationLoader")
+    {
         return new SkilledConfigurationLoader();
     }
 #endif
+#if defined PRJ_NEGOCIATEGYM || !defined MODULAR
+    else if (configurationLoaderObjectName == "NegociateGymConfigurationLoader")
+    {
+        return new NegociateGymConfigurationLoader();
+    }
+#endif
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
-    else {
+    else
+    {
         return NULL;
     }
 

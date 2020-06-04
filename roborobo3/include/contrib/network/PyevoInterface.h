@@ -15,14 +15,20 @@ class PyevoInterface
 {
 public:
     PyevoInterface() = default;
-    PyevoInterface(const std::string& ip, unsigned short port);
+
+    PyevoInterface(const std::string &ip, unsigned short port);
+
+    ~PyevoInterface()
+    {
+        close();
+    };
 
     /**
      * Connect the PyCMAESInterface to the python server with at `ip`:`port`.
      * @param ip
      * @param port
      */
-    void connect(const std::string& ip, unsigned short port);
+    void connect(const std::string &ip, unsigned short port);
 
     std::vector<std::vector<double>> initCMA(int popsize, int parameters_dimension);
 

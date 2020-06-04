@@ -33,7 +33,7 @@ namespace network
             socket(io_service)
     {
         boost::asio::socket_base::keep_alive option(true);
-        socket.set_option(option);
+        //socket.set_option(option);
         socket.connect(endpoint);
     }
 
