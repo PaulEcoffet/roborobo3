@@ -2,7 +2,6 @@
 // Created by paul on 27/10/17.
 //
 
-#include <contrib/neuralnetworks/EigenMLP.h>
 #include "neuralnetworks/Perceptron.h"
 #include "Utilities/Misc.h"
 #include "WorldModels/RobotWorldModel.h"

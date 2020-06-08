@@ -1,5 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
+find_package(pybind11)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
@@ -95,10 +96,11 @@ find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} )
 
-add_executable(roborobo ${SOURCE_FILES} prj/Lion/src/ScoreLogger.cpp prj/Lion/include/ScoreLogger.h)
+#add_executable(roborobo ${SOURCE_FILES} prj/Lion/src/ScoreLogger.cpp prj/Lion/include/ScoreLogger.h src/contrib/pyroborobo/pyroborobo.cpp include/contrib/pyroborobo/pyroborobo.h)
 
 
-target_link_libraries(roborobo
+pybind11_add_module(pyroborobo src/contrib/pyroborobo/pyroborobo.cpp)
+target_link_libraries(pyroborobo PRIVATE
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
         ${Boost_FILESYSTEM_LIBRARY}
