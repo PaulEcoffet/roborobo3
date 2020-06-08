@@ -7,6 +7,7 @@
 #include <csignal>
 #include <RoboroboMain/roborobo.h>
 #include "Controllers/Controller.h"
+#include "WorldModels/RobotWorldModel.h"
 
 
 namespace py = pybind11;
@@ -24,12 +25,31 @@ public:
 
     /* Trampoline (need one for each virtual function) */
     void step() override {
-        PYBIND11_OVERLOAD(
+        PYBIND11_OVERLOAD_PURE(
                 void, /* Return type */
                 Controller,      /* Parent class */
                 step,          /* Name of function in C++ (must match Python name) */
         );
     }
+
+    void reset() override {
+        PYBIND11_OVERLOAD_PURE(
+                void, /* Return type */
+                Controller,      /* Parent class */
+                reset,          /* Name of function in C++ (must match Python name) */
+        );
+    }
+
+    void inspect() override {
+        PYBIND11_OVERLOAD(
+                std::string, /* Return type */
+                Controller,      /* Parent class */
+                inspect,          /* Name of function in C++ (must match Python name) */
+                std::string
+        );
+    }
+
+
 };
 
 
@@ -44,7 +64,7 @@ public:
         py::object instance = worldObserverClass();
     }
 
-    void init()
+    void start()
     {
         signal(SIGINT, quit);
         signal(SIGTERM, quit);
@@ -58,11 +78,14 @@ private:
 PYBIND11_MODULE(pyroborobo, m) {
     py::class_<Pyroborobo>(m, "Pyroborobo")
             .def(py::init<py::object, py::object, py::object, py::object>())
-            .def("init", &Pyroborobo::init)
+            .def("start", &Pyroborobo::start);
             /*.def("start", &Pyroborobo::start)
             .def("setActions", &Pyroborobo::setActions);
             .def("getObservations", &Pyroborobo::getObservations)
             .def("getProperties", &Pyroborobo::getProperties)
             .def("setProperty", &Pyroborobo::setProperty)*/
-            ;
+    py::class_<PyController, Controller>(m, "PyController")
+            .def(py::init<RobotWorldModel>())
+            .def("step", &Controller::step)
+            .def("reset", &Controller::reset);
 }

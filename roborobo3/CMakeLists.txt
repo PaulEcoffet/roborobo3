@@ -99,13 +99,12 @@ include_directories(${SDL2_INCLUDE_DIRS} )
 #add_executable(roborobo ${SOURCE_FILES} prj/Lion/src/ScoreLogger.cpp prj/Lion/include/ScoreLogger.h src/contrib/pyroborobo/pyroborobo.cpp include/contrib/pyroborobo/pyroborobo.h)
 
 
-pybind11_add_module(pyroborobo src/contrib/pyroborobo/pyroborobo.cpp)
+pybind11_add_module(pyroborobo ${SOURCE_FILES})
 target_link_libraries(pyroborobo PRIVATE
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
-        Eigen3::Eigen
         ${GZSTREAM}
         ${ZLIB_LIBRARIES}
         #${OpenCV_LIBS}#
