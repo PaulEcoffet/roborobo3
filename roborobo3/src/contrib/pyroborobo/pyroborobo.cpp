@@ -2,18 +2,19 @@
 // Created by pecoffet on 05/06/2020.
 //
 
-#include "contrib/pyroborobo/pyroborobo.h"
 #include <pybind11/pybind11.h>
 
 #include <csignal>
+#include <core/Config/GlobalConfigurationLoader.h>
 
-#include "RoboroboMain/roborobo.h"
+#include "Utilities/Graphics.h"
 #include "RoboroboMain/main.h"
 #include "Controllers/Controller.h"
-#include "WorldModels/RobotWorldModel.h"
 #include "contrib/pyroborobo/PyControllerTrampoline.h"
 #include "contrib/pyroborobo/PyWorldModel.h"
-#include "PyWorldModelTrampoline.h"
+#include "World/World.h"
+#include "Config/GlobalConfigurationLoader.h"
+#include "PyConfigurationLoader.h"
 
 
 namespace py = pybind11;
@@ -22,12 +23,19 @@ namespace py = pybind11;
 class Pyroborobo
 {
 public:
-    Pyroborobo(const py::object &worldObserverClass,
+    Pyroborobo(const std::string &properties_file,
+               const py::object &worldObserverClass,
                const py::object &agentControllerClass,
                const py::object &worldModelClass,
-               const py::object &agentObserverClass)
+               const py::object &agentObserverClass,
+               const py::dict &options = py::dict())
     {
-        py::object instance = worldObserverClass();
+        int argc = 0;
+        char *argv[] = {};
+        loadProperties(properties_file, argc, argv);
+        this->overrideProperties(options);
+        this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
+                                            worldModelClass, agentObserverClass);
     }
 
     void start()
@@ -35,10 +43,61 @@ public:
         signal(SIGINT, quit);
         signal(SIGTERM, quit);
 
+        /* Taken from init Roborobo */
+        gCamera.x = 0;
+        gCamera.y = 0;
+        gCamera.w = gScreenWidth;
+        gCamera.h = gScreenHeight;
+
+        if (!initSDL(SDL_WINDOW_SHOWN | SDL_WINDOW_RESIZABLE))
+        {
+            py::print("[CRITICAL] cannot initialize SDL: ", SDL_GetError());
+            exit(-2);
+        }
+
+        // * Initialize log file(s)
+
+        initLogging();
+
+
+        // * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
+
+        engine.seed(gRandomSeed);
+
+        //srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
+        gLogFile << "# random seed             : " << gRandomSeed << std::endl;
+
+        gWorld = new World();
+
+        // * run
+        gWorld->initWorld();
+
+        if (!gBatchMode)
+        {
+            initMonitor(true);
+        } // add speed monitoring and inspector agent
+    }
+
+    void update()
+    {
+
     }
 
 private:
 
+    void overrideProperties(const py::dict &dict)
+    {
+
+    }
+
+    void initCustomConfigurationLoader(const py::object &worldObserverClass,
+                                       const py::object &agentControllerClass,
+                                       const py::object &worldModelClass,
+                                       const py::object &agentObserverClass)
+    {
+        gConfigurationLoader = new PyConfigurationLoader(gConfigurationLoader, worldObserverClass, agentControllerClass,
+                                                         worldModelClass, agentObserverClass);
+    }
 };
 
 PYBIND11_MODULE(pyroborobo, m)
@@ -53,6 +112,7 @@ PYBIND11_MODULE(pyroborobo, m)
     .def("setProperty", &Pyroborobo::setProperty)*/
     py::class_<Controller, PyControllerTrampoline>(m, "PyControllerTrampoline")
             .def(py::init<>())
+            .def(py::init<RobotWorldModel *>())
             .def("step", &Controller::step)
             .def("reset", &Controller::reset)
             .def("getWorldModel", &Controller::getWorldModel);

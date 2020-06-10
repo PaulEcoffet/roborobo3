@@ -25,7 +25,7 @@ include_directories(prj)
 set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
     message("it's unix")
-    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
+#    set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
 endif()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
@@ -69,17 +69,16 @@ list(APPEND SOURCE_FILES "${CMAKE_CURRENT_BINARY_DIR}/version.cpp" include/versi
 
 find_package(SDL2 COMPONENTS main image REQUIRED)
 #find_package(OpenCV)
-if (UNIX AND NOT APPLE)
-    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-endif()
-find_package(Eigen3 REQUIRED)
+#if (UNIX AND NOT APPLE)
+#    SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
+#endif()
 #find_package(TBB REQUIRED)
-set (Boost_USE_STATIC_LIBS ON) # enable dynamic linking
-set (Boost_USE_MULTITHREAD OFF)  # enable multithreading
+set(Boost_USE_STATIC_LIBS OFF) # enable dynamic linking
+set(Boost_USE_MULTITHREAD OFF)  # enable multithreading
 find_package(Boost COMPONENTS filesystem system REQUIRED)
 IF (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
-endif()
+endif ()
 
 if (SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIR})
@@ -109,6 +108,5 @@ target_link_libraries(pyroborobo PRIVATE
         ${Boost_SYSTEM_LIBRARY}
         ${GZSTREAM}
         ${ZLIB_LIBRARIES}
-        #${OpenCV_LIBS}#
-        # tbb
+
         )
