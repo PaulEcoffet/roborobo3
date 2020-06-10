@@ -12,6 +12,7 @@
 
 #include "RoboroboMain/roborobo.h"
 
+void quit(int signal);
 
 #endif // MAIN_H
 

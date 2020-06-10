@@ -22,8 +22,9 @@ class Controller
 
 	public:
 		//Initializes the variables
-		Controller( );
-		Controller( RobotWorldModel *__wm );
+        Controller();
+
+    Controller(RobotWorldModel *__wm);
         virtual ~Controller();
 				
 		virtual void reset() = 0;
