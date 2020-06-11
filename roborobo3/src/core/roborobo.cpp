@@ -914,12 +914,7 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
             SDL_RenderCopy(gScreenRenderer, gScreenTexture, NULL, NULL);
             SDL_RenderPresent(gScreenRenderer);
         }
-        
-        //Cap the frame rate
-        if( fps.get_ticks() < 1000 / gFramesPerSecond )
-        {
-            SDL_Delay( ( 1000 / gFramesPerSecond ) - fps.get_ticks() );
-        }
+
         /**/
         
         // video capture (sync with screen update)
@@ -2093,24 +2088,29 @@ bool runRoborobo(int __maxIt) // default parameter is -1 (infinite)
             
 			//Start the frame timer
 			fps.start();
-			
-			if ( gPauseMode == false )
-			{
-				if ( gUserCommandMode == true && gInspectorMode == false )
-					gWorld->updateWorld(keyboardStates);
-				else
-					gWorld->updateWorld();
-			}
-            
-			//Update the screen
-			updateDisplay();
-            
+
+            if (gPauseMode == false)
+            {
+                if (gUserCommandMode == true && gInspectorMode == false)
+                    gWorld->updateWorld(keyboardStates);
+                else
+                    gWorld->updateWorld();
+            }
+
+            //Update the screen
+            updateDisplay();
+            //Cap the frame rate
+            if (fps.get_ticks() < 1000 / gFramesPerSecond)
+            {
+                SDL_Delay((1000 / gFramesPerSecond) - fps.get_ticks());
+            }
+
             // monitor trajectories (if needed)
-            if ( gTrajectoryMonitor == true )
+            if (gTrajectoryMonitor == true)
                 updateTrajectoriesMonitor();
-            
-			updateMonitor(keyboardStates);
-		}
+
+            updateMonitor(keyboardStates);
+        }
 		
 		currentIt++;
 		if (gWorld->getNbOfRobots() <= 0)

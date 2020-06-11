@@ -57,7 +57,7 @@ protected:
 public:
 
     void initCameraSensors ( int nbSensors );
-    
+
     //sensor(R),sensor_origin_norm,sensor_origin_angle,sensor_target_distance_from_agent_center(!),sensor_target_angle, "current value", object Id.
 	double getCameraSensorValue( int sensorId, int valueId )
     {
