@@ -94,55 +94,58 @@ public:
         } // add speed monitoring and inspector agent
     }
 
-    bool update()
+    bool update(size_t n_step=1)
     {
         bool quit = false;
-        if (gBatchMode)
+        for (size_t i = 0; i < n_step && !quit; i++)
         {
-            gWorld->updateWorld();
-            if (gWorld->getIterations() % 10000 == 0)
-                if (gVerbose)
-                    std::cout << ".";
-
-            // monitor trajectories (if needed)
-            if (gTrajectoryMonitor)
-                updateTrajectoriesMonitor();
-        }
-        else
-        {
-            const Uint8 *keyboardStates = SDL_GetKeyboardState(nullptr);
-            quit = checkEvent() | handleKeyEvent(keyboardStates);
-
-            //Start the frame timer
-            fps.start();
-
-            if (!gPauseMode)
+            if (gBatchMode)
             {
-                if (gUserCommandMode && !gInspectorMode)
-                    gWorld->updateWorld(keyboardStates);
-                else
-                    gWorld->updateWorld();
+                gWorld->updateWorld();
+                if (gWorld->getIterations() % 10000 == 0)
+                    if (gVerbose)
+                        std::cout << ".";
+
+                // monitor trajectories (if needed)
+                if (gTrajectoryMonitor)
+                    updateTrajectoriesMonitor();
+            }
+            else
+            {
+                const Uint8 *keyboardStates = SDL_GetKeyboardState(nullptr);
+                quit = checkEvent() | handleKeyEvent(keyboardStates);
+
+                //Start the frame timer
+                fps.start();
+
+                if (!gPauseMode)
+                {
+                    if (gUserCommandMode && !gInspectorMode)
+                        gWorld->updateWorld(keyboardStates);
+                    else
+                        gWorld->updateWorld();
+                }
+
+                //Update the screen
+                updateDisplay();
+                //Cap the frame rate
+                if (fps.get_ticks() < 1000 / gFramesPerSecond)
+                {
+                    SDL_Delay((1000 / gFramesPerSecond) - fps.get_ticks());
+                }
+
+                // monitor trajectories (if needed)
+                if (gTrajectoryMonitor)
+                    updateTrajectoriesMonitor();
+
+                updateMonitor(keyboardStates);
             }
 
-            //Update the screen
-            updateDisplay();
-            //Cap the frame rate
-            if (fps.get_ticks() < 1000 / gFramesPerSecond)
+            currentIt++;
+            if (gWorld->getNbOfRobots() <= 0)
             {
-                SDL_Delay((1000 / gFramesPerSecond) - fps.get_ticks());
+                quit = true;
             }
-
-            // monitor trajectories (if needed)
-            if (gTrajectoryMonitor)
-                updateTrajectoriesMonitor();
-
-            updateMonitor(keyboardStates);
-        }
-
-        currentIt++;
-        if (gWorld->getNbOfRobots() <= 0)
-        {
-            quit = true;
         }
         return quit;
     }
