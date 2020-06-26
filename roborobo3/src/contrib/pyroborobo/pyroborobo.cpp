@@ -4,6 +4,7 @@
 
 #include <pybind11/pybind11.h>
 
+
 #include <csignal>
 #include <core/Config/GlobalConfigurationLoader.h>
 #include <core/Agents/InspectorAgent.h>
@@ -21,6 +22,7 @@
 
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 class Pyroborobo
 {
@@ -184,13 +186,19 @@ private:
 PYBIND11_MODULE(pyroborobo, m)
 {
     py::class_<Pyroborobo>(m, "Pyroborobo")
-            .def(py::init<std::string, py::object, py::object, py::object, py::object, py::dict>())
+            .def(py::init<std::string, py::object, py::object, py::object, py::object, py::dict>(),
+                 "properties_file"_a,
+                 "world_observer_class"_a,
+                 "controller_class"_a,
+                 "world_model_class"_a,
+                 "agent_observer_class"_a,
+                 "override_conf_dict"_a)
             .def("start", &Pyroborobo::start)
-            .def("update", &Pyroborobo::update)
+            .def("update", &Pyroborobo::update, "nb_updates"_a)
             .def("close", &Pyroborobo::close);
     py::class_<Controller, PyControllerTrampoline>(m, "PyController")
             .def(py::init<>())
-            .def(py::init<RobotWorldModel *>())
+            .def(py::init<RobotWorldModel *>(), "world_model"_a)
             .def("step", &Controller::step)
             .def("reset", &Controller::reset)
             .def("getWorldModel", &Controller::getWorldModel);

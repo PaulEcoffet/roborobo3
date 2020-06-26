@@ -186,11 +186,12 @@ void World::updateWorld(const Uint8 *__keyboardStates)
 	}
     
 	// * update world level observer (*before* updating agent state and location)
-	
+
     _worldObserver->stepPre();
 
+
     // * update agents
-	
+
     int shuffledRobotIndex[gNbOfRobots];
     for ( int i = 0 ; i < gNbOfRobots ; i++ )
         shuffledRobotIndex[i] = i;

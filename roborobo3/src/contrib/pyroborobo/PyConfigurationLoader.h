@@ -95,7 +95,7 @@ public:
         {
             py::object py_controller = agentControllerClass(wm);
             allocated.push_back(py_controller);
-            auto *c_controller = py_controller.cast<PyControllerTrampoline *>();
+            auto *c_controller = py_controller.cast<Controller *>();
             return c_controller;
         }
     }
