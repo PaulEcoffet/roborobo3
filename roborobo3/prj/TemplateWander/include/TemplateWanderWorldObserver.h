@@ -18,10 +18,10 @@ class TemplateWanderWorldObserver : public WorldObserver
 		TemplateWanderWorldObserver( World *__world );
 		~TemplateWanderWorldObserver();
 				
-		void reset();
+		void reset() override ;
     
-		void stepPre();
-		void stepPost();
+		void stepPre() override ;
+		void stepPost() override ;
     
 };
 

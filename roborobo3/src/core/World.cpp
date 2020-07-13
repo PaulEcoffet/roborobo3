@@ -15,6 +15,9 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <pybind11/pybind11.h>
+
+namespace py = pybind11;
 
 /*
 struct executor
@@ -186,7 +189,7 @@ void World::updateWorld(const Uint8 *__keyboardStates)
 	}
     
 	// * update world level observer (*before* updating agent state and location)
-
+    
     _worldObserver->stepPre();
 
 
@@ -200,7 +203,7 @@ void World::updateWorld(const Uint8 *__keyboardStates)
 	// update agent level observers
 	for ( int i = 0 ; i != gNbOfRobots ; i++ )
 		gRobots[shuffledRobotIndex[i]]->callObserverPre();
-
+    
 	// controller step
 	for ( int i = 0 ; i < gNbOfRobots ; i++ )
 	{
@@ -231,7 +234,7 @@ void World::updateWorld(const Uint8 *__keyboardStates)
         gRobots[shuffledRobotIndex[i]]->registerRobot();
         gRobotsRegistry[shuffledRobotIndex[i]]=true;
     }
-
+    
     // * update agent observer after movement
 	for ( int i = 0 ; i != gNbOfRobots ; i++ )
 		gRobots[shuffledRobotIndex[i]]->callObserverPost();

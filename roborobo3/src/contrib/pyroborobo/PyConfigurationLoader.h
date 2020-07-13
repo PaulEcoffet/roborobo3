@@ -13,6 +13,9 @@
 #include <Observers/AgentObserver.h>
 #include <Controllers/Controller.h>
 #include <pybind11/pybind11.h>
+#include <Dummy/include/DummyWorldObserver.h>
+#include <Dummy/include/DummyAgentObserver.h>
+#include <Dummy/include/DummyController.h>
 
 namespace py = pybind11;
 
@@ -43,6 +46,10 @@ public:
         {
             return fallbackconf->make_WorldObserver(wm);
         }
+        else if(worldObserverClass.cast<std::string>() == "dummy")
+        {
+            return new DummyWorldObserver(wm);
+        }
         else
         {
             py::object py_worldobserver = worldObserverClass();
@@ -58,6 +65,10 @@ public:
         if (worldModelClass.is(py::none()))
         {
             return fallbackconf->make_RobotWorldModel();
+        }
+        else if(worldModelClass.cast<std::string>() == "dummy")
+        {
+            return new RobotWorldModel();
         }
         else
         {
@@ -75,6 +86,10 @@ public:
         {
             return fallbackconf->make_AgentObserver(wm);
         }
+        else if(agentObserverClass.cast<std::string>() == "dummy")
+        {
+            return new DummyAgentObserver(wm);
+        }
         else
         {
             py::object py_agentobserver = agentObserverClass(wm);
@@ -90,6 +105,10 @@ public:
         if (agentControllerClass.is(py::none()))
         {
             return fallbackconf->make_Controller(wm);
+        }
+        else if(agentControllerClass.cast<std::string>() == "dummy")
+        {
+            return new DummyController(wm);
         }
         else
         {

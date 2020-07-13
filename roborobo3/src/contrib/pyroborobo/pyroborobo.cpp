@@ -19,7 +19,7 @@
 #include "World/World.h"
 #include "Config/GlobalConfigurationLoader.h"
 #include "PyConfigurationLoader.h"
-
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -46,7 +46,6 @@ public:
 
     void start()
     {
-        py::print("Roborobo is started !");
         currentIt = 0;
 
 
@@ -65,12 +64,10 @@ public:
             exit(-2);
         }
 
-        py::print("And SDL is initialized\ninitializing logging");
         // * Initialize log file(s)
 
         initLogging();
 
-        py::print("Logging initialized; seeding engine");
 
         // * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
 
@@ -79,21 +76,23 @@ public:
         //srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
         //gLogFile << "# random seed             : " << gRandomSeed << std::endl;
 
-        py::print("creating the world");
         world = new World();
         gWorld = world;
 
         // * run
 
-        py::print("about to initialize the world");
         world->initWorld();
 
-        py::print("World is initialized");
 
         if (!gBatchMode)
         {
             initMonitor(true);
         } // add speed monitoring and inspector agent
+
+        gatherProjectInstances();
+
+
+        initialized = true;
     }
 
     bool update(size_t n_step=1)
@@ -152,12 +151,54 @@ public:
         return quit;
     }
 
+    std::vector<Controller*> getControllers()
+    {
+        return controllers;
+    }
+
+    std::vector<RobotWorldModel*> getWorldModels()
+    {
+        return worldmodels;
+    }
+
+    std::vector<AgentObserver*> getAgentObservers()
+    {
+        return agentobservers;
+    }
+
+    WorldObserver* getWorldObserver()
+    {
+        return wobs;
+    }
+
     void close()
     {
         closeRoborobo();
     }
 
 private:
+
+    void gatherProjectInstances()
+    {
+        size_t nbRob = world->getNbOfRobots();
+
+        controllers.clear();
+        controllers.reserve(nbRob);
+        worldmodels.clear();
+        worldmodels.reserve(nbRob);
+        agentobservers.clear();
+        agentobservers.reserve(nbRob);
+
+        wobs = world->getWorldObserver();
+
+        for (size_t i = 0; i < nbRob; i++)
+        {
+            auto *rob = world->getRobot(i);
+            worldmodels.emplace_back(rob->getWorldModel());
+            agentobservers.emplace_back(rob->getObserver());
+            controllers.emplace_back(rob->getController());
+        }
+    }
 
     void overrideProperties(const py::dict &dict)
     {
@@ -181,6 +222,11 @@ private:
     World *world = nullptr;
     int timetag = -1;
     long long currentIt;
+    bool initialized;
+    std::vector<Controller*> controllers;
+    std::vector<RobotWorldModel*> worldmodels;
+    std::vector<AgentObserver*> agentobservers;
+    WorldObserver* wobs;
 };
 
 PYBIND11_MODULE(pyroborobo, m)
@@ -195,7 +241,11 @@ PYBIND11_MODULE(pyroborobo, m)
                  "override_conf_dict"_a)
             .def("start", &Pyroborobo::start)
             .def("update", &Pyroborobo::update, "nb_updates"_a)
-            .def("close", &Pyroborobo::close);
+            .def("close", &Pyroborobo::close)
+            .def("getControllers", &Pyroborobo::getControllers)
+            .def("getWorldModels", &Pyroborobo::getWorldModels)
+            .def("getAgentObservers", &Pyroborobo::getAgentObservers)
+            .def("getWorldObserver", &Pyroborobo::getWorldObserver, py::return_value_policy::reference);
     py::class_<Controller, PyControllerTrampoline>(m, "PyController")
             .def(py::init<>())
             .def(py::init<RobotWorldModel *>(), "world_model"_a)
@@ -214,4 +264,10 @@ PYBIND11_MODULE(pyroborobo, m)
             .def_readwrite("speed", &RobotWorldModel::_desiredTranslationalValue)
             .def_readwrite("rotspeed", &RobotWorldModel::_desiredRotationalVelocity)
             .def_readwrite("fitness", &RobotWorldModel::_fitnessValue);
+    py::class_<WorldObserver>(m, "PyWorldObserver")
+            .def(py::init<World*>())
+            .def("reset", &WorldObserver::reset)
+            .def("stepPre", &WorldObserver::stepPre)
+            .def("stepPost", &WorldObserver::stepPost);
+    py::class_<World>(m, "World");
 }

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
-find_package(pybind11)
+find_package(pybind11 REQUIRED)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
