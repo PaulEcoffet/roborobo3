@@ -3,6 +3,8 @@ from pyevo.fitprop import FitPropEvolutionStrategy
 from pyevo.mulambdaes import MuLambdaEvolutionStrategy
 from pyevo.oneone import OneOneEvolutionStrategy
 import cma
+from pyevo.nonenone import NOneOneEvolutionStrategy
+
 
 def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath, **kwargs):
     if type_ == 'cmaes':
@@ -25,5 +27,7 @@ def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath, **kwargs):
         mu = kwargs.get('mu', (9*popsize)//10)
         return OneOneEvolutionStrategy(guess, sigma, popsize, maxiter, bounds,
                                        logpath, mu=mu)
+    elif type_ == 'noneone':
+        return NOneOneEvolutionStrategy(guess, sigma, popsize, maxiter, bounds, logpath, **kwargs)
     else:
         raise NotImplemented()

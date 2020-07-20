@@ -20,6 +20,7 @@
 #include "Config/DebugCollConfigurationLoader.h"
 #include "Config/LionConfigurationLoader.h"
 #include "Config/NegociateConfigurationLoader.h"
+#include "Config/MaxOneConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -157,6 +158,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "NegociateConfigurationLoader" )
 	{
 		return new NegociateConfigurationLoader();
+	}
+#endif
+#if defined PRJ_MAXONE || !defined MODULAR
+	else if (configurationLoaderObjectName == "MaxOneConfigurationLoader" )
+	{
+		return new MaxOneConfigurationLoader();
 	}
 #endif
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

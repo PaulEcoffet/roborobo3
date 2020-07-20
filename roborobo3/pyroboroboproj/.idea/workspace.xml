@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="85444af3-321e-43cb-922c-612d2c5ae3ff" name="Default Changelist" comment="Creation of a benchmark PyFastWanderer and beginning implementation of GymRoborobo">
+      <change afterPath="$PROJECT_DIR$/.idea/other.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/multiagentenv.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/multiagentenv_ppoyield.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ppoyield/ppoyield.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../include/contrib/pyroborobo/PyWorldModel.h" beforeDir="false" afterPath="$PROJECT_DIR$/../include/contrib/pyroborobo/PyWorldModel.h" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="JupyterTrust" id="ddc9effe-3375-42a0-bb84-539fae48c060" />
+  <component name="ProjectId" id="1dDts9WNtaqWVAd0YXM8ll1bxkj" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="ASKED_SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../../RLlibXroborobo" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.multiagentenv_ppoyield">
+    <configuration name="gymroborobo" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pyroboroboproj" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/gymroborobo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="multiagentenv" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pyroboroboproj" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/multiagentenv.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="multiagentenv_ppoyield" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="pyroboroboproj" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/multiagentenv_ppoyield.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.multiagentenv_ppoyield" />
+        <item itemvalue="Python.multiagentenv" />
+        <item itemvalue="Python.gymroborobo" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="85444af3-321e-43cb-922c-612d2c5ae3ff" name="Default Changelist" comment="" />
+      <created>1591971695757</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1591971695757</updated>
+      <workItem from="1591971697501" duration="1235000" />
+      <workItem from="1591974714262" duration="1797000" />
+      <workItem from="1591976562923" duration="2199000" />
+      <workItem from="1592299091297" duration="839000" />
+      <workItem from="1592299952872" duration="25000" />
+      <workItem from="1592299994228" duration="10002000" />
+      <workItem from="1592316125059" duration="5928000" />
+      <workItem from="1592843892746" duration="1000" />
+      <workItem from="1592843914981" duration="24000" />
+    </task>
+    <task id="LOCAL-00001" summary="Creation of a benchmark PyFastWanderer and beginning implementation of GymRoborobo">
+      <created>1591982044262</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1591982044262</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="2" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Creation of a benchmark PyFastWanderer and beginning implementation of GymRoborobo" />
+    <option name="LAST_COMMIT_MESSAGE" value="Creation of a benchmark PyFastWanderer and beginning implementation of GymRoborobo" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="2475" y="267" width="800" height="719" key="#Plugins" timestamp="1592299977125">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state x="2475" y="267" width="800" height="719" key="#Plugins/70.27.1850.1053/1920.83.1920.1080@1920.83.1920.1080" timestamp="1592299977125" />
+    <state x="453" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1591975607866">
+      <screen x="70" y="27" width="1850" height="1053" />
+    </state>
+    <state x="453" y="211" key="#com.intellij.execution.impl.EditConfigurationsDialog/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591975607866" />
+    <state x="2398" y="159" width="918" height="911" key="CommitChangelistDialog2" timestamp="1592316044909">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state x="2398" y="159" key="CommitChangelistDialog2/70.27.1850.1053/1920.83.1920.1080@1920.83.1920.1080" timestamp="1592316044909" />
+    <state x="531" y="101" width="918" height="911" key="CommitChangelistDialog2/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591982044039" />
+    <state x="778" y="311" width="424" height="491" key="FileChooserDialogImpl" timestamp="1592843940420">
+      <screen x="70" y="27" width="1850" height="1053" />
+    </state>
+    <state x="778" y="311" width="424" height="491" key="FileChooserDialogImpl/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1592843940420" />
+    <state width="1874" height="346" key="GridCell.Tab.0.bottom" timestamp="1592326903841">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="346" key="GridCell.Tab.0.bottom/70.27.1850.1053/1920.83.1920.1080@1920.83.1920.1080" timestamp="1592326903841" />
+    <state width="1804" height="275" key="GridCell.Tab.0.bottom/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591976513845" />
+    <state width="1874" height="346" key="GridCell.Tab.0.center" timestamp="1592326903841">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="346" key="GridCell.Tab.0.center/70.27.1850.1053/1920.83.1920.1080@1920.83.1920.1080" timestamp="1592326903841" />
+    <state width="1804" height="275" key="GridCell.Tab.0.center/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591976513845" />
+    <state width="1874" height="346" key="GridCell.Tab.0.left" timestamp="1592326903841">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="346" key="GridCell.Tab.0.left/70.27.1850.1053/1920.83.1920.1080@1920.83.1920.1080" timestamp="1592326903841" />
+    <state width="1804" height="275" key="GridCell.Tab.0.left/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591976513845" />
+    <state width="1874" height="346" key="GridCell.Tab.0.right" timestamp="1592326903841">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state width="1874" height="346" key="GridCell.Tab.0.right/70.27.1850.1053/1920.83.1920.1080@1920.83.1920.1080" timestamp="1592326903841" />
+    <state width="1804" height="275" key="GridCell.Tab.0.right/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591976513845" />
+    <state x="484" y="188" width="1022" height="737" key="SettingsEditor" timestamp="1591975868802">
+      <screen x="70" y="27" width="1850" height="1053" />
+    </state>
+    <state x="484" y="188" width="1022" height="737" key="SettingsEditor/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591975868802" />
+    <state x="590" y="275" width="800" height="563" key="Vcs.Push.Dialog.v2" timestamp="1591982046810">
+      <screen x="70" y="27" width="1850" height="1053" />
+    </state>
+    <state x="590" y="275" width="800" height="563" key="Vcs.Push.Dialog.v2/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1591982046810" />
+    <state x="2118" y="83" width="1564" height="1009" maximized="true" key="dock-window-1" timestamp="1592300575918">
+      <screen x="1920" y="83" width="1920" height="1080" />
+    </state>
+    <state x="2118" y="83" width="1564" height="1009" maximized="true" key="dock-window-1/70.27.1850.1053/1920.83.1920.1080@70.27.1850.1053" timestamp="1592300575918" />
+  </component>
+  <component name="com.intellij.coverage.CoverageDataManagerImpl">
+    <SUITE FILE_PATH="coverage/pyroboroboproj$multiagentenv.coverage" NAME="multiagentenv Coverage Results" MODIFIED="1592316369860" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pyroboroboproj$multiagentenv_ppoyield.coverage" NAME="multiagentenv_ppoyield Coverage Results" MODIFIED="1592320285579" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/pyroboroboproj$gymroborobo.coverage" NAME="gymroborobo Coverage Results" MODIFIED="1591975747815" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+  </component>
+</project>
