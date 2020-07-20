@@ -13,15 +13,17 @@ class RobotWorldModel;
 
 class TemplateWanderController : public Controller
 {
-	public:
-		//Initializes the variables
-		TemplateWanderController( RobotWorldModel *__wm );
-		~TemplateWanderController();
-		
-		void reset();
-		void step();
-    
-        void monitorSensory();
+public:
+    //Initializes the variables
+    TemplateWanderController(RobotWorldModel *__wm);
+
+    ~TemplateWanderController();
+
+    void reset();
+
+    void step();
+
+    void monitorSensory();
 };
 
 

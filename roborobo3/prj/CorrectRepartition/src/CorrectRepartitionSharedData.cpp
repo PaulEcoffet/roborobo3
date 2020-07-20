@@ -29,12 +29,17 @@ void CorrectRepartitionSharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("evaluationTime", &CorrectRepartitionSharedData::evaluationTime, true);
     gProperties.checkAndGetPropertyValue("genomeLog", &CorrectRepartitionSharedData::genomeLog, true);
     gProperties.checkAndGetPropertyValue("controllerType", &CorrectRepartitionSharedData::controllerType, true);
-    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &CorrectRepartitionSharedData::maxTranslationalValue, true);
-    gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &CorrectRepartitionSharedData::maxRotationalVelocity, true);
+    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &CorrectRepartitionSharedData::maxTranslationalValue,
+                                         true);
+    gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &CorrectRepartitionSharedData::maxRotationalVelocity,
+                                         true);
     gProperties.checkAndGetPropertyValue("nbHiddenLayers", &CorrectRepartitionSharedData::nbHiddenLayers, true);
-    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &CorrectRepartitionSharedData::nbNeuronsPerHiddenLayer, true);
-    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &CorrectRepartitionSharedData::nbEvaluationsPerGeneration, true);
-    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &CorrectRepartitionSharedData::takeVideoEveryGeneration, false);
+    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer",
+                                         &CorrectRepartitionSharedData::nbNeuronsPerHiddenLayer, true);
+    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration",
+                                         &CorrectRepartitionSharedData::nbEvaluationsPerGeneration, true);
+    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration",
+                                         &CorrectRepartitionSharedData::takeVideoEveryGeneration, false);
     gProperties.checkAndGetPropertyValue("arrivalMemory", &CorrectRepartitionSharedData::arrivalMemory, false);
     gProperties.checkAndGetPropertyValue("exactlyTwo", &CorrectRepartitionSharedData::exactlyTwo, false);
     gProperties.checkAndGetPropertyValue("clones", &CorrectRepartitionSharedData::clones, false);

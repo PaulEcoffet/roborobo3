@@ -12,17 +12,19 @@ class World;
 
 class TemplateRandomwalkWorldObserver : public WorldObserver
 {
-	protected:
-		
-	public:
-		TemplateRandomwalkWorldObserver( World *__world );
-		~TemplateRandomwalkWorldObserver();
-				
-		void reset();
-    
-        void stepPre();
-        void stepPost();
-		
+protected:
+
+public:
+    TemplateRandomwalkWorldObserver(World *__world);
+
+    ~TemplateRandomwalkWorldObserver();
+
+    void reset();
+
+    void stepPre();
+
+    void stepPost();
+
 };
 
 #endif

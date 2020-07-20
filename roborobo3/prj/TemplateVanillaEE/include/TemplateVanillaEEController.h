@@ -14,27 +14,31 @@ class RobotWorldModel;
 
 class TemplateVanillaEEController : public TemplateEEController
 {
-    public:
-    
-        TemplateVanillaEEController(RobotWorldModel *wm);
-        ~TemplateVanillaEEController();
-    
-        double getFitness();
+public:
 
-    protected:
-    
-        void initController();
-        void stepController();
-    
-        void performSelection();
-        void performVariation();
-    
-        void broadcastGenome();
-    
-        void resetFitness();
-        void updateFitness();
+    TemplateVanillaEEController(RobotWorldModel *wm);
 
-        void logCurrentState();
+    ~TemplateVanillaEEController();
+
+    double getFitness();
+
+protected:
+
+    void initController();
+
+    void stepController();
+
+    void performSelection();
+
+    void performVariation();
+
+    void broadcastGenome();
+
+    void resetFitness();
+
+    void updateFitness();
+
+    void logCurrentState();
 };
 
 

@@ -10,7 +10,7 @@
 
 using namespace Neural;
 
-TemplateVanillaEEController::TemplateVanillaEEController( RobotWorldModel *wm ) : TemplateEEController( wm )
+TemplateVanillaEEController::TemplateVanillaEEController(RobotWorldModel *wm) : TemplateEEController(wm)
 {
     // superclass constructor called before this baseclass constructor.
     resetFitness(); // superconstructor calls parent method.
@@ -34,10 +34,10 @@ void TemplateVanillaEEController::initController()
 void TemplateVanillaEEController::performSelection()
 {
     //TemplateEEController::performSelection();
-    
-    std::pair<int,int> bestId;
 
-    std::map<std::pair<int,int>, float >::iterator fitnessesIt = _fitnessValuesList.begin();
+    std::pair<int, int> bestId;
+
+    std::map<std::pair<int, int>, float>::iterator fitnessesIt = _fitnessValuesList.begin();
 
     float bestFitnessValue = (*fitnessesIt).second;
     bestId = (*fitnessesIt).first;
@@ -45,12 +45,12 @@ void TemplateVanillaEEController::performSelection()
     ++fitnessesIt;
 
     int nbSimilar = 0;
-    
-    for ( int i = 1 ; fitnessesIt != _fitnessValuesList.end(); ++fitnessesIt, i++)
+
+    for (int i = 1; fitnessesIt != _fitnessValuesList.end(); ++fitnessesIt, i++)
     {
-        if ( (*fitnessesIt).second >= bestFitnessValue )
+        if ((*fitnessesIt).second >= bestFitnessValue)
         {
-            if ( (*fitnessesIt).second > bestFitnessValue )
+            if ((*fitnessesIt).second > bestFitnessValue)
             {
                 bestFitnessValue = (*fitnessesIt).second;
                 bestId = (*fitnessesIt).first;
@@ -63,19 +63,19 @@ void TemplateVanillaEEController::performSelection()
         }
     }
 
-    if ( nbSimilar > 0 ) // >1 genomes have the same fitness best value. Pick randomly among them
+    if (nbSimilar > 0) // >1 genomes have the same fitness best value. Pick randomly among them
     {
         int count = 0;
-        int randomPick = randint() % ( nbSimilar + 1 );
-        
-        if ( randomPick != 0 ) // not already stored (i.e. not the first one)
+        int randomPick = randint() % (nbSimilar + 1);
+
+        if (randomPick != 0) // not already stored (i.e. not the first one)
         {
             fitnessesIt = _fitnessValuesList.begin();
-            for ( int i = 0 ; ; ++fitnessesIt, i++)
+            for (int i = 0;; ++fitnessesIt, i++)
             {
-                if ( (*fitnessesIt).second == bestFitnessValue )
+                if ((*fitnessesIt).second == bestFitnessValue)
                 {
-                    if ( count == randomPick )
+                    if (count == randomPick)
                     {
                         bestId = (*fitnessesIt).first;
                         break;
@@ -85,17 +85,19 @@ void TemplateVanillaEEController::performSelection()
             }
         }
     }
-    
+
     _birthdate = gWorld->getIterations();
-    
+
     _currentGenome = _genomesList[bestId];
     _currentSigma = _sigmaList[bestId];
-    
+
     setNewGenomeStatus(true);
-    
+
     // Logging: track descendance
     std::string sLog = std::string("");
-    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",descendsFrom," + std::to_string((*_genomesList.begin()).first.first) + "::" + std::to_string((*_genomesList.begin()).first.second) + "\n";
+    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" +
+            std::to_string(_birthdate) + ",descendsFrom," + std::to_string((*_genomesList.begin()).first.first) + "::" +
+            std::to_string((*_genomesList.begin()).first.second) + "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
 }

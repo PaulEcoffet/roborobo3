@@ -57,7 +57,6 @@ public:
     static void initSharedData();
 
 
-
 };
 
 #endif //ROBOROBO3_LIONSHAREDDATA_H

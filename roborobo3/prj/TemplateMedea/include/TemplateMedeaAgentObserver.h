@@ -13,11 +13,12 @@ class RobotWorldModel;
 
 class TemplateMedeaAgentObserver : public TemplateEEAgentObserver
 {
-	public:
-        TemplateMedeaAgentObserver( RobotWorldModel *wm );
-		~TemplateMedeaAgentObserver();
+public:
+    TemplateMedeaAgentObserver(RobotWorldModel *wm);
 
-        virtual void stepPre();
+    ~TemplateMedeaAgentObserver();
+
+    virtual void stepPre();
 };
 
 #endif

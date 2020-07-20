@@ -12,20 +12,22 @@ class World;
 
 class DebugCollWorldObserver : public WorldObserver
 {
-	protected:
-		
-	public:
-		DebugCollWorldObserver( World *__world );
-		~DebugCollWorldObserver();
-				
-		void reset();
+protected:
 
-		std::ofstream log;
+public:
+    DebugCollWorldObserver(World *__world);
+
+    ~DebugCollWorldObserver();
+
+    void reset();
+
+    std::ofstream log;
 
 
-	void stepPre();
-		void stepPost();
-    
+    void stepPre();
+
+    void stepPost();
+
 };
 
 #endif

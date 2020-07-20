@@ -6,7 +6,6 @@
 #define ROBOROBO3_NegociateTrainWorldObserver_H
 
 
-
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
 #include <network/PyevoInterface.h>
@@ -27,7 +26,7 @@ public:
     using NegociateWorldObserver::NegociateWorldObserver;
 
 protected:
-    void computeOpportunityImpacts() override ;
+    void computeOpportunityImpacts() override;
 
 };
 

@@ -30,12 +30,13 @@ void CoopFixed2AgentObserver::stepPre()
 void CoopFixed2AgentObserver::stepPost()
 {
     int dest_obj = -1;
-    if (!m_wm->toBeTeleported && m_wm->teleport && !(CoopFixed2SharedData::partnerControl && m_wm->nbOnOpp >= 2 && m_wm->arrival <= 2))
+    if (!m_wm->toBeTeleported && m_wm->teleport &&
+        !(CoopFixed2SharedData::partnerControl && m_wm->nbOnOpp >= 2 && m_wm->arrival <= 2))
     {
         auto rob = gWorld->getRobot(this->m_wm->getId());
         rob->unregisterRobot();
-        rob->setCoord(0,0);
-        rob->setCoordReal(0,0);
+        rob->setCoord(0, 0);
+        rob->setCoordReal(0, 0);
         m_wm->toBeTeleported = true;
     }
     if (m_wm->toBeTeleported && random01() < CoopFixed2SharedData::tpProba)
@@ -71,19 +72,21 @@ void CoopFixed2AgentObserver::stepPost()
             const int nbCluster = CoopFixed2SharedData::nbCluster;
             const int objpercluster = gNbOfPhysicalObjects / nbCluster;
             int cur_cluster = m_wm->prevopp / objpercluster;
-            double p_stayincluster = (CoopFixed2SharedData::pStayInCluster != -1)? CoopFixed2SharedData::pStayInCluster : 1 - (1.0 / (gNbOfPhysicalObjects / nbCluster));
+            double p_stayincluster = (CoopFixed2SharedData::pStayInCluster != -1) ? CoopFixed2SharedData::pStayInCluster
+                                                                                  : 1 - (1.0 / (gNbOfPhysicalObjects /
+                                                                                                nbCluster));
             if (random01() < p_stayincluster) // Stay in the same cluster
             {
                 int curloc = m_wm->prevopp % objpercluster;
-                std::uniform_int_distribution<int> dis(0, objpercluster-1 -1);
+                std::uniform_int_distribution<int> dis(0, objpercluster - 1 - 1);
                 int newloc = dis(engine);
                 if (newloc >= curloc) newloc += 1; // exclude the current location from the draw
                 dest_obj = cur_cluster * objpercluster + newloc;
             }
             else
             {
-                std::uniform_int_distribution<int> dis(0, nbCluster-1 -1);
-                std::uniform_int_distribution<int> disInCluster(0, objpercluster-1);
+                std::uniform_int_distribution<int> dis(0, nbCluster - 1 - 1);
+                std::uniform_int_distribution<int> disInCluster(0, objpercluster - 1);
                 int newclus = dis(engine);
                 if (newclus >= cur_cluster) newclus += 1; // exclude the current location from the draw
                 dest_obj = newclus * objpercluster + disInCluster(engine);
@@ -98,7 +101,7 @@ void CoopFixed2AgentObserver::stepPost()
         }
         else
         {
-            std::uniform_int_distribution<int> dis(0, gNbOfPhysicalObjects-1);
+            std::uniform_int_distribution<int> dis(0, gNbOfPhysicalObjects - 1);
             dest_obj = dis(engine);
         }
         if (dest_obj != -1)
@@ -125,9 +128,9 @@ void CoopFixed2AgentObserver::stepPost()
     Uint32 pixel = getPixel32(gFootprintImage, static_cast<int>(_wm->_xReal + 0.5),
                               static_cast<int>(_wm->_yReal + 0.5));
     SDL_GetRGB(pixel, gFootprintImage->format, &r, &g, &b);
-    _wm->_groundSensorValue[0] = (int)r;
-    _wm->_groundSensorValue[1] = (int)g;
-    _wm->_groundSensorValue[2] = (int)b;
+    _wm->_groundSensorValue[0] = (int) r;
+    _wm->_groundSensorValue[1] = (int) g;
+    _wm->_groundSensorValue[2] = (int) b;
     int targetIndex = _wm->getGroundSensorValue();
     if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset +
                                                                         (int) gPhysicalObjects.size())   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)

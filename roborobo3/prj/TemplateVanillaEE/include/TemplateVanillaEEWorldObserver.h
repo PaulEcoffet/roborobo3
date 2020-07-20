@@ -14,13 +14,15 @@ class TemplateVanillaEEWorldObserver : public TemplateEEWorldObserver
 {
 public:
     TemplateVanillaEEWorldObserver(World *world);
+
     ~TemplateVanillaEEWorldObserver();
-    
+
     void stepPre();
+
     void stepPost();
 
-protected:    
-    virtual void monitorPopulation( bool localVerbose = true );
+protected:
+    virtual void monitorPopulation(bool localVerbose = true);
 };
 
 #endif

@@ -35,13 +35,22 @@ int NegociateAgentObserver::getSeekTime()
 
 void NegociateAgentObserver::stepPost()
 {
+    color_agent();
+
     if (!m_wm->seeking)
     {
         return;
     }
+    else
+    {
+        m_seekTime++;
+        mark_walking_opp();
 
-    m_seekTime++;
+    }
+}
 
+void NegociateAgentObserver::mark_walking_opp() const
+{
     Uint8 r, g, b;
     Uint32 pixel = getPixel32(gFootprintImage, static_cast<int>(_wm->_xReal + 0.5),
                               static_cast<int>(_wm->_yReal + 0.5));
@@ -56,6 +65,26 @@ void NegociateAgentObserver::stepPost()
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         gPhysicalObjects[targetIndex]->isWalked(m_wm->getId() + gRobotIndexStartOffset);
         m_wm->prevopp = targetIndex;
+    }
+}
+
+void NegociateAgentObserver::color_agent() const
+{
+    if (not m_wm->seeking)
+    {
+        m_wm->setRobotLED_colorValues(220, 220, 220);
+    }
+    else if (m_wm->fakeCoef < -0.33 * NegociateSharedData::fakeCoef)
+    {
+        m_wm->setRobotLED_colorValues(126, 55, 49);
+    }
+    else if (m_wm->fakeCoef < +0.33 * NegociateSharedData::fakeCoef)
+    {
+        m_wm->setRobotLED_colorValues(0, 0, 255);
+    }
+    else
+    {
+        m_wm->setRobotLED_colorValues(115, 182, 234);
     }
 }
 

@@ -9,12 +9,15 @@
 #include "World/RoundObject.h"
 #include <set>
 
-class CorrectRepartitionOpportunity: public RoundObject
+class CorrectRepartitionOpportunity : public RoundObject
 {
 public:
     explicit CorrectRepartitionOpportunity(int __id);
+
     void step() override;
-    const std::vector<int> & getNearbyRobotIndexes() const;
+
+    const std::vector<int> &getNearbyRobotIndexes() const;
+
     void clearNearbyRobotIndexes();
 
     void isPushed(int id, std::tuple<double, double> speed) override;
@@ -23,7 +26,7 @@ public:
 
     void registerNewNearbyRobots();
 
-    std::string inspect(std::string prefix="") override;
+    std::string inspect(std::string prefix = "") override;
 
 protected:
     std::vector<int> nearbyRobotIndexes;

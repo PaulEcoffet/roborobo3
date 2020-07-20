@@ -23,20 +23,25 @@ class PartnerControlController : public Controller
 {
 public:
     explicit PartnerControlController(RobotWorldModel *wm);
+
     ~PartnerControlController() override;
 
     void step() override;
+
     void reset() override;
 
     void loadNewGenome(const std::vector<double> &newGenome);
 
     void resetFitness();
+
     void updateFitness(double newFitness);
+
     void increaseFitness(double delta);
 
     std::string inspect(std::string prefix) override;
 
     double getFitness() const;
+
     std::vector<double> getWeights() const;
 
 protected:
@@ -51,6 +56,7 @@ protected:
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
     unsigned int getNbInputs() const;
+
     unsigned int getNbOutputs() const;
 };
 

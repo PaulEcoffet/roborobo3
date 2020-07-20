@@ -41,8 +41,6 @@ public:
     double lifeExpectancy;
 
 
-
-
 protected:
     std::vector<int> nearbyRobotIndexes;
     std::vector<int> newNearbyRobotIndexes;

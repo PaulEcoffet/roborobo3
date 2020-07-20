@@ -24,12 +24,13 @@ class MovingEEWorldObserver : public TemplateEEWorldObserver
 {
 public:
     MovingEEWorldObserver(World *world);
+
     ~MovingEEWorldObserver();
-    
+
     virtual void stepPre();
 
-protected:    
-    virtual void monitorPopulation( bool localVerbose = true );
+protected:
+    virtual void monitorPopulation(bool localVerbose = true);
 };
 
 #endif

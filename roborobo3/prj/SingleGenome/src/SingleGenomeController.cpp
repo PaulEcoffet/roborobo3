@@ -20,39 +20,39 @@
 
 using namespace Neural;
 
-SingleGenomeController::SingleGenomeController( RobotWorldModel *wm )
+SingleGenomeController::SingleGenomeController(RobotWorldModel *wm)
 {
     _wm = wm;
-    
+
     _NN = nullptr;
-    
+
     // evolutionary engine
-    
+
     _minValue = -1.0;
     _maxValue = 1.0;
-    
+
     _currentSigma = SingleGenomeSharedData::gSigmaRef;
-    
+
     // behaviour
-    
+
     _iteration = 0;
-    
+
     _birthdate = 0;
-    
+
     _isListening = true;
     _notListeningDelay = SingleGenomeSharedData::gNotListeningStateDelay;
     _listeningDelay = SingleGenomeSharedData::gListeningStateDelay;
-        
-    if ( gEnergyLevel )
+
+    if (gEnergyLevel)
         _wm->setEnergyLevel(gEnergyInit);
-    
-    if ( gNbOfLandmarks > 0 )
+
+    if (gNbOfLandmarks > 0)
         _wm->updateLandmarkSensor(); // wrt closest landmark
-    
+
     reset(); // resetFitness() is called in reset()
-    
+
     _wm->setRobotLED_colorValues(255, 0, 0);
-    
+
 }
 
 SingleGenomeController::~SingleGenomeController()
@@ -66,18 +66,18 @@ void SingleGenomeController::initController()
 {
     _nbHiddenLayers = SingleGenomeSharedData::gNbHiddenLayers;
     _nbNeuronsPerHiddenLayer = new std::vector<unsigned int>(_nbHiddenLayers);
-    for(unsigned int i = 0; i < _nbHiddenLayers; i++)
+    for (unsigned int i = 0; i < _nbHiddenLayers; i++)
         (*_nbNeuronsPerHiddenLayer)[i] = SingleGenomeSharedData::gNbNeuronsPerHiddenLayer;
-    
+
     createNN();
-    
-    if ( gVerbose )
+
+    if (gVerbose)
         std::cout << std::flush;
-    
+
     _currentGenome.clear();
-    
+
     // We'll get our genome from the WorldObserver
-    
+
     // state variables
     _nbNearbyRobots = 0;
     _isNearObject = false;
@@ -88,26 +88,27 @@ void SingleGenomeController::initController()
 void SingleGenomeController::setIOcontrollerSize()
 {
     // wrt inputs
-    
+
     _nbInputs = 0;
-    
-    if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
+
+    if (gExtendedSensoryInputs) // EXTENDED SENSORY INPUTS: code provided as example, can be rewritten to suit your need.
     {
-        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
+        _nbInputs =
+                (1 + 1 + 1 + 1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
     }
-    
+
     _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
-    
+
     _nbInputs += 1; // how many robots around?
-    
+
     if (SingleGenomeSharedData::gTotalEffort)
         _nbInputs += 1; // what's the total effort given to the object?
-    
+
     _nbInputs += 1; // how much did we contribute?
-    
+
     // wrt outputs
-    
-    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
+
+    _nbOutputs = 2 + 1; // 2 outputs for movement + 1 for cooperation
 }
 
 void SingleGenomeController::reset()
@@ -116,37 +117,38 @@ void SingleGenomeController::reset()
     resetFitness();
 }
 
-void SingleGenomeController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
+void
+SingleGenomeController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
-    
+
     _iteration++;
-    
+
     // Clean up the memory if we're not on an object
-    
+
     if (_isNearObject == false)
     {
         _efforts.clear();
         _totalEfforts.clear();
     }
-    
+
     // * step controller
 
     stepController();
-    
+
     // Coloring
-    
+
     if (_isNearObject == false) // blue
         _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
-    
+
     // Logging
-    
-    Robot* robot = gWorld->getRobot(_wm->getId());
+
+    Robot *robot = gWorld->getRobot(_wm->getId());
     SingleGenomeAgentObserver *aobs = static_cast<SingleGenomeAgentObserver *>(robot->getObserver());
     aobs->logStats();
 
     // Update state variables
-    
-	_nbNearbyRobots = 0;
+
+    _nbNearbyRobots = 0;
     _isNearObject = false;
 
 }
@@ -156,17 +158,17 @@ std::vector<double> SingleGenomeController::getInputs()
 {
     std::vector<double> inputs;
     SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
-    
-    
+
+
     // distance sensors
-    for(int i = 0; i < _wm->_cameraSensorsNb; i++)
+    for (int i = 0; i < _wm->_cameraSensorsNb; i++)
     {
-        inputs.push_back( _wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i) );
-        
-        if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
+        inputs.push_back(_wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i));
+
+        if (gExtendedSensoryInputs) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
         {
             int entityId = _wm->getObjectIdFromCameraSensor(i);
-            
+
             if (Agent::isInstanceOf(entityId)) // it's a robot
             {
                 inputs.push_back(1); // a robot
@@ -183,8 +185,9 @@ std::vector<double> SingleGenomeController::getInputs()
             }
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
-                MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
-                int nbDistantRobots = obj->getNbNearbyRobots()+wobs->getNbFakeRobots();
+                MovingObject *obj = static_cast<MovingObject *>(gPhysicalObjects[entityId -
+                                                                                 gPhysicalObjectIndexStartOffset]);
+                int nbDistantRobots = obj->getNbNearbyRobots() + wobs->getNbFakeRobots();
 //                printf("Robot %d (it %d): seeing %d robots on object %d from sensor %d\n", _wm->getId(), gWorld->getIterations(), nbDistantRobots, obj->getId(), i);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
@@ -198,19 +201,19 @@ std::vector<double> SingleGenomeController::getInputs()
                 inputs.push_back(0); // not an object
                 inputs.push_back(0); // no robots around
             }
-            
+
         }
     }
-    
-    
+
+
     // floor sensor
-    inputs.push_back( (double)_wm->getGroundSensor_redValue()/255.0 );
-    inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
-    inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
-    
+    inputs.push_back((double) _wm->getGroundSensor_redValue() / 255.0);
+    inputs.push_back((double) _wm->getGroundSensor_greenValue() / 255.0);
+    inputs.push_back((double) _wm->getGroundSensor_blueValue() / 255.0);
+
     // how many robots around?
     inputs.push_back(_nbNearbyRobots);
-    
+
     // how did everyone contribute recently?
     if (SingleGenomeSharedData::gTotalEffort)
     {
@@ -224,7 +227,7 @@ std::vector<double> SingleGenomeController::getInputs()
         }
         inputs.push_back(avgTotalEffort);
     }
-    
+
     // how much did we contribute recently?
     double avgEffort = 0;
     if (_efforts.size() > 0)
@@ -242,44 +245,44 @@ void SingleGenomeController::stepController()
 {
 
     // ---- compute and read out ----
-    
+
     _NN->setWeights(_parameters); // set-up NN
-    
+
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
-    
+
     _NN->setInputs(inputs);
-    
+
     _NN->step();
-    
+
     std::vector<double> outputs = _NN->readOut();
-    
+
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
-    
+
     _wm->_desiredTranslationalValue = (outputs[0] + 1) * 2;
     _wm->_desiredRotationalVelocity = outputs[1];
-    
-    if ( SingleGenomeSharedData::gEnergyRequestOutput )
+
+    if (SingleGenomeSharedData::gEnergyRequestOutput)
     {
         _wm->setEnergyRequestValue(outputs[2]);
     }
-    
+
     // normalize to motor interval values
     _wm->_desiredTranslationalValue = _wm->_desiredTranslationalValue * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = _wm->_desiredRotationalVelocity * gMaxRotationalSpeed;
-    
+
     _wm->_cooperationLevel = outputs[2] + 1.0; // in [0, 2]
-    
+
 }
 
 
 void SingleGenomeController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
-    
-    if ( _NN != NULL ) // useless: delete will anyway check if nn is NULL or not.
+
+    if (_NN != NULL) // useless: delete will anyway check if nn is NULL or not.
         delete _NN;
-    
-    switch ( SingleGenomeSharedData::gControllerType )
+
+    switch (SingleGenomeSharedData::gControllerType)
     {
         case 0:
         {
@@ -300,7 +303,8 @@ void SingleGenomeController::createNN()
             break;
         }
         default: // default: no controller
-            std::cerr << "[ERROR] gController type unknown (value: " << SingleGenomeSharedData::gControllerType << ").\n";
+            std::cerr << "[ERROR] gController type unknown (value: " << SingleGenomeSharedData::gControllerType
+                      << ").\n";
             exit(-1);
     };
 }
@@ -319,9 +323,10 @@ unsigned int SingleGenomeController::computeRequiredNumberOfWeights()
 
 void SingleGenomeController::performVariation()
 {
-    if (SingleGenomeSharedData::gIndividualMutationRate > random01() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if (SingleGenomeSharedData::gIndividualMutationRate >
+        random01()) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
-        switch ( SingleGenomeSharedData::gMutationOperator )
+        switch (SingleGenomeSharedData::gMutationOperator)
         {
             case 0:
                 mutateUniform();
@@ -334,7 +339,8 @@ void SingleGenomeController::performVariation()
                 mutateGaussian(SingleGenomeSharedData::gSigma); // fixed mutation rate
                 break;
             default:
-                std::cerr << "[ERROR] unknown variation method (gMutationOperator = " << SingleGenomeSharedData::gMutationOperator << ")\n";
+                std::cerr << "[ERROR] unknown variation method (gMutationOperator = "
+                          << SingleGenomeSharedData::gMutationOperator << ")\n";
                 exit(-1);
         }
     }
@@ -343,46 +349,46 @@ void SingleGenomeController::performVariation()
 void SingleGenomeController::mutateGaussian(float sigma) // mutate within bounds.
 {
     _currentSigma = sigma;
-    
-    for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
+
+    for (unsigned int i = 0; i != _currentGenome.size(); i++)
     {
         double value = _currentGenome[i] + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
-        if ( value < _minValue )
+        if (value < _minValue)
         {
             double range = _maxValue - _minValue;
-            double overflow = - ( (double)value - _minValue );
-            overflow = overflow - 2*range * (int)( overflow / (2*range) );
-            if ( overflow < range )
+            double overflow = -((double) value - _minValue);
+            overflow = overflow - 2 * range * (int) (overflow / (2 * range));
+            if (overflow < range)
                 value = _minValue + overflow;
             else // overflow btw range and range*2
-                value = _minValue + range - (overflow-range);
+                value = _minValue + range - (overflow - range);
         }
-        else if ( value > _maxValue )
+        else if (value > _maxValue)
         {
             double range = _maxValue - _minValue;
-            double overflow = (double)value - _maxValue;
-            overflow = overflow - 2*range * (int)( overflow / (2*range) );
-            if ( overflow < range )
+            double overflow = (double) value - _maxValue;
+            overflow = overflow - 2 * range * (int) (overflow / (2 * range));
+            if (overflow < range)
                 value = _maxValue - overflow;
             else // overflow btw range and range*2
-                value = _maxValue - range + (overflow-range);
+                value = _maxValue - range + (overflow - range);
         }
-        
+
         _currentGenome[i] = value;
     }
-    
+
 }
 
 
 void SingleGenomeController::mutateUniform() // mutate within bounds.
 {
-    for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
+    for (unsigned int i = 0; i != _currentGenome.size(); i++)
     {
-        float randomValue = float(randint()%100) / 100.0; // in [0,1[
+        float randomValue = float(randint() % 100) / 100.0; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
-        
+
         _currentGenome[i] = value;
     }
 }
@@ -390,14 +396,14 @@ void SingleGenomeController::mutateUniform() // mutate within bounds.
 void SingleGenomeController::mutateSigmaValue()
 {
     float dice = random01();
-    
-    if ( dice <= SingleGenomeSharedData::gProbaMutation )
+
+    if (dice <= SingleGenomeSharedData::gProbaMutation)
     {
         dice = random01();
-        if ( dice < 0.5 )
+        if (dice < 0.5)
         {
-            _currentSigma = _currentSigma * ( 1 + SingleGenomeSharedData::gUpdateSigmaStep ); // increase sigma
-            
+            _currentSigma = _currentSigma * (1 + SingleGenomeSharedData::gUpdateSigmaStep); // increase sigma
+
             if (_currentSigma > SingleGenomeSharedData::gSigmaMax)
             {
                 _currentSigma = SingleGenomeSharedData::gSigmaMax;
@@ -405,9 +411,9 @@ void SingleGenomeController::mutateSigmaValue()
         }
         else
         {
-            _currentSigma = _currentSigma * ( 1 - SingleGenomeSharedData::gUpdateSigmaStep ); // decrease sigma
-            
-            if ( _currentSigma < SingleGenomeSharedData::gSigmaMin )
+            _currentSigma = _currentSigma * (1 - SingleGenomeSharedData::gUpdateSigmaStep); // decrease sigma
+
+            if (_currentSigma < SingleGenomeSharedData::gSigmaMin)
             {
                 _currentSigma = SingleGenomeSharedData::gSigmaMin;
             }
@@ -415,21 +421,23 @@ void SingleGenomeController::mutateSigmaValue()
     }
 }
 
-void SingleGenomeController::loadNewGenome( genome __newGenome )
+void SingleGenomeController::loadNewGenome(genome __newGenome)
 {
-	// Check that we get a genome with the right size!
-	if (__newGenome.first.size() != _NN->getRequiredNumberOfWeights())
-	{
-		printf("[CRITICAL] Trying to load a genome with the wrong size (expected %d weights, got %lu).\nExiting.\n\n", _NN->getRequiredNumberOfWeights(), __newGenome.first.size());
-		exit(-1);
-	}
+    // Check that we get a genome with the right size!
+    if (__newGenome.first.size() != _NN->getRequiredNumberOfWeights())
+    {
+        printf("[CRITICAL] Trying to load a genome with the wrong size (expected %d weights, got %lu).\nExiting.\n\n",
+               _NN->getRequiredNumberOfWeights(), __newGenome.first.size());
+        exit(-1);
+    }
     _currentGenome = __newGenome.first;
     _currentSigma = __newGenome.second;
     performVariation();
     updatePhenotype();
 }
 
-void SingleGenomeController::updatePhenotype() {
+void SingleGenomeController::updatePhenotype()
+{
     // could be more complicated!
     _parameters = _currentGenome;
 }
@@ -437,19 +445,21 @@ void SingleGenomeController::updatePhenotype() {
 void SingleGenomeController::logCurrentState()
 {
     // Logging
-    std::string sLog = "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) +
-    ",age," + std::to_string(gWorld->getIterations()-_birthdate) +
-    ",energy," +  std::to_string(_wm->getEnergyLevel()) +
-    ",sigma," + std::to_string(_currentSigma) +
-    ",x_init," + std::to_string(_wm->getXReal()) +
-    ",y_init," + std::to_string(_wm->getYReal()) +
-    ",x_current," + std::to_string(_Xinit) +
-    ",y_current," + std::to_string(_Yinit) +
-    ",dist," + std::to_string( getEuclideanDistance( _Xinit, _Yinit, _wm->getXReal(), _wm->getYReal() ) ) +
-    ",sumOfDist," + std::to_string( _dSumTravelled ) +
-    ",groupId," + std::to_string(_wm->getGroupId()) +
-    ",fitnessValue," + std::to_string(_wm->_fitnessValue) + 
-    "\n";
+    std::string sLog = "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" +
+                       std::to_string(_birthdate) +
+                       ",age," + std::to_string(gWorld->getIterations() - _birthdate) +
+                       ",energy," + std::to_string(_wm->getEnergyLevel()) +
+                       ",sigma," + std::to_string(_currentSigma) +
+                       ",x_init," + std::to_string(_wm->getXReal()) +
+                       ",y_init," + std::to_string(_wm->getYReal()) +
+                       ",x_current," + std::to_string(_Xinit) +
+                       ",y_current," + std::to_string(_Yinit) +
+                       ",dist," +
+                       std::to_string(getEuclideanDistance(_Xinit, _Yinit, _wm->getXReal(), _wm->getYReal())) +
+                       ",sumOfDist," + std::to_string(_dSumTravelled) +
+                       ",groupId," + std::to_string(_wm->getGroupId()) +
+                       ",fitnessValue," + std::to_string(_wm->_fitnessValue) +
+                       "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
 }
@@ -465,23 +475,24 @@ void SingleGenomeController::resetFitness()
     updateFitness(0);
 }
 
-void SingleGenomeController::updateFitness( double __newFitness )
+void SingleGenomeController::updateFitness(double __newFitness)
 {
-	if (__newFitness < 0)
-	{
-		updateFitness(0);
-		return;
-	}
+    if (__newFitness < 0)
+    {
+        updateFitness(0);
+        return;
+    }
     _wm->_fitnessValue = __newFitness;
 }
 
-void SingleGenomeController::increaseFitness( double __delta )
+void SingleGenomeController::increaseFitness(double __delta)
 {
-    updateFitness(_wm->_fitnessValue+__delta);
+    updateFitness(_wm->_fitnessValue + __delta);
 }
 
 // called only once per step (experimentally verified)
-void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
+void SingleGenomeController::wasNearObject(int __objectId, bool __objectDidMove, double __totalEffort, double __effort,
+                                           int __nbRobots)
 {
     if (__effort > 0) // Green LED
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
@@ -492,22 +503,22 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
     // Fake object / effort setup
     SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
     __nbRobots += wobs->getNbFakeRobots();
-    __totalEffort = __effort + wobs->getNbFakeRobots()*wobs->getFakeCoop();
-    
+    __totalEffort = __effort + wobs->getNbFakeRobots() * wobs->getFakeCoop();
+
 //    printf("[DEBUG] Robot %d (it %d): near object %d, own effort %lf, total effort %lf, fake coop %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, wobs->getFakeCoop(), __nbRobots);
-    
+
     _isNearObject = true;
     _nbNearbyRobots = __nbRobots;
-    
-    double coeff = SingleGenomeSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+
+    double coeff = SingleGenomeSharedData::gConstantK / (1.0 + pow(__nbRobots - 2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, SingleGenomeSharedData::gConstantA) - __effort;
-    
+
     increaseFitness(payoff);
     _efforts.push_back(__effort);
     if (_efforts.size() >= SingleGenomeSharedData::gMemorySize)
         _efforts.pop_front();
 
-    
+
     _totalEfforts.push_back(__totalEffort);
     if (_totalEfforts.size() >= SingleGenomeSharedData::gMemorySize)
         _totalEfforts.pop_front();
@@ -516,7 +527,7 @@ void SingleGenomeController::wasNearObject( int __objectId, bool __objectDidMove
 
 void SingleGenomeController::dumpGenome()
 {
-    std::cout <<"Dumping genome of robot #" << _wm->getId() << std::endl;
+    std::cout << "Dumping genome of robot #" << _wm->getId() << std::endl;
     std::cout << _currentSigma << " ";
     std::cout << _currentGenome.size() << " ";
     for (auto gene: _currentGenome)
@@ -528,7 +539,7 @@ void SingleGenomeController::dumpGenome()
 std::string SingleGenomeController::inspect(std::string prefix)
 {
     std::stringstream out;
-    out << "Near object: " << ((_isNearObject)? "True" : "False") << ".\n";
+    out << "Near object: " << ((_isNearObject) ? "True" : "False") << ".\n";
     if (_isNearObject || true)
     {
         out << std::setprecision(3);
@@ -571,6 +582,6 @@ std::string SingleGenomeController::inspect(std::string prefix)
             out << "with " << nbDist << " robots nearby.\n ";
         }
     }
-    out << prefix <<  "Actual fitness: " << getFitness() << "\n";
+    out << prefix << "Actual fitness: " << getFitness() << "\n";
     return out.str();
 }

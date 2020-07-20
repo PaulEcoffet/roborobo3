@@ -94,7 +94,8 @@ double NegociateWorldModel::meanLastCommonKnowledgeReputation()
 {
     if (not lastCommonKnowledgeReputation.empty())
     {
-        return std::accumulate(lastCommonKnowledgeReputation.begin(), lastCommonKnowledgeReputation.end(), 0.0) / lastCommonKnowledgeReputation.size();
+        return std::accumulate(lastCommonKnowledgeReputation.begin(), lastCommonKnowledgeReputation.end(), 0.0) /
+               lastCommonKnowledgeReputation.size();
     }
     else
     {
@@ -127,7 +128,7 @@ void NegociateWorldModel::updateOtherReputation(int robid, double invest)
 {
     const double currep = otherReputations[robid];
     const int n = nbPlays[robid];
-    otherReputations[robid] = (currep * n + invest) / (n+1);
+    otherReputations[robid] = (currep * n + invest) / (n + 1);
     nbPlays[robid]++;
 }
 
@@ -135,7 +136,7 @@ double NegociateWorldModel::getOtherReputation(int robid)
 {
     if (NegociateSharedData::commonKnowledgeReputation)
     {
-        auto *o_wm = dynamic_cast<NegociateWorldModel*>(gWorld->getRobot(robid)->getWorldModel());
+        auto *o_wm = dynamic_cast<NegociateWorldModel *>(gWorld->getRobot(robid)->getWorldModel());
         return o_wm->meanLastCommonKnowledgeReputation();
     }
     return otherReputations[robid];
@@ -152,7 +153,8 @@ int NegociateWorldModel::getNbPlays(int robid)
 
 bool NegociateWorldModel::isPlaying()
 {
-    return onOpportunity && (arrival <= 2 || !NegociateSharedData::fixRobotNb) && (!NegociateSharedData::atLeastTwo || nbOnOpp >= 2);
+    return onOpportunity && (arrival <= 2 || !NegociateSharedData::fixRobotNb) &&
+           (!NegociateSharedData::atLeastTwo || nbOnOpp >= 2);
 }
 
 double NegociateWorldModel::getCoop(bool trueValue) const

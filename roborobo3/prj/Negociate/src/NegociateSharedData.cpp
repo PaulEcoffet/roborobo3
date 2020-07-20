@@ -77,7 +77,6 @@ bool NegociateSharedData::wander = false;
 bool NegociateSharedData::randomObjectPositions = false;
 
 
-
 void NegociateSharedData::initSharedData()
 {
     gProperties.checkAndGetPropertyValue("evaluationTime", &NegociateSharedData::evaluationTime, true);
@@ -123,7 +122,8 @@ void NegociateSharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("partnerControl", &NegociateSharedData::partnerControl, false);
     gProperties.checkAndGetPropertyValue("sigma", &NegociateSharedData::sigma, false);
     gProperties.checkAndGetPropertyValue("fixCoop", &NegociateSharedData::fixCoop, false);
-    gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &NegociateSharedData::commonKnowledgeReputation, false);
+    gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &NegociateSharedData::commonKnowledgeReputation,
+                                         false);
     gProperties.checkAndGetPropertyValue("reputationNoise", &NegociateSharedData::reputationNoise, false);
     GETVAL(onlyNforGame);
     GETVAL(frictionCoef);

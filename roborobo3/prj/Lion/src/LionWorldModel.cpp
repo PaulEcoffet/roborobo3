@@ -47,14 +47,14 @@ bool LionWorldModel::isPlaying()
 }
 
 
-
 double LionWorldModel::getCoop(int nbpart, bool truecoop)
 {
     assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
     assert(coopCache[nbpart] >= 0 && coopCache[nbpart] <= LionSharedData::maxCoop);
     if (truecoop || LionSharedData::independantCoop)
         return coopCache[nbpart];
-    else {
+    else
+    {
         if (!LionSharedData::additiveVar)
             return coopCache[nbpart] * fakeCoef;
         else

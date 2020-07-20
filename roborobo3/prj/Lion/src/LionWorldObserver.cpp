@@ -20,7 +20,8 @@ using boost::algorithm::clamp;
 
 
 LionWorldObserver::LionWorldObserver(World *__world) :
-        WorldObserver(__world), objectsToTeleport(), variabilityCoef() {
+        WorldObserver(__world), objectsToTeleport(), variabilityCoef()
+{
     m_world = __world;
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
@@ -81,7 +82,7 @@ LionWorldObserver::LionWorldObserver(World *__world) :
         double max = 1 + LionSharedData::fakeCoef;
         for (int i = 0; i < m_nbIndividuals; i++)
         {
-            variabilityCoef[i] = min + (max - min) * (double)i / (m_nbIndividuals - 1);
+            variabilityCoef[i] = min + (max - min) * (double) i / (m_nbIndividuals - 1);
         }
     }
 }
@@ -92,7 +93,8 @@ LionWorldObserver::~LionWorldObserver()
     cleanup();
 }
 
-void LionWorldObserver::cleanup() {
+void LionWorldObserver::cleanup()
+{
     std::cout << "Bien fermé pour le WorldObserver" << std::endl;
     m_logall.close();
     scorelogger.close();
@@ -160,7 +162,8 @@ void LionWorldObserver::stepPre()
             }
         }
         clearRobotFitnesses();
-        m_curEvaluationInGeneration = *std::min_element(std::begin(m_curnbparticipation), std::end(m_curnbparticipation));
+        m_curEvaluationInGeneration = *std::min_element(std::begin(m_curnbparticipation),
+                                                        std::end(m_curnbparticipation));
         std::cout << "Cur Ev:" << m_curEvaluationInGeneration << std::endl;
         mustresetEnv = true;
         m_trueCurEvaluationInGeneration++;
@@ -201,7 +204,7 @@ void LionWorldObserver::stepPre()
         }
 
     }
-    if(mustresetEnv)
+    if (mustresetEnv)
         resetEnvironment();
 
     scorelogger.updateIter(m_curEvaluationIteration);
@@ -240,7 +243,7 @@ void LionWorldObserver::logAgent(LionWorldModel *wm)
 void LionWorldObserver::stepPost()
 {
     /* Plays */
-    if(!LionSharedData::asyncPlay)
+    if (!LionSharedData::asyncPlay)
     {
         for (int i = 0; i < gNbOfRobots; i++)
         {
@@ -338,7 +341,7 @@ void LionWorldObserver::resetEnvironment()
     {
         object->resetLocation();
         object->registerObject();
-        auto* lionobj = dynamic_cast<LionOpportunity*>(object);
+        auto *lionobj = dynamic_cast<LionOpportunity *>(object);
         lionobj->reset();
     }
 
@@ -380,12 +383,12 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 static double bellcurve(double x, double mu, double sigma)
 {
 
-    return std::exp(- ((x - mu) * (x - mu)) / (2 * sigma * sigma));
+    return std::exp(-((x - mu) * (x - mu)) / (2 * sigma * sigma));
 }
 
 
 double LionWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
-        const double b)
+                                 const double b)
 {
     double res = 0;
     const double x0tot = (totalInvest - invest);
@@ -421,7 +424,8 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
             res = b * x0tot / (n - 1);
             res -= 0.5 * invest * invest;
         }
-        else {
+        else
+        {
             res = 0;
         }
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
@@ -429,16 +433,19 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     else if (LionSharedData::nControl == 5)
     {
         /* True Prisoner's dilemma without friction */
-        if (n >= 2) {
+        if (n >= 2)
+        {
             res = b * x0tot / (n - 1);
             res -= 0.5 * invest * invest;
         }
-        else {
+        else
+        {
             res = 0;
         }
     }
     else if (LionSharedData::nControl == 6)
     {
+        /* by product benefits */
         res = a * invest + b * x0tot / std::max(n - 1, 1);
         res -= 0.5 * invest * invest;
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
@@ -484,24 +491,26 @@ void LionWorldObserver::addObjectToTeleport(int id)
     objectsToTeleport.insert(id);
 }
 
-void LionWorldObserver::setWhichRobotsPlay() {
-    std::vector<int> individuals_indexes(m_nbIndividuals) ; // vector with 100 ints.
-    std::iota (std::begin(individuals_indexes), std::end(individuals_indexes), 0); // Fill with 0, 1, ..., 99.
+void LionWorldObserver::setWhichRobotsPlay()
+{
+    std::vector<int> individuals_indexes(m_nbIndividuals); // vector with 100 ints.
+    std::iota(std::begin(individuals_indexes), std::end(individuals_indexes), 0); // Fill with 0, 1, ..., 99.
     std::vector<int> individual_scores = individuals_indexes;
     std::shuffle(individual_scores.begin(), individual_scores.end(), engine);
     /* Put the ones that have participated less first, then the ones who participated the most
      * If they participated the same amount, pick them randomly (score which is random) */
     std::sort(individuals_indexes.begin(), individuals_indexes.end(),
-            [individual_scores, this](int a, int b) {
-                if (m_curnbparticipation[a] == m_curnbparticipation[b])
-                {
-                    return individual_scores[a] < individual_scores[b];
-                }
-            return m_curnbparticipation[a] < m_curnbparticipation[b];
-    });
+              [individual_scores, this](int a, int b)
+              {
+                  if (m_curnbparticipation[a] == m_curnbparticipation[b])
+                  {
+                      return individual_scores[a] < individual_scores[b];
+                  }
+                  return m_curnbparticipation[a] < m_curnbparticipation[b];
+              });
     for (size_t i = 0; i < gNbOfRobots; i++)
     {
-        auto wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(i)->getWorldModel());
+        auto wm = dynamic_cast<LionWorldModel *>(gWorld->getRobot(i)->getWorldModel());
         wm->setAlive(false);
         auto rob = gWorld->getRobot(i);
         rob->unregisterRobot();
@@ -510,20 +519,21 @@ void LionWorldObserver::setWhichRobotsPlay() {
         rob->registerRobot();
 
     }
-    for (auto index = individuals_indexes.begin(); index != (individuals_indexes.begin() + LionSharedData::maxPlayer); index++)
+    for (auto index = individuals_indexes.begin();
+         index != (individuals_indexes.begin() + LionSharedData::maxPlayer); index++)
     {
-        auto wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(*index)->getWorldModel());
+        auto wm = dynamic_cast<LionWorldModel *>(gWorld->getRobot(*index)->getWorldModel());
         wm->setAlive(true);
         m_world->getRobot(*index)->unregisterRobot();
         m_world->getRobot(*index)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                                   gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
+                                                      gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
         m_world->getRobot(*index)->registerRobot();
         m_curnbparticipation[*index]++;
 
     }
 }
 
-ScoreLogger *LionWorldObserver::getScoreLogger()
+LionScoreLogger *LionWorldObserver::getScoreLogger()
 {
     return &scorelogger;
 }

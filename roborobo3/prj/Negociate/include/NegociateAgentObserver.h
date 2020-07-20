@@ -31,6 +31,9 @@ protected:
 
     int m_seekTime;
 
+    void color_agent() const;
+
+    void mark_walking_opp() const;
 };
 
 

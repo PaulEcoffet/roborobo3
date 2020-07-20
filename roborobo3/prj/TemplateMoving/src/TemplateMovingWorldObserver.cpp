@@ -8,22 +8,22 @@
 #include "World/World.h"
 
 
-TemplateMovingWorldObserver::TemplateMovingWorldObserver( World *__world ) : WorldObserver( __world )
+TemplateMovingWorldObserver::TemplateMovingWorldObserver(World *__world) : WorldObserver(__world)
 {
-	_world = __world;
+    _world = __world;
 }
 
 TemplateMovingWorldObserver::~TemplateMovingWorldObserver()
 {
-	// nothing to do.
+    // nothing to do.
 }
 
 void TemplateMovingWorldObserver::reset()
 {
-	// nothing to do.
+    // nothing to do.
 }
 
 void TemplateMovingWorldObserver::stepPre()
 {
-	// nothing to do.
+    // nothing to do.
 }

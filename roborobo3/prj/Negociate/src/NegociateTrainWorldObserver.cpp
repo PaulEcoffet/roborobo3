@@ -76,7 +76,7 @@ void NegociateTrainWorldObserver::computeOpportunityImpacts()
                     wm->appendTotalInvest(totalInvest);
                 }
 
-                if(n >= 2)
+                if (n >= 2)
                 {
                     if (opp->getXCenterPixel() + opp->getYCenterPixel() * 100 != wm->lastvisit)
                     {

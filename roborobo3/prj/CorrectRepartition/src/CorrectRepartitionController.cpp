@@ -13,13 +13,14 @@
 #include "CorrectRepartition/include/CorrectRepartitionController.h"
 #include "CorrectRepartition/include/CorrectRepartitionSharedData.h"
 
-enum {
+enum
+{
     MLP_ID = 0,
     PERCEPTRON_ID = 1,
     ELMAN_ID = 2
 };
 
-CorrectRepartitionController::CorrectRepartitionController(RobotWorldModel* wm)
+CorrectRepartitionController::CorrectRepartitionController(RobotWorldModel *wm)
 {
     m_wm = dynamic_cast<CorrectRepartitionWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -38,7 +39,8 @@ CorrectRepartitionController::CorrectRepartitionController(RobotWorldModel* wm)
             m_nn = new Elman(m_weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             break;
         default:
-            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< CorrectRepartitionSharedData::controllerType << "\n";
+            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
+                      << CorrectRepartitionSharedData::controllerType << "\n";
             exit(-1);
     }
     m_weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
@@ -49,7 +51,7 @@ CorrectRepartitionController::CorrectRepartitionController(RobotWorldModel* wm)
 void CorrectRepartitionController::reset()
 {
     if (CorrectRepartitionSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 void CorrectRepartitionController::step()
@@ -99,7 +101,8 @@ std::vector<double> CorrectRepartitionController::getInputs()
         bool isOpportunity = false;
         auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(i));
         int nbOnOpp = 0;
-        if (entityId >= gPhysicalObjectIndexStartOffset && entityId < gPhysicalObjectIndexStartOffset+gNbOfPhysicalObjects) // is an Object
+        if (entityId >= gPhysicalObjectIndexStartOffset &&
+            entityId < gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects) // is an Object
         {
             int objid = entityId - gPhysicalObjectIndexStartOffset;
             isOpportunity = true;
@@ -129,7 +132,7 @@ void CorrectRepartitionController::loadNewGenome(const std::vector<double> &newG
     m_weights = newGenome;
     m_nn->setWeights(m_weights);
     if (CorrectRepartitionSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 unsigned int CorrectRepartitionController::getNbInputs() const
@@ -155,7 +158,7 @@ void CorrectRepartitionController::resetFitness()
     updateFitness(0);
 }
 
-void CorrectRepartitionController::updateFitness( double newFitness )
+void CorrectRepartitionController::updateFitness(double newFitness)
 {
     if (newFitness < 0)
     {
@@ -165,9 +168,9 @@ void CorrectRepartitionController::updateFitness( double newFitness )
     m_wm->_fitnessValue = newFitness;
 }
 
-void CorrectRepartitionController::increaseFitness( double delta )
+void CorrectRepartitionController::increaseFitness(double delta)
 {
-    updateFitness(m_wm->_fitnessValue+delta);
+    updateFitness(m_wm->_fitnessValue + delta);
 }
 
 std::string CorrectRepartitionController::inspect(std::string prefix)
@@ -194,7 +197,8 @@ std::string CorrectRepartitionController::inspect(std::string prefix)
         else if (entityId >= gPhysicalObjectIndexStartOffset)
         {
             out << "\tA cooperation opportunity ";
-            auto coop = dynamic_cast<CorrectRepartitionOpportunity *>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            auto coop = dynamic_cast<CorrectRepartitionOpportunity *>(gPhysicalObjects[entityId -
+                                                                                       gPhysicalObjectIndexStartOffset]);
             out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
         }
     }
@@ -216,8 +220,8 @@ unsigned long CorrectRepartitionController::getGenomeSize() const
 unsigned int CorrectRepartitionController::getNbOutputs() const
 {
     return 2    // Motor commands
-          // + 1  // Cooperation value
-    ;
+        // + 1  // Cooperation value
+            ;
 }
 
 

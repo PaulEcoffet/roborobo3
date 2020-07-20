@@ -20,15 +20,19 @@ class FastWandererWorldObserver : public WorldObserver
 {
 public:
     explicit FastWandererWorldObserver(World *__world);
+
     ~FastWandererWorldObserver() override;
 
     void stepPre() override;
+
     void stepPost() override;
+
     void reset() override;
 
     std::vector<std::pair<int, double>> getSortedFitnesses() const;
 
-    void logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses);
+    void logFitnesses(const std::vector<std::pair<int, double>> &sortedFitnesses);
+
     void resetEnvironment();
 
 protected:

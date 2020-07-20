@@ -22,7 +22,7 @@ def recv_msg(sock, encoding='utf8'):
     if not raw_msglen:
         return None
     # get the message len, transform to int and get right bit order with ntohl
-    msglen = socket.ntohl(int(raw_msglen.decode('utf8'), 16))
+    msglen = int(raw_msglen.decode('utf8'), 16)
     # Read the message data
     return recvall(sock, msglen).decode(encoding)
 
@@ -107,6 +107,7 @@ def main():
             print('*************************connected to {}************************'.format(i), flush=True)
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conns[i]))
+            print("info received")
         if 'min_bounds' in evo_info:
             bounds = [evo_info['min_bounds'], evo_info['max_bounds']]
         else:

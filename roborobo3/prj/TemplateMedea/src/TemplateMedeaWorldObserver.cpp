@@ -6,7 +6,7 @@
 #include "TemplateMedea/include/TemplateMedeaWorldObserver.h"
 #include "World/World.h"
 
-TemplateMedeaWorldObserver::TemplateMedeaWorldObserver( World* world ) : TemplateEEWorldObserver( world )
+TemplateMedeaWorldObserver::TemplateMedeaWorldObserver(World *world) : TemplateEEWorldObserver(world)
 {
     // superclass constructor called before
 }

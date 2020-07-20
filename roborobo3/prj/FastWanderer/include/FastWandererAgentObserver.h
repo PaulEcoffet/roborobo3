@@ -14,9 +14,11 @@ class FastWandererAgentObserver : public AgentObserver
 {
 public:
     FastWandererAgentObserver(RobotWorldModel *wm);
+
     ~FastWandererAgentObserver() override;
 
     void stepPre() override;
+
     void reset() override;
 
 protected:

@@ -13,87 +13,91 @@
 #include <cfloat>
 #include <random>
 
-MovingNSWorldObserver::MovingNSWorldObserver( World* world ) : WorldObserver( world )
+MovingNSWorldObserver::MovingNSWorldObserver(World *world) : WorldObserver(world)
 {
     _world = world;
-    
-    // ==== loading project-specific properties
-    
-    gProperties.checkAndGetPropertyValue("gSigmaRef",&MovingNSSharedData::gSigmaRef,true);
-    gProperties.checkAndGetPropertyValue("gSigmaMin",&MovingNSSharedData::gSigmaMin,true);
-    gProperties.checkAndGetPropertyValue("gSigmaMax",&MovingNSSharedData::gSigmaMax,true);
-    
-    gProperties.checkAndGetPropertyValue("gProbaMutation",&MovingNSSharedData::gProbaMutation,true);
-    gProperties.checkAndGetPropertyValue("gUpdateSigmaStep",&MovingNSSharedData::gUpdateSigmaStep,true);
-    gProperties.checkAndGetPropertyValue("gEvaluationTime",&MovingNSSharedData::gEvaluationTime,true);
-    gProperties.checkAndGetPropertyValue("gSynchronization",&MovingNSSharedData::gSynchronization,true);
-    
-    gProperties.checkAndGetPropertyValue("gEnergyRequestOutput",&MovingNSSharedData::gEnergyRequestOutput,false);
-    
-    gProperties.checkAndGetPropertyValue("gMonitorPositions",&MovingNSSharedData::gMonitorPositions,true);
-    
-    gProperties.checkAndGetPropertyValue("gNbHiddenLayers",&MovingNSSharedData::gNbHiddenLayers,true);
-    gProperties.checkAndGetPropertyValue("gNbNeuronsPerHiddenLayer",&MovingNSSharedData::gNbNeuronsPerHiddenLayer,true);
-    gProperties.checkAndGetPropertyValue("gNeuronWeightRange",&MovingNSSharedData::gNeuronWeightRange,true);
-    
-    gProperties.checkAndGetPropertyValue("gSnapshots",&MovingNSSharedData::gSnapshots,false);
-    gProperties.checkAndGetPropertyValue("gSnapshotsFrequency",&MovingNSSharedData::gSnapshotsFrequency,false);
-    
-    gProperties.checkAndGetPropertyValue("gControllerType",&MovingNSSharedData::gControllerType,true);
-    
-    gProperties.checkAndGetPropertyValue("gMaxNbGenomeTransmission",&MovingNSSharedData::gMaxNbGenomeTransmission,true);
-    gProperties.checkAndGetPropertyValue("gLimitGenomeTransmission",&MovingNSSharedData::gLimitGenomeTransmission,true);
-    gProperties.checkAndGetPropertyValue("gSelectionMethod",&MovingNSSharedData::gSelectionMethod,true);
-    
-    gProperties.checkAndGetPropertyValue("gNotListeningStateDelay",&MovingNSSharedData::gNotListeningStateDelay,true);
-    gProperties.checkAndGetPropertyValue("gListeningStateDelay",&MovingNSSharedData::gListeningStateDelay,true);
-    
-    gProperties.checkAndGetPropertyValue("gIndividualMutationRate",&MovingNSSharedData::gIndividualMutationRate,false);
 
-    gProperties.checkAndGetPropertyValue("gMutationOperator",&MovingNSSharedData::gMutationOperator,false);
-    
-    gProperties.checkAndGetPropertyValue("gSigma",&MovingNSSharedData::gSigma,false);
-    
+    // ==== loading project-specific properties
+
+    gProperties.checkAndGetPropertyValue("gSigmaRef", &MovingNSSharedData::gSigmaRef, true);
+    gProperties.checkAndGetPropertyValue("gSigmaMin", &MovingNSSharedData::gSigmaMin, true);
+    gProperties.checkAndGetPropertyValue("gSigmaMax", &MovingNSSharedData::gSigmaMax, true);
+
+    gProperties.checkAndGetPropertyValue("gProbaMutation", &MovingNSSharedData::gProbaMutation, true);
+    gProperties.checkAndGetPropertyValue("gUpdateSigmaStep", &MovingNSSharedData::gUpdateSigmaStep, true);
+    gProperties.checkAndGetPropertyValue("gEvaluationTime", &MovingNSSharedData::gEvaluationTime, true);
+    gProperties.checkAndGetPropertyValue("gSynchronization", &MovingNSSharedData::gSynchronization, true);
+
+    gProperties.checkAndGetPropertyValue("gEnergyRequestOutput", &MovingNSSharedData::gEnergyRequestOutput, false);
+
+    gProperties.checkAndGetPropertyValue("gMonitorPositions", &MovingNSSharedData::gMonitorPositions, true);
+
+    gProperties.checkAndGetPropertyValue("gNbHiddenLayers", &MovingNSSharedData::gNbHiddenLayers, true);
+    gProperties.checkAndGetPropertyValue("gNbNeuronsPerHiddenLayer", &MovingNSSharedData::gNbNeuronsPerHiddenLayer,
+                                         true);
+    gProperties.checkAndGetPropertyValue("gNeuronWeightRange", &MovingNSSharedData::gNeuronWeightRange, true);
+
+    gProperties.checkAndGetPropertyValue("gSnapshots", &MovingNSSharedData::gSnapshots, false);
+    gProperties.checkAndGetPropertyValue("gSnapshotsFrequency", &MovingNSSharedData::gSnapshotsFrequency, false);
+
+    gProperties.checkAndGetPropertyValue("gControllerType", &MovingNSSharedData::gControllerType, true);
+
+    gProperties.checkAndGetPropertyValue("gMaxNbGenomeTransmission", &MovingNSSharedData::gMaxNbGenomeTransmission,
+                                         true);
+    gProperties.checkAndGetPropertyValue("gLimitGenomeTransmission", &MovingNSSharedData::gLimitGenomeTransmission,
+                                         true);
+    gProperties.checkAndGetPropertyValue("gSelectionMethod", &MovingNSSharedData::gSelectionMethod, true);
+
+    gProperties.checkAndGetPropertyValue("gNotListeningStateDelay", &MovingNSSharedData::gNotListeningStateDelay, true);
+    gProperties.checkAndGetPropertyValue("gListeningStateDelay", &MovingNSSharedData::gListeningStateDelay, true);
+
+    gProperties.checkAndGetPropertyValue("gIndividualMutationRate", &MovingNSSharedData::gIndividualMutationRate,
+                                         false);
+
+    gProperties.checkAndGetPropertyValue("gMutationOperator", &MovingNSSharedData::gMutationOperator, false);
+
+    gProperties.checkAndGetPropertyValue("gSigma", &MovingNSSharedData::gSigma, false);
+
     gProperties.checkAndGetPropertyValue("gTotalEffort", &MovingNSSharedData::gTotalEffort, false);
-    
+
     gProperties.checkAndGetPropertyValue("gFakeCoopValue", &MovingNSSharedData::gFakeCoopValue, false);
     gProperties.checkAndGetPropertyValue("gNbFakeRobots", &MovingNSSharedData::gNbFakeRobots, false);
-    
+
     gProperties.checkAndGetPropertyValue("gFixedEffort", &MovingNSSharedData::gFixedEffort, false);
     gProperties.checkAndGetPropertyValue("gFixedEffortValue", &MovingNSSharedData::gFixedEffortValue, false);
-    
+
     gProperties.checkAndGetPropertyValue("gGenerationLog", &MovingNSSharedData::gGenerationLog, false);
     gProperties.checkAndGetPropertyValue("gTakeVideo", &MovingNSSharedData::gTakeVideo, false);
-    gProperties.checkAndGetPropertyValue("gLogGenome",&MovingNSSharedData::gLogGenome,false);
-    gProperties.checkAndGetPropertyValue("gLogGenomeSnapshot",&MovingNSSharedData::gLogGenomeSnapshot,false);
-    
+    gProperties.checkAndGetPropertyValue("gLogGenome", &MovingNSSharedData::gLogGenome, false);
+    gProperties.checkAndGetPropertyValue("gLogGenomeSnapshot", &MovingNSSharedData::gLogGenomeSnapshot, false);
+
     gProperties.checkAndGetPropertyValue("gConstantA", &MovingNSSharedData::gConstantA, true);
     gProperties.checkAndGetPropertyValue("gConstantK", &MovingNSSharedData::gConstantK, true);
 
-    
+
     // ====
-    
-    if ( !gRadioNetwork)
+
+    if (!gRadioNetwork)
     {
         std::cout << "Error : gRadioNetwork must be true." << std::endl;
         exit(-1);
     }
-    
+
     // * iteration and generation counters
-    
+
     _generationItCount = 0;
     _generationCount = 0;
-    
+
     // * Logfiles
-    
+
     time_t now = time(NULL);
-	char chartime[19] = "";
-	strftime (chartime, 19,"%Y%m%d_%Hh%Mm%Ss", localtime(&now));
-	std::string stime = chartime;
+    char chartime[19] = "";
+    strftime(chartime, 19, "%Y%m%d_%Hh%Mm%Ss", localtime(&now));
+    std::string stime = chartime;
     std::string fitnessLogFilename = gLogDirectoryname + "/" + stime + "_observer.txt";
     _fitnessLogManager = new LogManager(fitnessLogFilename);
     _fitnessLogManager->write("GEN\tPOP\tMINFIT\tMAXFIT\tAVGFIT\tQ1FIT\tQ2FIT\tQ3FIT\tSTDDEV\n");
-    
+
     std::string genomeLogFilename = gLogDirectoryname + "/" + stime + "_genome.txt";
     _genomeLogManager = new LogManager(genomeLogFilename);
 }
@@ -106,7 +110,7 @@ MovingNSWorldObserver::~MovingNSWorldObserver()
 
 void MovingNSWorldObserver::reset()
 {
-    
+
 }
 
 // Reset the environment, and perform an evolution step
@@ -127,14 +131,16 @@ void MovingNSWorldObserver::stepEvaluation()
         totalFitness += ctl->getFitness();
         genomes[iRobot] = ctl->getGenome();
     }
-    
+
     // Environment stuff
     // unregister everyone
-    for (auto object: gPhysicalObjects) {
+    for (auto object: gPhysicalObjects)
+    {
         object->unregisterObject();
     }
-    
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
@@ -144,16 +150,17 @@ void MovingNSWorldObserver::stepEvaluation()
         object->findRandomLocation();
         object->registerObject();
     }
-    
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
     }
-    
-    
+
+
     // update genomes (we do it here because Robot::reset() also resets genomes)
     // Create a new generation via selection/mutation
-    
+
     // O(1) fitness-proportionate selection
     // Give everyone a new genome, including the fixed-coop robots
     std::vector<int> nbPicks(gNbOfRobots);
@@ -163,8 +170,9 @@ void MovingNSWorldObserver::stepEvaluation()
     {
         bool done = false;
         int pick = -1;
-        while (done == false) {
-            pick = randint()%gNbOfRobots;
+        while (done == false)
+        {
+            pick = randint() % gNbOfRobots;
             double draw = random01() * totalFitness;
             if (draw <= fitnesses[pick] && pick < nbTrueRobots) // choose this robot
             {
@@ -174,7 +182,7 @@ void MovingNSWorldObserver::stepEvaluation()
         }
         newGenomePick[iRobot] = pick;
     }
-    
+
     for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
     {
 //        printf("New genome of robot %d: %d\n", iRobot, newGenomePick[iRobot]);
@@ -189,7 +197,7 @@ void MovingNSWorldObserver::stepEvaluation()
 void MovingNSWorldObserver::stepPre()
 {
     // switch to next generation.
-    if( _generationItCount == MovingNSSharedData::gEvaluationTime - 1 )
+    if (_generationItCount == MovingNSSharedData::gEvaluationTime - 1)
     {
         monitorPopulation();
         stepEvaluation();
@@ -200,7 +208,7 @@ void MovingNSWorldObserver::stepPre()
     {
         _generationItCount++;
     }
-    
+
     updateMonitoring();
     updateEnvironment();
 }
@@ -213,50 +221,50 @@ void MovingNSWorldObserver::updateEnvironment()
 
 void MovingNSWorldObserver::updateMonitoring()
 {
-    if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0 && MovingNSSharedData::gTakeVideo)
+    if ((_generationCount + 1) % MovingNSSharedData::gGenerationLog == 0 && MovingNSSharedData::gTakeVideo)
     {
         std::string name = "gen_" + std::to_string(_generationCount);
         saveCustomScreenshot(name);
     }
 }
 
-void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
+void MovingNSWorldObserver::monitorPopulation(bool localVerbose)
 {
     // * monitoring: count number of active agents.
-    
+
     int nbTrueRobots = gNbOfRobots - MovingNSSharedData::gNbFakeRobots;
-    
+
     std::vector<double> fitnesses(nbTrueRobots);
     std::vector<int> index(nbTrueRobots);
-    
+
     for (int iRobot = 0; iRobot < nbTrueRobots; iRobot++)
     {
-        MovingNSController *ctl = dynamic_cast<MovingNSController*>(gWorld->getRobot(iRobot)->getController());
+        MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(iRobot)->getController());
         fitnesses[iRobot] = ctl->getFitness();
         index[iRobot] = iRobot;
     }
-    
-    std::sort(index.begin(), index.end(), [&](int i, int j){ return fitnesses[i]<fitnesses[j]; });
-    
+
+    std::sort(index.begin(), index.end(), [&](int i, int j) { return fitnesses[i] < fitnesses[j]; });
+
 //    printf("Robots sorted by decreasing fitness\n");
 //    for (int i = 0; i < nbTrueRobots; i++)
 //        printf("Robot #%.2d is %.2d with %.2lf\n", i, index[nbTrueRobots-i-1], fitnesses[index[nbTrueRobots-i-1]]);
-    
+
     double minFit = fitnesses[index[0]];
-    double maxFit = fitnesses[index[nbTrueRobots-1]];
-    double medFit = fitnesses[index[nbTrueRobots/2]];
-    double lowQuartFit = fitnesses[index[nbTrueRobots/4]];
-    double highQuartFit = fitnesses[index[3*nbTrueRobots/4]];
-    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)nbTrueRobots;
+    double maxFit = fitnesses[index[nbTrueRobots - 1]];
+    double medFit = fitnesses[index[nbTrueRobots / 2]];
+    double lowQuartFit = fitnesses[index[nbTrueRobots / 4]];
+    double highQuartFit = fitnesses[index[3 * nbTrueRobots / 4]];
+    double avgFit = std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0) / (double) nbTrueRobots;
     double stddevFit = -1;
-    for (auto& fitness: fitnesses)
-        fitness = (fitness-avgFit)*(fitness-avgFit);
-    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0)/(double)nbTrueRobots, 0.5);
-    
+    for (auto &fitness: fitnesses)
+        fitness = (fitness - avgFit) * (fitness - avgFit);
+    stddevFit = pow(std::accumulate(fitnesses.begin(), fitnesses.end(), 0.0) / (double) nbTrueRobots, 0.5);
+
     std::stringstream genLog;
-    
+
     genLog << std::setprecision(5);
-    genLog << _generationCount+1 << "\t";
+    genLog << _generationCount + 1 << "\t";
     genLog << nbTrueRobots << "\t";
     genLog << minFit << "\t";
     genLog << maxFit << "\t";
@@ -265,19 +273,20 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
     genLog << medFit << "\t";
     genLog << highQuartFit << "\t";
     genLog << stddevFit << "\n";
-    
+
     _fitnessLogManager->write(genLog.str());
     _fitnessLogManager->flush();
-    
-    if ( (_generationCount+1) % MovingNSSharedData::gGenerationLog == 0)
+
+    if ((_generationCount + 1) % MovingNSSharedData::gGenerationLog == 0)
     {
         // log all genomes of each detailed generation, by decreasing fitness
         std::stringstream genomes;
         genomes << _generationCount << " ";
         genomes << nbTrueRobots << "\n";
-        for (int iRobot = nbTrueRobots-1; iRobot >= 0; iRobot--)
+        for (int iRobot = nbTrueRobots - 1; iRobot >= 0; iRobot--)
         {
-            MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(index[iRobot])->getController());
+            MovingNSController *ctl = dynamic_cast<MovingNSController *>(gWorld->getRobot(
+                    index[iRobot])->getController());
             MovingNSController::genome gen = ctl->getGenome();
             genomes << gen.second << " ";
             genomes << gen.first.size() << " ";
@@ -288,8 +297,10 @@ void MovingNSWorldObserver::monitorPopulation( bool localVerbose )
         _genomeLogManager->write(genomes.str());
         _genomeLogManager->flush();
     }
-    
+
     // display lightweight logs for easy-parsing
-    std::cout << "log," << (gWorld->getIterations()/MovingNSSharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit << "\n";
-    
+    std::cout << "log," << (gWorld->getIterations() / MovingNSSharedData::gEvaluationTime) << ","
+              << gWorld->getIterations() << "," << gNbOfRobots << "," << minFit << "," << maxFit << "," << avgFit
+              << "\n";
+
 }

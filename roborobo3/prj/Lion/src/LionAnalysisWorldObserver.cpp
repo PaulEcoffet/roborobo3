@@ -42,20 +42,20 @@ LionAnalysisWorldObserver::LionAnalysisWorldObserver(World *__world) : WorldObse
 void LionAnalysisWorldObserver::reset()
 {
     int i_gen = 0;
-    for (const auto& genome : m_genomesJson)
+    for (const auto &genome : m_genomesJson)
     {
         auto *ctl = dynamic_cast<LionController *>(gWorld->getRobot(0)->getController());
         ctl->loadNewGenome(genome);
         ctl->resetFitness();
         for (int cost = 0; cost < 2; cost++)
         {
-            int maxrob = (LionSharedData::maxTwo)?4:gInitialNumberOfRobots;
+            int maxrob = (LionSharedData::maxTwo) ? 4 : gInitialNumberOfRobots;
             for (int nbonopp = 0; nbonopp < maxrob;)
             {
                 for (int j = 0; j <= 20; j++)
                 {
                     double owncoop = j * 0.5;
-                    for(int k = 0; k <= 20; k++)
+                    for (int k = 0; k <= 20; k++)
                     {
                         double partcoop = k * 0.5;
                         double totothercoop = partcoop * nbonopp;

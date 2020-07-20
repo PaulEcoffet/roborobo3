@@ -15,15 +15,17 @@ class World;
 
 class TemplateMovingWorldObserver : public WorldObserver
 {
-	protected:
-		
-	public:
-		TemplateMovingWorldObserver( World *__world );
-		~TemplateMovingWorldObserver();
-				
-		void reset();
-		void stepPre() override;
-		
+protected:
+
+public:
+    TemplateMovingWorldObserver(World *__world);
+
+    ~TemplateMovingWorldObserver();
+
+    void reset();
+
+    void stepPre() override;
+
 };
 
 #endif

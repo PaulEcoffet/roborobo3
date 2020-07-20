@@ -37,7 +37,8 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
     }
 
     // Assert that no object can be covered twice by the proximity teleport, proximityTeleport == 0 means no constraint
-    assert(CoopFixed2SharedData::proximityTeleport >= 0 && CoopFixed2SharedData::proximityTeleport <= (gNbOfPhysicalObjects/2) - 1);
+    assert(CoopFixed2SharedData::proximityTeleport >= 0 &&
+           CoopFixed2SharedData::proximityTeleport <= (gNbOfPhysicalObjects / 2) - 1);
     assert(gNbOfPhysicalObjects % CoopFixed2SharedData::nbCluster == 0);
 
 
@@ -71,26 +72,31 @@ CoopFixed2WorldObserver::CoopFixed2WorldObserver(World *__world) :
     boost::math::normal normal(1, CoopFixed2SharedData::fakeCoefStd);
 
 
-    if (CoopFixed2SharedData::fakeCoefMulSym) {
-        double minquantile = boost::math::cdf(normal, 1./ CoopFixed2SharedData::fakeCoef);
+    if (CoopFixed2SharedData::fakeCoefMulSym)
+    {
+        double minquantile = boost::math::cdf(normal, 1. / CoopFixed2SharedData::fakeCoef);
         double maxquantile = boost::math::cdf(normal, 1);
         double stepquantile = (maxquantile - minquantile) / ((m_nbIndividuals / 2) - 1);
         double curquantile = minquantile;
-        for (int i = 0; i < m_nbIndividuals / 2; i++) {
+        for (int i = 0; i < m_nbIndividuals / 2; i++)
+        {
 
             variabilityCoef[i] = boost::math::quantile(normal, curquantile);
             curquantile += stepquantile;
         }
-        for (int i = 0; i < m_nbIndividuals / 2; i++) {
+        for (int i = 0; i < m_nbIndividuals / 2; i++)
+        {
             variabilityCoef[m_nbIndividuals - i] = 1. / variabilityCoef[i];
         }
     }
-    else {
+    else
+    {
         double minquantile = boost::math::cdf(normal, 1 - CoopFixed2SharedData::fakeCoef);
         double maxquantile = boost::math::cdf(normal, 1 + CoopFixed2SharedData::fakeCoef);
-        double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals  - 1);
+        double stepquantile = (maxquantile - minquantile) / (m_nbIndividuals - 1);
         double curquantile = minquantile;
-        for (int i = 0; i < m_nbIndividuals; i++) {
+        for (int i = 0; i < m_nbIndividuals; i++)
+        {
             variabilityCoef[i] = boost::math::quantile(normal, curquantile);
             assert(variabilityCoef[i] <= 1 + CoopFixed2SharedData::fakeCoef + 0.1);
             assert(variabilityCoef[i] >= 1 - CoopFixed2SharedData::fakeCoef - 0.1);
@@ -123,7 +129,7 @@ void CoopFixed2WorldObserver::reset()
     std::vector<double> minguess(nbweights, -1);
     std::vector<double> maxguess(nbweights, 1);
 
-    if(CoopFixed2SharedData::fixCoop)
+    if (CoopFixed2SharedData::fixCoop)
     {
         minbounds[0] = 0;
         maxbounds[0] = 1;
@@ -148,7 +154,7 @@ void CoopFixed2WorldObserver::stepPre()
         m_curEvaluationIteration = 0;
         for (int i = 0; i < m_nbIndividuals; i++)
         {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel*>(m_world->getRobot(i)->getWorldModel());
+            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
             m_fitnesses[i] += wm->_fitnessValue;
             m_curfitnesses[i] = wm->_fitnessValue;
         }
@@ -228,7 +234,8 @@ void CoopFixed2WorldObserver::stepPost()
                 m_logall.close();
             }
             m_logall.open(gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt");
-            m_logall << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
+            m_logall
+                    << "eval\titer\tid\ta\tfakeCoef\tplaying\toppId\tnbOnOpp\tcurCoop\tmeanOwn\tmeanTotal\tpunish\tspite\n";
         }
         for (int i = 0; i < m_world->getNbOfRobots(); i++)
         {
@@ -394,7 +401,7 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             double coop = wm->getCoop();
             totalInvest += coop;
             totalA += wm->selfA;
-            if(CoopFixed2SharedData::reputation)
+            if (CoopFixed2SharedData::reputation)
             {
                 for (auto oindex = opp->getNearbyRobotIndexes().begin(); oindex != itmax; oindex++)
                 {
@@ -422,7 +429,8 @@ void CoopFixed2WorldObserver::computeOpportunityImpacts()
             {
                 wm->appendTotalInvest(totalInvest);
             }
-            double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) / (CoopFixed2SharedData::evaluationTime - CoopFixed2SharedData::fitnessUnlockedIter);
+            double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
+                               (CoopFixed2SharedData::evaluationTime - CoopFixed2SharedData::fitnessUnlockedIter);
             if (m_curEvaluationIteration >= CoopFixed2SharedData::fitnessUnlockedIter)
             {
                 wm->_fitnessValue += curpayoff;
@@ -495,19 +503,19 @@ void CoopFixed2WorldObserver::mark_all_robots_as_alone() const
 
 void CoopFixed2WorldObserver::reward_lonely(double sum_payoff, int nb_payoffs) const
 {
-        for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
+        auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
+        if (!wm->isPlaying())
         {
-            auto *wm = dynamic_cast<CoopFixed2WorldModel *>(m_world->getRobot(i)->getWorldModel());
-            if (!wm->isPlaying())
-            {
-                wm->_fitnessValue += std::min(CoopFixed2SharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
-            }
+            wm->_fitnessValue += std::min(CoopFixed2SharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
         }
+    }
 }
 
 static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
 {
-    return lowerbound + (upperbound - lowerbound)/(1 + exp(-slope*(x - inflexionPoint)));
+    return lowerbound + (upperbound - lowerbound) / (1 + exp(-slope * (x - inflexionPoint)));
 }
 
 
@@ -526,7 +534,7 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     }
     if (CoopFixed2SharedData::frictionCoef > 0)
     {
-        res *= (1-sigmoid(n, 0, 1, CoopFixed2SharedData::frictionCoef, CoopFixed2SharedData::frictionInflexionPoint));
+        res *= (1 - sigmoid(n, 0, 1, CoopFixed2SharedData::frictionCoef, CoopFixed2SharedData::frictionInflexionPoint));
     }
     if (CoopFixed2SharedData::temperature > 0)
     {
@@ -534,7 +542,6 @@ double CoopFixed2WorldObserver::payoff(const double invest, const double totalIn
     }
     return res;
 }
-
 
 
 void CoopFixed2WorldObserver::registerRobotsOnOpportunities()

@@ -17,11 +17,12 @@
 
 class MovingEEAgentObserver : public TemplateEEAgentObserver
 {
-	public:
-		MovingEEAgentObserver(RobotWorldModel *wm);
-		~MovingEEAgentObserver();
-    
-        virtual void stepPre();
+public:
+    MovingEEAgentObserver(RobotWorldModel *wm);
+
+    ~MovingEEAgentObserver();
+
+    virtual void stepPre();
 };
 
 #endif

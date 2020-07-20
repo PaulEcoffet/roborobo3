@@ -21,7 +21,7 @@ void PartnerChoiceOpportunity::updateColor()
     }
     else if (m_coop < 2 * PartnerChoiceSharedData::maxCoop / 3)
     {
-        _displayColorRed =198;
+        _displayColorRed = 198;
         _displayColorGreen = 186;
         _displayColorBlue = 58;
     }
@@ -49,7 +49,7 @@ void PartnerChoiceOpportunity::isPushed(int id, std::tuple<double, double> speed
     nearbyRobotIndexes.insert(id - gRobotIndexStartOffset);
 }
 
-const std::set<int>& PartnerChoiceOpportunity::getNearbyRobotIndexes() const
+const std::set<int> &PartnerChoiceOpportunity::getNearbyRobotIndexes() const
 {
     return nearbyRobotIndexes;
 }

@@ -23,7 +23,7 @@ NegociateAnalysisOpportunity::NegociateAnalysisOpportunity(int __id) : Negociate
 void NegociateAnalysisOpportunity::step()
 {
     updateColor();
-    for (auto * fakerobot : fakerobots)
+    for (auto *fakerobot : fakerobots)
     {
         RobotWorldModel *wm = fakerobot->getWorldModel();
         wm->_desiredTranslationalValue = 0;
@@ -65,13 +65,13 @@ void NegociateAnalysisOpportunity::placeFakeRobot()
 
     const int cx = getXCenterPixel();
     const int cy = getYCenterPixel();
-    const double rotphase = fmod((double)_id / 50, 1);
+    const double rotphase = fmod((double) _id / 50, 1);
     int i = 1;
-    for (auto * fakerobot : fakerobots)
+    for (auto *fakerobot : fakerobots)
     {
         const double pos = (double) i / (fakerobots.size() + 1);
-        const double minrot = 1./6;
-        const double maxrot = 5./6;
+        const double minrot = 1. / 6;
+        const double maxrot = 5. / 6;
         const double linrot = rotphase + minrot + (maxrot - minrot) * pos;
         const double rot = linrot * 2 * M_PI;
         const int objradius = gPhysicalObjectDefaultRadius;

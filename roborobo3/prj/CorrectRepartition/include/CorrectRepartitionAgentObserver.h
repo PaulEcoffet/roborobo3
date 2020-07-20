@@ -14,9 +14,11 @@ class CorrectRepartitionAgentObserver : public AgentObserver
 {
 public:
     CorrectRepartitionAgentObserver(RobotWorldModel *wm);
+
     ~CorrectRepartitionAgentObserver() override;
 
     void stepPre() override;
+
     void reset() override;
 
 protected:

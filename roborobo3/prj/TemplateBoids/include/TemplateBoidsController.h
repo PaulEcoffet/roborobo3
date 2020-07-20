@@ -16,14 +16,17 @@ class TemplateBoidsController : public Controller
 {
 private:
     int _iteration;
+
     void resetRobot();
-    
+
 public:
-    
+
     TemplateBoidsController(RobotWorldModel *wm);
+
     ~TemplateBoidsController();
-    
+
     void reset();
+
     void step();
 };
 

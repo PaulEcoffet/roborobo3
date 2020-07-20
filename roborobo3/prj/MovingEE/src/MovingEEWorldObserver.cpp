@@ -11,7 +11,7 @@
 
 #include <float.h> // for DBL_MAX
 
-MovingEEWorldObserver::MovingEEWorldObserver( World* world ) : TemplateEEWorldObserver( world )
+MovingEEWorldObserver::MovingEEWorldObserver(World *world) : TemplateEEWorldObserver(world)
 {
     // superclass constructor called before
 }
@@ -24,7 +24,7 @@ MovingEEWorldObserver::~MovingEEWorldObserver()
 void MovingEEWorldObserver::stepPre()
 {
     TemplateEEWorldObserver::stepPre();
-    
+
     /*
     if( gWorld->getIterations() > 0 && gWorld->getIterations() % TemplateEESharedData::gEvaluationTime == 0 )
     {
@@ -34,40 +34,46 @@ void MovingEEWorldObserver::stepPre()
 
 }
 
-void MovingEEWorldObserver::monitorPopulation( bool localVerbose )
+void MovingEEWorldObserver::monitorPopulation(bool localVerbose)
 {
     // * monitoring: count number of active agents.
-    
+
     int activeCount = 0;
     double sumOfFitnesses = 0;
     double minFitness = DBL_MAX;
     double maxFitness = -DBL_MAX;
-    
-    for ( int i = 0 ; i != gNbOfRobots ; i++ )
+
+    for (int i = 0; i != gNbOfRobots; i++)
     {
-        MovingEEController *ctl = dynamic_cast<MovingEEController*>(gWorld->getRobot(i)->getController());
-        
-        if ( ctl->getWorldModel()->isAlive() == true )
+        MovingEEController *ctl = dynamic_cast<MovingEEController *>(gWorld->getRobot(i)->getController());
+
+        if (ctl->getWorldModel()->isAlive() == true)
         {
             activeCount++;
-            sumOfFitnesses += ctl->getFitness() ;
-            if ( ctl->getFitness() < minFitness )
+            sumOfFitnesses += ctl->getFitness();
+            if (ctl->getFitness() < minFitness)
                 minFitness = ctl->getFitness();
-            if ( ctl->getFitness() > maxFitness )
+            if (ctl->getFitness() > maxFitness)
                 maxFitness = ctl->getFitness();
         }
     }
-    
-    if ( gVerbose && localVerbose )
+
+    if (gVerbose && localVerbose)
     {
-        std::cout << "[gen:" << (gWorld->getIterations()/TemplateEESharedData::gEvaluationTime) << ";it:" << gWorld->getIterations() << ";pop:" << activeCount << ";avgFitness:" << sumOfFitnesses/activeCount << "]\n";
+        std::cout << "[gen:" << (gWorld->getIterations() / TemplateEESharedData::gEvaluationTime) << ";it:"
+                  << gWorld->getIterations() << ";pop:" << activeCount << ";avgFitness:" << sumOfFitnesses / activeCount
+                  << "]\n";
     }
-    
+
     // display lightweight logs for easy-parsing
-    std::cout << "log," << (gWorld->getIterations()/TemplateEESharedData::gEvaluationTime) << "," << gWorld->getIterations() << "," << activeCount << "," << minFitness << "," << maxFitness << "," << sumOfFitnesses/activeCount << "\n";
+    std::cout << "log," << (gWorld->getIterations() / TemplateEESharedData::gEvaluationTime) << ","
+              << gWorld->getIterations() << "," << activeCount << "," << minFitness << "," << maxFitness << ","
+              << sumOfFitnesses / activeCount << "\n";
 
     // Logging, population-level: alive
-    std::string sLog = std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(activeCount) + "\n";
+    std::string sLog =
+            std::string("") + std::to_string(gWorld->getIterations()) + ",pop,alive," + std::to_string(activeCount) +
+            "\n";
     gLogManager->write(sLog);
     gLogManager->flush();
 }
