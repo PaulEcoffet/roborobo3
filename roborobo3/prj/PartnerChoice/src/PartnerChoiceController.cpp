@@ -13,13 +13,14 @@
 #include "PartnerChoice/include/PartnerChoiceController.h"
 #include "PartnerChoice/include/PartnerChoiceSharedData.h"
 
-enum {
+enum
+{
     MLP_ID = 0,
     PERCEPTRON_ID = 1,
     ELMAN_ID = 2
 };
 
-PartnerChoiceController::PartnerChoiceController(RobotWorldModel* wm)
+PartnerChoiceController::PartnerChoiceController(RobotWorldModel *wm)
 {
     m_wm = dynamic_cast<PartnerChoiceWorldModel *>(wm);
     std::vector<unsigned int> nbNeuronsPerHiddenLayers = getNbNeuronsPerHiddenLayers();
@@ -38,7 +39,8 @@ PartnerChoiceController::PartnerChoiceController(RobotWorldModel* wm)
             m_nn = new Elman(m_weights, nbInputs, nbOutputs, nbNeuronsPerHiddenLayers, true);
             break;
         default:
-            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "<< PartnerChoiceSharedData::controllerType << "\n";
+            std::cerr << "Invalid controller Type in " << __FILE__ << ":" << __LINE__ << ", got "
+                      << PartnerChoiceSharedData::controllerType << "\n";
             exit(-1);
     }
     m_weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
@@ -49,7 +51,7 @@ PartnerChoiceController::PartnerChoiceController(RobotWorldModel* wm)
 void PartnerChoiceController::reset()
 {
     if (PartnerChoiceSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 void PartnerChoiceController::step()
@@ -103,9 +105,11 @@ std::vector<double> PartnerChoiceController::getInputs()
         double seenCoop = 0;
         auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(i));
 
-        if (entityId >= gPhysicalObjectIndexStartOffset && entityId < gPhysicalObjectIndexStartOffset+gNbOfPhysicalObjects) // is an Object
+        if (entityId >= gPhysicalObjectIndexStartOffset &&
+            entityId < gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects) // is an Object
         {
-            auto * opportunity = dynamic_cast<PartnerChoiceOpportunity*>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            auto *opportunity = dynamic_cast<PartnerChoiceOpportunity *>(gPhysicalObjects[entityId -
+                                                                                          gPhysicalObjectIndexStartOffset]);
             isOpportunity = true;
             if (PartnerChoiceSharedData::seeCoopFromDist)
                 seenCoop = opportunity->getCoop();
@@ -134,7 +138,7 @@ void PartnerChoiceController::loadNewGenome(const std::vector<double> &newGenome
     m_weights = newGenome;
     m_nn->setWeights(m_weights);
     if (PartnerChoiceSharedData::controllerType == ELMAN_ID)
-        dynamic_cast<Elman*>(m_nn)->initLastOutputs();
+        dynamic_cast<Elman *>(m_nn)->initLastOutputs();
 }
 
 unsigned int PartnerChoiceController::getNbInputs() const
@@ -159,7 +163,7 @@ void PartnerChoiceController::resetFitness()
     updateFitness(0);
 }
 
-void PartnerChoiceController::updateFitness( double newFitness )
+void PartnerChoiceController::updateFitness(double newFitness)
 {
     if (newFitness < 0)
     {
@@ -169,9 +173,9 @@ void PartnerChoiceController::updateFitness( double newFitness )
     m_wm->_fitnessValue = newFitness;
 }
 
-void PartnerChoiceController::increaseFitness( double delta )
+void PartnerChoiceController::increaseFitness(double delta)
 {
-    updateFitness(m_wm->_fitnessValue+delta);
+    updateFitness(m_wm->_fitnessValue + delta);
 }
 
 std::string PartnerChoiceController::inspect(std::string prefix)
@@ -198,7 +202,8 @@ std::string PartnerChoiceController::inspect(std::string prefix)
         else if (entityId >= gPhysicalObjectIndexStartOffset)
         {
             out << "\tA cooperation opportunity ";
-            auto coop = dynamic_cast<PartnerChoiceOpportunity *>(gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
+            auto coop = dynamic_cast<PartnerChoiceOpportunity *>(gPhysicalObjects[entityId -
+                                                                                  gPhysicalObjectIndexStartOffset]);
             out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
         }
     }
@@ -234,7 +239,7 @@ unsigned int PartnerChoiceController::getNbOutputs() const
 {
     return 2    // Motor commands
            + 1  // Cooperation value
-    ;
+            ;
 }
 
 

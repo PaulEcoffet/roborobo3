@@ -17,12 +17,14 @@
 
 class MonoRobotAgentObserver : public AgentObserver
 {
-	public:
-		MonoRobotAgentObserver(RobotWorldModel *wm);
-		~MonoRobotAgentObserver();
+public:
+    MonoRobotAgentObserver(RobotWorldModel *wm);
 
-		virtual void reset();
-		virtual void stepPre();
+    ~MonoRobotAgentObserver();
+
+    virtual void reset();
+
+    virtual void stepPre();
 
 };
 

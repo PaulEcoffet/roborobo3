@@ -29,16 +29,20 @@ void PartnerChoiceSharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("genomeLog", &PartnerChoiceSharedData::genomeLog, true);
     gProperties.checkAndGetPropertyValue("sigma", &PartnerChoiceSharedData::sigma, true);
     gProperties.checkAndGetPropertyValue("controllerType", &PartnerChoiceSharedData::controllerType, true);
-    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &PartnerChoiceSharedData::maxTranslationalValue, true);
+    gProperties.checkAndGetPropertyValue("gMaxTranslationalSpeed", &PartnerChoiceSharedData::maxTranslationalValue,
+                                         true);
     gProperties.checkAndGetPropertyValue("gMaxRotationalSpeed", &PartnerChoiceSharedData::maxRotationalVelocity, true);
     gProperties.checkAndGetPropertyValue("nbHiddenLayers", &PartnerChoiceSharedData::nbHiddenLayers, true);
-    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &PartnerChoiceSharedData::nbNeuronsPerHiddenLayer, true);
+    gProperties.checkAndGetPropertyValue("nbNeuronsPerHiddenLayer", &PartnerChoiceSharedData::nbNeuronsPerHiddenLayer,
+                                         true);
     gProperties.checkAndGetPropertyValue("maxCoop", &PartnerChoiceSharedData::maxCoop, true);
     gProperties.checkAndGetPropertyValue("nbCoopStep", &PartnerChoiceSharedData::nbCoopStep, true);
     gProperties.checkAndGetPropertyValue("constantA", &PartnerChoiceSharedData::constantA, true);
     gProperties.checkAndGetPropertyValue("constantK", &PartnerChoiceSharedData::constantK, true);
-    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration", &PartnerChoiceSharedData::nbEvaluationsPerGeneration, true);
-    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &PartnerChoiceSharedData::takeVideoEveryGeneration, false);
+    gProperties.checkAndGetPropertyValue("nbEvaluationsPerGeneration",
+                                         &PartnerChoiceSharedData::nbEvaluationsPerGeneration, true);
+    gProperties.checkAndGetPropertyValue("takeVideoEveryGeneration", &PartnerChoiceSharedData::takeVideoEveryGeneration,
+                                         false);
     gProperties.checkAndGetPropertyValue("seeCoopFromDist", &PartnerChoiceSharedData::seeCoopFromDist, false);
 }
 

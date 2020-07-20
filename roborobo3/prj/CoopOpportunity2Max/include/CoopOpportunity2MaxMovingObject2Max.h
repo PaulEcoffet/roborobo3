@@ -10,20 +10,22 @@
 
 #include "World/MovingObject.h"
 
-class CoopOpportunity2MaxMovingObject2Max: public MovingObject {
+class CoopOpportunity2MaxMovingObject2Max : public MovingObject
+{
 public:
-	CoopOpportunity2MaxMovingObject2Max(int __id);
-	virtual ~CoopOpportunity2MaxMovingObject2Max();
+    CoopOpportunity2MaxMovingObject2Max(int __id);
 
-	/**
-	 * isPushed is override to prevent robots from being more than 2 on an object
-	 */
-	virtual void isPushed( int __idAgent, std::tuple<double, double> __speed );
+    virtual ~CoopOpportunity2MaxMovingObject2Max();
 
-	virtual void step();
+    /**
+     * isPushed is override to prevent robots from being more than 2 on an object
+     */
+    virtual void isPushed(int __idAgent, std::tuple<double, double> __speed);
+
+    virtual void step();
 
 protected:
-	std::set<int> _prevNearbyRobots;
+    std::set<int> _prevNearbyRobots;
 
 };
 

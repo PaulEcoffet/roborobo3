@@ -44,16 +44,14 @@ namespace network
             throw std::runtime_error("Connection is not open");
         }
         std::stringstream sizestr;
-        size_t out_size = htonl(msg.size());
+        size_t out_size = msg.size();
         sizestr << std::setw(8) << std::hex << out_size;
         boost::asio::write(socket, boost::asio::buffer(sizestr.str()));
         boost::asio::write(socket, boost::asio::buffer(msg));
-        std::cout << "roborobo: message sent" << std::endl;
     }
 
     std::string NetworkInterface::receiveMessage()
     {
-        std::cout << "roborobo: Waiting for message" << std::endl;
         if (!is_open())
         {
             throw std::runtime_error("Connection is not open");
@@ -64,14 +62,11 @@ namespace network
         socket.read_some(boost::asio::buffer(header, 8), error);
         if (error == boost::asio::error::eof)
         {
-            std::cout << "roborobo: message eof" << std::endl;
             message = "";
         }
         else
         {
-            std::cout << "socker err=" << error << std::endl;
             size_t message_length = static_cast<size_t>(std::stoul(header, nullptr, 16));
-            std::cout << "roborobo: Expecting " << message_length << " bytes" << std::endl;
             boost::asio::streambuf message_buf;
             size_t bytes_read = boost::asio::read(socket, message_buf.prepare(message_length), error);
             assert(bytes_read == message_length);
@@ -79,7 +74,6 @@ namespace network
             message = make_string(message_buf);
             message_buf.consume(bytes_read);
         }
-        std::cout << "roborobo: message received" << std::endl;
         return message;
     }
 

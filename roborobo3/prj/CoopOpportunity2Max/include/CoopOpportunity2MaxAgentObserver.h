@@ -19,12 +19,14 @@
 class CoopOpportunity2MaxAgentObserver : public AgentObserver
 {
 public:
-	CoopOpportunity2MaxAgentObserver(RobotWorldModel *wm);
-	~CoopOpportunity2MaxAgentObserver();
+    CoopOpportunity2MaxAgentObserver(RobotWorldModel *wm);
 
-	virtual void reset();
-	virtual void stepPre();
-    
+    ~CoopOpportunity2MaxAgentObserver();
+
+    virtual void reset();
+
+    virtual void stepPre();
+
     void logStats();
 
 };

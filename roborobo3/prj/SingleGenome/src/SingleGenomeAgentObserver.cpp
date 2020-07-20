@@ -13,10 +13,10 @@
 #include "SingleGenome/include/SingleGenomeWorldObserver.h"
 #include <string>
 
-SingleGenomeAgentObserver::SingleGenomeAgentObserver( RobotWorldModel *wm )
+SingleGenomeAgentObserver::SingleGenomeAgentObserver(RobotWorldModel *wm)
 {
-    _wm = (RobotWorldModel*)wm;
-    
+    _wm = (RobotWorldModel *) wm;
+
 }
 
 SingleGenomeAgentObserver::~SingleGenomeAgentObserver()
@@ -32,21 +32,24 @@ void SingleGenomeAgentObserver::reset()
 void SingleGenomeAgentObserver::stepPre()
 {
     // See whether we're close to an object
-    
+
     int targetIndex = _wm->getGroundSensorValue();
-    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset + (int)gPhysicalObjects.size() )   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
+    if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset +
+                                                                        (int) gPhysicalObjects.size())   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         //std::cout << "[DEBUG] #" << _wm->getId() << " walked upon " << targetIndex << "\n";
         gPhysicalObjects[targetIndex]->isWalked(_wm->getId());
     }
-    
+
 }
+
 void SingleGenomeAgentObserver::logStats()
 {
     SingleGenomeWorldObserver *wobs = static_cast<SingleGenomeWorldObserver *>(gWorld->getWorldObserver());
-    SingleGenomeController *ctl = static_cast<SingleGenomeController *>(gWorld->getRobot(_wm->getId())->getController());
-    LogManager* coopLogManager = wobs->getCoopLogManager();
+    SingleGenomeController *ctl = static_cast<SingleGenomeController *>(gWorld->getRobot(
+            _wm->getId())->getController());
+    LogManager *coopLogManager = wobs->getCoopLogManager();
     std::stringstream coopStats;
     coopStats << std::setprecision(4);
     if (SingleGenomeSharedData::gOnlyOneRobot)

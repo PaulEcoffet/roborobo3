@@ -20,6 +20,7 @@ public:
     explicit PartnerChoiceAnalysisWorldObserver(World *__world);
 
     void stepPre() override;
+
     void reset() override;
 
 
@@ -39,7 +40,9 @@ protected:
     json::iterator m_genomesIt;
 
     void loadGenome(const std::vector<double> &weights);
+
     void computeOpportunityImpact();
+
     void clearOpportunityNearbyRobots();
 
     int m_nbIterationPerRep;

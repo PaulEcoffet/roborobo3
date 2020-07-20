@@ -31,7 +31,6 @@ protected:
     ogzstream m_log;
 
 
-
 };
 
 

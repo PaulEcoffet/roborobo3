@@ -13,7 +13,7 @@
 #include "LionOpportunity.h"
 #include "LionWorldModel.h"
 #include "Utilities/Misc.h"
-#include "ScoreLogger.h"
+#include "LionScoreLogger.h"
 
 
 class LionWorldObserver;
@@ -71,7 +71,7 @@ protected:
 
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
-    ScoreLogger *scorelogger;
+    LionScoreLogger *scorelogger;
 
 
     double cachedEmptyOpp = -1;

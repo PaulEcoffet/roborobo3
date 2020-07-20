@@ -12,7 +12,7 @@
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
 #include "LionController.h"
-#include "ScoreLogger.h"
+#include "LionScoreLogger.h"
 #include "LionWorldModel.h"
 
 using json = nlohmann::json;
@@ -46,9 +46,10 @@ public:
     static double payoff(double invest, double totalInvest, int n, double a, double b);
 
 
-    ScoreLogger *getScoreLogger();
+    LionScoreLogger *getScoreLogger();
 
     bool isJustAfterLoggingTime() const;
+
     bool isLoggingTime() const;
 
 
@@ -67,7 +68,7 @@ protected:
     std::vector<double> m_curfitnesses;
     std::vector<int> m_curnbparticipation;
     std::vector<bool> m_curparticipationindexes;
-    ScoreLogger scorelogger;
+    LionScoreLogger scorelogger;
 
     PyevoInterface pyevo;
 

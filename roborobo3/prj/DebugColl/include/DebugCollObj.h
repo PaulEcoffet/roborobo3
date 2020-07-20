@@ -8,10 +8,13 @@
 
 #include <ext/World/RoundObject.h>
 
-class DebugCollObj : public RoundObject {
+class DebugCollObj : public RoundObject
+{
 public:
     explicit DebugCollObj(int __id);
+
     void isPushed(int id, std::tuple<double, double> speed) override;
+
     void step() override;
 
     bool _pushed;

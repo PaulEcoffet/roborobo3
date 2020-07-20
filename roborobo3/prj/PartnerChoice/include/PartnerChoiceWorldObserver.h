@@ -18,11 +18,15 @@ class PartnerChoiceWorldObserver : public WorldObserver
 {
 public:
     explicit PartnerChoiceWorldObserver(World *__world);
+
     ~PartnerChoiceWorldObserver() override;
 
     void stepPre() override;
+
     void stepPost() override;
+
     void reset() override;
+
     void stepEvolution();
 
 
@@ -31,7 +35,7 @@ public:
 protected:
     World *m_world;
     LogManager *m_fitnessLogManager;
-    LogManager* m_observer;
+    LogManager *m_observer;
     json m_genomesLogJson;
     int m_curEvaluationIteration;
     int m_nbIndividuals;
@@ -45,11 +49,17 @@ protected:
     PyevoInterface pycma;
 
     void initOpportunities();
+
     void computeOpportunityImpact();
+
     double payoff(const double invest, const double totalInvest) const;
+
     void clearOpportunityNearbyRobots();
+
     void clearRobotFitnesses();
+
     void activateOnlyRobot(int robotIndex);
+
     void monitorPopulation() const;
 
 };

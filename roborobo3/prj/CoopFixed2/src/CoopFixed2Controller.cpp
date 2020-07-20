@@ -222,20 +222,21 @@ void CoopFixed2Controller::step()
 
     if (m_wm->fakeCoef < 0.8)
     {
-        m_wm->setRobotLED_colorValues(126,55,49);
+        m_wm->setRobotLED_colorValues(126, 55, 49);
         if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <= 2))
-            m_wm->setRobotLED_colorValues(169,96,89);
+            m_wm->setRobotLED_colorValues(169, 96, 89);
     }
     else if (m_wm->fakeCoef < 1.2)
     {
-        m_wm->setRobotLED_colorValues(0,0,255);
+        m_wm->setRobotLED_colorValues(0, 0, 255);
         if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <= 2))
-            m_wm->setRobotLED_colorValues(100,100,255);
+            m_wm->setRobotLED_colorValues(100, 100, 255);
     }
-    else {
-        m_wm->setRobotLED_colorValues(115,182,234);
+    else
+    {
+        m_wm->setRobotLED_colorValues(115, 182, 234);
         if (m_wm->onOpportunity && (!CoopFixed2SharedData::fixRobotNb || m_wm->arrival <= 2))
-            m_wm->setRobotLED_colorValues(185,218,244);
+            m_wm->setRobotLED_colorValues(185, 218, 244);
     }
 
 }
@@ -319,8 +320,8 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
             inputs[i++] = reputation / CoopFixed2SharedData::maxCoop;
             inputs[i++] = nbplays;
         }
-        inputs[i++] =  (entityId == WALL_ID) ? dist : 1;
-        inputs[i++] =  (isOpportunity) ? dist : 1;
+        inputs[i++] = (entityId == WALL_ID) ? dist : 1;
+        inputs[i++] = (isOpportunity) ? dist : 1;
         inputs[i++] = nbOnOpp;
 
         if (CoopFixed2SharedData::reputation)
@@ -336,18 +337,22 @@ std::vector<double> CoopFixed2Controller::getCameraInputs() const
 
 void CoopFixed2Controller::fillNames()
 {
-    if (inputnames.empty()) {
-        for (int j = 0; j < m_wm->_cameraSensorsNb; j++) {
+    if (inputnames.empty())
+    {
+        for (int j = 0; j < m_wm->_cameraSensorsNb; j++)
+        {
             //inputnames.emplace_back("dist " + std::to_string(j));
             inputnames.emplace_back("dist robot");
-            if (CoopFixed2SharedData::reputation) {
+            if (CoopFixed2SharedData::reputation)
+            {
                 inputnames.emplace_back("reputation");
                 inputnames.emplace_back("nb plays");
             }
             inputnames.emplace_back("dist wall");
             inputnames.emplace_back("dist obj");
             inputnames.emplace_back("nb on obj");
-            if (CoopFixed2SharedData::reputation) {
+            if (CoopFixed2SharedData::reputation)
+            {
                 inputnames.emplace_back("last inv on opp");
             }
         }
@@ -377,7 +382,8 @@ void CoopFixed2Controller::fillNames()
         /*
          * introspection inputs
          */
-        if (CoopFixed2SharedData::selfAAsInput) {
+        if (CoopFixed2SharedData::selfAAsInput)
+        {
             inputnames.emplace_back("own A");
         }
         fill_names = false;
@@ -446,7 +452,8 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
     {
         if (m_nn->getRequiredNumberOfWeights() + coopgene != newGenome.size())
         {
-            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
+                      << newGenome.size() << std::endl;
             exit(-1);
         }
         weights = std::vector<double>(newGenome.begin() + coopgene, newGenome.end());
@@ -456,7 +463,8 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
     {
         if (coopgene + m_nn->getRequiredNumberOfWeights() + m_nn2->getRequiredNumberOfWeights() != newGenome.size())
         {
-            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!=" << newGenome.size() << std::endl;
+            std::cout << "nb weights does not match nb genes: " << m_nn->getRequiredNumberOfWeights() << "!="
+                      << newGenome.size() << std::endl;
             exit(-1);
         }
         auto split = newGenome.begin() + m_nn->getRequiredNumberOfWeights() + coopgene;
@@ -465,7 +473,7 @@ void CoopFixed2Controller::loadNewGenome(const std::vector<double> &newGenome)
         m_nn->setWeights(weights);
         m_nn2->setWeights(weights2);
     }
-    if(CoopFixed2SharedData::fixCoop)
+    if (CoopFixed2SharedData::fixCoop)
     {
         hardcoop = newGenome[0] * CoopFixed2SharedData::maxCoop;
     }
@@ -498,7 +506,8 @@ unsigned int CoopFixed2Controller::getNbGameInputs() const
 unsigned int CoopFixed2Controller::getNbCameraInputs() const
 {
     const unsigned int nbCameraInputs = static_cast<const unsigned int>(
-            m_wm->_cameraSensorsNb * (4 + 3 * (int) CoopFixed2SharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
+            m_wm->_cameraSensorsNb * (4 + 3 *
+                                          (int) CoopFixed2SharedData::reputation)); // dist + isWall + isRobot + isObj + nbRob + repopp + repAgent + nbplays
     return nbCameraInputs;
 }
 
@@ -529,51 +538,63 @@ void CoopFixed2Controller::increaseFitness(double delta)
     updateFitness(m_wm->_fitnessValue + delta);
 }
 
-std::string CoopFixed2Controller::inspect(std::string prefix) {
+std::string CoopFixed2Controller::inspect(std::string prefix)
+{
     std::stringstream out;
-    if (verbose == 0) {
-    out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
-    std::set<int> seen;
-    for (int i = 0; i < m_wm->_cameraSensorsNb; i++) {
-        seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
-    }
-
-    out << prefix << "Seen objects:\n";
-    for (int entityId : seen) {
-        if (entityId == 0) {
-            out << "\tA wall\n";
-        } else if (Agent::isInstanceOf(entityId)) {
-            out << "\tAnother agent\n";
-        } else if (entityId >= gPhysicalObjectIndexStartOffset) {
-            out << "\tA cooperation opportunity ";
-            auto coop = dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[entityId -
-                                                                               gPhysicalObjectIndexStartOffset]);
-            out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
+    if (verbose == 0)
+    {
+        out << prefix << "I'm robot with coop coef " << m_wm->fakeCoef << "\n";
+        std::set<int> seen;
+        for (int i = 0; i < m_wm->_cameraSensorsNb; i++)
+        {
+            seen.insert((int) m_wm->getObjectIdFromCameraSensor(i));
         }
-    }
-    if (m_wm->onOpportunity) {
-        out << prefix << "On opportunity with " << m_wm->nbOnOpp << ". I arrived " << m_wm->arrival << ".\n";
-        out << prefix << "\tLast own invest: ";
-        for (auto ownInvest : m_wm->lastOwnInvest) {
-            out << ownInvest << " ";
-        }
-        out << "(" << m_wm->meanLastOwnInvest() << ")";
-        out << "\n";
-        out << prefix << "\tLast total invest: ";
-        for (auto totInvest : m_wm->lastTotalInvest) {
-            out << totInvest << " ";
-        }
-        out << "(" << m_wm->meanLastTotalInvest() << ")";
-        out << "\n";
 
-    }
-    out << prefix << "a coeff: " << m_wm->selfA << "\n";
-    out << prefix << "last coop: " << m_wm->_cooperationLevel << "\n";
-    out << prefix << "reputation : " << m_wm->meanLastCommonKnowledgeReputation() << "\n";
-    out << prefix << "received punishment : " << m_wm->punishment << "\n";
-    out << prefix << "sent punishment : " << m_wm->spite << "\n";
+        out << prefix << "Seen objects:\n";
+        for (int entityId : seen)
+        {
+            if (entityId == 0)
+            {
+                out << "\tA wall\n";
+            }
+            else if (Agent::isInstanceOf(entityId))
+            {
+                out << "\tAnother agent\n";
+            }
+            else if (entityId >= gPhysicalObjectIndexStartOffset)
+            {
+                out << "\tA cooperation opportunity ";
+                auto coop = dynamic_cast<CoopFixed2Opportunity *>(gPhysicalObjects[entityId -
+                                                                                   gPhysicalObjectIndexStartOffset]);
+                out << "with " << coop->getNbNearbyRobots() << " robots nearby.\n ";
+            }
+        }
+        if (m_wm->onOpportunity)
+        {
+            out << prefix << "On opportunity with " << m_wm->nbOnOpp << ". I arrived " << m_wm->arrival << ".\n";
+            out << prefix << "\tLast own invest: ";
+            for (auto ownInvest : m_wm->lastOwnInvest)
+            {
+                out << ownInvest << " ";
+            }
+            out << "(" << m_wm->meanLastOwnInvest() << ")";
+            out << "\n";
+            out << prefix << "\tLast total invest: ";
+            for (auto totInvest : m_wm->lastTotalInvest)
+            {
+                out << totInvest << " ";
+            }
+            out << "(" << m_wm->meanLastTotalInvest() << ")";
+            out << "\n";
 
-    out << prefix << "Actual fitness: " << getFitness() << "\n";
+        }
+        out << prefix << "a coeff: " << m_wm->selfA << "\n";
+        out << prefix << "last coop: " << m_wm->_cooperationLevel << "\n";
+        out << prefix << "reputation : " << m_wm->meanLastCommonKnowledgeReputation() << "\n";
+        out << prefix << "received punishment : " << m_wm->punishment << "\n";
+        out << prefix << "sent punishment : " << m_wm->spite << "\n";
+
+        out << prefix << "Actual fitness: " << getFitness() << "\n";
     }
     if (verbose == 1)
     {

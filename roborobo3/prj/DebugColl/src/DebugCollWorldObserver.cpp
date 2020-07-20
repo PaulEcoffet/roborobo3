@@ -10,34 +10,35 @@
 #include "WorldModels/RobotWorldModel.h"
 
 
-DebugCollWorldObserver::DebugCollWorldObserver( World *__world ) : WorldObserver( __world ), log(gLogDirectoryname + "/debuglog2.txt")
+DebugCollWorldObserver::DebugCollWorldObserver(World *__world) : WorldObserver(__world),
+                                                                 log(gLogDirectoryname + "/debuglog2.txt")
 {
-	_world = __world;
+    _world = __world;
 }
 
 DebugCollWorldObserver::~DebugCollWorldObserver()
 {
-	// nothing to do.
+    // nothing to do.
 }
 
 void DebugCollWorldObserver::reset()
 {
-    auto* rob = _world->getRobot(0);
+    auto *rob = _world->getRobot(0);
     rob->getWorldModel()->_agentAbsoluteOrientation = 0;
     log << "it,rot,pushed\n";
 }
 
 void DebugCollWorldObserver::stepPre()
 {
-    auto* rob = _world->getRobot(0);
-    auto* phys = gPhysicalObjects[0];
+    auto *rob = _world->getRobot(0);
+    auto *phys = gPhysicalObjects[0];
     rob->setCoord(phys->getXCenterPixel(), phys->getYCenterPixel());
     rob->setCoordReal(phys->getXCenterPixel(), phys->getYCenterPixel());
 }
 
 void DebugCollWorldObserver::stepPost()
 {
-    bool pushed = dynamic_cast<DebugCollObj*>(gPhysicalObjects[0])->_pushed;
+    bool pushed = dynamic_cast<DebugCollObj *>(gPhysicalObjects[0])->_pushed;
     auto *wm = _world->getRobot(0)->getWorldModel();
     log << _world->getIterations() << "," << wm->_agentAbsoluteOrientation << "," << pushed << "\n";
     if (!pushed)

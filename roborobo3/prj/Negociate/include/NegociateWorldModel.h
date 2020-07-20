@@ -21,7 +21,7 @@ public:
 
     double meanLastTotalInvest();
 
-    double getCoop(bool trueValue=false) const;
+    double getCoop(bool trueValue = false) const;
 
     double meanLastOwnInvest();
 
@@ -38,6 +38,7 @@ public:
     bool isPlaying();
 
     double getOtherReputation(int robid);
+
     int getNbPlays(int robid);
 
     void initOtherReputations();

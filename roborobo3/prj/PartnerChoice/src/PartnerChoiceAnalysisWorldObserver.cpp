@@ -39,7 +39,7 @@ PartnerChoiceAnalysisWorldObserver::PartnerChoiceAnalysisWorldObserver(World *__
 
     gProperties.checkAndGetPropertyValue("analysisIterationPerRep", &m_nbIterationPerRep, true);
     gProperties.checkAndGetPropertyValue("analysisNbRep", &m_nbRep, true);
-    m_stepCoop = PartnerChoiceSharedData::maxCoop / ((double)PartnerChoiceSharedData::nbCoopStep - 1);
+    m_stepCoop = PartnerChoiceSharedData::maxCoop / ((double) PartnerChoiceSharedData::nbCoopStep - 1);
     m_curCoop = 0;
     m_curInd = 0;
     m_curIterationInRep = 0;
@@ -113,7 +113,7 @@ void PartnerChoiceAnalysisWorldObserver::computeOpportunityImpact()
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < _world->getNbOfRobots(); i++)
     {
-        auto *wm = dynamic_cast<PartnerChoiceWorldModel*>(_world->getRobot(i)->getWorldModel());
+        auto *wm = dynamic_cast<PartnerChoiceWorldModel *>(_world->getRobot(i)->getWorldModel());
         wm->onOpportunity = false;
     }
     for (auto *physicalObject : gPhysicalObjects)
@@ -121,8 +121,8 @@ void PartnerChoiceAnalysisWorldObserver::computeOpportunityImpact()
         auto *opp = dynamic_cast<PartnerChoiceOpportunity *>(physicalObject);
         for (auto index : opp->getNearbyRobotIndexes())
         {
-            auto *wm = dynamic_cast<PartnerChoiceWorldModel*>(_world->getRobot(index)->getWorldModel());
-            auto *ctl = dynamic_cast<PartnerChoiceController*>(_world->getRobot(index)->getController());
+            auto *wm = dynamic_cast<PartnerChoiceWorldModel *>(_world->getRobot(index)->getWorldModel());
+            auto *ctl = dynamic_cast<PartnerChoiceController *>(_world->getRobot(index)->getController());
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
@@ -132,18 +132,20 @@ void PartnerChoiceAnalysisWorldObserver::computeOpportunityImpact()
             wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            ctl->increaseFitness(opp->getCoop()  + wm->_cooperationLevel);
+            ctl->increaseFitness(opp->getCoop() + wm->_cooperationLevel);
         }
     }
 }
 
 void PartnerChoiceAnalysisWorldObserver::resetEnvironment()
 {
-    for (auto object: gPhysicalObjects) {
+    for (auto object: gPhysicalObjects)
+    {
         object->unregisterObject();
     }
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
@@ -155,7 +157,8 @@ void PartnerChoiceAnalysisWorldObserver::resetEnvironment()
         object->registerObject();
     }
 
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->reset();
     }

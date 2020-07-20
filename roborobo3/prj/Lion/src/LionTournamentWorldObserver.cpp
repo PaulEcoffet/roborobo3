@@ -103,7 +103,8 @@ void LionTournamentWorldObserver::reset()
     std::uniform_real_distribution<double> randomInvPerAg(0, LionSharedData::maxCoop);
     std::normal_distribution<double> randomSmallVar(0, 1);
     std::normal_distribution<double> randomSmallN(0, 3);
-    do {
+    do
+    {
         if ((m_generationCount + 1) % LionSharedData::logEveryXGen == 0)
         {
             std::string path = gLogDirectoryname + "/genomes_" + std::to_string(m_generationCount) + ".txt";
@@ -115,7 +116,7 @@ void LionTournamentWorldObserver::reset()
         loadGenomesInRobots(m_individuals);
         for (int i = 0; i < gInitialNumberOfRobots; i++)
         {
-            auto ctl = dynamic_cast<LionController*>(gWorld->getRobot(i)->getController());
+            auto ctl = dynamic_cast<LionController *>(gWorld->getRobot(i)->getController());
             for (int iter = 0; iter < LionSharedData::evaluationTime; iter++)
             {
 
@@ -125,7 +126,8 @@ void LionTournamentWorldObserver::reset()
                 double ownInv1 = ctl->getCoop(nbOnOpp1);
                 double score1 = ctl->computeScore(cost1, nbOnOpp1, ownInv1, invPerAg1 * nbOnOpp1);
                 double payoff1 = LionWorldObserver::payoff(ownInv1, invPerAg1 * nbOnOpp1 + ownInv1, nbOnOpp1 + 1,
-                                                           LionSharedData::meanA, LionSharedData::b) - cost1 * LionSharedData::cost;
+                                                           LionSharedData::meanA, LionSharedData::b) -
+                                 cost1 * LionSharedData::cost;
 
                 int nbOnOpp2 = clamp(nbOnOpp1 + std::round(randomSmallN(engine)), 0, gInitialNumberOfRobots - 1);
                 double invPerAg2 = clamp(invPerAg1 + randomSmallVar(engine), 0, LionSharedData::maxCoop);
@@ -133,7 +135,8 @@ void LionTournamentWorldObserver::reset()
                 double ownInv2 = ctl->getCoop(nbOnOpp2);
                 double score2 = ctl->computeScore(cost2, nbOnOpp2, ownInv2, invPerAg2 * nbOnOpp2);
                 double payoff2 = LionWorldObserver::payoff(ownInv2, invPerAg2 * nbOnOpp2 + ownInv2, nbOnOpp2 + 1,
-                                                           LionSharedData::meanA, LionSharedData::b) - cost2 * LionSharedData::cost;
+                                                           LionSharedData::meanA, LionSharedData::b) -
+                                 cost2 * LionSharedData::cost;
                 /*//
                 std::cout << "rob: " << i << ", iter: " << iter << "\n";
                 std::cout << "nbOnOpp1: " << nbOnOpp1 << ", invPerAg1: " << invPerAg1
@@ -157,7 +160,7 @@ void LionTournamentWorldObserver::reset()
         logFitnesses(m_fitnesses);
         m_individuals = pyevo.getNextGeneration(m_individuals, m_fitnesses);
         m_generationCount++;
-    } while(!m_individuals.empty());
+    } while (!m_individuals.empty());
     exit(0);
 }
 
@@ -315,7 +318,7 @@ void LionTournamentWorldObserver::resetEnvironment()
     {
         object->resetLocation();
         object->registerObject();
-        auto* lionobj = dynamic_cast<LionOpportunity*>(object);
+        auto *lionobj = dynamic_cast<LionOpportunity *>(object);
         lionobj->reset();
     }
 
@@ -352,7 +355,7 @@ static double sigmoid(double x, double lowerbound, double upperbound, double slo
 
 
 double LionTournamentWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
-        const double b)
+                                           const double b)
 {
     double res = 0;
     const double x0 = (totalInvest - invest);

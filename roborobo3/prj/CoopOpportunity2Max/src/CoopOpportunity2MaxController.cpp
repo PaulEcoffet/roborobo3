@@ -20,36 +20,37 @@
 
 using namespace Neural;
 
-CoopOpportunity2MaxController::CoopOpportunity2MaxController( RobotWorldModel *wm )
+CoopOpportunity2MaxController::CoopOpportunity2MaxController(RobotWorldModel *wm)
 {
     _wm = wm;
-    
+
     _NN = nullptr;
-    
+
     // evolutionary engine
-    
+
     _minValue = -1.0;
     _maxValue = 1.0;
-    
+
     _currentSigma = CoopOpportunity2MaxSharedData::gSigmaRef;
-    
+
     // behaviour
-    
+
     _iteration = 0;
 
-    if ( gEnergyLevel )
+    if (gEnergyLevel)
         _wm->setEnergyLevel(gEnergyInit);
-    
-    if ( gNbOfLandmarks > 0 )
+
+    if (gNbOfLandmarks > 0)
         _wm->updateLandmarkSensor(); // wrt closest landmark
-    
+
     reset(); // resetFitness() is called in reset()
-    
-    if (_wm->getId() < gNbOfRobots - CoopOpportunity2MaxSharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
+
+    if (_wm->getId() < gNbOfRobots -
+                       CoopOpportunity2MaxSharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
         _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
     else // Red LED because we're a fake robot
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
-    
+
 }
 
 CoopOpportunity2MaxController::~CoopOpportunity2MaxController()
@@ -59,32 +60,35 @@ CoopOpportunity2MaxController::~CoopOpportunity2MaxController()
     _NN = nullptr;
 }
 
-void CoopOpportunity2MaxController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
+void
+CoopOpportunity2MaxController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
 {
     _iteration++;
-    
+
     // Clean up the memory if we're not on an object
-    
+
     if (_isNearObject == false)
     {
         _efforts.clear();
         _totalEfforts.clear();
     }
-    
+
     // * step controller
-    
+
     stepController();
-    
+
     // Coloring
-    if (_isNearObject == false) {
-        if (_wm->getId() < gNbOfRobots - CoopOpportunity2MaxSharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
+    if (_isNearObject == false)
+    {
+        if (_wm->getId() < gNbOfRobots -
+                           CoopOpportunity2MaxSharedData::gNbFakeRobots) // Blue LED because we're a true robot (and inactive)
             _wm->setRobotLED_colorValues(0x00, 0x99, 0xFF);
         else // Red LED because we're a fake robot
             _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
     }
-    
+
     // Update state variables
-    
+
     _nbNearbyRobots = 0;
     _isNearObject = false;
 
@@ -101,17 +105,17 @@ void CoopOpportunity2MaxController::step() // handles control decision and evolu
 std::vector<double> CoopOpportunity2MaxController::getInputs()
 {
     std::vector<double> inputs;
-    
-    
+
+
     // distance sensors
-    for(int i = 0; i < _wm->_cameraSensorsNb; i++)
+    for (int i = 0; i < _wm->_cameraSensorsNb; i++)
     {
-        inputs.push_back( _wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i) );
-        
-        if ( gExtendedSensoryInputs ) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
+        inputs.push_back(_wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i));
+
+        if (gExtendedSensoryInputs) // EXTENDED SENSORY INPUTS: code provided as example, should be rewritten to suit your need.
         {
             int entityId = _wm->getObjectIdFromCameraSensor(i);
-            
+
             if (Agent::isInstanceOf(entityId)) // it's a robot
             {
                 inputs.push_back(1); // a robot
@@ -128,7 +132,8 @@ std::vector<double> CoopOpportunity2MaxController::getInputs()
             }
             else if (entityId >= gPhysicalObjectIndexStartOffset) // an object
             {
-                MovingObject* obj = static_cast<MovingObject *>(gPhysicalObjects[entityId-gPhysicalObjectIndexStartOffset]);
+                MovingObject *obj = static_cast<MovingObject *>(gPhysicalObjects[entityId -
+                                                                                 gPhysicalObjectIndexStartOffset]);
 //                printf("Robot %d (it %d): seeing %d robots on object %d from sensor %d\n", _wm->getId(), gWorld->getIterations(), obj->getNbNearbyRobots(), obj->getId(), i);
                 inputs.push_back(0); // not a robot
                 inputs.push_back(0); // not a wall
@@ -142,19 +147,19 @@ std::vector<double> CoopOpportunity2MaxController::getInputs()
                 inputs.push_back(0); // not an object
                 inputs.push_back(0); // no robots around
             }
-            
+
         }
     }
-    
-    
+
+
     // floor sensor
-    inputs.push_back( (double)_wm->getGroundSensor_redValue()/255.0 );
-    inputs.push_back( (double)_wm->getGroundSensor_greenValue()/255.0 );
-    inputs.push_back( (double)_wm->getGroundSensor_blueValue()/255.0 );
-    
+    inputs.push_back((double) _wm->getGroundSensor_redValue() / 255.0);
+    inputs.push_back((double) _wm->getGroundSensor_greenValue() / 255.0);
+    inputs.push_back((double) _wm->getGroundSensor_blueValue() / 255.0);
+
     // how many robots around?
     inputs.push_back(_nbNearbyRobots);
-    
+
     // how did everyone contribute recently?
     if (CoopOpportunity2MaxSharedData::gTotalEffort)
     {
@@ -167,7 +172,7 @@ std::vector<double> CoopOpportunity2MaxController::getInputs()
         }
         inputs.push_back(avgTotalEffort);
     }
-    
+
     // how much did we contribute recently?
     double avgEffort = 0;
     if (_efforts.size() > 0)
@@ -176,31 +181,31 @@ std::vector<double> CoopOpportunity2MaxController::getInputs()
             avgEffort += eff;
     }
     inputs.push_back(avgEffort);
-    
+
     return inputs;
 }
 
 void CoopOpportunity2MaxController::stepController()
 {
-    
+
     // ---- compute and read out ----
-    
+
     _NN->setWeights(_parameters); // set-up NN
-    
+
     std::vector<double> inputs = getInputs(); // Build list of inputs (check properties file for extended/non-extended input values
-    
+
     _NN->setInputs(inputs);
-    
+
     _NN->step();
-    
+
     std::vector<double> outputs = _NN->readOut();
-    
+
     // std::cout << "[DEBUG] Neural Network :" << nn->toString() << " of size=" << nn->getRequiredNumberOfWeights() << std::endl;
-    
+
     _wm->_desiredTranslationalValue = outputs[0] * gMaxTranslationalSpeed;
     _wm->_desiredRotationalVelocity = outputs[1] * gMaxRotationalSpeed;
-    
-    
+
+
     // Effort value
     if (CoopOpportunity2MaxSharedData::gFixedEffort)
     {
@@ -212,9 +217,11 @@ void CoopOpportunity2MaxController::stepController()
         // Introduce fixed cooperation levels for the last gNbFakeRobots robots
         int nbTrueRobots = gNbOfRobots - CoopOpportunity2MaxSharedData::gNbFakeRobots;
         if (_wm->getId() < nbTrueRobots)
-            _wm->_cooperationLevel = (outputs[2]+1.0); // in [0, 2]
+            _wm->_cooperationLevel = (outputs[2] + 1.0); // in [0, 2]
         else
-            _wm->_cooperationLevel = (double)(_wm->getId()-nbTrueRobots)/(double)CoopOpportunity2MaxSharedData::gNbFakeRobots * (double)CoopOpportunity2MaxSharedData::gFakeCoopValue;
+            _wm->_cooperationLevel =
+                    (double) (_wm->getId() - nbTrueRobots) / (double) CoopOpportunity2MaxSharedData::gNbFakeRobots *
+                    (double) CoopOpportunity2MaxSharedData::gFakeCoopValue;
     }
 }
 
@@ -222,10 +229,10 @@ void CoopOpportunity2MaxController::stepController()
 void CoopOpportunity2MaxController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
-    
+
     delete _NN;
-    
-    switch ( CoopOpportunity2MaxSharedData::gControllerType )
+
+    switch (CoopOpportunity2MaxSharedData::gControllerType)
     {
         case 0:
         {
@@ -237,7 +244,7 @@ void CoopOpportunity2MaxController::createNN()
         {
             // PERCEPTRON
             _NN = new Perceptron(_parameters, _nbInputs, _nbOutputs);
-            
+
             break;
         }
         case 2:
@@ -247,7 +254,8 @@ void CoopOpportunity2MaxController::createNN()
             break;
         }
         default: // default: no controller
-            std::cerr << "[ERROR] gController type unknown (value: " << CoopOpportunity2MaxSharedData::gControllerType << ").\n";
+            std::cerr << "[ERROR] gController type unknown (value: " << CoopOpportunity2MaxSharedData::gControllerType
+                      << ").\n";
             exit(-1);
     };
 }
@@ -266,9 +274,10 @@ unsigned int CoopOpportunity2MaxController::computeRequiredNumberOfWeights()
 
 void CoopOpportunity2MaxController::performVariation()
 {
-    if ( CoopOpportunity2MaxSharedData::gIndividualMutationRate > randint() ) // global mutation rate (whether this genome will get any mutation or not) - default: always
+    if (CoopOpportunity2MaxSharedData::gIndividualMutationRate >
+        randint()) // global mutation rate (whether this genome will get any mutation or not) - default: always
     {
-        switch ( CoopOpportunity2MaxSharedData::gMutationOperator )
+        switch (CoopOpportunity2MaxSharedData::gMutationOperator)
         {
             case 0:
                 mutateUniform();
@@ -281,7 +290,8 @@ void CoopOpportunity2MaxController::performVariation()
                 mutateGaussian(CoopOpportunity2MaxSharedData::gSigma); // fixed mutation rate
                 break;
             default:
-                std::cerr << "[ERROR] unknown variation method (gMutationOperator = " << CoopOpportunity2MaxSharedData::gMutationOperator << ")\n";
+                std::cerr << "[ERROR] unknown variation method (gMutationOperator = "
+                          << CoopOpportunity2MaxSharedData::gMutationOperator << ")\n";
                 exit(-1);
         }
     }
@@ -290,30 +300,30 @@ void CoopOpportunity2MaxController::performVariation()
 void CoopOpportunity2MaxController::mutateGaussian(double sigma) // mutate within bounds.
 {
     _currentSigma = sigma;
-    
+
     for (double &curWeight : _currentGenome)
     {
         double value = curWeight + 0 + randgaussian() * _currentSigma;
         // bouncing upper/lower bounds
-        if ( value < _minValue )
+        if (value < _minValue)
         {
             double range = _maxValue - _minValue;
-            double overflow = - ( (double)value - _minValue );
-            overflow = overflow - 2*range * (int)( overflow / (2*range) );
-            if ( overflow < range )
+            double overflow = -((double) value - _minValue);
+            overflow = overflow - 2 * range * (int) (overflow / (2 * range));
+            if (overflow < range)
                 value = _minValue + overflow;
             else // overflow btw range and range*2
-                value = _minValue + range - (overflow-range);
+                value = _minValue + range - (overflow - range);
         }
-        else if ( value > _maxValue )
+        else if (value > _maxValue)
         {
             double range = _maxValue - _minValue;
-            double overflow = (double)value - _maxValue;
-            overflow = overflow - 2*range * (int)( overflow / (2*range) );
-            if ( overflow < range )
+            double overflow = (double) value - _maxValue;
+            overflow = overflow - 2 * range * (int) (overflow / (2 * range));
+            if (overflow < range)
                 value = _maxValue - overflow;
             else // overflow btw range and range*2
-                value = _maxValue - range + (overflow-range);
+                value = _maxValue - range + (overflow - range);
         }
 
         curWeight = value;
@@ -323,12 +333,12 @@ void CoopOpportunity2MaxController::mutateGaussian(double sigma) // mutate withi
 
 void CoopOpportunity2MaxController::mutateUniform() // mutate within bounds.
 {
-    for (unsigned int i = 0 ; i != _currentGenome.size() ; i++ )
+    for (unsigned int i = 0; i != _currentGenome.size(); i++)
     {
-        float randomValue = float(randint()%100) / 100.0; // in [0,1[
+        float randomValue = float(randint() % 100) / 100.0; // in [0,1[
         double range = _maxValue - _minValue;
         double value = randomValue * range + _minValue;
-        
+
         _currentGenome[i] = value;
     }
 }
@@ -337,52 +347,53 @@ void CoopOpportunity2MaxController::mutateUniform() // mutate within bounds.
 void CoopOpportunity2MaxController::setIOcontrollerSize()
 {
     // wrt inputs
-    
+
     _nbInputs = 0;
-    
-    if ( gExtendedSensoryInputs )
+
+    if (gExtendedSensoryInputs)
     {
-        _nbInputs = (1+1+1+1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
+        _nbInputs =
+                (1 + 1 + 1 + 1) * _wm->_cameraSensorsNb; // isItAnAgent? + isItAWall? + isItAnObject + nbNearbyRobots
     }
-    
+
     _nbInputs += _wm->_cameraSensorsNb + 3; // proximity sensors + ground sensor (3 values)
-    
+
     _nbInputs += 1; // how many robots around?
-    
+
     if (CoopOpportunity2MaxSharedData::gTotalEffort)
         _nbInputs += 1; // what's the total effort given to the object?
-    
+
     _nbInputs += 1; // how much did we contribute?
-    
+
     // wrt outputs
-    
-    _nbOutputs = 2+1; // 2 outputs for movement + 1 for cooperation
+
+    _nbOutputs = 2 + 1; // 2 outputs for movement + 1 for cooperation
 }
 
 void CoopOpportunity2MaxController::initController()
 {
     _nbHiddenLayers = CoopOpportunity2MaxSharedData::gNbHiddenLayers;
     _nbNeuronsPerHiddenLayer = new std::vector<unsigned int>(_nbHiddenLayers);
-    for(unsigned int i = 0; i < _nbHiddenLayers; i++)
+    for (unsigned int i = 0; i < _nbHiddenLayers; i++)
         (*_nbNeuronsPerHiddenLayer)[i] = CoopOpportunity2MaxSharedData::gNbNeuronsPerHiddenLayer;
-    
+
     createNN();
-    
+
     int nbGenes = computeRequiredNumberOfWeights();
-    
-    if ( gVerbose )
+
+    if (gVerbose)
         std::cout << std::flush;
-    
+
     _currentGenome.clear();
-    
+
     // Intialize genomes
-    for ( unsigned int i = 0 ; i < nbGenes; i++ )
+    for (unsigned int i = 0; i < nbGenes; i++)
     {
-        _currentGenome.push_back((randint()*2.0)-1.0); // weights: random init between -1 and +1
+        _currentGenome.push_back((randint() * 2.0) - 1.0); // weights: random init between -1 and +1
     }
-    
+
     updatePhenotype();
-    
+
     // state variables
     _nbNearbyRobots = 0;
     _isNearObject = false;
@@ -400,14 +411,14 @@ void CoopOpportunity2MaxController::reset()
 void CoopOpportunity2MaxController::mutateSigmaValue()
 {
     float dice = randint();
-    
-    if ( dice <= CoopOpportunity2MaxSharedData::gProbaMutation )
+
+    if (dice <= CoopOpportunity2MaxSharedData::gProbaMutation)
     {
         dice = randint();
-        if ( dice < 0.5 )
+        if (dice < 0.5)
         {
-            _currentSigma = _currentSigma * ( 1 + CoopOpportunity2MaxSharedData::gUpdateSigmaStep ); // increase sigma
-            
+            _currentSigma = _currentSigma * (1 + CoopOpportunity2MaxSharedData::gUpdateSigmaStep); // increase sigma
+
             if (_currentSigma > CoopOpportunity2MaxSharedData::gSigmaMax)
             {
                 _currentSigma = CoopOpportunity2MaxSharedData::gSigmaMax;
@@ -415,9 +426,9 @@ void CoopOpportunity2MaxController::mutateSigmaValue()
         }
         else
         {
-            _currentSigma = _currentSigma * ( 1 - CoopOpportunity2MaxSharedData::gUpdateSigmaStep ); // decrease sigma
-            
-            if ( _currentSigma < CoopOpportunity2MaxSharedData::gSigmaMin )
+            _currentSigma = _currentSigma * (1 - CoopOpportunity2MaxSharedData::gUpdateSigmaStep); // decrease sigma
+
+            if (_currentSigma < CoopOpportunity2MaxSharedData::gSigmaMin)
             {
                 _currentSigma = CoopOpportunity2MaxSharedData::gSigmaMin;
             }
@@ -425,7 +436,7 @@ void CoopOpportunity2MaxController::mutateSigmaValue()
     }
 }
 
-void CoopOpportunity2MaxController::loadNewGenome( genome __newGenome )
+void CoopOpportunity2MaxController::loadNewGenome(genome __newGenome)
 {
     _currentGenome = __newGenome.first;
     _currentSigma = __newGenome.second;
@@ -454,7 +465,7 @@ void CoopOpportunity2MaxController::resetFitness()
     updateFitness(0);
 }
 
-void CoopOpportunity2MaxController::updateFitness( double __newFitness )
+void CoopOpportunity2MaxController::updateFitness(double __newFitness)
 {
     if (__newFitness < 0)
     {
@@ -464,28 +475,31 @@ void CoopOpportunity2MaxController::updateFitness( double __newFitness )
     _wm->_fitnessValue = __newFitness;
 }
 
-void CoopOpportunity2MaxController::increaseFitness( double __delta )
+void CoopOpportunity2MaxController::increaseFitness(double __delta)
 {
-    updateFitness(_wm->_fitnessValue+__delta);
+    updateFitness(_wm->_fitnessValue + __delta);
 }
 
 // called only once per step (experimentally verified)
-void CoopOpportunity2MaxController::wasNearObject( int __objectId, bool __objectDidMove, double __totalEffort, double __effort, int __nbRobots )
+void CoopOpportunity2MaxController::wasNearObject(int __objectId, bool __objectDidMove, double __totalEffort,
+                                                  double __effort, int __nbRobots)
 {
 //    printf("Robot %d (it %d): near object %d, own effort %lf, total effort %lf, with %d total robots around\n", _wm->getId(), gWorld->getIterations(), __objectId, __effort, __totalEffort, __nbRobots);
-    
-    if (_wm->getId() < gNbOfRobots - CoopOpportunity2MaxSharedData::gNbFakeRobots) // Green LED because we're a true robot (and active)
+
+    if (_wm->getId() <
+        gNbOfRobots - CoopOpportunity2MaxSharedData::gNbFakeRobots) // Green LED because we're a true robot (and active)
         _wm->setRobotLED_colorValues(0x32, 0xCD, 0x32);
     else // Red LED because we're a fake robot
         _wm->setRobotLED_colorValues(0xFF, 0x00, 0x7F);
-    
+
     _isNearObject = true;
     _nbNearbyRobots = __nbRobots;
-    
-    double coeff = CoopOpportunity2MaxSharedData::gConstantK/(1.0+pow(__nbRobots-2, 2)); // \frac{k}{1+(n-2)^2}
+
+    double coeff = CoopOpportunity2MaxSharedData::gConstantK / (1.0 + pow(__nbRobots - 2, 2)); // \frac{k}{1+(n-2)^2}
     double payoff = coeff * pow(__totalEffort, CoopOpportunity2MaxSharedData::gConstantA) - __effort;
-    
-    if (__objectDidMove) {
+
+    if (__objectDidMove)
+    {
         increaseFitness(payoff);
         _efforts.push_back(__effort);
         if (_efforts.size() >= CoopOpportunity2MaxSharedData::gMemorySize)
@@ -498,7 +512,7 @@ void CoopOpportunity2MaxController::wasNearObject( int __objectId, bool __object
 
 void CoopOpportunity2MaxController::dumpGenome()
 {
-    std::cout <<"Dumping genome of robot #" << _wm->getId() << std::endl;
+    std::cout << "Dumping genome of robot #" << _wm->getId() << std::endl;
     std::cout << _currentSigma << " ";
     std::cout << _currentGenome.size() << " ";
     for (auto gene: _currentGenome)

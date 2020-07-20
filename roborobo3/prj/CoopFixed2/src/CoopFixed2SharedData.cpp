@@ -67,7 +67,6 @@ double CoopFixed2SharedData::temperature = -1;
 bool CoopFixed2SharedData::additiveVar = false;
 
 
-
 void CoopFixed2SharedData::initSharedData()
 {
     gProperties.checkAndGetPropertyValue("evaluationTime", &CoopFixed2SharedData::evaluationTime, true);
@@ -113,7 +112,8 @@ void CoopFixed2SharedData::initSharedData()
     gProperties.checkAndGetPropertyValue("partnerControl", &CoopFixed2SharedData::partnerControl, false);
     gProperties.checkAndGetPropertyValue("sigma", &CoopFixed2SharedData::sigma, false);
     gProperties.checkAndGetPropertyValue("fixCoop", &CoopFixed2SharedData::fixCoop, false);
-    gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &CoopFixed2SharedData::commonKnowledgeReputation, false);
+    gProperties.checkAndGetPropertyValue("commonKnowledgeReputation", &CoopFixed2SharedData::commonKnowledgeReputation,
+                                         false);
     gProperties.checkAndGetPropertyValue("reputationNoise", &CoopFixed2SharedData::reputationNoise, false);
     GETVAL(onlyNforGame);
     GETVAL(frictionCoef);

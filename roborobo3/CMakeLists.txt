@@ -3,7 +3,7 @@ project(roborobo3)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Wall -O3")
+set(CMAKE_CXX_FLAGS "-Wall -O3 -pthread")
 
 file(
         GLOB_RECURSE
@@ -95,7 +95,7 @@ find_library( GZSTREAM libgzstream.a)
 
 include_directories(${SDL2_INCLUDE_DIRS} )
 
-add_executable(roborobo ${SOURCE_FILES} prj/Lion/src/ScoreLogger.cpp prj/Lion/include/ScoreLogger.h)
+add_executable(roborobo ${SOURCE_FILES})
 
 
 target_link_libraries(roborobo

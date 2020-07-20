@@ -64,7 +64,8 @@ void PartnerControlWorldObserver::reset()
     clearRobotFitnesses();
 
     // create individuals
-    int nbweights = dynamic_cast<PartnerControlController * >(m_world->getRobot(0)->getController())->getWeights().size();
+    int nbweights = dynamic_cast<PartnerControlController * >(m_world->getRobot(
+            0)->getController())->getWeights().size();
     m_individuals = pycma.initCMA(m_nbIndividuals, nbweights);
     m_fitnesses.resize(m_nbIndividuals, 0);
 
@@ -74,7 +75,8 @@ void PartnerControlWorldObserver::reset()
 
 void PartnerControlWorldObserver::initOpportunities()
 {
-    double curCoop =  m_curEvaluationInGeneration * PartnerControlSharedData::maxCoop / ((double) PartnerControlSharedData::nbEvaluationsPerGeneration - 1);
+    double curCoop = m_curEvaluationInGeneration * PartnerControlSharedData::maxCoop /
+                     ((double) PartnerControlSharedData::nbEvaluationsPerGeneration - 1);
     curCoop = 0;
     auto &physObjList = gPhysicalObjects;
     for (auto *physicalObject : physObjList)
@@ -99,7 +101,7 @@ void PartnerControlWorldObserver::stepPre()
         m_curEvaluationInGeneration++;
         resetEnvironment();
     }
-    if( m_curEvaluationInGeneration == PartnerControlSharedData::nbEvaluationsPerGeneration)
+    if (m_curEvaluationInGeneration == PartnerControlSharedData::nbEvaluationsPerGeneration)
     {
         m_fitnesses[m_curInd] = m_world->getRobot(0)->getWorldModel()->_fitnessValue;
         m_world->getRobot(0)->getWorldModel()->_fitnessValue = 0;
@@ -167,15 +169,15 @@ std::vector<std::pair<int, double>> PartnerControlWorldObserver::getSortedFitnes
         fitnesses[i].second = m_fitnesses[i];
     }
     std::sort(fitnesses.begin(), fitnesses.end(),
-              [](std::pair<int, double>a, std::pair<int, double>b){return a.second < b.second;});
+              [](std::pair<int, double> a, std::pair<int, double> b) { return a.second < b.second; });
     return fitnesses;
 }
 
-void PartnerControlWorldObserver::logFitnesses(const std::vector<std::pair<int, double>>& sortedFitnesses)
+void PartnerControlWorldObserver::logFitnesses(const std::vector<std::pair<int, double>> &sortedFitnesses)
 {
     unsigned long size = sortedFitnesses.size();
     double sum = std::accumulate(sortedFitnesses.begin(), sortedFitnesses.end(), 0.0,
-                                 [](double& a, const std::pair<int, double>& b) -> double {return a + b.second;});
+                                 [](double &a, const std::pair<int, double> &b) -> double { return a + b.second; });
     double mean = sum / size;
     std::vector<double> diff(size);
     std::transform(sortedFitnesses.begin(), sortedFitnesses.end(), diff.begin(),
@@ -186,10 +188,10 @@ void PartnerControlWorldObserver::logFitnesses(const std::vector<std::pair<int, 
     out << m_generationCount << "\t";
     out << size << "\t";
     out << sortedFitnesses[0].second << "\t"; // MIN
-    out << sortedFitnesses[size/4].second << "\t"; // 1st quartile
-    out << sortedFitnesses[size/2].second << "\t"; // 2nd quartile - Median
-    out << sortedFitnesses[(3*size)/4].second << "\t"; // 3rd quartile
-    out << sortedFitnesses[size-1].second << "\t"; // Max
+    out << sortedFitnesses[size / 4].second << "\t"; // 1st quartile
+    out << sortedFitnesses[size / 2].second << "\t"; // 2nd quartile - Median
+    out << sortedFitnesses[(3 * size) / 4].second << "\t"; // 3rd quartile
+    out << sortedFitnesses[size - 1].second << "\t"; // Max
     out << mean << "\t";
     out << variance << "\n";
     m_fitnessLogManager->write(out.str());
@@ -198,10 +200,12 @@ void PartnerControlWorldObserver::logFitnesses(const std::vector<std::pair<int, 
 
 void PartnerControlWorldObserver::resetEnvironment()
 {
-    for (auto object: gPhysicalObjects) {
+    for (auto object: gPhysicalObjects)
+    {
         object->unregisterObject();
     }
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
         Robot *robot = gWorld->getRobot(iRobot);
         robot->unregisterRobot();
     }
@@ -225,7 +229,7 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
     // Mark all robots as not on an cooperation opportunity
     for (int i = 0; i < m_world->getNbOfRobots(); i++)
     {
-        auto *wm = dynamic_cast<PartnerControlWorldModel*>(m_world->getRobot(i)->getWorldModel());
+        auto *wm = dynamic_cast<PartnerControlWorldModel *>(m_world->getRobot(i)->getWorldModel());
         wm->onOpportunity = false;
     }
     for (auto *physicalObject : gPhysicalObjects)
@@ -233,8 +237,8 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
         auto *opp = dynamic_cast<PartnerControlOpportunity *>(physicalObject);
         for (auto index : opp->getNearbyRobotIndexes())
         {
-            auto *wm = dynamic_cast<PartnerControlWorldModel*>(m_world->getRobot(index)->getWorldModel());
-            auto *ctl = dynamic_cast<PartnerControlController*>(m_world->getRobot(index)->getController());
+            auto *wm = dynamic_cast<PartnerControlWorldModel *>(m_world->getRobot(index)->getWorldModel());
+            auto *ctl = dynamic_cast<PartnerControlController *>(m_world->getRobot(index)->getController());
 
             // Mark the robot on an opportunity
             wm->onOpportunity = true;
@@ -244,7 +248,8 @@ void PartnerControlWorldObserver::computeOpportunityImpact()
             wm->appendTotalInvest(opp->getCoop() + wm->_cooperationLevel);
 
             //Reward him
-            double fit = CoopFixed2WorldObserver::payoff(wm-> _cooperationLevel, opp->getCoop() + wm->_cooperationLevel, 2, 5, 1);
+            double fit = CoopFixed2WorldObserver::payoff(wm->_cooperationLevel, opp->getCoop() + wm->_cooperationLevel,
+                                                         2, 5, 1);
             ctl->increaseFitness(fit);
         }
     }
@@ -256,7 +261,7 @@ double PartnerControlWorldObserver::payoff(const double invest, const double tot
     throw std::string("Don't use the payoff function of PartnerControlWorldObserver right now");
     if (!PartnerControlSharedData::gaussianPayoff)
     {
-        double a=5, b = 1, n = 2;
+        double a = 5, b = 1, n = 2;
         res = (a * totalInvest + b * (totalInvest - invest)) / n - 0.5 * invest * invest;
     }
     else
@@ -278,8 +283,9 @@ void PartnerControlWorldObserver::clearOpportunityNearbyRobots()
 
 void PartnerControlWorldObserver::clearRobotFitnesses()
 {
-    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++) {
-        auto* ctl = dynamic_cast<PartnerControlController*>(gWorld->getRobot(iRobot)->getController());
+    for (int iRobot = 0; iRobot < gNbOfRobots; iRobot++)
+    {
+        auto *ctl = dynamic_cast<PartnerControlController *>(gWorld->getRobot(iRobot)->getController());
         ctl->resetFitness();
     }
 }

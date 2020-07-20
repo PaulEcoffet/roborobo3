@@ -13,12 +13,14 @@ class RobotWorldModel;
 
 class TemplateBoidsAgentObserver : public AgentObserver
 {
-	public:
-		TemplateBoidsAgentObserver(RobotWorldModel *wm);
-		~TemplateBoidsAgentObserver();
+public:
+    TemplateBoidsAgentObserver(RobotWorldModel *wm);
 
-		void reset();
-		void stepPre();
+    ~TemplateBoidsAgentObserver();
+
+    void reset();
+
+    void stepPre();
 
 };
 

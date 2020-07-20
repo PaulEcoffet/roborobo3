@@ -2,13 +2,13 @@
 // Created by pecoffet on 14/11/2019.
 //
 
-#ifndef ROBOROBO3_SCORELOGGER_H
-#define ROBOROBO3_SCORELOGGER_H
+#ifndef ROBOROBO3_SKILLEDSCORELOGGER_H
+#define ROBOROBO3_SKILLEDSCORELOGGER_H
 
 
 #include <gzstream.h>
 
-class ScoreLogger
+class SkilledScoreLogger
 {
 public:
     void addScore(int id, int cost, int nbpart, double owncoop, double othercoop, double score);
@@ -30,4 +30,4 @@ private:
 };
 
 
-#endif //ROBOROBO3_SCORELOGGER_H
+#endif //ROBOROBO3_SKILLEDSCORELOGGER_H

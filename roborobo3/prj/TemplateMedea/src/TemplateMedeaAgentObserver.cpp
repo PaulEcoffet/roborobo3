@@ -7,7 +7,7 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "RoboroboMain/roborobo.h"
 
-TemplateMedeaAgentObserver::TemplateMedeaAgentObserver( RobotWorldModel *wm ) : TemplateEEAgentObserver ( wm )
+TemplateMedeaAgentObserver::TemplateMedeaAgentObserver(RobotWorldModel *wm) : TemplateEEAgentObserver(wm)
 {
     // superclass constructor called before
 }
@@ -24,11 +24,11 @@ TemplateMedeaAgentObserver::~TemplateMedeaAgentObserver()
 void TemplateMedeaAgentObserver::stepPre()
 {
     // * update energy if needed
-    if ( gEnergyLevel && _wm->isAlive() )
+    if (gEnergyLevel && _wm->isAlive())
     {
         _wm->substractEnergy(1);
-        assert( _wm->getEnergyLevel() >= 0 );
-        if ( _wm->getEnergyLevel() == 0 )
+        assert(_wm->getEnergyLevel() >= 0);
+        if (_wm->getEnergyLevel() == 0)
             _wm->setAlive(false);
     }
 

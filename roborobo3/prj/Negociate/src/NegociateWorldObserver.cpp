@@ -39,7 +39,8 @@ NegociateWorldObserver::NegociateWorldObserver(World *__world) :
     }
 
     // Assert that no object can be covered twice by the proximity teleport, proximityTeleport == 0 means no constraint
-    assert(NegociateSharedData::proximityTeleport >= 0 && NegociateSharedData::proximityTeleport <= (gNbOfPhysicalObjects/2) - 1);
+    assert(NegociateSharedData::proximityTeleport >= 0 &&
+           NegociateSharedData::proximityTeleport <= (gNbOfPhysicalObjects / 2) - 1);
     assert(gNbOfPhysicalObjects % NegociateSharedData::nbCluster == 0);
 
 
@@ -73,27 +74,30 @@ NegociateWorldObserver::NegociateWorldObserver(World *__world) :
 
     double startcoef = -NegociateSharedData::fakeCoef;
     double endcoef = +NegociateSharedData::fakeCoef;
-    double stepcoef = (endcoef - startcoef) / (m_nbIndividuals-1);
-    for (int i = 0; i < m_nbIndividuals; i++) {
+    double stepcoef = (endcoef - startcoef) / (m_nbIndividuals - 1);
+    for (int i = 0; i < m_nbIndividuals; i++)
+    {
         variabilityCoef[i] = startcoef + i * stepcoef;
         assert(variabilityCoef[i] <= NegociateSharedData::fakeCoef + 0.1);
-        assert(variabilityCoef[i] >= - NegociateSharedData::fakeCoef - 0.1);
+        assert(variabilityCoef[i] >= -NegociateSharedData::fakeCoef - 0.1);
     }
 
     std::pair<int, int> coord(-1, -1);
     bool run = true;
     int i = 0;
-    while(run)
+    while (run)
     {
         gProperties.checkAndGetPropertyValue("availableslot[" + std::to_string(i) + "].x", &coord.first, false);
         gProperties.checkAndGetPropertyValue("availableslot[" + std::to_string(i) + "].y", &coord.second, false);
-        if(coord.first != -1)
+        if (coord.first != -1)
         {
             availableslots.emplace(coord.first, coord.second);
             coord.first = -1;
             coord.second = -1;
             i++;
-        } else{
+        }
+        else
+        {
             run = false;
         }
     }
@@ -120,7 +124,7 @@ void NegociateWorldObserver::reset()
     std::vector<double> maxguess(nbweights, 1);
     std::vector<double> mutprob(nbweights, NegociateSharedData::mutProb);
 
-    if(NegociateSharedData::fixCoop)
+    if (NegociateSharedData::fixCoop)
     {
         minbounds[0] = 0;
         maxbounds[0] = 1;
@@ -131,14 +135,14 @@ void NegociateWorldObserver::reset()
     }
     bool train = false;
     gProperties.checkAndGetPropertyValue("train", &train, false);
-    int split = dynamic_cast<NegociateController*>(gWorld->getRobot(0)->getController())->getSplit();
-    if(train)
+    int split = dynamic_cast<NegociateController *>(gWorld->getRobot(0)->getController())->getSplit();
+    if (train)
     {
         /* keep diversity in untrained part of the network */
         mutprob[0] = 1;
         minbounds[0] = minguess[0];
         maxbounds[0] = maxguess[0];
-        for(unsigned long i = split; i < std.size(); i++)
+        for (unsigned long i = split; i < std.size(); i++)
         {
             mutprob[i] = 1;
             minbounds[i] = minguess[i];
@@ -148,7 +152,7 @@ void NegociateWorldObserver::reset()
     else
     {
         mutprob[0] = NegociateSharedData::mutProbCoop;
-        for(unsigned long i = split; i < std.size(); i++)
+        for (unsigned long i = split; i < std.size(); i++)
         {
             mutprob[i] = NegociateSharedData::mutProbNegociate;
         }
@@ -216,7 +220,7 @@ void NegociateWorldObserver::stepPre()
                          << std::endl;
                 logSeekTime();
             }
-            if(NegociateSharedData::takeVideo)
+            if (NegociateSharedData::takeVideo)
             {
                 saveCustomScreenshot("movie_gen_" + std::to_string(m_generationCount));
                 /*
@@ -473,7 +477,6 @@ void NegociateWorldObserver::computeOpportunityImpacts()
             }
 
 
-
             for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++)
             {
                 auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(*index)->getWorldModel());
@@ -502,8 +505,8 @@ void NegociateWorldObserver::computeOpportunityImpacts()
                     i++;
                 }
             }
-            if((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0
-               && n > 1)
+            if ((m_generationCount + 1) % NegociateSharedData::logEveryXGen == 0
+                && n > 1)
             {
 
                 m_logall << m_curEvaluationInGeneration << "\t"
@@ -610,24 +613,24 @@ void NegociateWorldObserver::mark_all_robots_as_alone() const
 
 void NegociateWorldObserver::reward_lonely(double sum_payoff, int nb_payoffs) const
 {
-        for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
+        auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(i)->getWorldModel());
+        if (!wm->isPlaying())
         {
-            auto *wm = dynamic_cast<NegociateWorldModel *>(m_world->getRobot(i)->getWorldModel());
-            if (!wm->isPlaying())
-            {
-                wm->_fitnessValue += std::min(NegociateSharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
-            }
+            wm->_fitnessValue += std::min(NegociateSharedData::sigma, 0.8 * sum_payoff / nb_payoffs);
         }
+    }
 }
 
 static double sigmoid(double x, double lowerbound, double upperbound, double slope, double inflexionPoint)
 {
-    return lowerbound + (upperbound - lowerbound)/(1 + exp(-slope*(x - inflexionPoint)));
+    return lowerbound + (upperbound - lowerbound) / (1 + exp(-slope * (x - inflexionPoint)));
 }
 
 
 double NegociateWorldObserver::payoff(const double invest, const double totalInvest, const int n, const double a,
-                                       const double b)
+                                      const double b)
 {
     double res = 0;
     const double x0 = (totalInvest - invest);
@@ -641,7 +644,7 @@ double NegociateWorldObserver::payoff(const double invest, const double totalInv
     }
     if (NegociateSharedData::frictionCoef > 0)
     {
-        res *= (1-sigmoid(n, 0, 1, NegociateSharedData::frictionCoef, NegociateSharedData::frictionInflexionPoint));
+        res *= (1 - sigmoid(n, 0, 1, NegociateSharedData::frictionCoef, NegociateSharedData::frictionInflexionPoint));
     }
     if (NegociateSharedData::temperature > 0)
     {
@@ -649,7 +652,6 @@ double NegociateWorldObserver::payoff(const double invest, const double totalInv
     }
     return res;
 }
-
 
 
 void NegociateWorldObserver::registerRobotsOnOpportunities()

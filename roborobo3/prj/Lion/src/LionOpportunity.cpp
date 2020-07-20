@@ -52,7 +52,7 @@ void LionOpportunity::removeRobot(int id)
 void LionOpportunity::isWalked(const int id)
 {
     const int rid = id - gRobotIndexStartOffset;
-    auto* wm = dynamic_cast<LionWorldModel*>(gWorld->getRobot(rid)->getWorldModel());
+    auto *wm = dynamic_cast<LionWorldModel *>(gWorld->getRobot(rid)->getWorldModel());
     if (!isRobotOnOpp(rid))
     {
         nearbyMap.emplace(rid, wm);
@@ -162,7 +162,7 @@ double LionOpportunity::sumCoop(int nbonopp)
     int nbpart = nbonopp - 1;
     assert(nbpart >= 0 && nbpart < gNbOfRobots);
     double tot = 0;
-    for(auto elem : nearbyMap)
+    for (auto elem : nearbyMap)
     {
         tot += elem.second->getCoop(nbpart);
     }
@@ -174,7 +174,7 @@ void LionOpportunity::reset()
 {
     for (auto rob: nearbyMap)
     {
-        dynamic_cast<LionWorldModel*>(gWorld->getRobot(rob.first)->getWorldModel())->opp = nullptr;
+        dynamic_cast<LionWorldModel *>(gWorld->getRobot(rob.first)->getWorldModel())->opp = nullptr;
     }
     nearbyMap.clear();
     curInv = 0;

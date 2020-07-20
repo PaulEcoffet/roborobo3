@@ -33,7 +33,7 @@ void PartnerControlOpportunity::isPushed(int id, std::tuple<double, double> spee
     nearbyRobotIndexes.insert(id - gRobotIndexStartOffset);
 }
 
-const std::set<int>& PartnerControlOpportunity::getNearbyRobotIndexes() const
+const std::set<int> &PartnerControlOpportunity::getNearbyRobotIndexes() const
 {
     return nearbyRobotIndexes;
 }

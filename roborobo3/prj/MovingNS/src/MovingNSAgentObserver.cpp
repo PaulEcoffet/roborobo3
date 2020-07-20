@@ -13,10 +13,10 @@
 #include "MovingNS/include/MovingNSWorldObserver.h"
 #include <string>
 
-MovingNSAgentObserver::MovingNSAgentObserver( RobotWorldModel *wm )
+MovingNSAgentObserver::MovingNSAgentObserver(RobotWorldModel *wm)
 {
-    _wm = (RobotWorldModel*)wm;
-    
+    _wm = (RobotWorldModel *) wm;
+
 }
 
 MovingNSAgentObserver::~MovingNSAgentObserver()
@@ -32,15 +32,16 @@ void MovingNSAgentObserver::reset()
 void MovingNSAgentObserver::stepPre()
 {
     // See whether we're close to an object
-    
+
     int targetIndex = _wm->getGroundSensorValue();
-    if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset + (int)gPhysicalObjects.size() )   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
+    if (targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gPhysicalObjectIndexStartOffset +
+                                                                        (int) gPhysicalObjects.size())   // ground sensor is upon a physical object (OR: on a place marked with this physical object footprint, cf. groundsensorvalues image)
     {
         targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
         //std::cout << "[DEBUG] #" << _wm->getId() << " walked upon " << targetIndex << "\n";
         gPhysicalObjects[targetIndex]->isWalked(_wm->getId());
     }
-    
+
 }
 
 void MovingNSAgentObserver::logStats()

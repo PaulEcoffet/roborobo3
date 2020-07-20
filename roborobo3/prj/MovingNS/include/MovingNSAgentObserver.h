@@ -18,12 +18,14 @@
 class MovingNSAgentObserver : public AgentObserver
 {
 public:
-	MovingNSAgentObserver(RobotWorldModel *wm);
-	~MovingNSAgentObserver();
+    MovingNSAgentObserver(RobotWorldModel *wm);
 
-	virtual void reset();
-	virtual void stepPre();
-    
+    ~MovingNSAgentObserver();
+
+    virtual void reset();
+
+    virtual void stepPre();
+
     void logStats();
 
 };

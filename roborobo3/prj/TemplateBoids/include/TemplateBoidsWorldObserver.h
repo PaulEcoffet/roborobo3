@@ -13,22 +13,28 @@ class TemplateBoidsWorldObserver : public WorldObserver
 {
 private:
     void updateEnvironment();
+
     void updateMonitoring();
-    void monitorPopulation( bool localVerbose = true );
-    
+
+    void monitorPopulation(bool localVerbose = true);
+
 protected:
     int _generationCount;
     int _generationItCount;
-    
+
 public:
     TemplateBoidsWorldObserver(World *world);
+
     ~TemplateBoidsWorldObserver();
-    
+
     void reset();
+
     void stepPre();
+
     void stepPost();
-    
-    int getGenerationItCount() { return _generationItCount; }
+
+    int getGenerationItCount()
+    { return _generationItCount; }
 
 };
 

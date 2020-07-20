@@ -22,7 +22,7 @@ def recv_msg(sock, encoding='utf8'):
     if not raw_msglen:
         return None
     # get the message len, transform to int and get right bit order with ntohl
-    msglen = socket.ntohl(int(raw_msglen.decode('utf8'), 16))
+    msglen = int(raw_msglen.decode('utf8'), 16)
     # Read the message data
     return recvall(sock, msglen).decode(encoding)
 
@@ -67,7 +67,7 @@ def main():
     # catch the output dir to put the evolution logs in it.
     ap = argparse.ArgumentParser(prog='cmaesroborobo.py')
     ap.add_argument('-o', '--output', type=str, default='logs/')
-    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda', 'oneone'],
+    ap.add_argument('-e', '--evolution', choices=['cmaes', 'fitprop', 'mulambda', 'oneone', 'noneone'],
                     required=True)
     ap.add_argument('-m', '--mu', type=int, default=1)
     ap.add_argument('--guess', type=argparse.FileType())
@@ -107,6 +107,7 @@ def main():
             print('*************************connected to {}************************'.format(i), flush=True)
             # Wait for roborobo to give information about the simulation
             evo_info = loads(recv_msg(conns[i]))
+            print("info received")
         if 'min_bounds' in evo_info:
             bounds = [evo_info['min_bounds'], evo_info['max_bounds']]
         else:
@@ -152,14 +153,12 @@ def main():
             solutions = [sol.tolist() for sol in es.ask()]
             for i in range(argout.parallel_rep):
                 send_msg(conns[i], dumps(solutions, primitives=True))
-                print("solution sent", flush=True)
             ########################################
             # Roborobo simulation(s) are done here #
             ########################################
             fitnesses = []
             for i in range(argout.parallel_rep):
                 back_jsonstr = recv_msg(conns[i])
-                print("response received", flush=True)
                 if back_jsonstr is None:
                     end = True
                     break

@@ -6,7 +6,7 @@
 
 PartnerChoiceAgentObserver::PartnerChoiceAgentObserver(RobotWorldModel *wm)
 {
-    m_wm = dynamic_cast<PartnerChoiceWorldModel*>(wm);
+    m_wm = dynamic_cast<PartnerChoiceWorldModel *>(wm);
 }
 
 PartnerChoiceAgentObserver::~PartnerChoiceAgentObserver() = default;

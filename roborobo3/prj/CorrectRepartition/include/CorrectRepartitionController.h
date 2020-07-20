@@ -24,16 +24,21 @@ class CorrectRepartitionController : public Controller
 {
 public:
     explicit CorrectRepartitionController(RobotWorldModel *wm);
+
     ~CorrectRepartitionController() override;
 
     void step() override;
+
     void reset() override;
 
     void loadNewGenome(const std::vector<double> &newGenome);
+
     unsigned long getGenomeSize() const;
 
     void resetFitness();
+
     void updateFitness(double newFitness);
+
     void increaseFitness(double delta);
 
     std::string inspect(std::string prefix) override;
@@ -52,6 +57,7 @@ protected:
     std::vector<unsigned int> getNbNeuronsPerHiddenLayers() const;
 
     unsigned int getNbInputs() const;
+
     unsigned int getNbOutputs() const;
 
 };

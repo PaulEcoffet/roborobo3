@@ -10,11 +10,13 @@ DebugCollObj::DebugCollObj(int __id) :
 {
 }
 
-void DebugCollObj::isPushed(int id, std::tuple<double, double> speed) {
+void DebugCollObj::isPushed(int id, std::tuple<double, double> speed)
+{
     _pushed = true;
 }
 
-void DebugCollObj::step() {
+void DebugCollObj::step()
+{
     _pushed = false;
     RoundObject::step();
 }

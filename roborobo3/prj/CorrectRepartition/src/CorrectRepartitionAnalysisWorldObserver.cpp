@@ -12,7 +12,8 @@
 
 using json = nlohmann::json;
 
-CorrectRepartitionAnalysisWorldObserver::CorrectRepartitionAnalysisWorldObserver(World *__world) : WorldObserver(__world)
+CorrectRepartitionAnalysisWorldObserver::CorrectRepartitionAnalysisWorldObserver(World *__world) : WorldObserver(
+        __world)
 {
     CorrectRepartitionSharedData::initSharedData();
 
