@@ -18,8 +18,6 @@ class NOneOneEvolutionStrategy:
         self.log_every = 500
         self.percentuni = percentuni
 
-
-        # boundaries are the same for all the dimension for now
         bounds = np.asarray(bounds)
         assert(np.all(bounds[0] < bounds[1]))
         self.minb = np.asarray(bounds[0])
@@ -35,46 +33,70 @@ class NOneOneEvolutionStrategy:
             assert(len(self.mutprob) == len(self.minb))
         else:
             self.mutprob = np.repeat(self.mutation_rate, popsize)
-        print(self.mutprob)
+
         assert(self.normalmut.shape[0] == np.asarray(self.solutions[0]).shape[0])
-        self.lastfitnesses = np.repeat(1, self.popsize)
-        self.prevfitnesses = np.repeat(1, self.popsize)
-        self.prevsolutions = self.solutions
+        self.lastfitnesses = np.repeat(-np.inf, self.popsize)
+        self.bestfitnesses = np.repeat(-np.inf, self.popsize)
+        self.bestsolutions = self.solutions
+        self.new = np.array([True] * self.popsize)
+        self.better = np.array([False] * self.popsize)
+        self.reeval = np.array([True] * self.popsize)
+
+        self.preeval = kwargs.get('preeval', 0.1)
         self.logger = NOneOneLogger(self, path)
         self.nbweights = self.solutions.shape[1]
 
     def ask(self):
         # Compute the new solution, keep the best solution between the current eval and the previous one
-        new_solutions = np.where(np.tile((self.lastfitnesses > self.prevfitnesses)[:, np.newaxis], self.nbweights), self.solutions, self.prevsolutions)
-
-        # Normal transformation along all genes
-        p_uni = self.percentuni
-        p_normal = 1 - p_uni
-        mutation_mask_p = np.tile(self.mutprob, (self.popsize, 1))
-        mutation_mask = np.random.binomial(1, mutation_mask_p)
-        mutation_mask[mutation_mask == 1] = np.random.choice([UNIFORM, NORMAL], size=np.sum(mutation_mask), p=[p_uni, p_normal])
-        # Uniform transformation
-        min_mask = np.tile(self.minb, (self.popsize, 1))
-        max_mask = np.tile(self.maxb, (self.popsize, 1))
-        std_mask = np.tile(self.normalmut, (self.popsize, 1))
-        mutation_mask[np.where(std_mask == 0)] = NOTHING
-        mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
-        new_solutions[mutation_mask == UNIFORM] = mutations
-        # normal transformation
-        mutations = np.random.normal(new_solutions[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
-        new_solutions[mutation_mask == NORMAL] = mutations
-        np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
-        return deepcopy([solution for solution in new_solutions])
+        if self.iter == 0:
+            return self.solutions
+        else:
+            solutions = np.copy(self.bestsolutions)
+            for i in range(self.popsize):
+                if np.random.random() < self.preeval and not self.new[i]:
+                    solutions[i] = self.bestsolutions[i]
+                    self.reeval[i] = True
+                else:
+                    self.reeval[i] = False
+                    solutions[i] = self._mutate(self.bestsolutions[i])
+        return deepcopy([solution for solution in solutions])
 
     def tell(self, solutions, fitnesses):
-        self.prevsolutions = self.solutions
         self.solutions = np.asarray(solutions)
-        self.prevfitnesses = self.lastfitnesses
         self.lastfitnesses = np.asarray(fitnesses)
+        self.better = self.lastfitnesses >= self.bestfitnesses
+        must_update = self.better | self.reeval
+        self.new = must_update
+        self.bestfitnesses[must_update] = self.lastfitnesses[must_update]
+        self.bestsolutions[must_update] = np.copy(self.solutions[must_update])
+        self.bestfitnesses[self.reeval] = self.lastfitnesses[self.reeval]  # Override the fitnesses for best flagged as reevaluation
         self.iter += 1
 
     def stop(self):
         return self.iter >= self.maxiter
+
+    def _mutate(self, solution):
+        prev_shape = solution.shape
+        solution = np.copy(solution.reshape(-1, self.nbweights))
+        localpopsize = solution.shape[0]
+        # Normal transformation along all genes
+        p_uni = self.percentuni
+        p_normal = 1 - p_uni
+        mutation_mask_p = np.tile(self.mutprob, (localpopsize, 1))
+        mutation_mask = np.random.binomial(1, mutation_mask_p)
+        mutation_mask[mutation_mask == 1] = np.random.choice([UNIFORM, NORMAL], size=np.sum(mutation_mask), p=[p_uni, p_normal])
+        # Uniform transformation
+        min_mask = np.tile(self.minb, (localpopsize, 1))
+        max_mask = np.tile(self.maxb, (localpopsize, 1))
+        std_mask = np.tile(self.normalmut, (localpopsize, 1))
+        mutation_mask[np.where(std_mask == 0)] = NOTHING
+        mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
+        solution[mutation_mask == UNIFORM] = mutations
+        # normal transformation
+        mutations = np.random.normal(solution[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
+        solution[mutation_mask == NORMAL] = mutations
+        np.clip(solution, min_mask, max_mask, out=solution)
+        return solution.reshape(prev_shape)
 
     def _init_solutions(self, genome_guess, full_random_begin):
         if callable(genome_guess):
