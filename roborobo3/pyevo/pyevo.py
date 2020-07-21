@@ -3,7 +3,7 @@ from pyevo.fitprop import FitPropEvolutionStrategy
 from pyevo.mulambdaes import MuLambdaEvolutionStrategy
 from pyevo.oneone import OneOneEvolutionStrategy
 import cma
-from pyevo.nonenone import NOneOneEvolutionStrategy
+from pyevo.noneone import NOneOneEvolutionStrategy
 
 
 def getES(type_, guess, sigma, popsize, bounds, maxiter, logpath, **kwargs):

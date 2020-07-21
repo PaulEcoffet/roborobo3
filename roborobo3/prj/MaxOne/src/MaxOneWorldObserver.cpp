@@ -54,15 +54,18 @@ void MaxOneWorldObserver::reset()
     m_nbIndividuals = gInitialNumberOfRobots;
     gMaxIt = -1;
 
-
+    double mutproba = 1;
+    double mutrate = 1;
+    gProperties.checkAndGetPropertyValue("mutProb", &mutproba, false);
+    gProperties.checkAndGetPropertyValue("mutRate", &mutrate, false);
     // create individuals
     int nbweights = 10;
     std::vector<double> minbounds(nbweights, 0);
     std::vector<double> maxbounds(nbweights, 1);
-    std::vector<double> std(nbweights, 0.01);
+    std::vector<double> std(nbweights, mutrate);
     std::vector<double> minguess(nbweights, 0);
     std::vector<double> maxguess(nbweights, 1);
-    std::vector<double> mutprob(nbweights, 0.1);
+    std::vector<double> mutprob(nbweights, mutproba);
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob);
     loadGenomesInRobots(m_individuals);
 
