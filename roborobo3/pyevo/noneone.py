@@ -17,11 +17,16 @@ class NOneOneEvolutionStrategy:
         self.popsize = popsize
         self.log_every = 500
         self.percentuni = percentuni
-
         bounds = np.asarray(bounds)
         assert(np.all(bounds[0] < bounds[1]))
         self.minb = np.asarray(bounds[0])
         self.maxb = np.asarray(bounds[1])
+        self.nbweights = self.minb.shape[0]
+
+        self.randomguess = kwargs['randomguess']
+        self.init_min = kwargs['init_min']
+        self.init_max = kwargs['init_max']
+
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
         if np.isscalar(normalmut):
             self.normalmut = np.asarray(np.tile(normalmut, np.asarray(self.solutions[0]).shape))
@@ -44,7 +49,7 @@ class NOneOneEvolutionStrategy:
 
         self.preeval = kwargs.get('preeval', 0.1)
         self.logger = NOneOneLogger(self, path)
-        self.nbweights = self.solutions.shape[1]
+
 
     def ask(self):
         # Compute the new solution, keep the best solution between the current eval and the previous one
@@ -113,6 +118,10 @@ class NOneOneEvolutionStrategy:
             if self.popsize % nbelem != 0:  # We need to add the remaining
                 nbrep += 1
             out = np.tile(genome_guess, (nbrep, 1))[:self.popsize] # we remove the overflow
+            for i in range(out.shape[0]):
+                rand = np.random.uniform(self.init_min, self.init_max, self.nbweights)
+                out[i, self.randomguess] = rand[self.randomguess]
+            print(out.shape)
         return out
 
     def disp(self):

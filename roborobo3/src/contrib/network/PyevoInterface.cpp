@@ -4,6 +4,7 @@
  */
 
 #include <contrib/network/PyevoInterface.h>
+#include <iostream>
 
 #include "network/PyevoInterface.h"
 #include "json/json.hpp"
@@ -85,7 +86,7 @@ std::vector<std::vector<double>>
 PyevoInterface::initCMA(int popsize, int parameters_dimension, const std::vector<double> &minbounds,
                         const std::vector<double> &maxbounds, const std::vector<double> &minguess,
                         const std::vector<double> &maxguess, const std::vector<double> &std,
-                        const std::vector<double> &mutprob)
+                        const std::vector<double> &mutprob, const json& extra)
 {
     json params = {
             {"popsize",    popsize},
@@ -97,6 +98,7 @@ PyevoInterface::initCMA(int popsize, int parameters_dimension, const std::vector
             {"std",        std},
             {"mutprob", mutprob}
     };
+    params.merge_patch(extra);
     ni.sendMessage(params.dump());
     return getNextGeneration(std::vector<std::vector<double>>(), std::vector<double>());
 }
