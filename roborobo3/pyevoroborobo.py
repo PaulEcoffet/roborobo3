@@ -134,6 +134,9 @@ def main():
             mutprob=1/(evo_info['nb_weights'] * evo_info['popsize'])
         if argout.guess:
             guess = np.asarray(load(argout.guess))
+            guess = guess[:evo_info['popsize']]
+            print(guess.shape)
+            print(evo_info['nb_weights'])
             assert((len(guess.shape) == 1 and guess.shape[0] == evo_info['nb_weights'])
                    or (len(guess.shape) == 2 and guess.shape[1] == evo_info['nb_weights']))
         else:
@@ -142,7 +145,9 @@ def main():
                    guess,
                    argout.sigma,
                    evo_info['popsize'], bounds, argout.generations, join(str(outdir), ''), mu=argout.mu,
-                   normalmut=normalmut, percentuni=argout.percentuni, mutprob=mutprob)
+                   normalmut=normalmut, percentuni=argout.percentuni, mutprob=mutprob,
+                   randomguess=evo_info.get('randomguess', np.array([False] * evo_info['nb_weights'])),
+                   init_min=init_min, init_max=init_max)
         sign = 1
         if argout.evolution == 'cmaes':
             sign = -1

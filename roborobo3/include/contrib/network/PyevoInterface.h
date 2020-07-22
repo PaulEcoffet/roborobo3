@@ -10,6 +10,10 @@
 #include <network/NetworkInterface.h>
 #include <string>
 #include <vector>
+#include "json/json.hpp"
+
+using json = nlohmann::json;
+
 
 class PyevoInterface
 {
@@ -50,7 +54,7 @@ public:
     initCMA(int popsize, int parameters_dimension, const std::vector<double> &minbounds,
                             const std::vector<double> &maxbounds, const std::vector<double> &minguess,
                             const std::vector<double> &maxguess, const std::vector<double> &std,
-                            const std::vector<double> &mutprob);
+                            const std::vector<double> &mutprob, const json& extra = {});
 
     /**
      * Return the next generation of the population based on the fitnesses of the current generation.
