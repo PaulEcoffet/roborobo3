@@ -86,10 +86,7 @@ NegociateController::NegociateController(RobotWorldModel *wm)
 
     weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
     m_nn2->setWeights(weights);
-
-    std::cout << "number of weights nn1: " << m_nn->getRequiredNumberOfWeights() << std::endl;
-    std::cout << "number of weights nn2: " << m_nn2->getRequiredNumberOfWeights() << std::endl;
-
+    
     resetFitness();
 }
 
