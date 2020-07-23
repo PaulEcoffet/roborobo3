@@ -126,6 +126,10 @@ void MaxOneWorldObserver::stepEvolution()
         {
             tot += w;
         }
+        if (random01() < 0.1)
+        {
+            tot += randgaussian();
+        }
         fitnesses[i] = tot;
     }
     m_individuals = pyevo.getNextGeneration(m_individuals, fitnesses);

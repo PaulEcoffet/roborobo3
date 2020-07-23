@@ -72,6 +72,12 @@ class NOneOneEvolutionStrategy:
         self.better = self.lastfitnesses >= self.bestfitnesses
         must_update = self.better | self.reeval
         self.new = must_update
+        # for i, up in enumerate(must_update):
+        #     if up:
+        #         print("update", i)
+        #         if self.reeval[i]:
+        #             print("because reeval")
+        #         print("from ", self.bestfitnesses[i], "to", self.lastfitnesses[i])
         self.bestfitnesses[must_update] = self.lastfitnesses[must_update]
         self.bestsolutions[must_update] = np.copy(self.solutions[must_update])
         self.bestfitnesses[self.reeval] = self.lastfitnesses[self.reeval]  # Override the fitnesses for best flagged as reevaluation
