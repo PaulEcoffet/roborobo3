@@ -68,14 +68,20 @@ void MaxOneWorldObserver::reset()
     std::vector<double> mutprob(nbweights, mutproba);
     std::vector<bool> randomguess(nbweights, true);
 
-    int split = 5;
-    for (unsigned long i = 0; i < split; i++)
+    int train = 0;
+    json extra = {{"noextra", "noextra"}};
+    gProperties.checkAndGetPropertyValue("train", &train, false);
+    if (train == 2)
     {
-        mutprob[i] = 0;
-        randomguess[i] = false;
-    }
+        int split = 5;
+        for (unsigned long i = 0; i < split; i++)
+        {
+            mutprob[i] = 0;
+            randomguess[i] = false;
+        }
 
-    json extra = {{"randomguess", randomguess}};
+        extra = {{"randomguess", randomguess}};
+    }
 
 
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob,

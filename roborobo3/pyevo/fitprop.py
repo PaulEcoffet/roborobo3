@@ -24,6 +24,10 @@ class FitPropEvolutionStrategy():
         assert(np.all(bounds[0] < bounds[1]))
         self.minb = np.asarray(bounds[0])
         self.maxb = np.asarray(bounds[1])
+        self.nbweights = len(self.minb)
+        self.randomguess = kwargs['randomguess']
+        self.init_min = kwargs['init_min']
+        self.init_max = kwargs['init_max']
         self.solutions = self._init_solutions(genome_guess, full_random_begin)
         if np.isscalar(normalmut):
             self.normalmut = np.asarray(np.tile(normalmut, np.asarray(self.solutions[0]).shape))
@@ -41,7 +45,6 @@ class FitPropEvolutionStrategy():
         self.logger = FitPropLogger(self, path)
 
     def ask(self):
-        #fitnesses = np.clip(self.lastfitnesses, 1, None)
         fitnesses = np.asarray(self.lastfitnesses)
         assert(not np.any(np.isnan(fitnesses)))
         if np.min(fitnesses) <= 0:
@@ -51,27 +54,7 @@ class FitPropEvolutionStrategy():
                                          self.popsize,
                                          p=(fitnesses/np.sum(fitnesses)))
         new_solutions = self.solutions[new_pop_index]
-        normal_trans = False
-        # Normal transformation along all genes
-        if normal_trans:
-            new_solutions = np.random.normal(new_solutions, self.mutation_rate)
-        else:  # pick few genes and uniform transformation on them or a normal one
-            p_uni = self.percentuni
-            p_normal = 1 - p_uni
-            mutation_mask_p = np.tile(self.mutprob, (self.popsize, 1))
-            mutation_mask = np.random.binomial(1, mutation_mask_p)
-            mutation_mask[mutation_mask == 1] = np.random.choice([UNIFORM, NORMAL], size=np.sum(mutation_mask), p=[p_uni, p_normal])
-            # Uniform transformation
-            min_mask = np.tile(self.minb, (self.popsize, 1))
-            max_mask = np.tile(self.maxb, (self.popsize, 1))
-            std_mask = np.tile(self.normalmut, (self.popsize, 1))
-            mutation_mask[np.where(std_mask == 0)] = NOTHING
-            mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
-            new_solutions[mutation_mask == UNIFORM] = mutations
-            # normal transformation
-            mutations = np.random.normal(new_solutions[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
-            new_solutions[mutation_mask == NORMAL] = mutations
-        np.clip(new_solutions, min_mask, max_mask, out=new_solutions)
+        new_solutions = self._mutate(new_solutions)
         return deepcopy([solution for solution in new_solutions])
 
     def tell(self, solutions, fitnesses):
@@ -82,12 +65,35 @@ class FitPropEvolutionStrategy():
     def stop(self):
         return self.iter >= self.maxiter
 
+    def _mutate(self, solution):
+        prev_shape = solution.shape
+        solution = np.copy(solution.reshape(-1, self.nbweights))
+        localpopsize = solution.shape[0]
+        # Normal transformation along all genes
+        p_uni = self.percentuni
+        p_normal = 1 - p_uni
+        mutation_mask_p = np.tile(self.mutprob, (localpopsize, 1))
+        mutation_mask = np.random.binomial(1, mutation_mask_p)
+        mutation_mask[mutation_mask == 1] = np.random.choice([UNIFORM, NORMAL], size=np.sum(mutation_mask), p=[p_uni, p_normal])
+        # Uniform transformation
+        min_mask = np.tile(self.minb, (localpopsize, 1))
+        max_mask = np.tile(self.maxb, (localpopsize, 1))
+        std_mask = np.tile(self.normalmut, (localpopsize, 1))
+        mutation_mask[np.where(std_mask == 0)] = NOTHING
+        mutations = np.random.uniform(min_mask[mutation_mask == UNIFORM], max_mask[mutation_mask == UNIFORM])
+        solution[mutation_mask == UNIFORM] = mutations
+        # normal transformation
+        mutations = np.random.normal(solution[mutation_mask == NORMAL], std_mask[mutation_mask == NORMAL])
+        solution[mutation_mask == NORMAL] = mutations
+        np.clip(solution, min_mask, max_mask, out=solution)
+        return solution.reshape(prev_shape)
+
     def _init_solutions(self, genome_guess, full_random_begin):
         if callable(genome_guess):
             out = np.array([genome_guess() for dummy in range(self.popsize)])
         elif full_random_begin:
             out = np.random.uniform(
-                -1, 1, size=(self.popsize, nb_weights))  # TODO Hard coded guess
+                -1, 1, size=(self.popsize, len(self.minb)))  # TODO Hard coded guess
         else:
             if len(genome_guess.shape) == 1:
                 nbelem = 1
@@ -97,6 +103,9 @@ class FitPropEvolutionStrategy():
             if self.popsize % nbelem != 0:  # We need to add the remaining
                 nbrep += 1
             out = np.tile(genome_guess, (nbrep, 1))[:self.popsize] # we remove the overflow
+            for i in range(out.shape[0]):
+                rand = np.random.uniform(self.init_min, self.init_max, self.nbweights)
+                out[i, self.randomguess] = rand[self.randomguess]
         return out
 
     def disp(self):

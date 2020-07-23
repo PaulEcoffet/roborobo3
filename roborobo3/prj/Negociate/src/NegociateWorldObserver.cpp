@@ -151,21 +151,21 @@ void NegociateWorldObserver::reset()
             maxbounds[i] = maxguess[i];
         }
     }
-    else if (train == 2) /* Already trained */
-    {
-        /* Remove training from navigation */
-        for (unsigned long i = 1; i < split; i++)
-        {
-            mutprob[i] = 0;
-            randomguess[i] = false;
-        }
-    }
     else
     {
         mutprob[0] = NegociateSharedData::mutProbCoop;
         for (unsigned long i = split; i < std.size(); i++)
         {
             mutprob[i] = NegociateSharedData::mutProbNegociate;
+        }
+        if (train == 2) /* Already trained */
+        {
+            /* Remove training from navigation */
+            for (unsigned long i = 1; i < split; i++)
+            {
+                mutprob[i] = 0;
+                randomguess[i] = false;
+            }
         }
     }
     json extra = {{"randomguess", randomguess}};
