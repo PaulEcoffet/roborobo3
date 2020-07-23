@@ -72,6 +72,12 @@ class NOneOneEvolutionStrategy:
         self.better = self.lastfitnesses >= self.bestfitnesses
         must_update = self.better | self.reeval
         self.new = must_update
+        # for i, up in enumerate(must_update):
+        #     if up:
+        #         print("update", i)
+        #         if self.reeval[i]:
+        #             print("because reeval")
+        #         print("from ", self.bestfitnesses[i], "to", self.lastfitnesses[i])
         self.bestfitnesses[must_update] = self.lastfitnesses[must_update]
         self.bestsolutions[must_update] = np.copy(self.solutions[must_update])
         self.bestfitnesses[self.reeval] = self.lastfitnesses[self.reeval]  # Override the fitnesses for best flagged as reevaluation
@@ -121,7 +127,6 @@ class NOneOneEvolutionStrategy:
             for i in range(out.shape[0]):
                 rand = np.random.uniform(self.init_min, self.init_max, self.nbweights)
                 out[i, self.randomguess] = rand[self.randomguess]
-            print(out.shape)
         return out
 
     def disp(self):
