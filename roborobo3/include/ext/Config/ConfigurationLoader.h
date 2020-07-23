@@ -17,7 +17,7 @@ class ConfigurationLoader
 {
 	protected:
 		ConfigurationLoader();
-		~ConfigurationLoader();
+		virtual ~ConfigurationLoader();
 		
 	public:
 

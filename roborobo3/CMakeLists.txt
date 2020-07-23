@@ -1,0 +1,69 @@
+cmake_minimum_required(VERSION 3.5)
+project(roborobo3)
+
+set(CMAKE_BUILD_TYPE Debug)
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_FLAGS "-Wall -O3")
+
+find_package(pybind11 REQUIRED)
+
+# set(PYTHON_EXECUTABLE "/Users/paulecoffet/opt/anaconda3/bin/python")
+
+message("Installing for ${PYTHON_EXECUTABLE}")
+
+file(
+        GLOB_RECURSE
+        SOURCE_FILES
+        src/*
+        prj/*
+)
+
+include_directories(include)
+include_directories(include/contrib)
+include_directories(include/core)
+include_directories(include/ext)
+include_directories(prj)
+
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pyroborobo/")
+if (NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pyroborobo/")
+endif()
+
+# FindSDL2.cmake IMPORT
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
+
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+
+find_package(SDL2 COMPONENTS main image REQUIRED)
+# find_package(Boost COMPONENTS filesystem system REQUIRED)
+IF (Boost_FOUND)
+    include_directories(${Boost_INCLUDE_DIR})
+endif ()
+
+if (SDL2_FOUND)
+    include_directories(${SDL2_INCLUDE_DIR})
+endif()
+
+message(${SDL2_LIBRARIES})
+
+
+
+include_directories(${SDL2_INCLUDE_DIRS} )
+
+
+find_package (Eigen3 REQUIRED NO_MODULE)
+
+#add_executable(roborobo ${SOURCE_FILES})
+
+
+pybind11_add_module(pyroborobo ${SOURCE_FILES})
+target_link_libraries(pyroborobo PRIVATE
+        ${SDL2_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
+        ${GZSTREAM}
+        ${ZLIB_LIBRARIES}
+        Eigen3::Eigen
+        )
