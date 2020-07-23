@@ -106,7 +106,8 @@ def main():
             client_datas.append(tmpclient_data)
             print('*************************connected to {}************************'.format(i), flush=True)
             # Wait for roborobo to give information about the simulation
-            evo_info = loads(recv_msg(conns[i]))
+            msg = recv_msg(conns[i])
+            evo_info = loads(msg)
             print("info received")
         if 'min_bounds' in evo_info:
             bounds = [evo_info['min_bounds'], evo_info['max_bounds']]
@@ -133,10 +134,8 @@ def main():
         else:
             mutprob=1/(evo_info['nb_weights'] * evo_info['popsize'])
         if argout.guess:
-            guess = np.asarray(load(argout.guess))
+            guess = np.asarray(load(argout.guess), dtype=np.float)
             guess = guess[:evo_info['popsize']]
-            print(guess.shape)
-            print(evo_info['nb_weights'])
             assert((len(guess.shape) == 1 and guess.shape[0] == evo_info['nb_weights'])
                    or (len(guess.shape) == 2 and guess.shape[1] == evo_info['nb_weights']))
         else:

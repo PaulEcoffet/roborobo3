@@ -55,7 +55,7 @@ void MaxOneWorldObserver::reset()
     gMaxIt = -1;
 
     double mutproba = 1;
-    double mutrate = 1;
+    double mutrate = 0.1;
     gProperties.checkAndGetPropertyValue("mutProb", &mutproba, false);
     gProperties.checkAndGetPropertyValue("mutRate", &mutrate, false);
     // create individuals
@@ -66,7 +66,20 @@ void MaxOneWorldObserver::reset()
     std::vector<double> minguess(nbweights, 0);
     std::vector<double> maxguess(nbweights, 1);
     std::vector<double> mutprob(nbweights, mutproba);
-    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob);
+    std::vector<bool> randomguess(nbweights, true);
+
+    int split = 5;
+    for (unsigned long i = 0; i < split; i++)
+    {
+        mutprob[i] = 0;
+        randomguess[i] = false;
+    }
+
+    json extra = {{"randomguess", randomguess}};
+
+
+    m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob,
+            extra);
     loadGenomesInRobots(m_individuals);
 
     resetEnvironment();

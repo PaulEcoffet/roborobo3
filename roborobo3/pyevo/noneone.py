@@ -121,7 +121,6 @@ class NOneOneEvolutionStrategy:
             for i in range(out.shape[0]):
                 rand = np.random.uniform(self.init_min, self.init_max, self.nbweights)
                 out[i, self.randomguess] = rand[self.randomguess]
-            print(out.shape)
         return out
 
     def disp(self):
