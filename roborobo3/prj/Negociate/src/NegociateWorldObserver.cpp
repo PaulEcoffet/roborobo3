@@ -167,6 +167,13 @@ void NegociateWorldObserver::reset()
                 randomguess[i] = false;
             }
         }
+        else if (train == 3) /* keep best */
+        {
+            for (unsigned long i = 0; i < nbweights; i++)
+            {
+                randomguess[i] = false;
+            }
+        }
     }
     json extra = {{"randomguess", randomguess}};
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob,

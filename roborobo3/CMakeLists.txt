@@ -23,7 +23,7 @@ set(Boost_USE_STATIC_LIBS ON)
 if (UNIX AND NOT APPLE)
     message("it's unix")
     set(CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")  # use static libstdc++ which is not buggy
-endif()
+endif ()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
 
 
@@ -68,32 +68,32 @@ find_package(SDL2 COMPONENTS main image REQUIRED)
 #find_package(OpenCV)
 if (UNIX AND NOT APPLE)
     SET(CMAKE_FIND_LIBRARY_SUFFIXES .a)
-endif()
+endif ()
 find_package(Eigen3 REQUIRED)
 #find_package(TBB REQUIRED)
-set (Boost_USE_STATIC_LIBS ON) # enable dynamic linking
-set (Boost_USE_MULTITHREAD OFF)  # enable multithreading
+set(Boost_USE_STATIC_LIBS ON) # enable dynamic linking
+set(Boost_USE_MULTITHREAD OFF)  # enable multithreading
 find_package(Boost COMPONENTS filesystem system REQUIRED)
 IF (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
-endif()
+endif ()
 
 if (SDL2_FOUND)
     include_directories(${SDL2_INCLUDE_DIR})
-endif()
+endif ()
 
 message(${SDL2_LIBRARIES})
 
 Set(ZLIB_DIR /usr/local/opt/zlib/)
 
-find_package( ZLIB REQUIRED PATH ZLIB_DIR )
-find_library( GZSTREAM libgzstream.a)
+find_package(ZLIB REQUIRED PATH ZLIB_DIR)
+find_library(GZSTREAM libgzstream.a)
 
 #include_directories(${OpenCV_INCLUDE_DIRS})
 #link_directories(${OpenCV_LIB_DIR})
 
 
-include_directories(${SDL2_INCLUDE_DIRS} )
+include_directories(${SDL2_INCLUDE_DIRS})
 
 add_executable(roborobo ${SOURCE_FILES})
 
