@@ -36,7 +36,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 
 find_package(SDL2 COMPONENTS main image REQUIRED)
-# find_package(Boost COMPONENTS filesystem system REQUIRED)
+find_package(Boost COMPONENTS REQUIRED)
 IF (Boost_FOUND)
     include_directories(${Boost_INCLUDE_DIR})
 endif ()

@@ -17,11 +17,11 @@ class ConfigurationLoader
 {
 	protected:
 		ConfigurationLoader();
-		virtual ~ConfigurationLoader();
-		
-	public:
 
-		static ConfigurationLoader* make_ConfigurationLoader(std::string configurationLoaderObjectName);
+	public:
+        virtual ~ConfigurationLoader();
+
+        static ConfigurationLoader* make_ConfigurationLoader(std::string configurationLoaderObjectName);
 
 		virtual WorldObserver* make_WorldObserver(World* wm) = 0 ;
 		virtual RobotWorldModel* make_RobotWorldModel() = 0 ;

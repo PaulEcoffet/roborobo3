@@ -46,7 +46,7 @@ public:
         {
             return fallbackconf->make_WorldObserver(wm);
         }
-        else if(worldObserverClass.cast<std::string>() == "dummy")
+        else if(py::isinstance<py::str>(worldObserverClass) && worldObserverClass.cast<std::string>() == "dummy")
         {
             return new DummyWorldObserver(wm);
         }
@@ -66,7 +66,7 @@ public:
         {
             return fallbackconf->make_RobotWorldModel();
         }
-        else if(worldModelClass.cast<std::string>() == "dummy")
+        else if(py::isinstance<py::str>(worldModelClass) && worldModelClass.cast<std::string>() == "dummy")
         {
             return new RobotWorldModel();
         }
@@ -86,7 +86,7 @@ public:
         {
             return fallbackconf->make_AgentObserver(wm);
         }
-        else if(agentObserverClass.cast<std::string>() == "dummy")
+        else if(py::isinstance<py::str>(agentObserverClass) && agentObserverClass.cast<std::string>() == "dummy")
         {
             return new DummyAgentObserver(wm);
         }
@@ -106,7 +106,7 @@ public:
         {
             return fallbackconf->make_Controller(wm);
         }
-        else if(agentControllerClass.cast<std::string>() == "dummy")
+        else if(py::isinstance<py::str>(agentControllerClass) && agentControllerClass.cast<std::string>() == "dummy")
         {
             return new DummyController(wm);
         }

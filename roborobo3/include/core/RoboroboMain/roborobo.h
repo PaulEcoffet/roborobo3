@@ -270,7 +270,7 @@ void clean_up();
 void displayHelp();
 void inspectAtPixel(int xIns, int yIns);
 bool checkEvent();
-bool handleKeyEvent(Uint8 *keyboardStates);
+bool handleKeyEvent(const Uint8 *keyboardStates);
 void updateDisplay();
 void initLogging();
 void stopLogging();
