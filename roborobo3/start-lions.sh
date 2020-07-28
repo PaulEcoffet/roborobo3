@@ -3,7 +3,6 @@
 
 echo "create temporary dir"
 
-mkdir /home/ecoffet/robocoop/roborobo3/roborobo3/_batch_lions_call || true # ignore error
 
 dir=$(mktemp -d -t lions-XXXXXXXXX --tmpdir=/home/ecoffet/robocoop/roborobo3/roborobo3/_batch_lions_call)
 
@@ -15,9 +14,21 @@ pythonexec='/home/ecoffet/anaconda3/bin/python'
 
 nbjob=$($pythonexec "$dir/batch_lions.py")
 
-echo "submitting job"
+if [ -n "$1" ]
+then
+    nbjob="$1"
+fi
 
-jobid=`qsub -t 1-$nbjob -v dir="$dir,time=$(date +%s)" cl_lions_batch.sh`
+cur=1
+targ=$(( 200 < nbjob ? 200 : nbjob))
 
+while (( $cur <= $nbjob ))
+do
+    echo "submitting job from $cur to $targ"
+    jobid=`qsub -t $cur-$targ -v dir="$dir,time=$(date +%s)" cl_lions_batch.sh`
+    let "cur=targ+1"
+    let "targ=cur+200"
+    targ=$(( targ < nbjob ? targ : nbjob ))
+done
 
 echo "done"
