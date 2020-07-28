@@ -1,7 +1,5 @@
 #!/bin/bash
 
-echo "$@"
-
 debug=false
 fake=false
 max=10
@@ -30,7 +28,7 @@ else
     findgen=0
 fi
 
-echo "coucou"
+echo $$
 
 tmpdir=$(mktemp -d)
 mkdir -p batch_log/
@@ -95,3 +93,5 @@ wait
 # clean up
 
 rm -r $tmpdir
+
+echo $$

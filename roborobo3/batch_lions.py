@@ -21,17 +21,29 @@ def count_running(runs: Sequence[subprocess.Popen]):
 gridconf = {
     '_rep': list(range(24)),
     '_generation': [1500],
-    '_sigma' : [0.01],
+    '_sigma' : [0.01],  # ignored, actually controlled in mutProb
     '_percentuni': [0.1],
-    'b': [5],
-    'nTolerance': [0.5, 1, 2, 3, 5, 1e25],
-    'nOpti': [2, 3, 4, 20],
-    'meanA': [5, 1],
-    'gNbOfPhysicalObjects': [10, 20, 40, 80, 100],
-    'maxPlayer': [2, 5, 10, 20, 30, 40, 50, 60, 70, 80, 90, 100]
+    'nOpti': [2, 3, 4],
+    'costAsInput': [True],
+    'gInitialNumberOfRobots': [100],
+    'gNbOfPhysicalObjects': list(range(10, 101, 10)),
+    'maxPlayer': [2, 5] + list(range(10, 101, 10)),
+    'cost': [0],
+    'nTolerance': [0.1, 0.5, 1.5, 2]
 }
 
-expandedgridconf = list(product_dict(gridconf))
+def implies(p, q):
+    return ((not p) or q)
+
+def allow(conf):
+    tests = [
+            lambda x: implies(x['nTolerance'] > 1e20, x['nOpti'] == 2),
+            lambda x: implies(x['gNbOfPhysicalObjects'] not in [20, 40, 80], x['maxPlayer'] == 100),
+            ]
+    return all(test(conf) for test in tests)
+
+
+expandedgridconf = list(conf for conf in product_dict(gridconf) if allow(conf))
 
 
 try:
@@ -42,7 +54,7 @@ except IndexError:
 
 
 cluster = not platform.node().startswith('pecoffet')
-nb_runs = 24
+nb_runs = 72
 groupname = f"lionscross24-mean5paperready/{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
@@ -54,8 +66,8 @@ if not cluster:
     batch = ""
     nb_runs = 1
 
-
-print(int((len(expandedgridconf) / nb_runs)))
+from math import ceil
+print(int(ceil((len(expandedgridconf) / nb_runs))))
 if len(sys.argv) == 1:
     sys.exit(0)
 
@@ -63,7 +75,7 @@ os.makedirs(logdir, exist_ok=True)
 
 
 
-iconf = (int(sys.argv[1]) - 1) // nb_runs
+iconf = (int(sys.argv[1]) - 1)
 
 try:
     conffile=sys.argv[3]
@@ -78,7 +90,10 @@ files = []
 try:
     for i in range(nb_runs):
         # Lets expand the gridconf and add roborobo specific items
-        conf = {key: val for key, val in expandedgridconf[iconf * nb_runs + i].items()}
+        try:
+            conf = {key: val for key, val in expandedgridconf[iconf * nb_runs + i].items()}
+        except IndexError:  # No more run to do
+            break
         robargs = []
         for key, val in conf.items():
             if isinstance(key, tuple):

@@ -13,10 +13,16 @@ pythonexec='/home/ecoffet/anaconda3/bin/python'
 
 nbjob=$($pythonexec "$dir/batch_negociate.py")
 
-echo "submitting job"
-
-jobid=`qsub -t 1-$nbjob -v dir="$dir,time=$(date +%s)" cl_negociate.sh`
-
+cur=1
+targ=$(( 200 < nbjob ? 200 : nbjob))
+while (( $cur <= $nbjob ))
+do
+    echo "submitting job from $cur to $targ"
+    jobid=`qsub -t $cur-$targ -v dir="$dir,time=$(date +%s)" cl_negociate.sh`
+    let "cur=targ+1"
+    let "targ=cur+200"
+    targ=$(( targ < nbjob ? targ : nbjob ))
+done
 
 echo "done"
 

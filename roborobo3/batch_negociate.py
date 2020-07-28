@@ -6,6 +6,7 @@ import itertools
 from typing import Sequence
 import platform
 import argparse
+import math
 
 
 def product_dict(d):
@@ -19,58 +20,89 @@ def count_running(runs: Sequence[subprocess.Popen]):
     return sum(int(run.poll() is None) for run in runs)
 
 
+project='negociatesmall'
+runid=1
+runname='bench'
+subname='all'
+default_conf = "config/negociate_small.properties"
 gridconf = {
+    'gInitialNumberOfRobots': [100, 10, 20, 50, 70, 90],
+    'tau': [0, 100000, 50000, 10000, 1000],
+    '_rep': list(range(24//2)),
     '_generation': [203],
     '_sigma': [0.1],
-    '_percentuni': [0.001],
-    'fakeRobots': [True],
-    'tau': [50000],
+    '_percentuni': [0.01],
+    '_algo': ['fitprop'],
+#    '_guess': ['trainedgenomes/negociate_nav_{}.txt']
+    'fakeRobots': [False],
+    'mutCoop': [0.1],
+    'mutProb': [0.01],
+    'mutRate': [0.01],
+    'mutProbCoop': [0.1],
+    'mutProbNegociate': [0.01],
     'evaluationTime': [100000],
-    'totalInvAsInput': [True],
-    'gInitialNumberOfRobots': [750, 1000],
-    ('wander', 'putOutOfGame', 'randomObjectPositions'): [(True, False, True), (False, True, False)]
+    'totalInvAsInput': [True, False],
+    ('wander', 'putOutOfGame', 'randomObjectPositions'): [(True, False, True)],
+    'train': [0]
     }
+
 
 expandedgridconf = list(product_dict(gridconf))
 
-print(len(expandedgridconf))
-if len(sys.argv) == 1:
-    sys.exit(0)
-iconf = int(sys.argv[1]) - 1
 
-try:
-    curtime=time.localtime(int(sys.argv[2]))
-except IndexError:
-    curtime=time.localtime(time.time())
+parser = argparse.ArgumentParser()
+parser.add_argument("-d", "--debug", action="store_true", help="show only the command that will be run")
+parser.add_argument("runid", type=int, default=None, nargs='?', help="id of the run to be started")
+parser.add_argument("time", type=int, default=time.localtime(), nargs='?', help="Time when the batch was started")
+parser.add_argument("conf_file", type=str, default=default_conf, nargs='?')
+script_args = parser.parse_args()
 
-try:
-    conffile=sys.argv[3]
-except IndexError:
-    conffile="config/negociate.properties"
-
-true_type_conf = expandedgridconf[iconf]
-conf = {key: val for key, val in true_type_conf.items()}
-
-
-groupname = f"negociate21-bigarenawander/{time.strftime('%Y-%m-%d-%H%M', curtime)}/"
+cluster = 'cluster' in platform.node()
+nb_runs = 24
+groupname = f"{project}{runid}-{runname}-{subname}/{time.strftime('%Y-%m-%d-%H%M', script_args.time)}/"
 logdir = f"/home/ecoffet/robocoop/logs/{groupname}"
 pythonexec = '/home/ecoffet/.virtualenvs/robocoop/bin/python'
-nb_rep = 24
 batch = "-b"
-cluster = not platform.node().startswith('pecoffet')
-
 if not cluster:
     logdir = f"/home/pecoffet/Documents/work/roborobo3/roborobo3/logs/"
     pythonexec = "python"
-    nb_rep = 1
+    gridconf['_rep'] = list(range(1))
     batch = ""
+    nb_runs = 1
+
+print(int(math.ceil(len(expandedgridconf) / nb_runs)))
+
+
+if script_args.runid is None:
+    sys.exit(0)
 
 os.makedirs(logdir, exist_ok=True)
 
+
+
+iconf = (script_args.runid - 1)
+
+
 curruns = []
 files = []
+
 try:
-    for i in range(nb_rep):
+    for i in range(nb_runs):
+        # wait until there is room to start runs
+        while count_running(curruns) >= 24:
+            time.sleep(10)
+
+        # Load current run
+        try:
+            conf = {key: val for key, val in expandedgridconf[iconf * nb_runs + i].items()}
+        except IndexError: # If there is no more run to do
+            break
+        except Exception as e:
+            print("not the expected Exception")
+            print(type(e), str(e))
+            break
+
+        # Else let's start runs
         # Lets expand the gridconf and add roborobo specific items
         robargs = []
         for key, val in conf.items():
@@ -82,7 +114,9 @@ try:
                 robargs += ['+' + key, str(val)]
 
         name = '_'.join([arg[:7] if arg.startswith('+') else arg for arg in robargs])
-        curpath = logdir + '/' + name + f'/run_{i:02}/'
+        if '_algo' in conf:
+            name += '_' + conf['_algo']
+        curpath = logdir + '/' + name + f'/run_{conf["_rep"]:02}/'
         os.makedirs(curpath, exist_ok=True)
         if cluster:
             outf = open(curpath + 'out.txt', 'w')
@@ -94,22 +128,23 @@ try:
 
         args = [pythonexec, 'pyevoroborobo.py',
                 '--no-movie',
-                '-e', 'fitprop',
+                '-e', str(conf['_algo']),
                 '--percentuni', str(conf['_percentuni']),
                 '-g', str(conf['_generation']),
                 '-s', str(conf['_sigma']),
-                '-l', conffile,
+                '-l', script_args.conf_file,
                 '-p', '1',
                 '-o', curpath,
                 batch,
-                '--'
                 ]
+        if 'guess' in conf:
+            args += ['--guess', conf['guess'].format(conf["gInitialNumberOfRobots"])]
+        args += ['--']
         print(' '.join(args + robargs))
-        run = subprocess.Popen(args + robargs, stdout=outf, stderr=errf)
-        curruns.append(run)
+        if not script_args.debug:
+            run = subprocess.Popen(args + robargs, stdout=outf, stderr=errf)
+            curruns.append(run)
 
-        while count_running(curruns) >= 24:
-            time.sleep(10)
     # wait until everyone finished
     while not count_running(curruns) == 0:
         time.sleep(10)
@@ -120,5 +155,4 @@ finally:
     for file_ in files:
         if file_ is not None:
             file_.close()
-
 print("Over")
