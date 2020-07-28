@@ -6,6 +6,8 @@
  *
  */
 
+#include <Python.h>
+#include <z3.h>
 #include "Config/GlobalConfigurationLoader.h"
 #include "Agents/Robot.h"
 #include "RoboroboMain/roborobo.h"
@@ -174,61 +176,19 @@ void Robot::reset()
 	}
 	else
 	{
-		bool success;
-
-		do {
-			success = true;
-		
-			// pick random coordinate
-			
-            x = (int)(random01() * (double)(gAgentsInitAreaWidth - (2 * gRobotWidth))) + gRobotWidth + gAgentsInitAreaX;
-            y = (int)(random01() * (double)(gAgentsInitAreaHeight - (2 * gRobotHeight))) + gRobotHeight + gAgentsInitAreaY;
-           
-			// check for agents superposition - ie. if picked position is valid vs. already located agents.
-			for ( int i = 0 ; i != _wm->getId() ; i++ )
-			{
-                if ( ( std::abs((double)x - gWorld->getRobot(i)->_wm->_xReal) <= gRobotWidth+1 ) && ( std::abs((double)y - gWorld->getRobot(i)->_wm->_yReal) <= gRobotHeight+1 ) ) // uses square boxes as location approximation
-				{
-					success = false;
-					break; // terminate for statement.
-				}
-			}
-
-			if ( success == false )
-			{
-				continue; // no need to perform next check...
-			}
-			
-			// check if position is valid in environment
-			
-			for ( int i = x - gRobotWidth/2 ; i <= x + gRobotWidth/2 ; i++ )
-			{
-				for ( int j = y - gRobotHeight/2 ; j <= y + gRobotHeight/2 ; j++ ) // && valid == true
-				{
-					// get pixel values
-					Uint8 r, g, b;
-					Uint32 pixel = getPixel32( gEnvironmentImage, i , j);
-					SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b); 
-					
-					int color = ((r<<16)+(g<<8)+b);
-					
-					// check if empty
-					if ( color != ((255<<16)+(255<<8)+255) ) // r=robot, g=obstacle/object, b=unused
-					{
-						success = false;
-					}
-				}
-			}
-
-			tries++;
-				
-		} while ( success == false && tries < gLocationFinderMaxNbOfTrials );
-			
-		if ( tries == gLocationFinderMaxNbOfTrials )
-		{
+	    std::pair<int, int> new_pos;
+	    try
+        {
+            new_pos = findRandomLocation(gLocationFinderMaxNbOfTrials);
+        }
+	    catch (std::runtime_error& err)
+        {
             std::cerr << "[CRITICAL] Random initialization of initial position for agent #" << _wm->getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
-			exit(-1);
-		}
+            std::cerr << err.what() << "\n";
+            exit(-1);
+        }
+	    x = new_pos.first;
+	    y = new_pos.second;
     }
 
 	setCoordReal(x,y);
@@ -309,6 +269,69 @@ void Robot::reset()
 	_agentObserver->reset();
 	_controller->reset();
 
+}
+
+std::pair<int, int> Robot::findRandomLocation(int max_tries) const
+{
+    bool success;
+    int x, y;
+    int tries = 0;
+
+    do {
+        success = true;
+
+        // pick random coordinate
+
+        x = (int)(random01() * (double)(gAgentsInitAreaWidth - (2 * gRobotWidth))) + gRobotWidth + gAgentsInitAreaX;
+        y = (int)(random01() * (double)(gAgentsInitAreaHeight - (2 * gRobotHeight))) + gRobotHeight + gAgentsInitAreaY;
+
+        // check for agents superposition - ie. if picked position is valid vs. already located agents.
+        for (int i = 0 ; i != _wm->getId() ; i++ )
+        {
+            if ( ( std::abs((double)x - gWorld->getRobot(i)->_wm->_xReal) <= gRobotWidth+1 ) && ( std::abs((double)y - gWorld->getRobot(i)->_wm->_yReal) <= gRobotHeight+1 ) ) // uses square boxes as location approximation
+            {
+                success = false;
+                break; // terminate for statement.
+            }
+        }
+
+        if ( !success )
+        {
+            continue; // no need to perform next check...
+        }
+
+        // check if position is valid in environment
+
+        for ( int i = x - gRobotWidth/2 ; i <= x + gRobotWidth/2 ; i++ )
+        {
+            for ( int j = y - gRobotHeight/2 ; j <= y + gRobotHeight/2 ; j++ ) // && valid == true
+            {
+                // get pixel values
+                Uint8 r, g, b;
+                Uint32 pixel = getPixel32( gEnvironmentImage, i , j);
+                SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
+
+                int color = ((r<<16)+(g<<8)+b);
+
+                // check if empty
+                if ( color != ((255<<16)+(255<<8)+255) ) // r=robot, g=obstacle/object, b=unused
+                {
+                    success = false;
+                }
+            }
+        }
+
+        tries++;
+
+    } while ( !success && tries < max_tries );
+    if (success)
+    {
+        return {x, y};
+    }
+    else
+    {
+        throw std::runtime_error("Too many tries to find a random location for the robot.");
+    }
 }
 
 void Robot::callObserverPre()

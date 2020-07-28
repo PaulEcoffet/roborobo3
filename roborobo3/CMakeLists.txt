@@ -5,9 +5,9 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Wall -O3")
 
-find_package(pybind11 REQUIRED)
+#set(PYTHON_EXECUTABLE "/home/pecoffet/anaconda3/bin/python")
 
-# set(PYTHON_EXECUTABLE "/Users/paulecoffet/opt/anaconda3/bin/python")
+find_package(pybind11 REQUIRED)
 
 message("Installing for ${PYTHON_EXECUTABLE}")
 
