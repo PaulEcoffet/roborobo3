@@ -164,12 +164,23 @@ The robot's world_model.
 )doc");
     py::class_<RobotWorldModel, PyWorldModel>(m, "PyWorldModel")
             .def(py::init<>())
-            .def("get_camera_sensors_dist", [](PyWorldModel &own)
-            { return own.getCameraSensorsDist(); })
-            .def("get_ground_sensor_values", [](PyWorldModel &own)
-            { return own.getRobotGroundSensors(); })
-            .def("get_camera_object_ids", [](PyWorldModel &own)
-            { return own.getCameraObjectIds(); })
+            .def("get_camera_sensors_dist", [](PyWorldModel &self) { return self.getCameraSensorsDist(); },
+                 R"doc(
+Returns a numpy array of the normalized distances of the objects seen by the robot sensors. If the distance is 1,
+no object is seen by the sensor. If the distance is 0, the object is completely adjacent to the robot.
+
+Returns
+-------
+A numpy.array of the objects seen by the robot's sensors.
+)doc")
+            .def("get_ground_sensor_values", [](PyWorldModel &self) { return self.getRobotGroundSensors(); },
+                 R"doc(
+Returns a tuple (red, green, blue) from the ground sensor of the robot
+)doc")
+            .def("get_camera_object_ids", [](PyWorldModel &self) { return self.getCameraObjectIds(); },
+                 R"doc(
+Returns a numpy array of the IDs of the objects seen by the robot
+)doc")
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive)
             .def_readwrite("translation", &RobotWorldModel::_desiredTranslationalValue)
             .def_readwrite("rotation", &RobotWorldModel::_desiredRotationalVelocity)
@@ -180,18 +191,18 @@ The robot's world_model.
             .def("step_post", &WorldObserver::stepPost);
     py::class_<World>(m, "World");
     py::class_<Robot>(m, "PyRobot")
-            .def("set_position", [](Robot &own, int x, int y) {
-                own.unregisterRobot();
-                own.setCoord(x, y);
-                own.setCoordReal(x, y);
-                own.registerRobot();
+            .def("set_position", [](Robot &self, int x, int y) {
+                self.unregisterRobot();
+                self.setCoord(x, y);
+                self.setCoordReal(x, y);
+                self.registerRobot();
             }, "x"_a, "y"_a)
-            .def("find_random_location", [](Robot &own) {
+            .def("find_random_location", [](Robot &self) {
                 int x, y;
-                own.unregisterRobot();
-                std::tie(x, y) = own.findRandomLocation(gLocationFinderMaxNbOfTrials);
-                own.setCoord(x, y);
-                own.setCoordReal(x, y);
-                own.registerRobot();
+                self.unregisterRobot();
+                std::tie(x, y) = self.findRandomLocation(gLocationFinderMaxNbOfTrials);
+                self.setCoord(x, y);
+                self.setCoordReal(x, y);
+                self.registerRobot();
             });
 }
