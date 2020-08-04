@@ -61,27 +61,35 @@ public :
     Sint16 getXCenterPixel() { return (Sint16)_xReal; }
     Sint16 getYCenterPixel() { return (Sint16)_yReal; }
 
-    void setCoordinates( double x, double y )
+    void setCoordinates(double x, double y)
     {
         _xReal = x;
         _yReal = y;
     }
 
     virtual void step() = 0;
+
     void stepPhysicalObject(); // default step method. Suggested: call this method from step().
-    
+
     virtual bool canRegister() = 0; // test if register object is possible (use both shape or footprints)
-    virtual void registerObject() = 0; // register object in the world (write images)
+    virtual void registerObject()
+    {
+        std::cerr << "Should not be called\n";
+        exit(-1);
+    }; // register object in the world (write images)
     virtual void unregisterObject() = 0; // unregister object in the world (write blank pixels)
 
-    virtual void isTouched( int __idAgent ) = 0; // callback, triggered by agent
-    virtual void isWalked( int __idAgent ) = 0; // callback, triggered by agent
-    virtual void isPushed( int __id, std::tuple<double, double> __speed ) = 0; // callback, triggered by collision w/ agent/object
-    
+    virtual void isTouched(int __idAgent) = 0; // callback, triggered by agent
+    virtual void isWalked(int __idAgent) = 0; // callback, triggered by agent
+    virtual void
+    isPushed(int __id, std::tuple<double, double> __speed) = 0; // callback, triggered by collision w/ agent/object
+
     virtual void show(SDL_Surface *surface = gScreen) = 0;
+
     virtual void hide() = 0;
-    
-    bool isVisible() { return _visible; }
+
+    bool isVisible()
+    { return _visible; }
     
     bool triggerRegrow();
     

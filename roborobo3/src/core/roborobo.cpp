@@ -181,8 +181,20 @@ bool gInspectorAgent = false; // is there an inspector agent?
 
 int gMaxIt = 0; // note: value *must* be defined in the properties file. ("-1" (ie. infinite) is a nice default setting).
 
+bool gSensoryInputs_physicalObjectType = true;
+bool gSensoryInputs_isOtherAgent = true;
+bool gSensoryInputs_otherAgentGroup = true;
+bool gSensoryInputs_otherAgentOrientation = true;
+bool gSensoryInputs_isWall = true;
+bool gSensoryInputs_groundSensors = true;
+int gSensoryInputs_landmarkTrackerMode = 1;
+bool gSensoryInputs_distanceToLandmark = true;
+bool gSensoryInputs_orientationToLandmark = true;
+bool gSensoryInputs_energyLevel = true;
+
+
 int gNbOfLandmarks = 0;
-std::vector<LandmarkObject*> gLandmarks;
+std::vector<LandmarkObject *> gLandmarks;
 
 int gNbOfPhysicalObjects = 0;
 int gPhysicalObjectDefaultType = 0;
@@ -937,9 +949,8 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
 void initLogging()
 {
 	// test log directory.
-    
-    /*
-     
+
+
     // notes, 2014-09-02: unfortunatly, boost::filesystem is not a header-only boost library...
     // http://www.boost.org/doc/libs/1_53_0/more/getting_started/windows.html#header-only-libraries
      

@@ -1,13 +1,6 @@
-#include <CoopFixed2/include/CoopFixed2Opportunity.h>
-#include <PartnerChoice/include/PartnerChoiceOpportunity.h>
-#include <PartnerControl/include/PartnerControlOpportunity.h>
-#include <CoopFixed2/include/CoopFixed2AnalysisOpportunity.h>
 #include <Lion/include/LionAnalysisOpportunity.h>
 #include <Lion/include/LionOpportunity.h>
-#include <CorrectRepartition/include/CorrectRepartitionOpportunity.h>
-#include <DebugColl/include/DebugCollObj.h>
 #include <Negociate/include/NegociateOpportunity.h>
-#include <Skilled/include/SkilledOpportunity.h>
 #include "World/PhysicalObjectFactory.h"
 #include "World/RoundObject.h"
 #include "World/EnergyItem.h"
@@ -17,7 +10,6 @@
 #include "World/MovableObject.h"
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
-#include "CoopOpportunity2Max/include/CoopOpportunity2MaxMovingObject2Max.h"
 
 int PhysicalObjectFactory::_nextId = 0;
 
@@ -77,37 +69,37 @@ void PhysicalObjectFactory::makeObject( int type )
         case 6:
             if (gVerbose)
                 std::cout << "[INFO] Moving Object 2 max created (type = " << type << ").\n";
-            gPhysicalObjects.push_back( new CoopOpportunity2MaxMovingObject2Max(id));
+            exit(1);
             break;
         case 7:
             if (gVerbose)
                 std::cout << "[INFO] Coop Opportunity 2 Fixed created (type = 7).\n";
-            gPhysicalObjects.push_back( new CoopFixed2Opportunity(id));
+            exit(1);
             break;
         case 8:
             if (gVerbose)
                 std::cout << "[INFO] Partner Choice Opportunity created (type = 8).\n";
-            gPhysicalObjects.push_back( new PartnerChoiceOpportunity(id));
+            exit(1);
             break;
         case 9:
             if (gVerbose)
                 std::cout << "[INFO] Partner Control Opportunity created (type = 9).\n";
-            gPhysicalObjects.push_back( new PartnerControlOpportunity(id));
+            exit(1);
             break;
         case 10:
             if (gVerbose)
                 std::cout << "[INFO] CoopFixed2Analysis Opportunity created (type = 10).\n";
-            gPhysicalObjects.push_back(new CoopFixed2AnalysisOpportunity(id));
+            exit(1);
             break;
         case 11:
             if (gVerbose)
                 std::cout << "[INFO] CorrectRepartition Opportunity created (type = 11).\n";
-            gPhysicalObjects.push_back(new CorrectRepartitionOpportunity(id));
+            exit(1);
             break;
         case 12:
             if (gVerbose)
                 std::cout << "[INFO] Debug Coll obj created (type = 12).\n";
-            gPhysicalObjects.push_back(new DebugCollObj(id));
+            exit(1);
             break;
         case 13:
             if (gVerbose)
@@ -127,7 +119,7 @@ void PhysicalObjectFactory::makeObject( int type )
         case 16:
             if (gVerbose)
                 std::cout << "[INFO] Skilled obj created (type = 15).\n";
-            gPhysicalObjects.push_back(new SkilledOpportunity(id));
+            exit(1);
             break;
             // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:

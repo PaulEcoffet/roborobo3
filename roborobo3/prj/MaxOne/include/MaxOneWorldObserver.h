@@ -10,7 +10,6 @@
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
 #include <network/PyevoInterface.h>
-#include <gzstream.h>
 #include <queue>
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"

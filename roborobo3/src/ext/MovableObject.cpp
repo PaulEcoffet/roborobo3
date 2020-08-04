@@ -83,21 +83,23 @@ void MovableObject::move()
         {
             unregisterObject();
             hide();
-            
+
             if (canRegister(newX, newY))
             {
                 _xReal = _desiredX;
                 _yReal = _desiredY;
                 _didMove = true;
             }
-            
-            //if (_hitWall )  // trigger relocation if object hits wall -- deprecated as of 31/07/2017
-            //{
-            //    registered = false;
-            //    _visible = false;
-            //}
-            //else
-            registerObject();
+
+            if (_hitWall)
+            { // reappear somewhere else
+                registered = false;
+                _visible = false;
+            }
+            else
+            {
+                registerObject();
+            }
         }
         else // silently move offscreen by less than a pixel
         {

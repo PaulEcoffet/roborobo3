@@ -34,6 +34,7 @@
 #include <cstdlib>
 #include <fstream>
 #include <sstream>
+#include <boost/algorithm/string.hpp>
 
 using namespace std;
 using namespace zsu;
@@ -104,11 +105,27 @@ void Properties::load(istream& inStream)
       string value( stripRight(stripLeft(stripAfter(string(valStart, line.end()),'#'))) );
 
       // Added by Nicolas (2017-12-30, roborobo-specific): only one definition per property is allowed in Property file.
-      if ( hasProperty(key) == true )
-      {
-          std::cout << "[ERROR] Properties: Multiple definitions of \"" << key << "\" in Properties file(s). Stopping.\n";
-          exit (-1);
-      }
+        if (hasProperty(key) and key != "allowOverride")
+        {
+            // Added by Paul : This behavior can be overridden
+            std::string allow_override_str = getProperty("allowOverride", "false");
+            boost::to_lower(allow_override_str);
+            bool allow_override = (allow_override_str == "true");
+            if (allow_override)
+            {
+                std::cout << "[OVERRIDE] Property " << key << " going from " << getProperty(key) << " to "
+                          << value << ".\n";
+            }
+            else
+            {
+                std::cout << "[ERROR] Properties: Multiple definitions of \"" << key
+                          << "\" in Properties file(s). Stopping.\n";
+                std::cout << "Add allow_override = true in your property file as the first line to allow override "
+                             "(warning) it's error prone";
+                exit(-1);
+            }
+
+        }
         
       // Convert then store key and value
       key = loadConvert(key);

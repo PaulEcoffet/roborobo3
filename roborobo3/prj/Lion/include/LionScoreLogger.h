@@ -6,7 +6,6 @@
 #define ROBOROBO3_LIONSCORELOGGER_H
 
 
-#include <gzstream.h>
 
 class LionScoreLogger
 {
@@ -22,7 +21,7 @@ public:
     void openNewLog(int gen);
 
 private:
-    ogzstream file;
+    std::ofstream file;
     int m_eval;
     int m_iter;
 

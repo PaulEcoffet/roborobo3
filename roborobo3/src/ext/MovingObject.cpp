@@ -3,22 +3,20 @@
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
 #include "World/World.h"
-
-#include "../prj/MovingNS/include/MovingNSController.h"
-#include "../prj/MonoRobot/include/MonoRobotController.h"
-#include "../prj/SingleGenome/include/SingleGenomeController.h"
-#include "../prj/TemplateMoving/include/TemplateMovingController.h"
-#include "../prj/CoopOpportunity2Max/include/CoopOpportunity2MaxController.h"
-
+#include "SDL2/SDL.h"
+#include "WorldModels/RobotWorldModel.h"
 
 
 #include <iomanip>
+#include <core/Utilities/Graphics.h>
 
-MovingObject::MovingObject( int __id ) : CircleObject ( __id )
+MovingObject::MovingObject(int __id) : CircleObject(__id)
 {
     setType(5);
-    for (auto& totEff: _totalEfforts)
+    for (auto &totEff: _totalEfforts)
+    {
         totEff = 0;
+    }
 }
 
 void MovingObject::reset()
@@ -130,41 +128,6 @@ void MovingObject::step()
 
     // remember the total effort of the current iteration
     _totalEfforts[gWorld->getIterations()%_memorySize] = totalEffort;
-    
-    for (auto robotID: _nearbyRobots)
-    {
-        Robot *robot = gWorld->getRobot(robotID);
-    
-        // see how much the robot helped push us
-        double effort = 0;
-        if (_efforts.count(robotID+gRobotIndexStartOffset) > 0)
-        {
-            effort = _efforts[robotID+gRobotIndexStartOffset];
-        }
-        std::string projectName = gProperties.getProperty("ConfigurationLoaderObjectName");
-        
-        if (projectName == "MovingNSConfigurationLoader")
-        {
-            MovingNSController *ctl = dynamic_cast<MovingNSController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
-        }
-        else if (projectName == "MonoRobotConfigurationLoader")
-        {
-            MonoRobotController *ctl = dynamic_cast<MonoRobotController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
-        }
-        else if (projectName == "SingleGenomeConfigurationLoader")
-        {
-            SingleGenomeController *ctl = dynamic_cast<SingleGenomeController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
-        }
-        else if (projectName == "CoopOpportunity2MaxConfigurationLoader")
-        {
-            CoopOpportunity2MaxController *ctl = dynamic_cast<CoopOpportunity2MaxController *>(robot->getController());
-            ctl->wasNearObject(_id, _didMove, totalEffort, effort, _nbNearbyRobots);
-            
-        }
-    }
     _nearbyRobots.clear();
     _efforts.clear();
     stepPhysicalObject();

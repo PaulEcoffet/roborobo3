@@ -10,7 +10,6 @@
 #include <Observers/WorldObserver.h>
 #include <json/json.hpp>
 #include <set>
-#include <gzstream.h>
 #include "World/World.h"
 #include "Agents/Robot.h"
 
@@ -37,7 +36,7 @@ protected:
     int m_curInd;
 
 
-    ogzstream m_log;
+    std::ofstream m_log;
 
     json::iterator m_genomesIt;
 

@@ -288,10 +288,9 @@ void NegociateWorldObserver::stepPre()
                 wm->seeking = true;
                 if (NegociateSharedData::putOutOfGame)
                 {
-                    rob->findRandomLocation(gAgentsInitAreaX,
-                                            gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                            gAgentsInitAreaY,
-                                            gAgentsInitAreaY + gAgentsInitAreaHeight);
+                    const auto new_pos = rob->findRandomLocation(gLocationFinderMaxNbOfTrials);
+                    rob->setCoord(new_pos.first, new_pos.second);
+                    rob->setCoordReal(new_pos.first, new_pos.second);
                 }
             }
         }
@@ -310,10 +309,12 @@ void NegociateWorldObserver::stepPost()
     {
         for (auto rid: robotsToTeleport)
         {
-            m_world->getRobot(rid)->unregisterRobot();
-            m_world->getRobot(rid)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                                       gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
-            m_world->getRobot(rid)->registerRobot();
+            auto *rob = m_world->getRobot(rid);
+            rob->unregisterRobot();
+            const auto new_pos = rob->findRandomLocation(gLocationFinderMaxNbOfTrials);
+            rob->setCoord(new_pos.first, new_pos.second);
+            rob->setCoordReal(new_pos.first, new_pos.second);
+            rob->registerRobot();
         }
     }
 
@@ -716,7 +717,8 @@ void NegociateWorldObserver::addObjectToTeleport(int id)
 void NegociateWorldObserver::logSeekTime()
 {
     std::cout << "Saving seek time" << std::endl;
-    ogzstream f_seektime((gLogDirectoryname + "/seektime_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
+    std::ofstream f_seektime(
+            (gLogDirectoryname + "/seektime_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
     f_seektime << "id\tseekCount\n";
     for (int i = 0; i < m_nbIndividuals; i++)
     {

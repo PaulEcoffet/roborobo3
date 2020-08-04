@@ -32,7 +32,7 @@ Pyroborobo::Pyroborobo(std::string properties_file, py::object worldObserverClas
 {
     int argc = 0;
     char *argv[] = {};
-    loadProperties(properties_file);
+    loadProperties(properties_file, argc, argv);
     this->overrideProperties(options);
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass);

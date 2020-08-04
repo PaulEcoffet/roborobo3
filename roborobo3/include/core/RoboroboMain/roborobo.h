@@ -146,6 +146,7 @@ extern bool gInspectorMode;			// defines if manual control is robot-centered or 
 extern bool gInspectorAgent;		// defines if there *actually* is an inspector agent (note: if using batch mode for, e.g. evolution, no inspector agent is needed)
 
 extern int gMaxIt;
+extern bool gExtendedSensoryInputs;
 
 extern int gNbOfLandmarks;
 extern std::vector<LandmarkObject*> gLandmarks; // list of inanimate objects (landmarks).

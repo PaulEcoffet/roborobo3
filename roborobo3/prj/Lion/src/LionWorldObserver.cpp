@@ -525,8 +525,11 @@ void LionWorldObserver::setWhichRobotsPlay()
         auto wm = dynamic_cast<LionWorldModel *>(gWorld->getRobot(*index)->getWorldModel());
         wm->setAlive(true);
         m_world->getRobot(*index)->unregisterRobot();
-        m_world->getRobot(*index)->findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX + gAgentsInitAreaWidth,
-                                                      gAgentsInitAreaY, gAgentsInitAreaY + gAgentsInitAreaHeight);
+        const auto new_pos = m_world->getRobot(*index)->findRandomLocation(gLocationFinderMaxNbOfTrials);
+        const int x = new_pos.first;
+        const int y = new_pos.second;
+        m_world->getRobot(*index)->setCoord(x, y);
+        m_world->getRobot(*index)->setCoordReal(x, y);
         m_world->getRobot(*index)->registerRobot();
         m_curnbparticipation[*index]++;
 

@@ -9,7 +9,6 @@
 #include <Observers/WorldObserver.h>
 #include <World/World.h>
 #include <network/PyevoInterface.h>
-#include <gzstream.h>
 #include <queue>
 #include "Utilities/LogManager.h"
 #include "json/json.hpp"
@@ -52,7 +51,7 @@ public:
 
 protected:
     World *m_world;
-    ogzstream m_fitnessLogManager;
+    std::ofstream m_fitnessLogManager;
 
     //cv::VideoWriter outvid;
 
@@ -76,7 +75,7 @@ protected:
 
     std::set<int> robotsToTeleport;
     std::set<int> objectsToTeleport;
-    ogzstream m_logall;
+    std::ofstream m_logall;
 
 
     std::vector<double> variabilityCoef;

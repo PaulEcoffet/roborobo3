@@ -1,3 +1,6 @@
+#include <ext/Config/NegociateConfigurationLoader.h>
+#include <ext/Config/MaxOneConfigurationLoader.h>
+#include <ext/Config/LionConfigurationLoader.h>
 #include "Config/ConfigurationLoader.h"
 #include "Config/TemplateWanderConfigurationLoader.h"
 #include "Config/TemplateBoidsConfigurationLoader.h"
@@ -12,72 +15,42 @@
 
 ConfigurationLoader::ConfigurationLoader()
 {
-	//nothing to do
+    //nothing to do
 }
 
 ConfigurationLoader::~ConfigurationLoader()
 {
-	//nothing to do
+    //nothing to do
 }
 
 ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string configurationLoaderObjectName)
 {
-	if (0)
-	{
-		// >>> Never reached
-	}
-#if defined PRJ_TEMPLATEWANDER || !defined MODULAR
-	else if (configurationLoaderObjectName == "TemplateWanderConfigurationLoader" )
-	{
-		return new TemplateWanderConfigurationLoader();
-	}
-#endif
-#if defined PRJ_TEMPLATEBOIDS || !defined MODULAR
-	else if (configurationLoaderObjectName == "TemplateBoidsConfigurationLoader" )
-	{
-		return new TemplateBoidsConfigurationLoader();
-	}
-#endif
-#if defined PRJ_TEMPLATERANDOMWALK || !defined MODULAR
-	else if (configurationLoaderObjectName == "TemplateRandomwalkConfigurationLoader" )
-	{
-		return new TemplateRandomwalkConfigurationLoader();
-	}
-#endif
-#if defined PRJ_TEMPLATEEE || !defined MODULAR
-    else if (configurationLoaderObjectName == "TemplateEEConfigurationLoader" )
+    if (0)
     {
-        return new TemplateEEConfigurationLoader();
+        // >>> Never reached
+    }
+#if defined PRJ_NEGOCIATE || !defined MODULAR
+    else if (configurationLoaderObjectName == "NegociateConfigurationLoader")
+    {
+        return new NegociateConfigurationLoader();
     }
 #endif
-#if defined PRJ_TEMPLATEVANILLAEE || !defined MODULAR
-	else if (configurationLoaderObjectName == "TemplateVanillaEEConfigurationLoader" )
-	{
-		return new TemplateVanillaEEConfigurationLoader();
-	}
+#if defined PRJ_MAXONE || !defined MODULAR
+    else if (configurationLoaderObjectName == "MaxOneConfigurationLoader")
+    {
+        return new MaxOneConfigurationLoader();
+    }
 #endif
-#if defined PRJ_TEMPLATEMEDEA || !defined MODULAR
-	else if (configurationLoaderObjectName == "TemplateMedeaConfigurationLoader" )
-	{
-		return new TemplateMedeaConfigurationLoader();
-	}
+#if defined PRJ_LION || !defined MODULAR
+    else if (configurationLoaderObjectName == "LionConfigurationLoader")
+    {
+        return new LionConfigurationLoader();
+    }
 #endif
-#if defined PRJ_FORAGINGREGIONS || !defined MODULAR
-	else if (configurationLoaderObjectName == "ForagingRegionsConfigurationLoader" )
-	{
-		return new ForagingRegionsConfigurationLoader();
-	}
-#endif
-#if defined PRJ_TUTORIAL || !defined MODULAR
-	else if (configurationLoaderObjectName == "TutorialConfigurationLoader" )
-	{
-		return new TutorialConfigurationLoader();
-	}
-#endif
-    //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
-	else
-	{
-		return NULL;
-	}
+        //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
+    else
+    {
+        return NULL;
+    }
 
 }

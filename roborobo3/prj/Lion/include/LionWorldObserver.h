@@ -57,7 +57,7 @@ public:
 
 protected:
     World *m_world;
-    ogzstream m_fitnessLogManager;
+    std::ofstream m_fitnessLogManager;
 
     int m_curEvaluationInGeneration;
     int m_curEvaluationIteration;
@@ -77,7 +77,7 @@ protected:
     void loadGenomesInRobots(const std::vector<std::vector<double>> &genomes);
 
     std::set<int> objectsToTeleport;
-    ogzstream m_logall;
+    std::ofstream m_logall;
     std::vector<double> variabilityCoef;
 
 

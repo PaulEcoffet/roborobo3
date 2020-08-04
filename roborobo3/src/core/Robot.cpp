@@ -336,11 +336,6 @@ void Robot::callObserverPre()
 	_agentObserver->stepPre();
 }
 
-void Robot::callObserverPre()
-{
-	_agentObserver->stepPre();
-}
-
 void Robot::callObserverPost()
 {
     _agentObserver->stepPost();
