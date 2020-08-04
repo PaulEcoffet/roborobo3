@@ -49,19 +49,21 @@ class Robot : public Agent
 		Robot( World *__world );
 		virtual ~Robot();
 
-		void reset();
+		void reset() override;
 
-		virtual void stepBehavior();
-		virtual void stepBehavior(const Uint8* __keyboardStates);
+		void stepBehavior() override;
+		void stepBehavior(const Uint8* __keyboardStates) override;
 
-		void callObserverPre(); // call the embedded genetic engine -- always called before stepBehavior.
+		void callObserverPre(); // always called before stepBehavior.
+
+        void callObserverPost(); // always called after stepBehavior.
 
 		void applyDynamics(); // use transl/rot delta to compute x/y delta.
 
 		//Moves the agent
 		void move( int __recursiveIt = 0 );
 		
-		void show(SDL_Surface *surface = gScreen);
+		void show(SDL_Surface *surface = gScreen) override;
 
 		bool isCollision();
 
@@ -69,9 +71,6 @@ class Robot : public Agent
 		
 		void registerRobot();
 		void unregisterRobot();
-    
-        int findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax);
-        // the interval is [min, max[
 		
 		void behaviorUpdate_remoteController(const Uint8* __keyStates);
 
@@ -79,17 +78,17 @@ class Robot : public Agent
         AgentObserver* getObserver() { return _agentObserver; }
 		WorldObserver* getWorldObserver();
         RobotWorldModel* getWorldModel() { return _wm; }
-
+    
         virtual std::string inspect( std::string prefix = "" );
-
+    
 		void displayInfo(); // display input/output values on console. (used for inspect agent mode, cf. help on console) -- keep it simple: one line only.
 
+        std::pair<int, int> findRandomLocation(int max_tries) const;
 
-		// return a list of agents in the vincinity (ie. in the communication area)
+    // return a list of agents in the vincinity (ie. in the communication area)
 		// the content of this list depends on the max communication range (see properties file).
 		// works only if communication network is active.
 		/* std::vector<int> getNeighbors(); */
-	void callObserverPost();
 };
 
 

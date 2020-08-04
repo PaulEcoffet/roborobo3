@@ -34,6 +34,7 @@ extern std::string gCompileTime;
 extern std::string gCompileDate;
 
 extern bool gVideoRecording;
+extern bool gFullLoggerRecording;
 extern bool gOutputImageFormat;
 
 extern bool gTrajectoryMonitor;
@@ -44,8 +45,6 @@ extern bool gCustomSnapshot_showLandmarks;
 extern bool gCustomSnapshot_showObjects;
 extern bool gCustomSnapshot_showRobots;
 extern bool gCustomSnapshot_showSensorRays;
-
-// extern std::vector<std::string> gRemainingCommandLineParameters;     //todelete: 2014-09-17, deprecated
 
 
 // files
@@ -113,13 +112,33 @@ extern bool gMovableObjects; // enable physics for moving (some) objects
 
 extern bool gRobotDisplayFocus;  // make focused robot more visible
 
-extern bool gRadioNetwork;			// update radio network.
+#define SENSOR_RAY_RED 224   //192,192,255
+#define SENSOR_RAY_GREEN 224
+#define SENSOR_RAY_BLUE 255
+#define SENSOR_RAY_CONTACT_RED 255   //255,0,0
+#define SENSOR_RAY_CONTACT_GREEN 192
+#define SENSOR_RAY_CONTACT_BLUE 192
 
 extern int gDisplaySensors; // display sensor rays on screen (0:no,1:if-contact,2:always+red,3:always)
 extern bool gDisplayTail; // display tail on screen (back of robot)
 extern bool gRobotLEDdisplay; // display LED status (RGB) on top of the robot
 
-extern bool gExtendedSensoryInputs; // adds type of object or class of agents in controller sensory inputs.
+//extern bool gExtendedSensoryInputs; // DEPRECATED AND REMOVED AS OF 2017-12-28. Check TemplateEEController::getInputs() for help.
+extern bool gSensoryInputs_distanceToContact;
+extern bool gSensoryInputs_physicalObjectType;
+extern bool gSensoryInputs_isOtherAgent;
+extern bool gSensoryInputs_otherAgentGroup;
+extern bool gSensoryInputs_otherAgentOrientation;
+extern bool gSensoryInputs_isWall;
+extern bool gSensoryInputs_groundSensors;
+extern int gSensoryInputs_landmarkTrackerMode;
+extern bool gSensoryInputs_distanceToLandmark;
+extern bool gSensoryInputs_orientationToLandmark;
+extern bool gSensoryInputs_energyLevel;
+
+extern bool gReentrantMapping_motorOutputs;
+extern bool gReentrantMapping_virtualOutputs;
+extern int gVirtualOutputs;
 
 extern bool gPauseMode;				// pause on/off (default is on)
 extern bool gStepByStep;
@@ -181,6 +200,7 @@ extern int gInspectorAgentYStart;
 
 // max nb of trials when looking for a location for a physical object or a robot
 extern int gLocationFinderMaxNbOfTrials;
+extern bool gLocationFinderExitOnFail;
 
 // area where objects can be randomly located (ie. not a constraint over explicit location)
 extern int gPhysicalObjectsInitAreaX;
@@ -239,8 +259,6 @@ extern bool gFootprintImage_restoreOriginal; // If true, then any object footpri
 // general purpose
 extern SDL_Event gEvent; //The event structure
 
-extern int gMaxRadioDistance;
-
 // robot dynamics and structure
 extern float gMaxTranslationalSpeed; // pixels/sec.
 extern float gMaxTranslationalDeltaValue; // default: = gMaxTranslationSpeed (however, may favor bang-bang)
@@ -258,7 +276,7 @@ void clean_up();
 void displayHelp();
 void inspectAtPixel(int xIns, int yIns);
 bool checkEvent();
-bool handleKeyEvent(Uint8 *keyboardStates);
+bool handleKeyEvent(const Uint8 *keyboardStates);
 void updateDisplay();
 void initLogging();
 void stopLogging();

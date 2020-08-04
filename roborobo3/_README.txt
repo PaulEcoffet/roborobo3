@@ -2,7 +2,7 @@
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 =-=-=-=-=-=-=-=-=-=-=-= ROBOROBO.3=-=-=-=-=-=-=-=
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-=- 2008-2017 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+=- 2008-2018 -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
 -=-=-=-= nicolas.bredeche(at)upmc.fr -=-=-=-=-=-=
 =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
@@ -25,13 +25,13 @@ If roborobo is installed and running, and you want to quickly get into the code,
 
 ==== DESCRIPTION ====
 
-Roborobo! is a fast and simple 2D mobile robot simulator written in C++ loosely based on a khepera/epuck model. It is targeted for fast single and multi-robots simulation (primary motivation is evolutionary robotics et swarm/collective robotics). Its dependencies to external libraries are kept to the minimum (SDL 2 and BOOST) and the code rely on a simple philosophy: "Keep it simple". It can be compiled with a simple Makefile. And new projects can be introduced quickly and easily. Any new project can be created in a dedicated location in the prj/ directory, without any modifications to the roborobo core.
+Roborobo! is a fast and simple 2D mobile robot simulator written in C++ loosely based on a khepera/epuck model. It is targeted for fast single and multi-robots simulation (primary motivation is evolutionary robotics et swarm/collective robotics). Its dependencies to external libraries are kept to the minimum (SDL 2, BOOST and EIGEN) and the code rely on a simple philosophy: "Keep it simple". It can be compiled with a simple Makefile. And new projects can be introduced quickly and easily. Any new project can be created in a dedicated location in the prj/ directory, without any modifications to the roborobo core.
 
 Some random bits of information:
 - Robot position and mouvement are real-valued (ie. precise)
 - Collision is performed on a pixel-based information for fast speed (ie. fast but not precise)
 - both GUI mode and batch mode are available. Note that batch mode is the fastest mode (gBatchMode=true, gVerbose=false). It also makes it possible to run roborobo "headless", which is useful if you use a cluster of computers.
-- only two external dependencies: SDL2 and SDL2_image library (multi-platform fast 2D library), and the boost librairy, header-only.
+- only three external dependencies: SDL2 and SDL2_image library (multi-platform fast 2D library), the boost librairy (header-only) and Eigen (only required to use Echo State Network).
 - most parameters are to be found in the config/ subdirectory (e.g. default.properties)
 - full environment and robot specifications can set up directly with an image editor (check data directories). E.g. Robot proximity sensor positions are set up in the robot image. 
 - you can specify a properties file as command line option (see "./roborobo -h" for help)
@@ -50,6 +50,7 @@ Some random bits of information:
 The current version is Roborobo.3 (since 2016).
 Compared to version 1, it requires Boost as dependencies.
 Compared to version 2, it uses SDL2 instead of SDL1.2
+Compared to version 2 and version 3 prior to April 16th 2018, uses Eigen (to implement echo state networks)
 Of course, every version changes also included heavy useful upgrades.
 
 ==== CREDITS ====
@@ -58,7 +59,6 @@ roborobo!:
  - main developper: nicolas.bredeche(at)upmc.fr
 included contributions:
  - the Properties class from Evert Haasdijk (VU Amsterdam)
- - box-muller algorithm from Everett F. Carter Jr. (1994) - ref: http://www.taygeta.com/random/gaussian.html
  - other contribs are mentionned in the code (check: core/Misc.h and contrib/*)
  - past contributor(s): Jean-Marc Montanier, Leo Cazenille, Pierre Delarboulas
 
@@ -88,16 +88,16 @@ The paper is available on Arxiv: http://arxiv.org/abs/1304.2888
 
 ** VERY QUICK START **
 
-Check the Template* projects in prj/ (start with TemplateRandomwalk, then TemplateBoids). Everything you need is there. The code is meant to illustrate how it worksand contains a lot of comments.
+Check the projects in prj/ starting with the "Tutorial" project. Everything you need is there. The code is meant to illustrate how it worksand contains a lot of comments.
 Check also the config/ directory, which contains "properties" files, used to launch a particular instance of roborobo. It specifies both parameters and project classes to be used.
 A typical command to launch roborobo is: './roborobo -l config/boids.properties'
 
 If you want to start coding:
-1. clone a project (go to prj/, use the clone_project.py script)
-2. create your own config file (go to config/, copy an existing file)
-3. add your project to the Makefile (use makefile_manager script)
-4. compile ('make')
-5. run ('./roborobo -l config/myconfigurationfile.properties')
+1. clone a project (go to prj/, use the clone_project.py script). E.g. "python2 clone_project.py Tutorial MyProjectName"
+2. create your own config file (go to config/, copy an existing file). E.g. in the config/ directory, "cp Tutorial.properties myProjectName.properties"
+3. add your project to the Makefile (use makefile_manager script). E.g. "./makefile-manager -a MyProjectName"
+4. compile. E.g. "make" or "make -j16" (if you have a 16 cores CPU)
+5. run. E.g. "./roborobo -l config/myProjectName.properties"
 
 Detailed example, based on cloning the TemplateRandomWalk project:
 
@@ -144,7 +144,7 @@ The philosophy is that in the standard case, the designer should be able to code
 From the Controllers, you can access the world and robot(s) world-models. All the rest is simulator-specific implementation.
 - of course, you may want to create a new properties file in the config sub-directory
 
-** SIMULATION UPDATE CYCLE **
+** SIMULATION INIT AND UPDATE CYCLE **
 
 Roborobo is turn-based with randomized-ordering updates for both objects and robots. Randomization is used to break any ordering effects, and updates for control and movements are asynchroneous. The update ordering is the following (check World::updateWorld):
 
@@ -156,20 +156,33 @@ Roborobo is turn-based with randomized-ordering updates for both objects and rob
 6. call a world observer (WorldObserve::.stepPost()), ie. observe (and possibly modify) the state of the world *after* the robots moved
 
 More general information about the simulation update cycle:
-    - Prior to this update cycle, a World::initWorld() is called to setup the whole simulation.
-    - Observers are pretty useful for logging data.
-	- AgentObserver is called N times per iterations (N = nb of agents)
-	- WorldObserver is called once per iterations
-	- Update method: turn-based, synchroneous and shuffle-ordered update method.
-		- update method call sequence: WorldObserver => N_a * agentObservers => (N_e * energyPoints update) => N_a * agent steps => N_a agent moves
-			- worldObserver is called *before* agentObservers, agentObservers are all called *before* agent.stepBehavior
-			- environment physics and actual moving of agents are performed in a row *after* all agent.stepBehavior has been called
-			- Agent position movements is performed using synchroneous position updates. Hence, solving collisions is robust to agent index ordering
-		- the update ordering is shuffled for each new world iterations, ie. agent indexes are shuffled (to avoid update ordering nasty effects accross time)
-			- a typical problem if shuffling is not done is that agents with low indexes always act and move first, hence a big survival advantage.
-			- however, agentObservers and agent.stepBehavior are called in the same order (ie. no re-shuffling)
-	- WorldModel: contains all information on on agent, ie. its representation of the outside world, including its own status (e.g. energy level).
-		- in practical, neither controlarchitecture or observers should contain general agent-related information. All should be stored in the worldmodel.
+- Observers are pretty useful for logging data.
+- AgentObserver is called N times per iterations (N = nb of agents)
+- WorldObserver is called once per iterations
+- Update method: turn-based, synchroneous and shuffle-ordered update method.
+- update method call sequence: WorldObserver => N_a * agentObservers => (N_e * energyPoints update) => N_a * agent steps => N_a agent moves
+- worldObserver is called *before* agentObservers, agentObservers are all called *before* agent.stepBehavior
+- environment physics and actual moving of agents are performed in a row *after* all agent.stepBehavior has been called
+- Agent position movements is performed using synchroneous position updates. Hence, solving collisions is robust to agent index ordering
+- the update ordering is shuffled for each new world iterations, ie. agent indexes are shuffled (to avoid update ordering nasty effects accross time)
+- a typical problem if shuffling is not done is that agents with low indexes always act and move first, hence a big survival advantage.
+- however, agentObservers and agent.stepBehavior are called in the same order (ie. no re-shuffling)
+- WorldModel: contains all information on on agent, ie. its representation of the outside world, including its own status (e.g. energy level).
+- in practical, neither controlarchitecture or observers should contain general agent-related information. All should be stored in the worldmodel.
+
+Prior to this update cycle, a World::initWorld() is called to setup the whole simulation. The initialisation order is:
+1. call WorldObserver::initPre() -- does nothing by default. User-implementation is possible.
+2. initialise landmarks
+3. initialise objects
+4. initialise robots
+5. call WorldObserver::initPost() -- does nothing by default. User-implementation is possible.
+
+More general information about the simulation initialization:
+- WorldObserver's initPre() and initPost() methods are useful to log the state of the world before simulation starts (especially initPost()).
+    - initPre() is called before landmarks/objects/robots are set up according to the Properties file
+    - initPost() is called after landmarks/objects/robots are set up according to the Properties file, ie. just before simulation starts
+    - These methods can also be used to change/initialize the simulation, e.g. setting up specifics (e.g. add/remove/move some objects, robots, landmarks)
+- initialisation uses information from the Properties file
 
 The best way to learn is to practice. Clone an existing project and toy with it. See next paragraph to start playing.
 
@@ -191,6 +204,23 @@ A last remark: roborobo! is not exactly the paragon of Clean Coding philosophy a
 - core   : core roborobo! code. Contains the elementary elements for running roborobo.
 - ext    : derived class and extensions for roborobo! code, which may be of global interest. It contains addition to roborobo core, including all code that can be factorised from projects (ie. re-usable code, such as e.g. neural nets, logger), as well as project specific code.
 - contrib: imported code with useful features.
+
+** PROPERTIES FILE **
+
+Properties files are plain-text file where you can specify the parameters for your run with keys and values (e.g. gScreenWidth=800). Some parameters are required by roborobo, some other you can add to fit your needs. It is recommended to clone an existing Properties file if you need to create your own keys and values.
+
+Useful information on Properties file:
+- only one Properties file can be passed as argument to roborobo
+- duplicated symbols are forbidden (i.e. multiple declarations of the same key will trigger a critical error (with message))
+- the main Properties file can import any number of other Properties files (syntax: "import (config/mysecondlevelpropertiesfile.properties)")
+- recursive imports are not allowed (only imports from the main Properties file are done)
+
+the import(.) command can be very useful for two reasons:
+1. to seperate different kind of parameters (e.g. environment-related properties vs agent-related properties)
+2. to re-use a similar subset of parameters in two different experiments
+    Examples:
+        obstacleavoidanceexperiement.properties and foragingexperiment.properties may use the same evolutionaryparameters.properties
+        a defaultsetup.properties could contain the general settings to be imported in experiment-specific Properties files.
 
 
 ** CONTENT OF ./DATA/ : IMAGES OF ROBOTS AND ENVIRONMENT **

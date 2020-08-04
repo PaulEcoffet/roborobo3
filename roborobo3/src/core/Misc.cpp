@@ -20,10 +20,24 @@ std::uniform_real_distribution<double> disRandom(0.0, 1.0);
 std::uniform_int_distribution<int> disRandint(0, std::numeric_limits<int>::max());
 std::normal_distribution<> disNormal(0,1);
 
-double computeModulo( double a , double b )
+
+double getBalance( double a, double b )
 {
-	int result = static_cast<int>( a / b );
-	return a - static_cast<double>( result ) * b;
+    // x vs x => 1.0
+    // x vs 0 => 0.0
+    // 0 vs 0 => -1.0 (divbyzero protection)
+    // f(a,b) = 1.0 - ( ( max(a,b) / ( a+b ) - 0.5 ) * 2.0 ) = 2. - 2. * max(a,b) / (a+b)
+    // constraints: a>=0, b>=0
+    
+    if ( a+b == 0 )
+        return ( -1. );
+    else
+        return ( 2. - 2. * std::max( float(a) , float(b) ) / float( a + b ) );
+}
+
+double getBalance( int a , int b )
+{
+    return getBalance( (double)a, (double)b );
 }
 
 int roundAwayFromZero( double x )

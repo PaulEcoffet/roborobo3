@@ -31,8 +31,6 @@ class Agent
 		virtual void reset() = 0;
     
 	public:
-	
-		//Initializes the variables
 		Agent();
         virtual ~Agent(){};
 				
@@ -44,8 +42,8 @@ class Agent
 
 		virtual std::string inspect(std::string prefix);
     
-		void move();
-        void show(SDL_Surface *surface = gScreen);
+		virtual void move();
+        virtual void show(SDL_Surface *surface = gScreen);
     
 		//Sets the camera over the dot
 		void set_camera();

@@ -46,7 +46,6 @@
 
 #include "RoboroboMain/roborobo.h"
 
-
 // Project headers
 
 #include "Utilities/Graphics.h"
@@ -939,7 +938,7 @@ void initLogging()
 {
 	// test log directory.
     
-
+    /*
      
     // notes, 2014-09-02: unfortunatly, boost::filesystem is not a header-only boost library...
     // http://www.boost.org/doc/libs/1_53_0/more/getting_started/windows.html#header-only-libraries
@@ -1151,7 +1150,7 @@ bool loadProperties( std::string __propertiesFilename, int argc, char* argv[] )
 
     /* Load properties from the command line arguments */
     gProperties.addCommandLineArgs(argc, argv, "+");
-    
+
     // Load properties given in the config file
 	
     std::string s;
@@ -2016,7 +2015,7 @@ bool loadProperties( std::string __propertiesFilename, int argc, char* argv[] )
 	}
 	
 
-	
+
 	return returnValue;
 }
 
@@ -2026,6 +2025,7 @@ bool loadProperties( std::string __propertiesFilename, int argc, char* argv[] )
 
 void initRoborobo(int argc, char* argv[])
 {
+    
 	// load properties
 	if ( loadProperties(gPropertiesFilename, argc, argv) == false )
 	{

@@ -172,14 +172,23 @@ void Robot::reset()
 	}
 	else
 	{
-		tries = findRandomLocation(gAgentsInitAreaX, gAgentsInitAreaX+ gAgentsInitAreaWidth,
-                                   gAgentsInitAreaY, gAgentsInitAreaY+ gAgentsInitAreaHeight);
-		if ( tries == gLocationFinderMaxNbOfTrials )
-		{
+	    std::pair<int, int> new_pos;
+	    try
+        {
+            new_pos = findRandomLocation(gLocationFinderMaxNbOfTrials);
+        }
+	    catch (std::runtime_error& err)
+        {
             std::cerr << "[CRITICAL] Random initialization of initial position for agent #" << _wm->getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). There may be too few (none?) possible locations (you may try to manually set initial positions). EXITING.\n";
-			exit(-1);
-		}
+            std::cerr << err.what() << "\n";
+            exit(-1);
+        }
+	    x = new_pos.first;
+	    y = new_pos.second;
     }
+
+	setCoordReal(x,y);
+    setCoord(x,y);
 
     //Initialize coordinate and displacement
 	_xDelta = 0;
@@ -247,13 +256,84 @@ void Robot::reset()
 	}
     
     for ( int i = 0 ; i < 3 ; i++ )
+    {
         _wm->_groundSensorValue[i] = 0; // floor sensor value (taken from gFootprintImage)
-	
+    }
+
 	// Initialize agent observer and Behavior Control Architecture
   
 	_agentObserver->reset();
 	_controller->reset();
 
+}
+
+std::pair<int, int> Robot::findRandomLocation(int max_tries) const
+{
+    	_agentObserver->stepPost();
+    bool success;
+    int x, y;
+    int tries = 0;
+
+    do {
+        success = true;
+
+        // pick random coordinate
+
+        x = (int)(random01() * (double)(gAgentsInitAreaWidth - (2 * gRobotWidth))) + gRobotWidth + gAgentsInitAreaX;
+        y = (int)(random01() * (double)(gAgentsInitAreaHeight - (2 * gRobotHeight))) + gRobotHeight + gAgentsInitAreaY;
+
+        // check for agents superposition - ie. if picked position is valid vs. already located agents.
+        for (int i = 0 ; i != _wm->getId() ; i++ )
+        {
+            if ( ( std::abs((double)x - gWorld->getRobot(i)->_wm->_xReal) <= gRobotWidth+1 ) && ( std::abs((double)y - gWorld->getRobot(i)->_wm->_yReal) <= gRobotHeight+1 ) ) // uses square boxes as location approximation
+            {
+                success = false;
+                break; // terminate for statement.
+            }
+        }
+
+        if ( !success )
+        {
+            continue; // no need to perform next check...
+        }
+
+        // check if position is valid in environment
+
+        for ( int i = x - gRobotWidth/2 ; i <= x + gRobotWidth/2 ; i++ )
+        {
+            for ( int j = y - gRobotHeight/2 ; j <= y + gRobotHeight/2 ; j++ ) // && valid == true
+            {
+                // get pixel values
+                Uint8 r, g, b;
+                Uint32 pixel = getPixel32( gEnvironmentImage, i , j);
+                SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
+
+                int color = ((r<<16)+(g<<8)+b);
+
+                // check if empty
+                if ( color != ((255<<16)+(255<<8)+255) ) // r=robot, g=obstacle/object, b=unused
+                {
+                    success = false;
+                }
+            }
+        }
+
+        tries++;
+
+    } while ( !success && tries < max_tries );
+    if (success)
+    {
+        return {x, y};
+    }
+    else
+    {
+        throw std::runtime_error("Too many tries to find a random location for the robot.");
+    }
+}
+
+void Robot::callObserverPre()
+{
+	_agentObserver->stepPre();
 }
 
 void Robot::callObserverPre()
@@ -263,7 +343,7 @@ void Robot::callObserverPre()
 
 void Robot::callObserverPost()
 {
-	_agentObserver->stepPost();
+    _agentObserver->stepPost();
 }
 
 void Robot::stepBehavior()
@@ -494,19 +574,15 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 	// apply world dynamics onto this agent
 
 	// * compute real valued delta (convert to x/y delta coordinates)
-
-    /* WARNING : STRONG EDIT, WHEN NOT ALIVE, NO PHYSIC */
-    if (!_wm->isAlive())
-    {
-        return;
-    }
-
+    
 	applyDynamics();
 
 	// * save position
+    
     double xReal_old = _wm->_xReal; // backup old position in case of collision
 	double yReal_old = _wm->_yReal;
-
+	
+	
 	// * update x/y position
 		
 	_xDeltaReal = _wm->_agentAbsoluteLinearSpeed * cos(_wm->_agentAbsoluteOrientation * M_PI / 180);
@@ -515,15 +591,14 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 	_wm->_xReal += _xDeltaReal;
 	_wm->_yReal += _yDeltaReal;	// TODO: round is for positive values... (ok in this case however as 0,0 is up-left)
 
-
-	setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5); // TODO WEIRD CAST HERE (paul)
-
-
+	//setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5); // !n : 2018-07-23 -- original
+    setCoord((int)(_wm->_xReal+0.5),(int)(_wm->_yReal+0.5)); // !n : 2018-07-23
+	
 	// * collision with (image) border of the environment - position at border, then bounce
     
 	if ( isCollision() )
 	{
-		_wm->_desiredTranslationalValue = 0; // cancel any translation order as agent translation speed is set to zero after collision. (note that rotation is still ok)
+        _wm->_desiredTranslationalValue = 0; // cancel any translation order as agent translation speed is set to zero after collision. (note that rotation is still ok)
 		
 		if (_wm->_agentAbsoluteLinearSpeed >= 1.0 )
 		{
@@ -552,8 +627,9 @@ void Robot::move( int __recursiveIt ) // the interface btw agent and world -- in
 		{
 			// special case: agent cannot not move at all - restore original coordinate (remember, _x/yReal are global and modified during recursive call).
 			_wm->_xReal=xReal_old;
-			_wm->_yReal=yReal_old;
-			setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5);
+			_wm->_yReal=yReal_old;			
+			//setCoord((int)_wm->_xReal+0.5,(int)_wm->_yReal+0.5); // !n : 2018-07-23 -- original
+            setCoord((int)(_wm->_xReal+0.5),(int)(_wm->_yReal+0.5)); // !n : 2018-07-23
 		}
 
 		// update world model variables and internal data
@@ -628,6 +704,7 @@ bool Robot::isCollision()
 	else
 	{
         //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collision manager.\n";
+        
 		// * environment objects
 		for ( int i = 0 ; i != gRobotWidth ; i++ )
 			for ( int j = 0 ; j != gRobotHeight ; j++ )
@@ -635,7 +712,7 @@ bool Robot::isCollision()
 				if ( getPixel32( gRobotMaskImage , i , j) != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) // opt: bounding box instead of pixel-to-pixel test.
 				{
                     // not useful: testing out-of-the-world status
-                    // if ( ( _x + i < 0 ) || ( _x + i  >= gAreaWidth ) || ( _y + j < 0 ) || ( _y + i  >= gAreaHeight ) ) { return true;	}
+                    // if ( ( _x + i < 0 ) || ( _x + i  >= gAreaWidth ) || ( _y + j < 0 ) || ( _y + i  >= gAreaHeight ) ) { return true;	}				
 					Uint32 pixel = getPixel32( gEnvironmentImage , _x+i , _y+j);
 					Uint32 truewhitepixel = SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE);
 					if (  pixel != truewhitepixel)
@@ -896,66 +973,4 @@ void Robot::applyRobotPhysics( )
 std::string Robot::inspect( std::string prefix)
 {
     return _controller->inspect( prefix );
-}
-
-int Robot::findRandomLocation(int __xMin, int __xMax, int __yMin, int __yMax)
-{
-	int tries = 0;
-	int x = 0, y = 0;
-	do {
-		x = randint() % (__xMax - __xMin) + __xMin;
-		y = randint() % (__yMax - __yMin) + __yMin;
-		setCoord(x, y);
-		setCoordReal(x, y);
-		tries++;
-	} while (isCollision() == true && tries < gLocationFinderMaxNbOfTrials);
-
-    if ( tries == gLocationFinderMaxNbOfTrials )
-    {
-        /**/
-        // New method 2019-11-29 -- more efficient, but horribly costly wrt computation. Test *all* possible position, pick a random one. Horrible.
-
-        std::cout << "[DEBUG] FindRandomLocation, Trying *horrible* method.\n";
-
-        tries = 0;
-        int nbLocations = 0;
-
-        std::vector<std::pair<int, int>> locations;
-
-        for (x = __xMin; x < __xMax; x++)
-        {
-            for (y = __yMin; y < __yMax; y++)
-            {
-                setCoord(x, y);
-                setCoordReal(x, y);
-                if (!isCollision())
-                {
-                    locations.emplace_back(x, y);
-                    nbLocations++;
-                }
-            }
-        }
-
-        if (!locations.empty())
-        {
-            int randomIndex = (int) (locations.size() * random01());
-            std::pair<int, int> selectedLocation = locations.at(randomIndex);
-            setCoord(selectedLocation.first, selectedLocation.second);
-            setCoordReal(selectedLocation.first, selectedLocation.second);
-        }
-        else
-        {
-            tries = gLocationFinderMaxNbOfTrials; // Failed.
-        }
-
-        std::cout << "[DEBUG] FindRandomLocation, #positions: " << nbLocations << "\n";
-        /**/
-    }
-	if (tries == gLocationFinderMaxNbOfTrials)
-    {
-        std::cerr << "[CRITICAL] Random position for robot #" << _wm->getId() << " failed. EXITING." << std::endl;
-        exit(-1);
-    }
-//    printf("[DEBUG] Found location (%d, %d) for robot #%d after %d tries\n", _x, _y, _wm->getId(), tries);
-	return tries;
 }

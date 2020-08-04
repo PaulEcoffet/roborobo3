@@ -84,9 +84,8 @@ void EnergyItem::isWalked( int __idAgent )
             break;
     }
 
-    registered = false;
-
     unregisterObject();
+    registered = false;
     hide();
     _visible = false;
 }
@@ -96,4 +95,3 @@ void EnergyItem::isPushed( int __id, std::tuple<double, double> __speed )
     //    if ( gVerbose && gDisplayMode <= 1)
     //        std::cout << "[DEBUG] Physical object #" << this->getId() << " (energy item) pushed by robot/object #" << __id << std::endl;
 }
-

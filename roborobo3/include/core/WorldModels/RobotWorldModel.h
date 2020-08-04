@@ -244,7 +244,7 @@ public:
         _groupId = __groupId;
     }
     
-    int getGroupId(  )
+    int getGroupId( )
     {
         return ( _groupId );
     }

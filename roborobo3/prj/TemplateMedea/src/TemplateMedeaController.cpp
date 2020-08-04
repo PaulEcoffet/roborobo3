@@ -28,6 +28,16 @@ void TemplateMedeaController::initController()
     TemplateEEController::initController();
 }
 
+void TemplateMedeaController::initEvolution()
+{
+    TemplateEEController::initEvolution();
+}
+
+void TemplateMedeaController::stepEvolution()
+{
+    TemplateEEController::stepEvolution();
+}
+
 void TemplateMedeaController::performSelection()
 {
     TemplateEEController::performSelection();
@@ -43,18 +53,26 @@ void TemplateMedeaController::broadcastGenome()
     TemplateEEController::broadcastGenome();
 }
 
+bool TemplateMedeaController::sendGenome( TemplateEEController* __targetRobotController )
+{
+    return TemplateEEController::sendGenome(__targetRobotController);
+}
+
+bool TemplateMedeaController::receiveGenome( Packet* p )
+{
+    return TemplateEEController::receiveGenome(p);
+}
+
 double TemplateMedeaController::getFitness()
 {
-    // nothing to do
-    // if relevant, use _wm->_fitnessValue.
-    return -1;
+    // mEDEA uses no fitness. Set to zero by default.
+    return 0;
 }
 
 void TemplateMedeaController::resetFitness()
 {
     // nothing to do
 }
-
 
 void TemplateMedeaController::updateFitness()
 {

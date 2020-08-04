@@ -211,6 +211,8 @@ bool SquareObject::canRegister()
 
 void SquareObject::registerObject()
 {
+    PhysicalObject::registerObject(); // call to superclass method
+    
     int id_converted = _id + gPhysicalObjectIndexStartOffset;
     Sint16 _xCenterPixel = getXCenterPixel();
     Sint16 _yCenterPixel = getYCenterPixel();
