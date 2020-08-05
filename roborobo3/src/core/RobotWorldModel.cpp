@@ -7,13 +7,16 @@
  *
  */
 
+#include <pybind11/pytypes.h>
 #include "WorldModels/RobotWorldModel.h"
 #include "RoboroboMain/roborobo.h"
 
-RobotWorldModel::RobotWorldModel() : _cameraSensors ( boost::extents[12][7] )
+namespace py = pybind11;
+
+RobotWorldModel::RobotWorldModel() : _cameraSensors(boost::extents[12][7])
 {
     _initSensor = false;
-    
+
     _xReal = 0.0;
     _yReal = 0.0;
 
@@ -27,9 +30,9 @@ RobotWorldModel::RobotWorldModel() : _cameraSensors ( boost::extents[12][7] )
 	_robotLED_red = 255;
     
     _energyRequestValue = 0.0; // default value -- if asked, dont request for energy.
-    
+
     _energyLevel = gEnergyInit;
-    
+
     _desiredTranslationalValue = 0;
     _desiredRotationalVelocity = 0;
 }
@@ -38,9 +41,19 @@ RobotWorldModel::~RobotWorldModel()
 {
 }
 
-void RobotWorldModel::initCameraSensors ( int nbSensors )
+py::object RobotWorldModel::getObservations()
 {
-    if ( _initSensor == true )
+    throw std::runtime_error("Must be implemented by a subclass");
+}
+
+void RobotWorldModel::setActions(py::object)
+{
+    throw std::runtime_error("Must be implemented by a subclass");
+}
+
+void RobotWorldModel::initCameraSensors(int nbSensors)
+{
+    if (_initSensor == true)
     {
         std::cerr << "[ERROR] robot #" << this->getId() << " - tried to initialize sensors a second time.";
         exit(-1);

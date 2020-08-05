@@ -10,6 +10,7 @@
 #include "Config/TemplateMedeaConfigurationLoader.h"
 #include "Config/ForagingRegionsConfigurationLoader.h"
 #include "Config/TutorialConfigurationLoader.h"
+#include "Config/PyNegotiateConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -45,6 +46,12 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
     else if (configurationLoaderObjectName == "LionConfigurationLoader")
     {
         return new LionConfigurationLoader();
+    }
+#endif
+#if defined PRJ_PYNEGOTIATE || !defined MODULAR
+    else if (configurationLoaderObjectName == "PyNegotiateConfigurationLoader")
+    {
+        return new PyNegotiateConfigurationLoader();
     }
 #endif
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//

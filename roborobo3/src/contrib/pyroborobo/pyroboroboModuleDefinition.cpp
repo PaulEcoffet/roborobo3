@@ -10,9 +10,10 @@
 #include <contrib/pyroborobo/PyControllerTrampoline.h>
 #include <core/RoboroboMain/roborobo.h>
 
+#include <utility>
+
 namespace py = pybind11;
 using namespace pybind11::literals;
-
 
 
 PYBIND11_MODULE(pyroborobo, m)
@@ -31,27 +32,27 @@ PYBIND11_MODULE(pyroborobo, m)
                  R"doc(
 Parameters
 ----------
-properties_file : str
+properties_file: str
     Properties file for the roborobo simulator
-world_observer_class : Class inherited from PyWorldObserver or str or None
+world_observer_class: Class inherited from PyWorldObserver or str or None
     Class used to instantiate the WorldObserver. It must inherit from `PyWorldObserver`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
-controller_class : Class inherited from PyController or str or None
+controller_class: Class inherited from PyController or str or None
     Class used to instantiate the Controllers. It must inherit from `PyController`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
-world_model_class : Class inherited from PyWorldModel or str or None
+world_model_class: Class inherited from PyWorldModel or str or None
     Class used to instantiate the WorldModels. It must inherit from `PyWorldModel`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
-agent_observer_class : Class inherited from PyAgentObserver or str or None
+agent_observer_class: Class inherited from PyAgentObserver or str or None
     Class used to instantiate the AgentObservers. It must inherit from `PyAgentObservers`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
@@ -70,14 +71,14 @@ Starts the simulator, creates the window if the batch mode is not activated. Onc
 modify the classes used to instantiate the different modules of the simulator or to change its configuration.
 )doc")
             .def("update", &Pyroborobo::update, "nb_updates"_a,
-                    R"doc(
+                 R"doc(
 Performs a simulator evaluation of `nb_updates' time steps. It is possible to call `update' multiple times.
 
 Returns
 -------
 
-quit : bool
-    quit : has the end of the simulation been requested, either by roborobo itself or by closing the window
+quit: bool
+    quit: has the end of the simulation been requested, either by roborobo itself or by closing the window
 
 Example
 ------------
@@ -121,11 +122,11 @@ The list of all the robots of the roborobo environment in order
 `PyRoborobo.start()` must have been called before using this property
 )doc");
     py::class_<Controller, PyControllerTrampoline>(m, "PyController",
-            R"doc(
+                                                   R"doc(
 Class to extend a Roborobo Controller in python.
 
 ..warning:
-    If the __init__ is override, it is absolutely necessary to call the PyController constructor by doing :
+    If the __init__ is override, it is absolutely necessary to call the PyController constructor by doing:
     ```
     def __init__(self, world_model):
         PyController.__init__(self, world_model)
@@ -180,6 +181,22 @@ Returns a tuple (red, green, blue) from the ground sensor of the robot
             .def("get_camera_object_ids", [](PyWorldModel &self) { return self.getCameraObjectIds(); },
                  R"doc(
 Returns a numpy array of the IDs of the objects seen by the robot
+)doc")
+            .def("get_obs", [](PyWorldModel &self) { return self.getObservations(); },
+                 R"doc(
+Returns a python object containing the obs you need for your python controller.  It can be implemented at your will.
+It can return a numpy.array, a dict, a single value or whatever you want.
+
+It is useful when you want to implement a gym environment.
+)doc")
+            .def("set_actions", [](PyWorldModel &self, py::object actions) {
+                     self.setActions(std::move(actions));
+                 },
+                 R"doc(
+Feed the world model with the action the robot intend to do. It can be implemented at your will.
+It can receive a numpy.array, a dict, a single value or whatever you want.
+
+It is useful when you want to implement a gym environment.
 )doc")
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive)
             .def_readwrite("translation", &RobotWorldModel::_desiredTranslationalValue)

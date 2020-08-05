@@ -249,7 +249,9 @@ public:
         return ( _groupId );
     }
 
+    virtual pybind11::object getObservations();
 
+    virtual void setActions(pybind11::object actions);
 };
 
 

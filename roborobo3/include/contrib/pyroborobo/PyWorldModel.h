@@ -42,6 +42,28 @@ public:
         }
         return res;
     }
+
+    py::object getObservations() override
+    {
+        PYBIND11_OVERLOAD(
+                py::object, /* Return type */
+                RobotWorldModel,      /* Parent class */
+                getObservations,          /* Name of function in C++ (must match Python name) */
+        );
+    }
+
+    void setActions(py::object actions) override
+    {
+        PYBIND11_OVERLOAD(
+                void, /* Return type */
+                RobotWorldModel,      /* Parent class */
+                setActions,          /* Name of function in C++ (must match Python name) */
+                actions
+        );
+
+    }
+
+
 };
 
 #endif //ROBOROBO3_PYWORLDMODEL_H
