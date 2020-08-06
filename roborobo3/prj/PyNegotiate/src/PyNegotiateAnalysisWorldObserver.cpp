@@ -70,10 +70,10 @@ void PyNegotiateAnalysisWorldObserver::reset()
                 wm->lastOwnInvest.clear();
                 wm->lastTotalInvest.clear();
                 wm->nbOnOpp = 2;
-                wm->appendOwnInvest(owncoop);
+                /* wm->appendOwnInvest(owncoop);  TODO FIx */
                 wm->_cooperationLevel = owncoop;
-                wm->appendTotalInvest(othercoop);
-                bool accept = ctl->acceptPlay();
+                /*wm->appendTotalInvest(othercoop); TODO FIX */
+                bool accept = true; /* TODO Fix ctl->acceptPlay(); */
                 m_log << curind << "\t"
                       << owncoop << "\t"
                       << othercoop << "\t"

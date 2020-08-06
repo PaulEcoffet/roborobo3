@@ -15,5 +15,4 @@ WorldModel::WorldModel()
 }
 
 WorldModel::~WorldModel()
-{
-}
+= default;

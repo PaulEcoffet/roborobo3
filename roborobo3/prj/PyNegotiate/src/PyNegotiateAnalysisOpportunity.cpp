@@ -49,7 +49,7 @@ void PyNegotiateAnalysisOpportunity::setNbFakeRobots(int nbrobots)
 
 }
 
-int PyNegotiateAnalysisOpportunity::getNbFakeRobots()
+int PyNegotiateAnalysisOpportunity::getNbFakeRobots() const
 {
     return nbFakeRobots;
 }
@@ -77,8 +77,8 @@ void PyNegotiateAnalysisOpportunity::placeFakeRobot()
         const int objradius = gPhysicalObjectDefaultRadius;
         const int robh = gRobotHeight;
         const int robw = gRobotWidth;
-        int newrobcx = static_cast<int>(round(cx + (objradius + robw / 2) * cos(rot)));
-        int newrobcy = static_cast<int>(round(cy + (objradius + robh / 2) * sin(rot)));
+        int newrobcx = static_cast<int>(round(cx + (objradius + (robw / 2.0) * cos(rot))));
+        int newrobcy = static_cast<int>(round(cy + (objradius + robh / 2.0) * sin(rot)));
         int xpad = 0, ypad = 0;
         fakerobot->unregisterRobot();
         fakerobot->setCoordReal(newrobcx + xpad, newrobcy + ypad);

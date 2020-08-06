@@ -8,6 +8,8 @@
 #include "WorldModels/RobotWorldModel.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
+
 
 namespace py = pybind11;
 
@@ -52,7 +54,7 @@ public:
         );
     }
 
-    void setActions(py::object actions) override
+    void setActions(const py::object &actions) override
     {
         PYBIND11_OVERLOAD(
                 void, /* Return type */

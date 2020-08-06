@@ -57,6 +57,8 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
     else
     {
+        std::cerr << "No configuration loader found. Exiting." << std::endl;
+        exit(1);
         return NULL;
     }
 

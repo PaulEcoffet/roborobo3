@@ -25,7 +25,7 @@ public:
 
     void setNbFakeRobots(int nbrobots);
 
-    int getNbFakeRobots();
+    int getNbFakeRobots() const;
 
     void placeFakeRobot();
 

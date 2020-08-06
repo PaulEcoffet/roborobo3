@@ -7,7 +7,7 @@
  *
  */
 
-#include <pybind11/pytypes.h>
+#include <pybind11/pybind11.h>
 #include "WorldModels/RobotWorldModel.h"
 #include "RoboroboMain/roborobo.h"
 
@@ -38,22 +38,21 @@ RobotWorldModel::RobotWorldModel() : _cameraSensors(boost::extents[12][7])
 }
 
 RobotWorldModel::~RobotWorldModel()
-{
-}
+= default;
 
 py::object RobotWorldModel::getObservations()
 {
     throw std::runtime_error("Must be implemented by a subclass");
 }
 
-void RobotWorldModel::setActions(py::object)
+void RobotWorldModel::setActions(const py::object &actions) // NOLINT
 {
     throw std::runtime_error("Must be implemented by a subclass");
 }
 
 void RobotWorldModel::initCameraSensors(int nbSensors)
 {
-    if (_initSensor == true)
+    if (_initSensor)
     {
         std::cerr << "[ERROR] robot #" << this->getId() << " - tried to initialize sensors a second time.";
         exit(-1);
@@ -64,16 +63,17 @@ void RobotWorldModel::initCameraSensors(int nbSensors)
     _initSensor = true;
 }
 
-void RobotWorldModel::updateLandmarkSensor( int __landmarkId )
+void RobotWorldModel::updateLandmarkSensor(int _landmarkId)
 {
-    if ( __landmarkId > gNbOfLandmarks )
+    if (_landmarkId > gNbOfLandmarks)
     {
-        std::cout << "[ERROR] Landmark " << __landmarkId << " does not exist in RobotWorldModel::updateLandmarkSensor(landmarkId). Exiting." << std::endl;
-        exit (-1);
+        std::cout << "[ERROR] Landmark " << _landmarkId
+                  << " does not exist in RobotWorldModel::updateLandmarkSensor(landmarkId). Exiting." << std::endl;
+        exit(-1);
     }
-    
-    Point2d posRobot(_xReal,_yReal);
-    Point2d landmarkCoordinates = gLandmarks[__landmarkId]->getCoordinates();
+
+    Point2d posRobot(_xReal, _yReal);
+    Point2d landmarkCoordinates = gLandmarks[_landmarkId]->getCoordinates();
     
     double distanceToLandmark = getEuclideanDistance (posRobot,landmarkCoordinates);
     double diffAngleToLandmark = getAngleToTarget(posRobot,_agentAbsoluteOrientation,landmarkCoordinates);
@@ -87,8 +87,10 @@ void RobotWorldModel::updateLandmarkSensor( int __landmarkId )
     // monitoring
     if ( gVerbose && gDisplayMode <= 1 && gMonitorRobot && gRobotIndexFocus == getId() )
     {
-        std::cout << "[ Target landmark " << __landmarkId << " : " << std::setw(8) << diffAngleToLandmark << "°, " <<  std::setw(10) << distanceToLandmark << "pix" << " ] --- [ ";
-        std::cout << "Sensor values  : " << std::setw(4) << getLandmarkDirectionAngleValue() << " , " << std::setw(4) << getLandmarkDistanceValue() << " ] --- [ ";
+        std::cout << "[ Target landmark " << _landmarkId << " : " << std::setw(8) << diffAngleToLandmark << "°, "
+                  << std::setw(10) << distanceToLandmark << "pix" << " ] --- [ ";
+        std::cout << "Sensor values  : " << std::setw(4) << getLandmarkDirectionAngleValue() << " , " << std::setw(4)
+                  << getLandmarkDistanceValue() << " ] --- [ ";
         std::cout << "Battery-level  : " << std::setw(6) << getEnergyLevel() << " ] --- [";
         std::cout << "Energy Requested (if asked) : " << std::setw(4) << getEnergyRequestValue() << " ]" << std::endl;
     }
@@ -107,8 +109,8 @@ void RobotWorldModel::updateLandmarkSensor()
     double distanceToClosestLandmark = 0.0;
     
     // * find closest landmark and compute orientation to it
-    
-    double diffAngleToClosestLandmark;
+
+    double diffAngleToClosestLandmark = 0;
     
     if ( gNbOfLandmarks > 0 )
     {
@@ -132,8 +134,7 @@ void RobotWorldModel::updateLandmarkSensor()
         closestPoint = gLandmarks[iClosest]->getCoordinates();
         diffAngleToClosestLandmark = getAngleToTarget(posRobot,_agentAbsoluteOrientation,closestPoint);
     }
-    else
-        diffAngleToClosestLandmark = 0;
+
     
     // orientation wrt to landmark. mapped to [-1,+1]
     setLandmarkDirectionAngleValue( diffAngleToClosestLandmark / 180.0 );
@@ -142,11 +143,30 @@ void RobotWorldModel::updateLandmarkSensor()
     setLandmarkDistanceValue( distanceToClosestLandmark / (double)(gAreaWidth*gAreaHeight) );
 
     // monitoring
-    if ( gVerbose && gDisplayMode <= 1 && gMonitorRobot && gRobotIndexFocus == getId() )
+    if (gVerbose && gDisplayMode <= 1 && gMonitorRobot && gRobotIndexFocus == getId())
     {
-        std::cout << "[ Closest landmark : " << std::setw(8) << diffAngleToClosestLandmark << "°, " <<  std::setw(10) << distanceToClosestLandmark << "pix" << " ] --- [ ";
-        std::cout << "Sensor values  : " << std::setw(4) << getLandmarkDirectionAngleValue() << " , " << std::setw(4) << getLandmarkDistanceValue() << " ] --- [ ";
+        std::cout << "[ Closest landmark : " << std::setw(8) << diffAngleToClosestLandmark << "°, " << std::setw(10)
+                  << distanceToClosestLandmark << "pix" << " ] --- [ ";
+        std::cout << "Sensor values  : " << std::setw(4) << getLandmarkDirectionAngleValue() << " , " << std::setw(4)
+                  << getLandmarkDistanceValue() << " ] --- [ ";
         std::cout << "Battery-level  : " << std::setw(6) << getEnergyLevel() << " ] --- [";
         std::cout << "Energy Requested (if asked) : " << std::setw(4) << getEnergyRequestValue() << " ]" << std::endl;
     }
+}
+
+void RobotWorldModel::setRobotLED_colorValues(int _r, int _g, int _b)
+{
+    _robotLED_red = _r;
+    _robotLED_green = _g;
+    _robotLED_blue = _b;
+}
+
+double RobotWorldModel::getReward()
+{
+    throw std::runtime_error("Should be overriden");
+}
+
+bool RobotWorldModel::getDone()
+{
+    throw std::runtime_error("Should be overriden");
 }

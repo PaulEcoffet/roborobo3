@@ -5,9 +5,8 @@
 
 
 #include <csignal>
+#include <utility>
 #include <core/Config/GlobalConfigurationLoader.h>
-#include <core/Agents/InspectorAgent.h>
-#include <core/Utilities/Timer.h>
 #include <RoboroboMain/roborobo.h>
 
 #include "Utilities/Graphics.h"
@@ -16,7 +15,6 @@
 #include "contrib/pyroborobo/PyControllerTrampoline.h"
 #include "contrib/pyroborobo/PyWorldModel.h"
 #include "World/World.h"
-#include "Config/GlobalConfigurationLoader.h"
 #include "PyConfigurationLoader.h"
 #include <pybind11/pybind11.h>
 
@@ -26,13 +24,13 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 Pyroborobo::Pyroborobo(std::string properties_file, py::object worldObserverClass, py::object agentControllerClass,
-                       py::object worldModelClass, py::object agentObserverClass, py::dict options)
+                       py::object worldModelClass, py::object agentObserverClass, const py::dict &options)
         :
         currentIt(0)
 {
     int argc = 0;
     char *argv[] = {};
-    loadProperties(properties_file, argc, argv);
+    loadProperties(std::move(properties_file), argc, argv);
     this->overrideProperties(options);
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass);

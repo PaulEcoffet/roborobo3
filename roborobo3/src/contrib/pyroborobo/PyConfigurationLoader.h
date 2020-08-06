@@ -33,6 +33,7 @@ public:
             agentObserverClass(agentObserverClass),
             allocated()
     {
+        assert(fallbackconf != nullptr);
     }
 
     ~PyConfigurationLoader() override

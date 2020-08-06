@@ -23,7 +23,7 @@ public:
                py::object agentControllerClass,
                py::object worldModelClass,
                py::object agentObserverClass,
-               py::dict options);
+               const py::dict &options);
 
     void start();
 

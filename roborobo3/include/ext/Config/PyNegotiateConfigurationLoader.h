@@ -1,4 +1,3 @@
-//
 // Created by paul on 02/11/17.
 //
 
@@ -13,15 +12,15 @@ class PyNegotiateConfigurationLoader : public ConfigurationLoader
 public:
     PyNegotiateConfigurationLoader() = default;
 
-    ~PyNegotiateConfigurationLoader() = default;
+    ~PyNegotiateConfigurationLoader() override = default;
 
-    WorldObserver *make_WorldObserver(World *wm);
+    WorldObserver *make_WorldObserver(World *wm) override;
 
-    RobotWorldModel *make_RobotWorldModel();
+    RobotWorldModel *make_RobotWorldModel() override;
 
-    AgentObserver *make_AgentObserver(RobotWorldModel *wm);
+    AgentObserver *make_AgentObserver(RobotWorldModel *wm) override;
 
-    Controller *make_Controller(RobotWorldModel *wm);
+    Controller *make_Controller(RobotWorldModel *wm) override;
 };
 
 

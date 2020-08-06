@@ -1,6 +1,7 @@
 #include <Lion/include/LionAnalysisOpportunity.h>
 #include <Lion/include/LionOpportunity.h>
 #include <Negociate/include/NegociateOpportunity.h>
+#include <PyNegotiate/include/PyNegotiateOpportunity.h>
 #include "World/PhysicalObjectFactory.h"
 #include "World/RoundObject.h"
 #include "World/EnergyItem.h"
@@ -113,14 +114,26 @@ void PhysicalObjectFactory::makeObject( int type )
             break;
         case 15:
             if (gVerbose)
+            {
                 std::cout << "[INFO] Negociate obj created (type = 15).\n";
+            }
             gPhysicalObjects.push_back(new NegociateOpportunity(id));
             break;
         case 16:
             if (gVerbose)
+            {
                 std::cout << "[INFO] Skilled obj created (type = 15).\n";
+            }
             exit(1);
             break;
+        case 17:
+            if (gVerbose)
+            {
+                std::cout << "[INFO] Skilled obj created (type = 15).\n";
+            }
+            gPhysicalObjects.push_back(new PyNegotiateOpportunity(id));
+            break;
+
             // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")"
@@ -131,7 +144,7 @@ void PhysicalObjectFactory::makeObject( int type )
 
 int PhysicalObjectFactory::getNbOfTypes()
 {
-    return 16;
+    return 17;
 }
 
 

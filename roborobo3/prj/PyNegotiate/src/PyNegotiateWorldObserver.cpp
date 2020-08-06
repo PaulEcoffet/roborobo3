@@ -20,10 +20,10 @@
 using boost::algorithm::clamp;
 
 
-PyNegotiateWorldObserver::PyNegotiateWorldObserver(World *__world) :
-        WorldObserver(__world), robotsToTeleport(), objectsToTeleport(), variabilityCoef()
+PyNegotiateWorldObserver::PyNegotiateWorldObserver(World *world) :
+        WorldObserver(world), robotsToTeleport(), objectsToTeleport(), variabilityCoef()
 {
-    m_world = __world;
+    m_world = world;
     m_curEvaluationIteration = 0;
     m_curEvaluationInGeneration = 0;
     m_generationCount = 0;
@@ -161,8 +161,10 @@ void PyNegotiateWorldObserver::stepPre()
     {
         auto *rob = m_world->getRobot(i);
         auto *wm = dynamic_cast<PyNegotiateWorldModel *>(rob->getWorldModel());
+        wm->reward = 0;
         if (!wm->seeking)
         {
+            wm->wasSeekerLastStep = false;
             if (!PyNegotiateSharedData::wander)
             {
                 wm->_desiredTranslationalValue = 0;
@@ -173,6 +175,7 @@ void PyNegotiateWorldObserver::stepPre()
             {
                 wm->setAlive(true);
                 wm->seeking = true;
+                wm->wasSeekerLastStep = true;
                 if (PyNegotiateSharedData::putOutOfGame)
                 {
                     const auto new_pos = rob->findRandomLocation(gLocationFinderMaxNbOfTrials);
@@ -187,8 +190,10 @@ void PyNegotiateWorldObserver::stepPre()
 void PyNegotiateWorldObserver::stepPost()
 {
     /* Plays */
-    registerRobotsOnOpportunities();
     computeOpportunityImpacts();
+
+    /* Register the robots from previous step */
+    registerRobotsOnOpportunities();
 
     /* Move */
     /* Teleport robots */
@@ -339,16 +344,12 @@ void PyNegotiateWorldObserver::computeOpportunityImpacts()
         int n = opp->getNbNearbyRobots();
         if (n != 0)
         {
-            if (PyNegotiateSharedData::fixRobotNb && n > 2)
-            {
-                n = 2;
-            }
-
             mark_robots_on_opp(opp);
 
             // If we only give reward for the first two robots
-            if (PyNegotiateSharedData::fixRobotNb && opp->getNbNearbyRobots() > 2)
+            if (PyNegotiateSharedData::fixRobotNb && n > 2)
             {
+                n = 2;
                 itmax = opp->getNearbyRobotIndexes().begin() + 2;
             }
 
@@ -364,22 +365,16 @@ void PyNegotiateWorldObserver::computeOpportunityImpacts()
                 double coop = wm->getCoop();
                 agentsCoop[i] = wm->getCoop(true);
                 agentsFake[i] = wm->fakeCoef;
+                agentsAccept[i] = wm->accept;
                 totalInvest += coop;
                 totalA += wm->selfA;
+                everyone_agree = everyone_agree && wm->accept;
                 i++;
             }
 
             if (n > 1)
             {
                 opp->kill();
-                i = 0;
-                for (auto index = opp->getNearbyRobotIndexes().begin(); index != itmax; index++, i++)
-                {
-                    auto *const ctl = dynamic_cast<PyNegotiateController *>(m_world->getRobot(*index)->getController());
-                    bool accept = ctl->acceptPlay();
-                    agentsAccept[i] = accept;
-                    everyone_agree = everyone_agree && accept;
-                }
                 if ((m_generationCount + 1) % PyNegotiateSharedData::logEveryXGen == 0)
                 {
                     m_logall << m_curEvaluationInGeneration << "\t"
@@ -399,13 +394,16 @@ void PyNegotiateWorldObserver::computeOpportunityImpacts()
                     {
                         auto *wm = dynamic_cast<PyNegotiateWorldModel *>(m_world->getRobot(*index)->getWorldModel());
                         wm->seeking = false;
+                        wm->wasSeekerLastStep = true;
                         double coop = wm->getCoop();
                         double curpayoff = payoff(coop, totalInvest, n, wm->selfA, b) /
                                            PyNegotiateSharedData::nbEvaluationsPerGeneration;
+                        wm->reward = curpayoff;
                         if (PyNegotiateSharedData::tau != 0)
                         {
-                            wm->_fitnessValue +=
+                            const double normalized_payoff =
                                     curpayoff * PyNegotiateSharedData::tau / PyNegotiateSharedData::evaluationTime;
+                            wm->_fitnessValue += normalized_payoff;
                         }
                         else
                         {
@@ -473,11 +471,7 @@ double PyNegotiateWorldObserver::payoff(const double invest, const double totalI
 {
     double res = 0;
     const double x0 = (totalInvest - invest);
-    if (PyNegotiateSharedData::atLeastTwo and n < 2)
-    {
-        res = 0; // No payoff if you are alone
-    }
-    else
+    if (!PyNegotiateSharedData::atLeastTwo or n >= 2)
     {
         res = (a * totalInvest + b * x0) / n - 0.5 * invest * invest;
     }

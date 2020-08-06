@@ -57,7 +57,7 @@ void PyNegotiateTrainWorldObserver::computeOpportunityImpacts()
                 double coop = wm->getCoop();
                 totalInvest += coop;
                 totalA += wm->selfA;
-                everyone_agree = everyone_agree && ctl->acceptPlay();
+                everyone_agree = everyone_agree /* && ctl->acceptPlay() TODO Fix */;
             }
 
 
@@ -65,6 +65,7 @@ void PyNegotiateTrainWorldObserver::computeOpportunityImpacts()
             {
                 auto *wm = dynamic_cast<PyNegotiateWorldModel *>(m_world->getRobot(*index)->getWorldModel());
                 double coop = wm->getCoop();
+                /* TODO FIX
                 wm->appendOwnInvest(coop);
 
                 if (PyNegotiateSharedData::onlyOtherInTotalInv)
@@ -75,7 +76,7 @@ void PyNegotiateTrainWorldObserver::computeOpportunityImpacts()
                 {
                     wm->appendTotalInvest(totalInvest);
                 }
-
+                */
                 if (n >= 2)
                 {
                     if (opp->getXCenterPixel() + opp->getYCenterPixel() * 100 != wm->lastvisit)

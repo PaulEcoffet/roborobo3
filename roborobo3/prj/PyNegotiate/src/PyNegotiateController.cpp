@@ -94,57 +94,6 @@ void PyNegotiateController::wander_behavior() const
 
 PyNegotiateController::~PyNegotiateController() = default;
 
-std::vector<double> PyNegotiateController::getInputs()
-{
-    std::vector<double> inputs;
-    inputs = getCameraInputs();
-
-    const std::vector<double> game_inputs(getGameInputs());
-    inputs.insert(inputs.end(), game_inputs.begin(), game_inputs.end());
-    fill_names = false;
-    assert(inputnames.size() == inputs.size());
-    return inputs;
-}
-
-std::vector<double> PyNegotiateController::getCameraInputs() const
-{
-    size_t i = 0;
-    std::vector<double> inputs(getNbCameraInputs(), 0);
-    const int WALL_ID = 0;
-    /*
-     * Camera inputs
-     */
-    for (int j = 0; j < m_wm->_cameraSensorsNb; j++)
-    {
-        bool isOpportunity = false;
-        double nbOnOpp = 0;
-        auto entityId = static_cast<int>(m_wm->getObjectIdFromCameraSensor(j));
-
-        if (entityId >= gPhysicalObjectIndexStartOffset &&
-            entityId < gPhysicalObjectIndexStartOffset + gNbOfPhysicalObjects) // is an Object
-        {
-            auto *opportunity = dynamic_cast<PyNegotiateOpportunity *>(
-                    gPhysicalObjects[entityId - gPhysicalObjectIndexStartOffset]);
-            isOpportunity = true;
-            if (opportunity == m_wm->opp)
-            {
-                nbOnOpp = m_wm->nbOnOpp;
-            }
-            else
-            {
-                nbOnOpp = opportunity->getNbNearbyRobots();
-            }
-        }
-        double dist = m_wm->getDistanceValueFromCameraSensor(j) / m_wm->getCameraSensorMaximumDistanceValue(j);
-        inputs[i++] = (Agent::isInstanceOf(entityId)) ? dist : 1;
-        inputs[i++] = (entityId == WALL_ID) ? dist : 1;
-        inputs[i++] = (isOpportunity) ? dist : 1;
-        inputs[i++] = nbOnOpp;
-    }
-
-    return inputs;
-}
-
 
 void PyNegotiateController::fillNames()
 {
@@ -170,39 +119,6 @@ void PyNegotiateController::fillNames()
         fill_names = false;
     }
 }
-
-std::vector<double> PyNegotiateController::getGameInputs() const
-{
-    std::vector<double> inputs(getNbGameInputs(), 0);
-    size_t i = 0;
-    if (PyNegotiateSharedData::totalInvAsInput)
-    {
-        inputs[i++] =  /* TODO get total invest */ 0 /* end TODO */ / PyNegotiateSharedData::maxCoop;
-    }
-    if (PyNegotiateSharedData::ownInvAsInput)
-    {
-        inputs[i++] = m_wm->getCoop() / PyNegotiateSharedData::maxCoop;
-    }
-    return inputs;
-}
-
-unsigned int PyNegotiateController::getNbInputs() const
-{
-    return getNbCameraInputs() + getNbGameInputs();
-}
-
-unsigned int PyNegotiateController::getNbGameInputs() const
-{
-    return 2;
-}
-
-unsigned int PyNegotiateController::getNbCameraInputs() const
-{
-    const auto nbCameraInputs = static_cast<const unsigned int>(
-            m_wm->_cameraSensorsNb * (4)); // distWall + distRobot + distObj + nbRob
-    return nbCameraInputs;
-}
-
 
 double PyNegotiateController::getFitness() const
 {
@@ -240,21 +156,15 @@ std::string PyNegotiateController::inspect(std::string prefix)
     }
     if (verbose == 1)
     {
-        auto inputs = wm->getInputs();
+        auto inputs_py = m_wm->getObservations();
         out << prefix << "inputs:\n";
-        for (size_t i = 0; i < inputs.size(); i++)
+        int i = 0;
+        for (auto elem : inputs_py)
         {
-            out << prefix << "\t" << inputnames[i] << ":" << inputs[i] << "\n";
+            out << prefix << "\t" << inputnames[i] << ":" << elem.str().cast<std::string>() << "\n";
+            i++;
         }
     }
     verbose = (verbose + 1) % 2;
     return out.str();
-}
-
-unsigned int PyNegotiateController::getNbOutputs() const
-{
-    return 1
-           + (unsigned int) !PyNegotiateSharedData::tpToNewObj // Motor commands
-           + (unsigned int) !PyNegotiateSharedData::fixCoop  // Cooperation value
-            ;
 }

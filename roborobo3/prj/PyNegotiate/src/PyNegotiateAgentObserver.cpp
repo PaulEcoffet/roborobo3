@@ -46,7 +46,7 @@ void PyNegotiateAgentObserver::stepPost()
 
 void PyNegotiateAgentObserver::mark_walking_opp() const
 {
-    Uint8 r, g, b;
+    Uint8 r = 0, g = 0, b = 0;
     Uint32 pixel = getPixel32(gFootprintImage, static_cast<int>(_wm->_xReal + 0.5),
                               static_cast<int>(_wm->_yReal + 0.5));
     SDL_GetRGB(pixel, gFootprintImage->format, &r, &g, &b);

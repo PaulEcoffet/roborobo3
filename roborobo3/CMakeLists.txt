@@ -4,7 +4,7 @@ project(roborobo3)
 
 set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Wall -O3")
+set(CMAKE_CXX_FLAGS "-Wall -O0")
 
 
 SET(PYTHON_EXECUTABLE /home/pecoffet/anaconda3/bin/python)

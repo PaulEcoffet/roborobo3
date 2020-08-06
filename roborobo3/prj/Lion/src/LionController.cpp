@@ -475,11 +475,6 @@ double LionController::getCoopWeight()
 }
 
 
-static inline double normalize(const double value, const double min = 0, const double max = 1)
-{
-    return ((value - min) / (max - min)) * 2 - 1;
-}
-
 double LionController::computeScore(int cost, int nbPart, double owncoop, double totothercoop)
 {
     assert(cost == 0 || cost == 1);

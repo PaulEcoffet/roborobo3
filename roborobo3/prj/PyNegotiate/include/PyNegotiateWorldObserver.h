@@ -23,7 +23,7 @@ using json = nlohmann::json;
 class PyNegotiateWorldObserver : public WorldObserver
 {
 public:
-    explicit PyNegotiateWorldObserver(World *__world);
+    explicit PyNegotiateWorldObserver(World *world);
 
     ~PyNegotiateWorldObserver() override;
 

@@ -16,6 +16,7 @@ WorldObserver *PyNegotiateConfigurationLoader::make_WorldObserver(World *wm)
 {
     bool analysis = false;
     bool train = false;
+    /*
     gProperties.checkAndGetPropertyValue("train", &train, false);
     gProperties.checkAndGetPropertyValue("analysis", &analysis, false);
     if (train)
@@ -27,9 +28,10 @@ WorldObserver *PyNegotiateConfigurationLoader::make_WorldObserver(World *wm)
         return new PyNegotiateAnalysisWorldObserver(wm);
     }
     else
-    {
-        return new PyNegotiateWorldObserver(wm);
-    }
+    {*/
+    std::cout << "about to create a pynegotiateworldobserver" << std::endl;
+    return new PyNegotiateWorldObserver(wm);
+    /*}*/
 }
 
 RobotWorldModel *PyNegotiateConfigurationLoader::make_RobotWorldModel()

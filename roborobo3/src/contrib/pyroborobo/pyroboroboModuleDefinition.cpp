@@ -10,8 +10,6 @@
 #include <contrib/pyroborobo/PyControllerTrampoline.h>
 #include <core/RoboroboMain/roborobo.h>
 
-#include <utility>
-
 namespace py = pybind11;
 using namespace pybind11::literals;
 
@@ -182,21 +180,31 @@ Returns a tuple (red, green, blue) from the ground sensor of the robot
                  R"doc(
 Returns a numpy array of the IDs of the objects seen by the robot
 )doc")
-            .def("get_obs", [](PyWorldModel &self) { return self.getObservations(); },
+            .def("get_observations", [](PyWorldModel &self) { return self.getObservations(); },
                  R"doc(
 Returns a python object containing the obs you need for your python controller.  It can be implemented at your will.
 It can return a numpy.array, a dict, a single value or whatever you want.
 
 It is useful when you want to implement a gym environment.
 )doc")
-            .def("set_actions", [](PyWorldModel &self, py::object actions) {
-                     self.setActions(std::move(actions));
+            .def("set_actions", [](PyWorldModel &self, const py::object &actions) {
+                     self.setActions(actions);
                  },
                  R"doc(
 Feed the world model with the action the robot intend to do. It can be implemented at your will.
 It can receive a numpy.array, a dict, a single value or whatever you want.
 
 It is useful when you want to implement a gym environment.
+)doc")
+            .def("get_reward", [](PyWorldModel &self) {
+                return self.getReward();
+            }, R"doc(
+TODO
+)doc")
+            .def("get_done", [](PyWorldModel &self) {
+                return self.getDone();
+            }, R"doc(
+TODO
 )doc")
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive)
             .def_readwrite("translation", &RobotWorldModel::_desiredTranslationalValue)

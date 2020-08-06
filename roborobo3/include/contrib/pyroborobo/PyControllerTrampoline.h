@@ -38,7 +38,7 @@ public:
         );
     }
 
-    std::string inspect(std::string prefix = "") override
+    std::string inspect(std::string prefix) override
     {
         PYBIND11_OVERLOAD(
                 std::string, /* Return type */

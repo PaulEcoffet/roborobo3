@@ -40,35 +40,17 @@ public:
 
     double getFitness() const;
 
-    std::vector<double> getInputs();
-
 protected:
     PyNegotiateWorldModel *m_wm;
     static std::vector<std::string> inputnames;
-
-    std::vector<double> getCameraInputs() const;
 
     bool fill_names = false;
     int verbose = 0;
 
     void fillNames();
 
-    unsigned int getNbInputs() const;
-
-    unsigned int getNbOutputs() const;
-
-    std::vector<double> getGameInputs() const;
-
-    unsigned int getNbCameraInputs() const;
-
-    unsigned int getNbGameInputs() const;
-
     void wander_behavior() const;
 
-    void seeking_behavior() const
-    {
-
-    }
 };
 
 

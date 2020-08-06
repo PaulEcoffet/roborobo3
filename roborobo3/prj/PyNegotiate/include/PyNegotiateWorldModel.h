@@ -8,7 +8,11 @@
 
 #include <WorldModels/RobotWorldModel.h>
 #include <deque>
+#include <pybind11/pybind11.h>
 #include "PyNegotiateOpportunity.h"
+
+namespace py = pybind11;
+
 
 class PyNegotiateWorldModel : public RobotWorldModel
 {
@@ -22,6 +26,13 @@ public:
 
     double getCoop(bool trueValue = false) const;
 
+    py::object getObservations() override;
+
+    void setActions(const py::object &actions) override;
+
+    bool getDone() override;
+
+    double getReward() override;
 
     bool isPlaying() const;
 
@@ -47,7 +58,11 @@ public:
     bool toBeTeleported = false;
     int lastvisit = 0;
     bool seeking = true;
+
     int prevopp = -1;
+    bool accept = false;
+    double reward = 0;
+    bool wasSeekerLastStep = true;
 };
 
 
