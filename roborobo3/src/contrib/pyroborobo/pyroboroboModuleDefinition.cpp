@@ -213,13 +213,14 @@ TODO
     py::class_<WorldObserver>(m, "PyWorldObserver")
             .def(py::init<World *>(), "World"_a, py::return_value_policy::reference)
             .def("step_pre", &WorldObserver::stepPre)
-            .def("step_post", &WorldObserver::stepPost);
+            .def("step_post", &WorldObserver::stepPost)
+            .def("reset", &WorldObserver::reset);
     py::class_<World>(m, "World");
     py::class_<Robot>(m, "PyRobot")
             .def("set_position", [](Robot &self, int x, int y) {
                 self.unregisterRobot();
-                self.setCoord(x, y);
                 self.setCoordReal(x, y);
+                self.setCoord(x, y);
                 self.registerRobot();
             }, "x"_a, "y"_a)
             .def("find_random_location", [](Robot &self) {

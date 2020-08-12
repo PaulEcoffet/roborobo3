@@ -94,6 +94,8 @@ protected:
     std::queue<std::pair<int, int>> curavailableslots;
 
     void logSeekTime() const;
+
+    void resetAllRewards();
 };
 
 

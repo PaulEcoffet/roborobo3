@@ -170,3 +170,8 @@ bool RobotWorldModel::getDone()
 {
     throw std::runtime_error("Should be overriden");
 }
+
+void RobotWorldModel::reset()
+{
+
+}

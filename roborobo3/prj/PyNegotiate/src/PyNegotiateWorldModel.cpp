@@ -26,6 +26,7 @@ PyNegotiateWorldModel::PyNegotiateWorldModel()
           punishment(0),
           spite(0)
 {
+    _cooperationLevel = 0;
     setNewSelfA();
 }
 
@@ -43,6 +44,7 @@ void PyNegotiateWorldModel::reset()
     teleport = false;
     toBeTeleported = false;
     opp = nullptr;
+    reward = 0;
 }
 
 
@@ -98,15 +100,22 @@ py::object PyNegotiateWorldModel::getObservations()
         inputs[i++] = (Agent::isInstanceOf(entityId)) ? dist : 1;
         inputs[i++] = (entityId == WALL_ID) ? dist : 1;
         inputs[i++] = (isOpportunity) ? dist : 1;
-        inputs[i++] = cur_nbOnOpp;
+        inputs[i++] = cur_nbOnOpp / 10.0;
     }
+
     /*
      * Game Inputs
      */
 
-    inputs[i++] =  /* TODO get total invest */ 0 /* end TODO */ / PyNegotiateSharedData::maxCoop;
+    if (opp != nullptr)
+    {
+        inputs[i++] = (opp->getAllCoop() - getCoop()) / PyNegotiateSharedData::maxCoop;
+    }
+    else
+    {
+        inputs[i++] = 0;
+    }
     inputs[i++] = getCoop() / PyNegotiateSharedData::maxCoop;
-
 
     obs["seeking"] = seeking || wasSeekerLastStep;
     obs["obs"] = py::array(py::cast(inputs));
@@ -121,6 +130,7 @@ static inline double normalize(const double value, const double min = 0, const d
 void PyNegotiateWorldModel::setActions(const py::object &actions)
 {
     auto actions_vec = actions.cast<std::vector<double>>();
+    assert(std::all_of(actions_vec.begin(), actions_vec.end(), [](double a) { return !isnan(a); }));
     _desiredTranslationalValue = actions_vec[0] * gMaxTranslationalSpeed;
     _desiredRotationalVelocity = actions_vec[1] * gMaxRotationalSpeed;
     accept = actions_vec[2] > 0;
@@ -130,7 +140,7 @@ void PyNegotiateWorldModel::setActions(const py::object &actions)
 
 bool PyNegotiateWorldModel::getDone()
 {
-    return false;
+    return !seeking;
 }
 
 double PyNegotiateWorldModel::getReward()

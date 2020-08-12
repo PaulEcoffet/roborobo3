@@ -159,7 +159,7 @@ std::string PyNegotiateController::inspect(std::string prefix)
         auto inputs_py = m_wm->getObservations();
         out << prefix << "inputs:\n";
         int i = 0;
-        for (auto elem : inputs_py)
+        for (auto elem : inputs_py["obs"])
         {
             out << prefix << "\t" << inputnames[i] << ":" << elem.str().cast<std::string>() << "\n";
             i++;

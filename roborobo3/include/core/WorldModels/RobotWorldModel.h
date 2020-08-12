@@ -276,6 +276,7 @@ public:
         return ( _groupId );
     }
 
+    virtual void reset();
 };
 
 

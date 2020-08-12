@@ -41,6 +41,10 @@ public:
     double lifeExpectancy;
 
 
+    double getAllCoop() const;
+
+    double getAllCoopExcept(int id);
+
 protected:
     std::vector<int> nearbyRobotIndexes;
     std::vector<int> newNearbyRobotIndexes;

@@ -52,9 +52,11 @@ PyNegotiateWorldObserver::PyNegotiateWorldObserver(World *world) :
     m_fitnessLogManager.open(fitnessLogFilename.c_str());
     m_fitnessLogManager << "gen\tind\trep\tfake\tfitness\n";
 
-
     m_nbIndividuals = gInitialNumberOfRobots;
     gMaxIt = -1;
+
+    m_fitnesses = std::vector<double>(m_nbIndividuals);
+    m_curfitnesses = std::vector<double>(m_nbIndividuals);
 
     /* build variability coef distribution */
 
@@ -155,13 +157,13 @@ void PyNegotiateWorldObserver::stepPre()
         {
             resetEnvironment();
         }
+
     }
 
     for (int i = 0; i < gInitialNumberOfRobots; i++)
     {
         auto *rob = m_world->getRobot(i);
         auto *wm = dynamic_cast<PyNegotiateWorldModel *>(rob->getWorldModel());
-        wm->reward = 0;
         if (!wm->seeking)
         {
             wm->wasSeekerLastStep = false;
@@ -179,20 +181,19 @@ void PyNegotiateWorldObserver::stepPre()
                 if (PyNegotiateSharedData::putOutOfGame)
                 {
                     const auto new_pos = rob->findRandomLocation(gLocationFinderMaxNbOfTrials);
-                    rob->setCoord(new_pos.first, new_pos.second);
                     rob->setCoordReal(new_pos.first, new_pos.second);
+                    rob->setCoord(new_pos.first, new_pos.second);
                 }
             }
         }
     }
+    resetAllRewards();
+    computeOpportunityImpacts();
 }
 
 void PyNegotiateWorldObserver::stepPost()
 {
-    /* Plays */
-    computeOpportunityImpacts();
-
-    /* Register the robots from previous step */
+    /* Register the robots from current step */
     registerRobotsOnOpportunities();
 
     /* Move */
@@ -204,8 +205,8 @@ void PyNegotiateWorldObserver::stepPost()
             auto *rob = m_world->getRobot(rid);
             rob->unregisterRobot();
             const auto new_pos = rob->findRandomLocation(gLocationFinderMaxNbOfTrials);
-            rob->setCoord(new_pos.first, new_pos.second);
             rob->setCoordReal(new_pos.first, new_pos.second);
+            rob->setCoord(new_pos.first, new_pos.second);
             rob->registerRobot();
         }
     }
@@ -339,6 +340,10 @@ void PyNegotiateWorldObserver::computeOpportunityImpacts()
         double totalInvest = 0;
         double totalA = 0;
         auto *opp = dynamic_cast<PyNegotiateOpportunity *>(physicalObject);
+        if (opp == nullptr)
+        {
+            std::cerr << "Cant cast opp to PyNegotiateOpportunity" << std::endl;
+        }
         auto itmax = opp->getNearbyRobotIndexes().end();
 
         int n = opp->getNbNearbyRobots();
@@ -490,10 +495,21 @@ double PyNegotiateWorldObserver::payoff(const double invest, const double totalI
 
 void PyNegotiateWorldObserver::registerRobotsOnOpportunities()
 {
+    mark_all_robots_as_alone();
     for (auto *physicalObject : gPhysicalObjects)
     {
         auto *opp = dynamic_cast<PyNegotiateOpportunity *>(physicalObject);
         opp->registerNewRobots();
+        for (auto rid : opp->getNearbyRobotIndexes())
+        {
+            auto *robot_wm = dynamic_cast<PyNegotiateWorldModel *>(gWorld->getRobot(rid)->getWorldModel());
+            if (robot_wm == nullptr)
+            {
+                std::cerr << "Cannot cast WorldModel to PyNegotiateWorldModel" << std::endl;
+                exit(1);
+            }
+            robot_wm->opp = opp;
+        }
     }
 }
 
@@ -533,4 +549,13 @@ void PyNegotiateWorldObserver::logSeekTime() const
         f_seektime << i << "\t" << obs->getSeekTime() << "\n";
     }
     f_seektime.close();
+}
+
+void PyNegotiateWorldObserver::resetAllRewards()
+{
+    for (int i = 0; i < m_world->getNbOfRobots(); i++)
+    {
+        auto *wm = dynamic_cast<PyNegotiateWorldModel *>(m_world->getRobot(i)->getWorldModel());
+        wm->reward = 0;
+    }
 }

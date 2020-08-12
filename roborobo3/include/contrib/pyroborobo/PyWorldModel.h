@@ -54,6 +54,15 @@ public:
         );
     }
 
+    void reset() override
+    {
+        PYBIND11_OVERLOAD(
+                void, /* Return type */
+                RobotWorldModel,      /* Parent class */
+                reset,          /* Name of function in C++ (must match Python name) */
+        );
+    }
+
     void setActions(const py::object &actions) override
     {
         PYBIND11_OVERLOAD(

@@ -150,3 +150,24 @@ bool PyNegotiateOpportunity::hasBeenTouched(int rid) const
 {
     return touchingrobotsSet.find(rid) != touchingrobotsSet.end();
 }
+
+double PyNegotiateOpportunity::getAllCoop() const
+{
+    double tot = 0;
+    auto itmax = std::min(getNearbyRobotIndexes().size(), 2ul);
+    for (int i = 0; i < itmax; i++)
+    {
+        int rid = getNearbyRobotIndexes()[i];
+        if (auto *wm = dynamic_cast<PyNegotiateWorldModel *>(gWorld->getRobot(rid)->getWorldModel()))
+        {
+            tot += wm->getCoop();
+        }
+        else
+        {
+            std::cerr << "Cant cast WorldModel to PyNegotiateWorldModel";
+            exit(1);
+        }
+    }
+    return tot;
+}
+
