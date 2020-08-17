@@ -40,12 +40,12 @@ LionController::LionController(RobotWorldModel *wm) : scorelogger(nullptr)
             break;
         case PERCEPTRON_ID:
             m_nn = new Perceptron(weights, getNbInputs(), 1);
-            m_nn2 = new Perceptron(weights, 1, 1);
+            m_nn2 = new Perceptron(weights, 2, 1);
             break;
         case ELMAN_ID:
             m_nn = new Elman(weights, getNbInputs(), 1,
                              nbNeuronsPerHiddenLayers, true);
-            m_nn2 = new Elman(weights, 1, 1,
+            m_nn2 = new Elman(weights, 2, 1,
                               nbNeurons2, true);
             break;
         default:
@@ -55,14 +55,14 @@ LionController::LionController(RobotWorldModel *wm) : scorelogger(nullptr)
     }
     weights.resize(m_nn->getRequiredNumberOfWeights(), 0);
     m_nn->setWeights(weights);
-    if (LionSharedData::independantCoop == 0)
+    if (!LionSharedData::hardCoop)
     {
         weights2.resize(m_nn2->getRequiredNumberOfWeights(), 0);
         m_nn2->setWeights(weights2);
     }
     else
     {
-        weights2.clear();
+        weights2.resize(1, 0);
     }
     resetFitness();
 }
@@ -204,55 +204,26 @@ void LionController::loadNewGenome(const std::vector<double> &newGenome)
     weights = std::vector<double>(newGenome.begin(), split);
     weights2 = std::vector<double>(split, newGenome.end());
     m_nn->setWeights(weights);
-    m_nn2->setWeights(weights2);
 
     if (LionSharedData::controllerType == ELMAN_ID)
     {
         dynamic_cast<Elman *>(m_nn)->initLastOutputs();
     }
 
-    std::vector<double> inputs(2, 0);
     if (LionSharedData::hardCoop)
     {
-        assert(LionSharedData::independantCoop == 0);
+        assert(getCoopWeight() >= 0 && getCoopWeight() <= 1);
+
         for (int i = 0; i < gInitialNumberOfRobots; i++)
         {
-            int nbPlayers = i + 1;
-            double coop = 0;
-            if (getCoopWeight() < 0)
-            {
-                coop = LionSharedData::meanA / nbPlayers;
-            }
-            else
-            {
-                coop = LionSharedData::meanA + (LionSharedData::b * (nbPlayers - 1)) / nbPlayers;
-            }
+            double coop = getCoopWeight() * LionSharedData::maxCoop;
             m_wm->setCoop(i, coop);
         }
     }
-    else if (LionSharedData::independantCoop == 1)
-    {
-        m_wm->setCoop(0, LionSharedData::meanA);
-        if (m_wm->fakeCoef < 1)
-        {
-            m_wm->setCoop(1, LionSharedData::meanA / 2);
-        }
-        else
-        {
-            m_wm->setCoop(1, LionSharedData::meanA + LionSharedData::b / 2);
-        }
-    }
-    else if (LionSharedData::independantCoop == 2)
-    {
-        const double coefrange = 2 * LionSharedData::fakeCoef;
-        const double ess = LionSharedData::meanA / 2;
-        const double so = LionSharedData::meanA + LionSharedData::b / 2;
-        double coef = (m_wm->fakeCoef - (1 - LionSharedData::fakeCoef)) / coefrange;
-        m_wm->setCoop(0, LionSharedData::meanA);
-        m_wm->setCoop(1, ess * (1 - coef) + so * coef);
-    }
     else
     {
+        m_nn2->setWeights(weights2);
+        std::vector<double> inputs(2, 0);
         for (int i = 0; i < gInitialNumberOfRobots; i++)
         {
             inputs[0] = (double) (i % 10) / 10;  // Units counter
@@ -469,7 +440,7 @@ double LionController::getCoop(int i)
     return coop;
 }
 
-double LionController::getCoopWeight()
+double LionController::getCoopWeight() const
 {
     return weights2[0];
 }

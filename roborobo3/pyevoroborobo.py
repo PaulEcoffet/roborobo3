@@ -108,7 +108,7 @@ def main():
             # Wait for roborobo to give information about the simulation
             msg = recv_msg(conns[i])
             evo_info = loads(msg)
-            print("info received")
+            print(evo_info)
         if 'min_bounds' in evo_info:
             bounds = [evo_info['min_bounds'], evo_info['max_bounds']]
         else:

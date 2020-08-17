@@ -36,7 +36,6 @@ bool LionSharedData::optimalPlay = false;
 bool LionSharedData::maxTwo = false;
 bool LionSharedData::normalCoef = false;
 bool LionSharedData::asyncPlay = false;
-int LionSharedData::independantCoop = 0;
 bool LionSharedData::costAsInput = true;
 bool LionSharedData::additiveVar = false;
 int LionSharedData::nControl = 0;
@@ -82,7 +81,6 @@ void LionSharedData::initSharedData()
     GETVAL(maxTwo);
     GETVAL(normalCoef);
     GETVAL(asyncPlay);
-    GETVAL(independantCoop);
     GETVAL(costAsInput);
     GETVAL(additiveVar);
     GETVAL(nControl);
@@ -97,8 +95,6 @@ void LionSharedData::initSharedData()
     GETVAL(logScore);
 
 
-    assert((hardCoop && independantCoop == 0 && !fakeRobots) ||
-           !hardCoop); // if hardcoop then no independant coop or fake
     assert((maxTwo && nControl == 0) || !maxTwo); // if maxtwo then no ncontrol
 }
 

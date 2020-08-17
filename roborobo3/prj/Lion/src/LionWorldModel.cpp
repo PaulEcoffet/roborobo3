@@ -13,13 +13,15 @@
 
 LionWorldModel::LionWorldModel()
         : RobotWorldModel(),
+          arrival(0),
+          newopp(false),
           onOpportunity(false),
           selfA(0.5),
           opp(nullptr),
           fake(false),
           ingame(false),
           fakeCoef(1),
-          teleport(false),
+          teleport(-1),
           coopCache(gInitialNumberOfRobots)
 {
     setNewSelfA();
@@ -28,7 +30,7 @@ LionWorldModel::LionWorldModel()
 void LionWorldModel::setNewSelfA()
 {
 
-    selfA = std::max(randgaussian() * LionSharedData::stdA + LionSharedData::meanA, 0.01);
+    selfA = randgaussian() * LionSharedData::stdA + LionSharedData::meanA;
 }
 
 
@@ -51,7 +53,7 @@ double LionWorldModel::getCoop(int nbpart, bool truecoop)
 {
     assert(nbpart >= 0 && nbpart < gInitialNumberOfRobots);
     assert(coopCache[nbpart] >= 0 && coopCache[nbpart] <= LionSharedData::maxCoop);
-    if (truecoop || LionSharedData::independantCoop)
+    if (truecoop)
         return coopCache[nbpart];
     else
     {

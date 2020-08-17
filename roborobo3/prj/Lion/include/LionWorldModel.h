@@ -23,7 +23,7 @@ public:
 
     void setNewSelfA();
 
-    int arrival;
+    int arrival{};
     LionOpportunity *opp = nullptr;
 
     bool fake;
@@ -42,7 +42,7 @@ public:
 
     void setCoop(int nbpart, double val);
 
-    bool newopp;
+    bool newopp{};
 
 
 protected:

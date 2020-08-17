@@ -117,6 +117,18 @@ void LionWorldObserver::reset()
     std::vector<double> maxguess(nbweights, 1);
     std::vector<double> std(nbweights, LionSharedData::normalMut);
     std::vector<double> mutprob(nbweights, LionSharedData::mutProb);
+    if (LionSharedData::hardCoop)
+    {
+        minbounds[nbweights - 1] = 0;
+        maxbounds[nbweights - 1] = 1;
+        minguess[nbweights - 1] = 0;
+        maxguess[nbweights - 1] = 1;
+    }
+    else
+    {
+        minguess[nbweights - 2] = minguess[nbweights - 1] = -10;
+        maxguess[nbweights - 2] = maxguess[nbweights - 1] = -9.9;
+    }
 
 
     m_individuals = pyevo.initCMA(m_nbIndividuals, nbweights, minbounds, maxbounds, minguess, maxguess, std, mutprob);
@@ -128,10 +140,8 @@ void LionWorldObserver::reset()
 
     if (isLoggingTime())
     {
-        std::cout << "coucou" << std::endl;
         if (m_curEvaluationIteration == 0 && m_curEvaluationInGeneration == 0)
         {
-            std::cout << "lolilol" << std::endl;
             m_logall.close();
             m_logall.open((gLogDirectoryname + "/logall_" + std::to_string(m_generationCount) + ".txt.gz").c_str());
             m_logall
@@ -446,7 +456,7 @@ double LionWorldObserver::payoff(const double invest, const double totalInvest, 
     else if (LionSharedData::nControl == 6)
     {
         /* by product benefits */
-        res = a * invest + b * x0tot / std::max(n - 1, 1);
+        res = a * invest + b * (x0tot / std::max(n - 1, 1));
         res -= 0.5 * invest * invest;
         res *= bellcurve(n, LionSharedData::nOpti, LionSharedData::nTolerance);
     }
@@ -549,7 +559,7 @@ void LionWorldObserver::printCoopStats(int nbPart)
     for (int i = 0; i < m_nbIndividuals; i++)
     {
         auto *cur_wm = dynamic_cast<LionWorldModel *>(m_world->getRobot(i)->getWorldModel());
-        coops[i] = cur_wm->getCoop(2, true);
+        coops[i] = cur_wm->getCoop(1, true);
     }
     std::sort(coops.begin(), coops.end());
     std::cout << "coop quartiles: " << coops[0] << ", " << coops[m_nbIndividuals / 4] << ", "

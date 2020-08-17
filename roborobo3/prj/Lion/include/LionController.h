@@ -55,7 +55,7 @@ public:
 
     double computeScore(int cost, int nbPart, double owncoop, double totothercoop);
 
-    double getCoopWeight();
+    double getCoopWeight() const;
 
     void play_and_fitness();
 
