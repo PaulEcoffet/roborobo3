@@ -51,7 +51,7 @@ public:
     const std::vector<double> getWeights() const;
 
 
-    double getCoop(int i);
+    double getCoop(int i, bool truecoop = false);
 
     double computeScore(int cost, int nbPart, double owncoop, double totothercoop);
 

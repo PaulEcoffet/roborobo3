@@ -434,9 +434,9 @@ void LionController::play_and_fitness()
 
 }
 
-double LionController::getCoop(int i)
+double LionController::getCoop(int i, bool truecoop)
 {
-    double coop = m_wm->getCoop(i);
+    double coop = m_wm->getCoop(i, truecoop);
     return coop;
 }
 
