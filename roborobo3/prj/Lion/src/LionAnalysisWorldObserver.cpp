@@ -57,9 +57,9 @@ void LionAnalysisWorldObserver::reset()
                 for (int j = 0; j <= nbstep; j++)
                 {
                     double owncoop = ((double) j / nbstep) * maxcoop;
-                    for (int k = 0; k <= 20; k++)
+                    for (int k = 0; k <= nbstep; k++)
                     {
-                        double partcoop = k * 0.5;
+                        double partcoop = ((double) k / nbstep) * maxcoop;
                         double totothercoop = partcoop * nbonopp;
                         double score = ctl->computeScore(cost, nbonopp, owncoop, totothercoop);
                         m_log << i_gen << "\t"
