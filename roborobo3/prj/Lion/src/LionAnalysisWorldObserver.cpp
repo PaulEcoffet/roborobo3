@@ -52,7 +52,7 @@ void LionAnalysisWorldObserver::reset()
             int maxrob = (LionSharedData::maxTwo) ? 4 : gInitialNumberOfRobots;
             for (int nbonopp = 0; nbonopp < maxrob;)
             {
-                for (int j = 0; j <= 20; j++)
+                for (int j = 0; j <= 30; j++)
                 {
                     double owncoop = j * 0.5;
                     for (int k = 0; k <= 20; k++)
