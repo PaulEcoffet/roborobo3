@@ -54,7 +54,7 @@ void LionAnalysisWorldObserver::reset()
             {
                 for (int j = 0; j <= 30; j++)
                 {
-                    double owncoop = j * 0.5;
+                    double owncoop = (j / 30.0) * LionSharedData::maxCoop;
                     for (int k = 0; k <= 20; k++)
                     {
                         double partcoop = k * 0.5;
