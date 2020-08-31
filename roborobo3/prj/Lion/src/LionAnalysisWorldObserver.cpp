@@ -42,6 +42,8 @@ LionAnalysisWorldObserver::LionAnalysisWorldObserver(World *__world) : WorldObse
 void LionAnalysisWorldObserver::reset()
 {
     int i_gen = 0;
+    double maxcoop = LionSharedData::maxCoop;
+    int nbstep = ceil(maxcoop / 0.5);
     for (const auto &genome : m_genomesJson)
     {
         auto *ctl = dynamic_cast<LionController *>(gWorld->getRobot(0)->getController());
@@ -52,9 +54,9 @@ void LionAnalysisWorldObserver::reset()
             int maxrob = (LionSharedData::maxTwo) ? 4 : gInitialNumberOfRobots;
             for (int nbonopp = 0; nbonopp < maxrob;)
             {
-                for (int j = 0; j <= 30; j++)
+                for (int j = 0; j <= nbstep; j++)
                 {
-                    double owncoop = (j / 30.0) * LionSharedData::maxCoop;
+                    double owncoop = ((double) j / nbstep) * maxcoop;
                     for (int k = 0; k <= 20; k++)
                     {
                         double partcoop = k * 0.5;
