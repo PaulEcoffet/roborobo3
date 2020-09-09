@@ -2,8 +2,6 @@ from pyroborobo import Pyroborobo, PyController
 import numpy as np
 
 
-
-
 class MyController(PyController):
     def __init__(self, wm):
         PyController.__init__(self, wm)  # NEEDED otherwise segfault, pybind limitation
@@ -25,6 +23,7 @@ class MyController(PyController):
 if __name__ == "__main__":
     # Use a dummy world observer that doesn't call any dynamic_cast
     rob = Pyroborobo("config/template_randomwalk.properties", "dummy", MyController, None, None, {})
+    print(rob)
     rob.start()
     stop = False
     while not stop:

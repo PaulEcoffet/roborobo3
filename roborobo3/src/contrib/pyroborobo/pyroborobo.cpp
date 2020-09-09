@@ -103,58 +103,7 @@ public:
 
     bool update(size_t n_step=1)
     {
-        bool quit = false;
-        for (size_t i = 0; i < n_step && !quit; i++)
-        {
-            if (gBatchMode)
-            {
-                gWorld->updateWorld();
-                if (gWorld->getIterations() % 10000 == 0)
-                    if (gVerbose)
-                        std::cout << ".";
-
-                // monitor trajectories (if needed)
-                if (gTrajectoryMonitor)
-                    updateTrajectoriesMonitor();
-            }
-            else
-            {
-                const Uint8 *keyboardStates = SDL_GetKeyboardState(nullptr);
-                quit = checkEvent() | handleKeyEvent(keyboardStates);
-
-                //Start the frame timer
-                fps.start();
-
-                if (!gPauseMode)
-                {
-                    if (gUserCommandMode && !gInspectorMode)
-                        gWorld->updateWorld(keyboardStates);
-                    else
-                        gWorld->updateWorld();
-                }
-
-                //Update the screen
-                updateDisplay();
-                //Cap the frame rate
-                if (fps.get_ticks() < 1000 / gFramesPerSecond)
-                {
-                    SDL_Delay((1000 / gFramesPerSecond) - fps.get_ticks());
-                }
-
-                // monitor trajectories (if needed)
-                if (gTrajectoryMonitor)
-                    updateTrajectoriesMonitor();
-
-                updateMonitor(keyboardStates);
-            }
-
-            currentIt++;
-            if (gWorld->getNbOfRobots() <= 0)
-            {
-                quit = true;
-            }
-        }
-        return quit;
+        return runRoborobo(n_step);
     }
 
     std::vector<Controller*> getControllers()
@@ -267,8 +216,8 @@ PYBIND11_MODULE(pyroborobo, m)
             .def("getCameraObjectIds", [](PyWorldModel &own)
             { return own.getCameraObjectIds(); })
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive)
-            .def_readwrite("speed", &RobotWorldModel::_desiredTranslationalValue)
-            .def_readwrite("rotspeed", &RobotWorldModel::_desiredRotationalVelocity)
+            .def_readwrite("translation", &RobotWorldModel::_desiredTranslationalValue)
+            .def_readwrite("rotation", &RobotWorldModel::_desiredRotationalVelocity)
             .def_readwrite("fitness", &RobotWorldModel::_fitnessValue);
     py::class_<WorldObserver>(m, "PyWorldObserver")
             .def(py::init<World*>())
