@@ -80,8 +80,9 @@ class Robot : public Agent
     
 		void displayInfo(); // display input/output values on console. (used for inspect agent mode, cf. help on console) -- keep it simple: one line only.
 
-		
-		// return a list of agents in the vincinity (ie. in the communication area)
+        std::pair<int, int> findRandomLocation(int max_tries) const;
+
+    // return a list of agents in the vincinity (ie. in the communication area)
 		// the content of this list depends on the max communication range (see properties file).
 		// works only if communication network is active.
 		/* std::vector<int> getNeighbors(); */

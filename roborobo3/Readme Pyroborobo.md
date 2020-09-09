@@ -33,6 +33,7 @@ I use the SDL2 from brew, it *might* work with the .framework. If it does not :
 
 ```bash
 brew install sdl2
+brew install sdl2-image
 brew install boost
 ```
 

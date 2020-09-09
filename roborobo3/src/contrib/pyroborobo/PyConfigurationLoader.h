@@ -40,19 +40,19 @@ public:
         delete fallbackconf;
     }
 
-    WorldObserver *make_WorldObserver(World *wm) override
+    WorldObserver *make_WorldObserver(World *w) override
     {
         if (worldObserverClass.is(py::none()))
         {
-            return fallbackconf->make_WorldObserver(wm);
+            return fallbackconf->make_WorldObserver(w);
         }
-        else if(py::isinstance<py::str>(worldObserverClass) && worldObserverClass.cast<std::string>() == "dummy")
+        else if (py::isinstance<py::str>(worldObserverClass) && worldObserverClass.cast<std::string>() == "dummy")
         {
-            return new DummyWorldObserver(wm);
+            return new DummyWorldObserver(w);
         }
         else
         {
-            py::object py_worldobserver = worldObserverClass();
+            py::object py_worldobserver = worldObserverClass(w);
             allocated.push_back(py_worldobserver);
             auto *c_worldobserver = py_worldobserver.cast<WorldObserver *>();
             return c_worldobserver;
@@ -66,7 +66,7 @@ public:
         {
             return fallbackconf->make_RobotWorldModel();
         }
-        else if(py::isinstance<py::str>(worldModelClass) && worldModelClass.cast<std::string>() == "dummy")
+        else if (py::isinstance<py::str>(worldModelClass) && worldModelClass.cast<std::string>() == "dummy")
         {
             return new RobotWorldModel();
         }
@@ -86,7 +86,7 @@ public:
         {
             return fallbackconf->make_AgentObserver(wm);
         }
-        else if(py::isinstance<py::str>(agentObserverClass) && agentObserverClass.cast<std::string>() == "dummy")
+        else if (py::isinstance<py::str>(agentObserverClass) && agentObserverClass.cast<std::string>() == "dummy")
         {
             return new DummyAgentObserver(wm);
         }
@@ -106,7 +106,7 @@ public:
         {
             return fallbackconf->make_Controller(wm);
         }
-        else if(py::isinstance<py::str>(agentControllerClass) && agentControllerClass.cast<std::string>() == "dummy")
+        else if (py::isinstance<py::str>(agentControllerClass) && agentControllerClass.cast<std::string>() == "dummy")
         {
             return new DummyController(wm);
         }
