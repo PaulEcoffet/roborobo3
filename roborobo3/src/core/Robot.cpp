@@ -6,8 +6,6 @@
  *
  */
 
-#include <Python.h>
-#include <z3.h>
 #include "Config/GlobalConfigurationLoader.h"
 #include "Agents/Robot.h"
 #include "RoboroboMain/roborobo.h"

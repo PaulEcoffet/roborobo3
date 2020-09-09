@@ -40,7 +40,7 @@ class Agent
 		virtual void stepBehavior() = 0;
 		virtual void stepBehavior(const Uint8* __keyboardStates) = 0;
     
-		virtual void move();
+		virtual void move(int recursiveIt);
         virtual void show(SDL_Surface *surface = gScreen);
     
 		//Sets the camera over the dot

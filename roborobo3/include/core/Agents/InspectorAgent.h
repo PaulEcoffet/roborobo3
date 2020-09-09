@@ -29,11 +29,11 @@ class InspectorAgent : public Agent
 		void reset() override;
 		
 		//Moves the dot
-		void move() override;
+		void move(int recursiveIt = 0) override;
 
 		
 		//Shows the dot on the screen
-		virtual void show();
+		virtual void show(SDL_Surface *surface);
 		
 		/*
 		//Sets the camera over the dot
