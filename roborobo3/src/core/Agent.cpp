@@ -48,7 +48,7 @@ void Agent::show(SDL_Surface *surface) // display on screen -- method may be ove
  /**
     * update the agent position in the environment. Apply simple physics (ie. obstacle collision detection and consequences).
     */
-void Agent::move() // the interface btw agent and world -- in more complex envt, this should be handled by the "world".
+void Agent::move(int recursiveIt) // the interface btw agent and world -- in more complex envt, this should be handled by the "world".
 {
 /*
 	// update position

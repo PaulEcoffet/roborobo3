@@ -58,7 +58,7 @@ class Robot : public Agent
 		void applyDynamics(); // use transl/rot delta to compute x/y delta.
 
 		//Moves the agent
-		void move( int __recursiveIt = 0 );
+		void move( int __recursiveIt = 0 ) override;
 		
 		void show(SDL_Surface *surface = gScreen) override;
 

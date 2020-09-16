@@ -939,7 +939,7 @@ void updateDisplay() // display is called starting when gWorld->getIterations > 
         
         // show inspector agent location (single point)
         if ( gInspectorMode )
-            inspectorAgent->show();
+            inspectorAgent->show(gScreen);
         
         if ( !gBatchMode )
         {
