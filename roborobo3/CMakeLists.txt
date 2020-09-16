@@ -19,6 +19,8 @@ file(
         src/*
         prj/*
 )
+SET(LIB_SOURCE_FILES ${SOURCE_FILES})
+list(FILTER SOURCE_FILES EXCLUDE REGEX ".*pyroborobo/.*")
 
 include_directories(include)
 include_directories(include/contrib)
@@ -50,16 +52,25 @@ endif()
 message(${SDL2_LIBRARIES})
 
 
-
-include_directories(${SDL2_INCLUDE_DIRS} )
-
-
-find_package (Eigen3 REQUIRED NO_MODULE)
-
-#add_executable(roborobo ${SOURCE_FILES})
+include_directories(${SDL2_INCLUDE_DIRS})
 
 
-pybind11_add_module(pyroborobo ${SOURCE_FILES})
+find_package(Eigen3 REQUIRED NO_MODULE)
+
+add_executable(roborobo ${SOURCE_FILES})
+target_link_libraries(roborobo PRIVATE
+        ${SDL2_LIBRARIES}
+        ${SDL2_IMAGE_LIBRARIES}
+        ${Boost_FILESYSTEM_LIBRARY}
+        ${Boost_SYSTEM_LIBRARY}
+        ${GZSTREAM}
+        ${ZLIB_LIBRARIES}
+        Eigen3::Eigen
+        )
+
+
+pybind11_add_module(pyroborobo ${LIB_SOURCE_FILES})
+target_compile_definitions(pyroborobo PUBLIC PYROBOROBO)
 target_link_libraries(pyroborobo PRIVATE
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
