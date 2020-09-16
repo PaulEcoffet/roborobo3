@@ -16,7 +16,6 @@
 #include "contrib/pyroborobo/PyControllerTrampoline.h"
 #include "contrib/pyroborobo/PyWorldModel.h"
 #include "World/World.h"
-#include "Config/GlobalConfigurationLoader.h"
 #include "PyConfigurationLoader.h"
 #include <pybind11/pybind11.h>
 
@@ -25,18 +24,18 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-Pyroborobo::Pyroborobo(std::string properties_file, py::object worldObserverClass, py::object agentControllerClass,
-                       py::object worldModelClass, py::object agentObserverClass, py::dict options)
+Pyroborobo::Pyroborobo(const std::string &properties_file, py::object worldObserverClass,
+                       py::object agentControllerClass,
+                       py::object worldModelClass, py::object agentObserverClass, py::object objectClass,
+                       const py::dict &options)
         :
         currentIt(0)
 {
-    int argc = 0;
-    char *argv[] = {};
+
     loadProperties(properties_file);
     this->overrideProperties(options);
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
-                                        worldModelClass, agentObserverClass);
-
+                                        worldModelClass, agentObserverClass, objectClass);
 }
 
 void Pyroborobo::start()
@@ -213,8 +212,9 @@ void Pyroborobo::overrideProperties(const py::dict &dict)
 }
 
 void Pyroborobo::initCustomConfigurationLoader(py::object &worldObserverClass, py::object &agentControllerClass,
-                                               py::object &worldModelClass, py::object &agentObserverClass)
+                                               py::object &worldModelClass, py::object &agentObserverClass,
+                                               py::object &objectClass)
 {
     gConfigurationLoader = new PyConfigurationLoader(gConfigurationLoader, worldObserverClass, agentControllerClass,
-                                                     worldModelClass, agentObserverClass);
+                                                     worldModelClass, agentObserverClass, objectClass);
 }

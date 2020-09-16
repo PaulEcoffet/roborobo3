@@ -24,13 +24,15 @@ class PyConfigurationLoader : public ConfigurationLoader
 public:
     PyConfigurationLoader(ConfigurationLoader *configurationLoader, const py::object &worldObserverClass,
                           const py::object &agentControllerClass,
-                          const py::object &worldModelClass, const py::object &agentObserverClass)
+                          const py::object &worldModelClass, const py::object &agentObserverClass,
+                          const py::object &objectClass)
             :
             fallbackconf(configurationLoader),
             worldObserverClass(worldObserverClass),
             agentControllerClass(agentControllerClass),
             worldModelClass(worldModelClass),
             agentObserverClass(agentObserverClass),
+            objectClass(objectClass),
             allocated()
     {
     }
@@ -119,6 +121,21 @@ public:
         }
     }
 
+    PhysicalObject *make_CustomObject() override
+    {
+        if (agentControllerClass.is(py::none()))
+        {
+            return fallbackconf->make_CustomObject();
+        }
+        else
+        {
+            py::object py_object = objectClass();
+            allocated.push_back(py_object);
+            auto *c_object = py_object.cast<PhysicalObject *>();
+            return c_object;
+        }
+    }
+
 private:
 
     ConfigurationLoader *fallbackconf;
@@ -126,6 +143,7 @@ private:
     py::object agentControllerClass;
     py::object worldModelClass;
     py::object agentObserverClass;
+    py::object objectClass;
     std::vector<py::object> allocated; // keep references to the allocated object by the conf loader
 };
 

@@ -72,12 +72,18 @@ ConfigurationLoader* ConfigurationLoader::make_ConfigurationLoader (std::string 
 	else if (configurationLoaderObjectName == "TutorialConfigurationLoader" )
 	{
 		return new TutorialConfigurationLoader();
-	}
+    }
 #endif
-    //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
-	else
-	{
-		return NULL;
-	}
+        //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
+    else
+    {
+        return NULL;
+    }
 
+}
+
+PhysicalObject *ConfigurationLoader::make_CustomObject()
+{
+    throw std::runtime_error("No custom object definition for this Configuration");
+    return nullptr;
 }

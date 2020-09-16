@@ -18,12 +18,13 @@ using namespace pybind11::literals;
 class Pyroborobo
 {
 public:
-    Pyroborobo(const std::string properties_file,
+    Pyroborobo(std::string &properties_file,
                py::object worldObserverClass,
                py::object agentControllerClass,
                py::object worldModelClass,
                py::object agentObserverClass,
-               py::dict options);
+               py::object objectClass,
+               py::dict &options);
 
     void start();
 
@@ -57,18 +58,19 @@ private:
     void initCustomConfigurationLoader(py::object &worldObserverClass,
                                        py::object &agentControllerClass,
                                        py::object &worldModelClass,
-                                       py::object &agentObserverClass);
+                                       py::object &agentObserverClass,
+                                       py::object &objectClass);
 
     InspectorAgent *inspectorAgent = nullptr;
     Timer fps;
     World *world = nullptr;
-    int timetag = -1;
     long long currentIt = 0;
     bool initialized = false;
     std::vector<Controller *> controllers;
     std::vector<RobotWorldModel *> worldmodels;
     std::vector<AgentObserver *> agentobservers;
     std::vector<Robot *> robots;
+    std::vector<PhysicalObject *> objects;
     WorldObserver *wobs = nullptr;
 };
 
