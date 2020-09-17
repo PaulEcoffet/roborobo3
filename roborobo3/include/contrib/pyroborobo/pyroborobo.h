@@ -30,6 +30,8 @@ public:
 
     bool update(size_t n_step=1);
 
+    int addObjectToEnv(PhysicalObject *);
+
     std::vector<Controller*> getControllers();
 
     std::vector<RobotWorldModel*> getWorldModels();

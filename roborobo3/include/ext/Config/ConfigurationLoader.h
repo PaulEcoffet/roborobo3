@@ -30,7 +30,7 @@ class ConfigurationLoader
 
     virtual Controller *make_Controller(RobotWorldModel *wm) = 0;
 
-    virtual PhysicalObject *make_CustomObject();
+    virtual PhysicalObject *make_CustomObject(int id);
 };
 
 

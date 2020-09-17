@@ -69,7 +69,7 @@ void PhysicalObjectFactory::makeObject( int type )
             {
                 std::cout << "[INFO] Custom Object created (type = " << type << ").\n";
             }
-            gPhysicalObjects.push_back(gConfigurationLoader->make_CustomObject());
+            gPhysicalObjects.push_back(gConfigurationLoader->make_CustomObject(id));
             // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:
             std::cerr << "[CRITICAL] PhysicalObjectFactory: object #" << id << ", type unknown (" << type << ")"

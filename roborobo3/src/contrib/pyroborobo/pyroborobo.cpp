@@ -20,6 +20,8 @@
 #include <pybind11/pybind11.h>
 
 #include <pybind11/stl.h>
+#include <contrib/pyroborobo/pyroborobo.h>
+
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -217,4 +219,12 @@ void Pyroborobo::initCustomConfigurationLoader(py::object &worldObserverClass, p
 {
     gConfigurationLoader = new PyConfigurationLoader(gConfigurationLoader, worldObserverClass, agentControllerClass,
                                                      worldModelClass, agentObserverClass, objectClass);
+}
+
+int Pyroborobo::addObjectToEnv(PhysicalObject *obj)
+{
+    int id = PhysicalObjectFactory::getNextId();
+    obj->setId(id);
+    gPhysicalObjects.emplace_back(obj);
+    return id;
 }

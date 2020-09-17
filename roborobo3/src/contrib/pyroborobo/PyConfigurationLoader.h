@@ -121,15 +121,15 @@ public:
         }
     }
 
-    PhysicalObject *make_CustomObject() override
+    PhysicalObject *make_CustomObject(int id) override
     {
         if (agentControllerClass.is(py::none()))
         {
-            return fallbackconf->make_CustomObject();
+            return fallbackconf->make_CustomObject(id);
         }
         else
         {
-            py::object py_object = objectClass();
+            py::object py_object = objectClass(id);
             allocated.push_back(py_object);
             auto *c_object = py_object.cast<PhysicalObject *>();
             return c_object;
