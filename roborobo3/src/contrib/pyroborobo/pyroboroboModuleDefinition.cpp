@@ -9,6 +9,7 @@
 #include <contrib/pyroborobo/PyWorldModel.h>
 #include <contrib/pyroborobo/PyControllerTrampoline.h>
 #include <core/RoboroboMain/roborobo.h>
+#include <contrib/pyroborobo/PyPhysicalObjectTrampoline.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;

@@ -14,17 +14,20 @@
 class RoundObject : public CircleObject
 {
 private:
-    
+
 public :
-    
-    RoundObject( int __id ); // use PhysicalObjectFactory instead!
-    ~RoundObject() { }
-    
-    void step();
-    void isTouched( int __idAgent ); // callback, triggered by agent
-    void isWalked( int __idAgent ); // callback, triggered by agent
-    void isPushed( int __id, std::tuple<double, double> __speed ); // callback, triggered by agent/object
-    
+
+    RoundObject(int __id); // use PhysicalObjectFactory instead!
+    ~RoundObject()
+    {
+    }
+
+    void step() override;
+
+    void isTouched(int __idAgent) override; // callback, triggered by agent
+    void isWalked(int __idAgent) override; // callback, triggered by agent
+    void isPushed(int __id, std::tuple<double, double> __speed) override; // callback, triggered by agent/object
+
 };
 
 #endif

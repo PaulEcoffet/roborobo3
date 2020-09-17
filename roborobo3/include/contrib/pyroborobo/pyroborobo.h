@@ -18,23 +18,23 @@ using namespace pybind11::literals;
 class Pyroborobo
 {
 public:
-    Pyroborobo(std::string &properties_file,
-               py::object worldObserverClass,
-               py::object agentControllerClass,
-               py::object worldModelClass,
-               py::object agentObserverClass,
-               py::object objectClass,
-               py::dict &options);
+    Pyroborobo(const std::string &properties_file,
+               py::object &worldObserverClass,
+               py::object &agentControllerClass,
+               py::object &worldModelClass,
+               py::object &agentObserverClass,
+               py::object &objectClass,
+               const py::dict &options);
 
     void start();
 
-    bool update(size_t n_step=1);
+    bool update(size_t n_step = 1);
 
     int addObjectToEnv(PhysicalObject *);
 
-    std::vector<Controller*> getControllers();
+    std::vector<Controller *> getControllers();
 
-    std::vector<RobotWorldModel*> getWorldModels();
+    std::vector<RobotWorldModel *> getWorldModels();
 
     std::vector<AgentObserver*> getAgentObservers();
 

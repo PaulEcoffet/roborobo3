@@ -26,9 +26,12 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-Pyroborobo::Pyroborobo(const std::string &properties_file, py::object worldObserverClass,
-                       py::object agentControllerClass,
-                       py::object worldModelClass, py::object agentObserverClass, py::object objectClass,
+Pyroborobo::Pyroborobo(const std::string &properties_file,
+                       py::object &worldObserverClass,
+                       py::object &agentControllerClass,
+                       py::object &worldModelClass,
+                       py::object &agentObserverClass,
+                       py::object &objectClass,
                        const py::dict &options)
         :
         currentIt(0)

@@ -97,17 +97,23 @@ public :
     
     int getType() { return type; }
 
-    static bool isInstanceOf ( int index );
-    
-    virtual std::string inspect( std::string prefix = "" );
-    
+    static bool isInstanceOf(int index);
+
+    virtual std::string inspect(std::string prefix = "");
+
     virtual void relocate();
-    virtual bool relocate( int x, int y );
-    
+
+    virtual bool relocate(int x, int y);
+
     int getTimestepSinceRelocation();
-    int getLastRelocationDate() { return lastRelocationDate; }
-    
-    
+
+    int getLastRelocationDate()
+    {
+        return lastRelocationDate;
+    }
+
+
+    void setId(int id);
 };
 
 #endif

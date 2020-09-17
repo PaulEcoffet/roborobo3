@@ -16,23 +16,26 @@ class SquareObject : public PhysicalObject
 
 protected:
 
-    
+
     int _solid_w;
     int _solid_h;
     int _soft_w;
     int _soft_h;
-    
+
 public :
-    
-    SquareObject( int __id ); // use PhysicalObjectFactory instead!
-    ~SquareObject() { }
-    
-    bool canRegister(); // test if register object is possible (use both shape or footprints)
-    void registerObject(); // register object in the world (write images)
-    void unregisterObject(); // unregister object in the world (write blank pixels)
-    void show(SDL_Surface *surface = gScreen);
-    void hide();    // wrt. screen-rendering
-    
+
+    SquareObject(int __id); // use PhysicalObjectFactory instead!
+    ~SquareObject()
+    {
+    }
+
+    bool canRegister() override; // test if register object is possible (use both shape or footprints)
+    void registerObject() override; // register object in the world (write images)
+    void unregisterObject() override; // unregister object in the world (write blank pixels)
+    void show(SDL_Surface *surface = gScreen) override;
+
+    void hide() override;    // wrt. screen-rendering
+
 };
 
 #endif

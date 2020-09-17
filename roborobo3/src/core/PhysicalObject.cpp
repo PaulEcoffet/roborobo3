@@ -304,5 +304,10 @@ int PhysicalObject::getTimestepSinceRelocation()
 {
     int a = gWorld->getIterations();
     int b = this->lastRelocationDate;
-    return ( a - b );
+    return (a - b);
+}
+
+void PhysicalObject::setId(int id)
+{
+    _id = id;
 }

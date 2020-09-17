@@ -15,16 +15,20 @@ class GateObject : public SquareObject
 {
 
 private:
-    
-public :
-    
-    GateObject( int __id ); // use PhysicalObjectFactory instead!
-    ~GateObject() { }
 
-    void step();
-    void isTouched( int __idAgent ); // callback, triggered by agent
-    void isWalked( int __idAgent ); // callback, triggered by agent
-    void isPushed( int __id, std::tuple<double, double> __speed ); // callback, triggered by collision w/ agent/object
+public :
+
+    GateObject(int __id); // use PhysicalObjectFactory instead!
+    ~GateObject()
+    {
+    }
+
+    void step() override;
+
+    void isTouched(int __idAgent) override; // callback, triggered by agent
+    void isWalked(int __idAgent) override; // callback, triggered by agent
+    void
+    isPushed(int __id, std::tuple<double, double> __speed) override; // callback, triggered by collision w/ agent/object
 };
 
 #endif
