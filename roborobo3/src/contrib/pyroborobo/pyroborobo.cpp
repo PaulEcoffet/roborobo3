@@ -6,8 +6,6 @@
 
 #include <csignal>
 #include <core/Config/GlobalConfigurationLoader.h>
-#include <core/Agents/InspectorAgent.h>
-#include <core/Utilities/Timer.h>
 #include <RoboroboMain/roborobo.h>
 
 #include "Utilities/Graphics.h"
@@ -16,11 +14,13 @@
 #include "contrib/pyroborobo/PyControllerTrampoline.h"
 #include "contrib/pyroborobo/PyWorldModel.h"
 #include "World/World.h"
-#include "PyConfigurationLoader.h"
+#include "contrib/pyroborobo/PyConfigurationLoader.h"
 #include <pybind11/pybind11.h>
 
 #include <pybind11/stl.h>
 #include <contrib/pyroborobo/pyroborobo.h>
+
+#include <contrib/pyroborobo/PyPhysicalObjectFactory.h>
 
 
 namespace py = pybind11;
@@ -31,7 +31,7 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
                        py::object &agentControllerClass,
                        py::object &worldModelClass,
                        py::object &agentObserverClass,
-                       py::object &objectClass,
+                       py::dict &objectClassDict,
                        const py::dict &options)
         :
         currentIt(0)
@@ -39,8 +39,14 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
 
     loadProperties(properties_file);
     this->overrideProperties(options);
+    py::object objectClass = py::none();
+    if (objectClassDict.contains("_default"))
+    {
+        objectClass = objectClassDict["_default"];
+    }
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
+    PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
 }
 
 void Pyroborobo::start()
@@ -95,7 +101,8 @@ void Pyroborobo::start()
 bool Pyroborobo::update(size_t n_step)
 {
     bool quit = false;
-    for (size_t i = 0; i < n_step && !quit; i++)
+    size_t i = 0;
+    while (i < n_step && !quit) /* i++ after update if not pausemode */
     {
         if (gBatchMode)
         {
@@ -121,6 +128,7 @@ bool Pyroborobo::update(size_t n_step)
                     gWorld->updateWorld(keyboardStates);
                 else
                     gWorld->updateWorld();
+                i++;
             }
             //Update the screen
             updateDisplay();

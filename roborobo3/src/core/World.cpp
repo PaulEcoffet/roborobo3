@@ -67,10 +67,13 @@ World::World()
 
 World::~World()
 {
-	for ( int i = 0 ; i != gNbOfRobots ; i++ )
-		if ( gRobots[i] != NULL ) delete gRobots[i];
-	
-	delete _worldObserver;
+    for (int i = 0; i != gNbOfRobots; i++)
+    {
+        if (gRobots[i] != nullptr)
+            delete gRobots[i];
+    }
+
+    delete _worldObserver;
 }
 
 void World::initWorld()
@@ -154,12 +157,12 @@ void World::initWorld()
     {
         PhysicalObjectFactory::makeObject();
     }
-    
-	for ( int i = 0 ; i != gInitialNumberOfRobots ; i++ )
-	{
-		Robot *robot = new Robot(this);
+
+    for (int i = 0; i != gInitialNumberOfRobots; i++)
+    {
+        auto *robot = new Robot(this);
         this->addRobot(robot);
-	}
+    }
 
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
 		gRobotsRegistry[i]=false;
@@ -168,74 +171,82 @@ void World::initWorld()
     _worldObserver->initPost();
 }
 
-void World::updateWorld(const Uint8 *__keyboardStates)
+void World::updateWorld(const Uint8 *_keyboardStates)
 {
     // Remark: objects and agents are updated *in random order* so as to avoid "effect" order (e.g. low index agents moves first).
     //    This is very important to avoid possible nasty effect from ordering such as "agents with low indexes moves first"
     //    outcome: among many iterations, the effect of ordering is reduced.
     //    This means that roborobo is turn-based, with stochastic update ordering within one turn
 
-    
+
     // * update physical object, if any (in random order)
-    
+
     int shuffledObjectIndex[gNbOfPhysicalObjects];
-    for ( int i = 0 ; i < gNbOfPhysicalObjects ; i++ )
+    for (int i = 0; i < gNbOfPhysicalObjects; i++)
+    {
         shuffledObjectIndex[i] = i;
-    
-    std::shuffle(&shuffledObjectIndex[0], &shuffledObjectIndex[gNbOfPhysicalObjects],engine);
+    }
+
+    std::shuffle(&shuffledObjectIndex[0], &shuffledObjectIndex[gNbOfPhysicalObjects], engine);
     //std::random_shuffle(&shuffledObjectIndex[0], &shuffledObjectIndex[gNbOfPhysicalObjects]); // [!n] remove after 2018-5-1 - random_shuffle was not seeded, and uses rand() - thanks Amine.
-    
-    for ( int i = 0 ; i < gNbOfPhysicalObjects ; i++ )
+
+    for (int i = 0; i < gNbOfPhysicalObjects; i++)
+    {
         gPhysicalObjects[shuffledObjectIndex[i]]->step();
-    
+    }
+
     // * update landmark object, if any
-	
-    for (std::vector<LandmarkObject*>::iterator it = gLandmarks.begin(); it < gLandmarks.end() ; it++ )
-	{
-		(*it)->step();
-	}
-    
-	// * update world level observer (*before* updating agent state and location)
-	
+
+    for (auto it = gLandmarks.begin(); it < gLandmarks.end(); it++)
+    {
+        (*it)->step();
+    }
+
+    // * update world level observer (*before* updating agent state and location)
+
     _worldObserver->stepPre();
 
     // * update agents
-	
+
     int shuffledRobotIndex[gNbOfRobots];
-    for ( int i = 0 ; i < gNbOfRobots ; i++ )
+    for (int i = 0; i < gNbOfRobots; i++)
+    {
         shuffledRobotIndex[i] = i;
-    
-    std::shuffle(&shuffledRobotIndex[0], &shuffledRobotIndex[gNbOfRobots],engine);
+    }
+
+    std::shuffle(&shuffledRobotIndex[0], &shuffledRobotIndex[gNbOfRobots], engine);
     //std::random_shuffle(&shuffledRobotIndex[0], &shuffledRobotIndex[gNbOfRobots]); // [!n] remove after 2018-5-1 - random_shuffle was not seeded, and uses rand() - thanks Amine.
-    
-    
-    
-	// update agent level observers
-	for ( int i = 0 ; i != gNbOfRobots ; i++ )
-		gRobots[shuffledRobotIndex[i]]->callObserverPre();
 
-	// controller step
-	for ( int i = 0 ; i < gNbOfRobots ; i++ )
-	{
-		if ( __keyboardStates == NULL )
-			gRobots[shuffledRobotIndex[i]]->stepBehavior();
-		else
-		{
-			if ( shuffledRobotIndex[i] == gRobotIndexFocus )
-				gRobots[shuffledRobotIndex[i]]->stepBehavior(__keyboardStates);
-			else
-				gRobots[shuffledRobotIndex[i]]->stepBehavior();
-		}
-	}
 
-	// move the agent -- apply (limited) physics
-	for ( int i = 0 ; i < gNbOfRobots ; i++ )
-	{
-		// unregister itself (otw: own sensor may see oneself)
-		if ( gRobotsRegistry[shuffledRobotIndex[i]] )
-		{
-			gRobots[shuffledRobotIndex[i]]->unregisterRobot();
-		}
+
+    // update agent level observers
+    for (int i = 0; i != gNbOfRobots; i++)
+    {
+        gRobots[shuffledRobotIndex[i]]->callObserverPre();
+    }
+
+    // controller step
+    for (int i = 0; i < gNbOfRobots; i++)
+    {
+        if (_keyboardStates == nullptr)
+            gRobots[shuffledRobotIndex[i]]->stepBehavior();
+        else
+        {
+            if (shuffledRobotIndex[i] == gRobotIndexFocus)
+                gRobots[shuffledRobotIndex[i]]->stepBehavior(_keyboardStates);
+            else
+                gRobots[shuffledRobotIndex[i]]->stepBehavior();
+        }
+    }
+
+    // move the agent -- apply (limited) physics
+    for (int i = 0; i < gNbOfRobots; i++)
+    {
+        // unregister itself (otw: own sensor may see oneself)
+        if (gRobotsRegistry[shuffledRobotIndex[i]])
+        {
+            gRobots[shuffledRobotIndex[i]]->unregisterRobot();
+        }
 
         // move agent
         gRobots[shuffledRobotIndex[i]]->move();
@@ -282,81 +293,82 @@ bool World::loadFiles()
 		std::cerr << "[ERROR] foreground: BMP format is *mandatory*\n";
 		returnValue = false;
 	}
-	
-    gEnvironmentImage = load_image( gEnvironmentImageFilename );
-	if ( gEnvironmentImageFilename.compare(gEnvironmentImageFilename.length()-3, 3, "jpg", 0, 3) == 0 )
-	{
-		std::cerr << "[ERROR] environment: BMP format is *mandatory*\n";
-		returnValue = false;
+
+    gEnvironmentImage = load_image(gEnvironmentImageFilename);
+    if (gEnvironmentImageFilename.compare(gEnvironmentImageFilename.length() - 3, 3, "jpg", 0, 3) == 0)
+    {
+        std::cerr << "[ERROR] environment: BMP format is *mandatory*\n";
+        returnValue = false;
     }
-	
+
     //gTrajectoryMonitorImage = load_image( gEnvironmentImageFilename ); // prepare for logging trajectories (useful if requested in the config file)   ---- // Created in roborobo::initTrajectoriesMonitor
 
-	// load background image
-	
-    gBackgroundImage = load_image( gBackgroundImageFilename );
+    // load background image
 
-	// Load the ground type image
-	
-    gFootprintImage = load_image( gFootprintImageFilename );
-    gFootprintImageBackup = load_image( gFootprintImageFilename ); // backup for rewriting original values
-    
+    gBackgroundImage = load_image(gBackgroundImageFilename);
+
+    // Load the ground type image
+
+    gFootprintImage = load_image(gFootprintImageFilename);
+    gFootprintImageBackup = load_image(gFootprintImageFilename); // backup for rewriting original values
+
     // Managing problems with loading files (agent mask and specs)
-    
-    if( gRobotMaskImage == NULL )
+
+    if (gRobotMaskImage == nullptr)
     {
-		std::cerr << "Could not load agent mask image\n";
-		returnValue = false;
-    }
-	
-    if ( gRobotDisplayImage == NULL )
-    {
-		std::cerr << "Could not load agent display image\n";
-		returnValue = false;
+        std::cerr << "Could not load agent mask image\n";
+        returnValue = false;
     }
 
-    if( gRobotSpecsImage == NULL )
+    if (gRobotDisplayImage == nullptr)
     {
-		std::cerr << "Could not load agent specification image\n";
-		returnValue = false;
+        std::cerr << "Could not load agent display image\n";
+        returnValue = false;
     }
-	
+
+    if (gRobotSpecsImage == nullptr)
+    {
+        std::cerr << "Could not load agent specification image\n";
+        returnValue = false;
+    }
+
     //If there was a problem in loading the foreground image
-    if( gForegroundImage == NULL )
+    if (gForegroundImage == nullptr)
     {
-		std::cerr << "Could not load foreground image\n";
-		returnValue = false;
+        std::cerr << "Could not load foreground image\n";
+        returnValue = false;
     }
-	
-	if ( gEnvironmentImage == NULL )
+
+    if (gEnvironmentImage == nullptr)
     {
-		std::cerr << "Could not load environment image\n";
-		returnValue = false;
-    }	
-	
-	
-	//no background image (not a critical error)
-	if ( gBackgroundImage == NULL )
-	{
-		std::cout << "warning: could not load background image (will proceed anyway)\n";
-	}
-	
-	// mandatory: image dimensions must be more than display screen dimensions (otw: underfitting)
-	if ( gForegroundImage->w < gScreenWidth || gForegroundImage->h < gScreenHeight )
-	{
-		std::cerr << "foreground image dimensions must be " << gScreenWidth << "x" << gScreenHeight << " or higher (given: " << gForegroundImage->w << "x" << gForegroundImage->h << ") \n";
-		returnValue = false;
-	}
-	
-	//If there was a problem in loading the ground type image
-    if(  gFootprintImage == NULL )
-    {
-		std::cerr << "Could not load ground image\n";
-        returnValue = false;    
+        std::cerr << "Could not load environment image\n";
+        returnValue = false;
     }
-	else
+
+
+    //no background image (not a critical error)
+    if (gBackgroundImage == nullptr)
     {
-        if( ( gFootprintImage->w != gForegroundImage->w ) || ( gFootprintImage->h != gForegroundImage->h ) )
+        std::cout << "warning: could not load background image (will proceed anyway)\n";
+    }
+
+    // mandatory: image dimensions must be more than display screen dimensions (otw: underfitting)
+    if (gForegroundImage->w < gScreenWidth || gForegroundImage->h < gScreenHeight)
+    {
+        std::cerr << "foreground image dimensions must be " << gScreenWidth << "x" << gScreenHeight
+                  << " or higher (given: " << gForegroundImage->w << "x" << gForegroundImage->h << ") \n";
+        returnValue = false;
+    }
+
+    //If there was a problem in loading the ground type image
+    if (gFootprintImage == nullptr)
+    {
+        std::cerr << "Could not load ground image\n";
+        returnValue = false;
+    }
+    else
+    {
+        if ((gFootprintImage->w != gForegroundImage->w) || (gFootprintImage->h != gForegroundImage->h))
         {
             std::cerr << "Ground image dimensions do not match that of the foreground image\n";
             returnValue = false;

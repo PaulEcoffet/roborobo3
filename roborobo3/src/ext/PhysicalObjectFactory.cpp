@@ -8,28 +8,48 @@
 #include "RoboroboMain/roborobo.h"
 #include "Utilities/Misc.h"
 
+#ifdef PYROBOROBO
+
+#include <contrib/pyroborobo/PyPhysicalObjectFactory.h>
+
+#endif
 
 int PhysicalObjectFactory::_nextId = 0;
 
-void PhysicalObjectFactory::makeObject( int type )
+void PhysicalObjectFactory::makeObject(int type)
 {
     int id = PhysicalObjectFactory::getNextId();
 
-    std::string s = "";
+    std::string s;
+    std::string pytype;
     std::stringstream out;
     out << id;
 
     s = "physicalObject[";
     s += out.str();
+    pytype = s + "].pytype";
     s += "].type";
-    if ( gProperties.hasProperty( s ) )
+    if (gProperties.hasProperty(pytype))
     {
-        convertFromString<int>(type, gProperties.getProperty( s ), std::dec);
+#ifdef PYROBOROBO
+        std::string strpytype;
+        gProperties.checkAndGetPropertyValue(pytype, &strpytype, false);
+        gPhysicalObjects.push_back(PyPhysicalObjectFactory::makeObject(pytype, id));
+#else
+        throw std::runtime_error("Python is not activated here, please use pyroborobo from a python interpreter"
+                                 "to run this conf\n");
+#endif
+
+    }
+    if (gProperties.hasProperty(s))
+    {
+        convertFromString<int>(type, gProperties.getProperty(s), std::dec);
     }
     else
     {
-        if ( gVerbose )
-            std::cerr << "[MISSING] PhysicalObjectFactory: object #" << id << ", type is missing. Assume type "<< gPhysicalObjectDefaultType << "." << std::endl;
+        if (gVerbose)
+            std::cerr << "[MISSING] PhysicalObjectFactory: object #" << id << ", type is missing. Assume type "
+                      << gPhysicalObjectDefaultType << "." << std::endl;
         type = gPhysicalObjectDefaultType;
     }
 

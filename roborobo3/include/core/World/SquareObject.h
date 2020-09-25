@@ -24,15 +24,13 @@ protected:
 
 public :
 
-    SquareObject(int __id); // use PhysicalObjectFactory instead!
-    ~SquareObject()
-    {
-    }
+    explicit SquareObject(int _id); // use PhysicalObjectFactory instead!
+    ~SquareObject() = default;
 
     bool canRegister() override; // test if register object is possible (use both shape or footprints)
     void registerObject() override; // register object in the world (write images)
     void unregisterObject() override; // unregister object in the world (write blank pixels)
-    void show(SDL_Surface *surface = gScreen) override;
+    void show(SDL_Surface *surface) override;
 
     void hide() override;    // wrt. screen-rendering
 

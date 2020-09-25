@@ -8,10 +8,10 @@
  */
 
 #include "RoboroboMain/main.h"
-#include <stdlib.h>
+#include <cstdlib>
 #include <getopt.h>
 #include <unistd.h>
-#include <signal.h>
+#include <csignal>
 
 // For getopt
 extern char *optarg;
@@ -196,7 +196,7 @@ int main(int argc, char* argv[])
     }
     
     /**/
-    char *path = NULL;
+    char *path = nullptr;
     size_t size = 0;
     path = getcwd(path,size);
     std::cout << "[INFO] Current location : " << path << std::endl;

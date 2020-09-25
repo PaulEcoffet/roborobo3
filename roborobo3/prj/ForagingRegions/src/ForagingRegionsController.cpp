@@ -53,7 +53,7 @@ void ForagingRegionsController::stepController()
         objectOnFloorIndex = -1;
     }
 
-    PhysicalObject* lastWalkedObject = NULL;
+    PhysicalObject *lastWalkedObject = nullptr;
     if ( objectOnFloorIndex != -1 )
         lastWalkedObject = gPhysicalObjects[objectOnFloorIndex];
     
@@ -158,30 +158,31 @@ void ForagingRegionsController::performSelection()
 
 void ForagingRegionsController::selectNaiveMO()
 {
-    std::map<std::pair<int,int>, float >::iterator fitnessItUnderFocus = _fitnessValueList.begin();
-    std::map<std::pair<int,int>, int >::iterator regretItUnderFocus = _regretValueList.begin();
- 
-    std::vector<std::pair<int,int>> paretoFrontGenomeList;
-    
+    auto fitnessItUnderFocus = _fitnessValueList.begin();
+    auto regretItUnderFocus = _regretValueList.begin();
+
+    std::vector<std::pair<int, int>> paretoFrontGenomeList;
+
     // build the Pareto front
-    
-    for ( ; fitnessItUnderFocus != _fitnessValueList.end(); ++fitnessItUnderFocus, ++regretItUnderFocus )
+
+    for (; fitnessItUnderFocus != _fitnessValueList.end(); ++fitnessItUnderFocus, ++regretItUnderFocus)
     {
-        std::map<std::pair<int,int>, float >::iterator fitnessItChallenger = _fitnessValueList.begin();
-        std::map<std::pair<int,int>, int >::iterator regretItChallenger = _regretValueList.begin();
-        
+        auto fitnessItChallenger = _fitnessValueList.begin();
+        auto regretItChallenger = _regretValueList.begin();
+
         bool candidate = true;
-        
-        for ( ; fitnessItChallenger != _fitnessValueList.end(); ++fitnessItChallenger, ++regretItChallenger )
+
+        for (; fitnessItChallenger != _fitnessValueList.end(); ++fitnessItChallenger, ++regretItChallenger)
         {
-            if ( (*fitnessItUnderFocus).second < (*fitnessItChallenger).second and (*regretItUnderFocus).second > (*regretItChallenger).second ) // remember: regret is positive and larger value is worse.
+            if ((*fitnessItUnderFocus).second<(*fitnessItChallenger).second and (*regretItUnderFocus).second>(
+                    *regretItChallenger).second) // remember: regret is positive and larger value is worse.
             {
                 candidate = false;
                 break;
             }
         }
-        if ( candidate == true )
-            paretoFrontGenomeList.push_back( (*fitnessItUnderFocus).first );
+        if (candidate)
+            paretoFrontGenomeList.push_back((*fitnessItUnderFocus).first);
     }
     
     // select a random genome from the Pareto front
@@ -256,17 +257,17 @@ void ForagingRegionsController::logCurrentState()
 }
 
 
-bool ForagingRegionsController::sendGenome( TemplateEEController* __targetRobotController )
+bool ForagingRegionsController::sendGenome(TemplateEEController *_targetRobotController)
 {
-    ForagingRegionsPacket* p = new ForagingRegionsPacket();
+    auto *p = new ForagingRegionsPacket();
     p->senderId = std::make_pair(_wm->getId(), _birthdate);
     p->fitness = getFitness();
     p->genome = _currentGenome;
     p->sigma = _currentSigma;
     p->regret = this->regret;
-    
-    bool retValue = ((ForagingRegionsController*)__targetRobotController)->receiveGenome(p);
-    
+
+    bool retValue = ((ForagingRegionsController *) _targetRobotController)->receiveGenome(p);
+
     return retValue;
 }
 

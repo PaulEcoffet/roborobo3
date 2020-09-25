@@ -49,7 +49,7 @@ extern bool gCustomSnapshot_showSensorRays;
 
 // files
 
-extern std::string gLogCommentText; // user comment that will be written in the log file (e.g. description of experimental setup)
+__unused extern std::string gLogCommentText; // user comment that will be written in the log file (e.g. description of experimental setup)
 extern bool gVerbose_commandlineargument;
 extern bool gLogDirectoryname_commandlineargument;
 extern bool gBatchMode_commandlineargument;
@@ -267,22 +267,35 @@ extern int gLocomotionMode; // locomotion mode dynamics
 // function hearders
 
 void clean_up();
+
 void displayHelp();
+
 void inspectAtPixel(int xIns, int yIns);
+
 bool checkEvent();
+
 bool handleKeyEvent(const Uint8 *keyboardStates);
+
 void updateDisplay();
+
 void initLogging();
+
 void stopLogging();
-void initMonitor( bool __isInspectorAgent = false );
-void updateMonitor(const Uint8* __keyboardStates);
-bool loadProperties( std::string __propertiesFilename );
+
+void initMonitor(bool _isInspectorAgent = false);
+
+void updateMonitor(const Uint8 *_keyboardStates);
+
+bool loadProperties(const std::string &_propertiesFilename);
 
 void initRoborobo();
-bool runRoborobo( int __maxIt = -1);
+
+bool runRoborobo(int _mßaxIt = -1);
+
 void closeRoborobo();
 
 void initTrajectoriesMonitor();
+
 void updateTrajectoriesMonitor();
 
 int launchRoborobo(); // the main entry point

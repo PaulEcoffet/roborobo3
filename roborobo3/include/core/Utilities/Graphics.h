@@ -45,45 +45,51 @@ inline void putPixel32( SDL_Surface *surface, int x, int y, Uint32 pixel )
     Uint32 *pixels = (Uint32 *)surface->pixels;
     
     //Set the pixel
-	pixels[ ( y * (surface->w) ) + x ] = pixel;
+    pixels[(y * (surface->w)) + x] = pixel;
 }
 
-inline void putPixel32_secured( SDL_Surface *surface, int x, int y, Uint32 pixel ) // check borders (8% slower)
+inline void putPixel32_secured(SDL_Surface *surface, int x, int y, Uint32 pixel) // check borders (8% slower)
 {
-    if ( x >= 0 && x < surface->w && y >= 0 && y < surface->h )
+    if (x >= 0 && x < surface->w && y >= 0 && y < surface->h)
         putPixel32(surface, x, y, pixel);
 }
 
-void apply_surface( int x, int y, SDL_Surface* source, SDL_Surface* destination , SDL_Rect* clip = NULL );
-void register_robotMask( int __x, int __y, SDL_Surface* destination , int __id ); // use gRobotMaskData
-void clean_robotMask( int __x, int __y, SDL_Surface* destination ); // use gRobotMaskData
+void apply_surface(int x, int y, SDL_Surface *source, SDL_Surface *destination, SDL_Rect *clip = NULL);
 
-void register_surface( int __x, int __y, SDL_Surface* source, SDL_Surface* destination , int __id ); // unused as of 2014-03-28
-void clean_surface( int __x, int __y, SDL_Surface* source, SDL_Surface* destination ); // unused as of 2014-03-28
+void register_robotMask(int __x, int __y, SDL_Surface *destination, int __id); // use gRobotMaskData
+void clean_robotMask(int __x, int __y, SDL_Surface *destination); // use gRobotMaskData
+
+void
+register_surface(int __x, int __y, SDL_Surface *source, SDL_Surface *destination, int __id); // unused as of 2014-03-28
+void clean_surface(int __x, int __y, SDL_Surface *source, SDL_Surface *destination); // unused as of 2014-03-28
 
 void toggle_fullscreen();
 
-SDL_Surface *load_image( std::string filename );
+SDL_Surface *load_image(const std::string &filename);
 
-void saveCustomScreenshot( std::string __comment = "" );
-void saveRenderScreenshot( std::string __comment = "" );
-void saveFullLoggerScreenshot( std::string __comment = "" );
-void saveEnvironmentScreenshot( std::string __comment = "" );
-void saveFootprintScreenshot( std::string __comment = "" );
+void saveCustomScreenshot(const std::string &__comment = "");
 
-void saveTrajectoryImage( std::string __comment = "" );
+void saveRenderScreenshot(const std::string &__comment = "");
 
-void saveImage ( SDL_Surface image, std::string __prefix, std::string __comment = "" );
+void saveFullLoggerScreenshot(const std::string &__comment = "");
+
+void saveEnvironmentScreenshot(const std::string &__comment = "");
+
+void saveFootprintScreenshot(const std::string &__comment = "");
+
+void saveTrajectoryImage(const std::string &_comment = "");
+
+void saveImage(SDL_Surface image, std::string __prefix, std::string __comment = "");
 
 // Draw a line
 // Algorithm: Bresenham
 // adapted from: http://www.roguebasin.com/index.php?title=Bresenham%27s_Line_Algorithm
-void drawLine(SDL_Surface * image,
-               int x1,
-               int y1,
-               int const x2,
-               int const y2,
-               uint8_t r, uint8_t g, uint8_t b );
+void drawLine(SDL_Surface *image,
+              int x1,
+              int y1,
+              int const x2,
+              int const y2,
+              uint8_t r, uint8_t g, uint8_t b);
 
 // Cast a line. Do not draw. Stops when no-white pixel hit. return updated x2 and y2 (pointers), and collision (true|false).
 // Algorithm: Bresenham

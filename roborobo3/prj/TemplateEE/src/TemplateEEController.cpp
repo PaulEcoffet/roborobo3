@@ -20,16 +20,16 @@ using namespace Neural;
 TemplateEEController::TemplateEEController( RobotWorldModel *wm )
 {
     _wm = wm;
-    
-    nn = NULL;
-    
+
+    nn = nullptr;
+
     // evolutionary engine
-    
+
     _minValue = -1.0;
     _maxValue = 1.0;
-    
+
     _currentSigma = TemplateEESharedData::gSigmaRef;
-    
+
     // behaviour
     
     _iteration = 0;
@@ -60,7 +60,7 @@ TemplateEEController::~TemplateEEController()
 {
     _parameters.clear();
     delete nn;
-    nn = NULL;
+    nn = nullptr;
 }
 
 void TemplateEEController::step() // handles control decision and evolution (but: actual movement is done in roborobo's main loop)
@@ -441,11 +441,11 @@ void TemplateEEController::stepController()
 void TemplateEEController::createNN()
 {
     setIOcontrollerSize(); // compute #inputs and #outputs
-    
-    if ( nn != NULL ) // useless: delete will anyway check if nn is NULL or not.
+
+    if (nn != nullptr) // useless: delete will anyway check if nn is nullptr or not.
         delete nn;
-    
-    switch ( TemplateEESharedData::gControllerType )
+
+    switch (TemplateEESharedData::gControllerType)
     {
         case 0:
         {
@@ -923,20 +923,22 @@ void TemplateEEController::broadcastGenome()
         if ( targetIndex >= gRobotIndexStartOffset && targetIndex < gRobotIndexStartOffset+gNbOfRobots )   // sensor ray bumped into a robot : communication is possible
         {
             targetIndex = targetIndex - gRobotIndexStartOffset; // convert image registering index into robot id.
-            
-            TemplateEEController* targetRobotController = dynamic_cast<TemplateEEController*>(gWorld->getRobot(targetIndex)->getController());
-            
-            if ( ! targetRobotController )
+
+            auto *targetRobotController = dynamic_cast<TemplateEEController *>(gWorld->getRobot(targetIndex)
+                    ->getController());
+
+            if (!targetRobotController)
             {
-                std::cerr << "Error from robot " << _wm->getId() << " : the observer of robot " << targetIndex << " is not compatible." << std::endl;
+                std::cerr << "Error from robot " << _wm->getId() << " : the observer of robot " << targetIndex
+                          << " is not compatible." << std::endl;
                 exit(-1);
             }
-            
-            if ( targetRobotController->isListening() )
+
+            if (targetRobotController->isListening())
             {
                 bool retValue = sendGenome(targetRobotController);
-                
-                if ( retValue == true )
+
+                if (retValue)
                     _nbGenomeTransmission++; // count unique transmissions (ie. nb of different genomes stored).
             }
         }
@@ -978,20 +980,20 @@ void TemplateEEController::loadNewGenome()
 {
     if ( _wm->isAlive() || gEnergyRefill )  // ( gEnergyRefill == true ) enables revive
     {
-        if ( _wm->isAlive() )
+        if (_wm->isAlive())
             logCurrentState();
-        
+
         // note: at this point, agent got energy, whether because it was revived or because of remaining energy.
-        
-        if (_genomesList.size() > 0)
+
+        if (!_genomesList.empty())
         {
             // case: 1+ genome(s) imported, random pick.
-            
+
             performSelection();
             logLineage();
             performVariation();
             clearReservoir();
-            
+
             //logCurrentState();
             
             _wm->setAlive(true);
@@ -1014,54 +1016,57 @@ void TemplateEEController::loadNewGenome()
             if ( _wm->isAlive() )
             {
                 // Logging: full genome
-                std::string sLog = std::string("");
-                sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,";
-                
+                std::string sLog2 = std::string("");
+                sLog2 += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::"
+                         + std::to_string(_birthdate) + ",genome,";
+
                 /*
                  // write genome (takes a lot of disk space)
                  for(unsigned int i=0; i<_genome.size(); i++)
                  {
-                 sLog += std::to_string(_genome[i]) + ",";
+                 sLog2 += std::to_string(_genome[i]) + ",";
                  //gLogFile << std::fixed << std::showpoint << _wm->_genome[i] << " ";
                  }
                  */
-                sLog += "(...)"; // do not write genome
-                
-                sLog += "\n";
-                gLogManager->write(sLog);
+                sLog2 += "(...)"; // do not write genome
+
+                sLog2 += "\n";
+                gLogManager->write(sLog2);
                 gLogManager->flush();
             }
         }
         else
         {
             // case: no imported genome and the robot is/was active - robot is set to inactive (which means: robot is put off-line (if gDeathState is true), then wait for new genome (if gListenState is true))
-            
-            if ( _wm->isAlive() == true )
+
+            if (_wm->isAlive())
             {
-                
+
                 // Logging: "no genome"
                 std::string sLog = std::string("");
-                sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",genome,n/a.\n";
+                sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::"
+                        + std::to_string(_birthdate) + ",genome,n/a.\n";
                 gLogManager->write(sLog);
                 gLogManager->flush();
-                
+
                 reset(); // destroy then create a new NN
-                
+
                 _wm->setAlive(false); // inactive robot *must* import a genome from others (ie. no restart).
-                
-                if ( TemplateEESharedData::gNotListeningStateDelay != 0 ) // ie. -1 (infinite,dead) or >0 (temporary,mute)
+
+                if (TemplateEESharedData::gNotListeningStateDelay != 0) // ie. -1 (infinite,dead) or >0 (temporary,mute)
                 {
                     _isListening = false;
 
                     _notListeningDelay = TemplateEESharedData::gNotListeningStateDelay;
                     _listeningDelay = TemplateEESharedData::gListeningStateDelay;
                     _wm->setRobotLED_colorValues(0, 0, 255); // is not listening
-                    
-                    std::string sLog = std::string("");
-                    sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,inactive\n";
-                    gLogManager->write(sLog);
+
+                    std::string sLog2 = std::string("");
+                    sLog2 += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::"
+                             + std::to_string(_birthdate) + ",status,inactive\n";
+                    gLogManager->write(sLog2);
                     gLogManager->flush();
-                    
+
                 }
                 else
                 {
@@ -1070,19 +1075,23 @@ void TemplateEEController::loadNewGenome()
                     if ( _listeningDelay > 0 || _listeningDelay == -1 )
                     {
                         _isListening = true;
-                        
+
                         _wm->setRobotLED_colorValues(0, 255, 0); // is listening
-                        
-                        std::string sLog = std::string("");
-                        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,listening\n";
-                        gLogManager->write(sLog);
+
+                        std::string sLog2 = std::string("");
+                        sLog2 +=
+                                "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::"
+                                + std::to_string(_birthdate) + ",status,listening\n";
+                        gLogManager->write(sLog2);
                         gLogManager->flush();
                     }
                     else
                     {
-                        std::string sLog = std::string("");
-                        sLog += "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::" + std::to_string(_birthdate) + ",status,inactive\n";
-                        gLogManager->write(sLog);
+                        std::string sLog2 = std::string("");
+                        sLog2 +=
+                                "" + std::to_string(gWorld->getIterations()) + "," + std::to_string(_wm->getId()) + "::"
+                                + std::to_string(_birthdate) + ",status,inactive\n";
+                        gLogManager->write(sLog2);
                         gLogManager->flush();
                     }
                 }
@@ -1131,19 +1140,19 @@ void TemplateEEController::updateFitness()
     std::cout << "[WARNING] TemplateEEController::updateFitness() called -- nothing to do. Forgot to implement?\n";
 }
 
-bool TemplateEEController::sendGenome( TemplateEEController* __targetRobotController )
+bool TemplateEEController::sendGenome(TemplateEEController *_targetRobotController)
 {
     // other agent stores my genome. Contaminant stragegy.
     // Note that medea does not use fitnessValue (default value: 0)
     // if you need to send other information, derive your own Packet class and sendGenome/receiveGenome methods in your project space.
 
-    Packet* p = new Packet();
+    auto *p = new Packet();
     p->senderId = std::make_pair(_wm->getId(), _birthdate);
     p->fitness = getFitness();
     p->genome = _currentGenome;
     p->sigma = _currentSigma;
-    
-    bool retValue = __targetRobotController->receiveGenome(p);
+
+    bool retValue = _targetRobotController->receiveGenome(p);
 
     delete p;
 

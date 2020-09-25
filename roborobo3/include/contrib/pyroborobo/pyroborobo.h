@@ -1,5 +1,5 @@
-#ifndef _PYROBOROBO_H_
-#define _PYROBOROBO_H_
+#ifndef _PYROBOROBO_DEF_H_
+#define _PYROBOROBO_DEF_H_
 
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
@@ -23,7 +23,7 @@ public:
                py::object &agentControllerClass,
                py::object &worldModelClass,
                py::object &agentObserverClass,
-               py::object &objectClass,
+               py::dict &objectClassDict,
                const py::dict &options);
 
     void start();
@@ -49,7 +49,7 @@ public:
 
     std::vector<Robot *> getRobots();
 
-    void close();
+    static void close();
 
 private:
 

@@ -17,22 +17,24 @@
 #include <Dummy/include/DummyAgentObserver.h>
 #include <Dummy/include/DummyController.h>
 
+#include <utility>
+
 namespace py = pybind11;
 
 class PyConfigurationLoader : public ConfigurationLoader
 {
 public:
-    PyConfigurationLoader(ConfigurationLoader *configurationLoader, const py::object &worldObserverClass,
-                          const py::object &agentControllerClass,
-                          const py::object &worldModelClass, const py::object &agentObserverClass,
-                          const py::object &objectClass)
+    PyConfigurationLoader(ConfigurationLoader *configurationLoader, py::object worldObserverClass,
+                          py::object agentControllerClass,
+                          py::object worldModelClass, py::object agentObserverClass,
+                          py::object objectClass)
             :
             fallbackconf(configurationLoader),
-            worldObserverClass(worldObserverClass),
-            agentControllerClass(agentControllerClass),
-            worldModelClass(worldModelClass),
-            agentObserverClass(agentObserverClass),
-            objectClass(objectClass),
+            worldObserverClass(std::move(worldObserverClass)),
+            agentControllerClass(std::move(agentControllerClass)),
+            worldModelClass(std::move(worldModelClass)),
+            agentObserverClass(std::move(agentObserverClass)),
+            objectClass(std::move(objectClass)),
             allocated()
     {
     }

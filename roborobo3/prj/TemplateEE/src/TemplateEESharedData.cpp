@@ -63,4 +63,4 @@ int TemplateEESharedData::gMutationOperator = 1; // 0: uniform, 1: gaussian
 double TemplateEESharedData::gSigma = 0.01; // 0.01 is just some random value.
 
 std::ofstream gLitelogFile;
-LogManager *gLitelogManager = NULL;
+LogManager *gLitelogManager = nullptr;
