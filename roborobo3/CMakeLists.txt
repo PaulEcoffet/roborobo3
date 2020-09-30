@@ -9,6 +9,12 @@ set(CMAKE_CXX_FLAGS "-Wall -O3")
 
 #SET(PYTHON_EXECUTABLE /home/pecoffet/anaconda3/bin/python)
 
+if (DEFINED ENV{PYTHON_EXECUTABLE})
+    SET(PYTHON_EXECUTABLE $ENV{PYTHON_EXECUTABLE})
+else ()
+    message("PYTHON_EXECUTABLE environment variable is not set")
+endif ()
+
 find_package(pybind11 REQUIRED)
 
 message("Installing for ${PYTHON_EXECUTABLE}")

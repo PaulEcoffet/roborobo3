@@ -71,7 +71,7 @@
 // =-=-=-=-=
 
 long int gVersion = 20180704;
-__unused std::string gLogCommentText = "(under development)"; //
+std::string gLogCommentText = "(under development)"; //
 
 std::string gStartTime = getCurrentTimeAsReadableString();
 time_t gStartTimeRawFormat = time(nullptr);

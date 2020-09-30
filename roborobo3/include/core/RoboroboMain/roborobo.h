@@ -49,7 +49,7 @@ extern bool gCustomSnapshot_showSensorRays;
 
 // files
 
-__unused extern std::string gLogCommentText; // user comment that will be written in the log file (e.g. description of experimental setup)
+extern std::string gLogCommentText; // user comment that will be written in the log file (e.g. description of experimental setup)
 extern bool gVerbose_commandlineargument;
 extern bool gLogDirectoryname_commandlineargument;
 extern bool gBatchMode_commandlineargument;
@@ -290,7 +290,7 @@ bool loadProperties(const std::string &_propertiesFilename);
 
 void initRoborobo();
 
-bool runRoborobo(int _mßaxIt = -1);
+bool runRoborobo(int _maxIt = -1);
 
 void closeRoborobo();
 
