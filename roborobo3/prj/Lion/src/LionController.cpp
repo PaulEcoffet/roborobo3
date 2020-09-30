@@ -306,23 +306,17 @@ std::string LionController::inspect(std::string prefix)
     }
     if (verbose == 1)
     {
+        out << "nn1: " << std::endl;
         out << m_nn->toString() << std::endl;
-        auto &weights = m_nn->getWeigths();
-        int i = 0;
-        for (auto &weight : weights)
-        {
-            out << weight << ",";
-            if (i == 10)
-            {
-                out << "\n";
-                i = 0;
-            }
-            i++;
-        }
+        out << "nb weights:" << m_nn->getRequiredNumberOfWeights() << std::endl;
+        out << "nn2:" << std::endl;
+        out << m_nn2->toString() << std::endl;
+        out << "nb weights:" << m_nn2->getRequiredNumberOfWeights() << std::endl;
+        out << "total: " << getWeights().size() << std::endl;
     }
     if (verbose == 2)
     {
-        for (int i = 0; i < gInitialNumberOfRobots; i++)
+        for (int i = 0; i < std::min(gInitialNumberOfRobots, 10); i++)
         {
             out << prefix << i << ": " << m_wm->getCoop(i) << "(" << m_wm->getCoop(i, true) << ")\n";
         }
