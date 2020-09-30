@@ -14,6 +14,11 @@ class PyCircleObjectTrampoline : public BaseCircle
 public:
     using BaseCircle::BaseCircle;
 
+    PyCircleObjectTrampoline(int id, const pybind11::dict &data) : BaseCircle(id)
+    {
+        (void) data;
+    }
+
     void step() override
     {
         PYBIND11_OVERLOAD(void, BaseCircle, step,);

@@ -21,15 +21,14 @@ protected:
 
 public :
 
-    CircleObject(int __id); // use PhysicalObjectFactory instead!
+    CircleObject(int _id); // use PhysicalObjectFactory instead!
     ~CircleObject()
-    {
-    }
+    = default;
 
     bool canRegister() override; // test if register object is possible (use both shape or footprints)
     void registerObject() override; // register object in the world (write images)
     void unregisterObject() override; // unregister object in the world (write blank pixels)
-    void show(SDL_Surface *surface = gScreen) override; // wrt. screen-rendering
+    void show(SDL_Surface *surface) override; // wrt. screen-rendering
     void hide() override;    // wrt. screen-rendering
 
 };

@@ -9,11 +9,25 @@
 #include <pybind11/pybind11.h>
 
 
+class SquareObjectPublicist : public SquareObject
+{
+public:
+    using SquareObject::_soft_w;
+    using SquareObject::_soft_h;
+    using SquareObject::_solid_w;
+    using SquareObject::_solid_h;
+};
+
 template<class BaseSquare = SquareObject>
 class PySquareObjectTrampoline : public BaseSquare
 {
 public:
     using BaseSquare::BaseSquare;
+
+    PySquareObjectTrampoline(int id, const pybind11::dict &data) : BaseSquare(id)
+    {
+        (void) data;
+    };
 
     void step() override
     {

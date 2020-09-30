@@ -26,6 +26,7 @@ public:
 
     static void updateObjectConstructionDict(const py::dict &constructionDict);
 
+    static py::dict getObjectData(int id);
 };
 
 

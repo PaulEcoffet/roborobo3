@@ -13,6 +13,7 @@
 #include <contrib/pyroborobo/PySquareObjectTrampoline.h>
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotWorldModelModuleDefinition.h>
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotModuleDefinition.h>
+#include <contrib/pyroborobo/ModuleDefinitions/pyObjectsModuleDefinition.h>
 #include "contrib/pyroborobo/ModuleDefinitions/pyAgentObserverModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyControllerModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyRoboroboModuleDefinition.h"
@@ -29,6 +30,7 @@ PYBIND11_MODULE(pyroborobo, m)
     addPyAgentObserverBinding(m);
     py::class_<World> world_def(m, "World");
     addPyRobotBinding(m);
+    addPyObjectsBindings(m);
 
 
 }
