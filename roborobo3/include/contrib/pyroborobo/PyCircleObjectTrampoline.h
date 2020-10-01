@@ -8,6 +8,15 @@
 #include <pybind11/pybind11.h>
 #include "core/World/CircleObject.h"
 
+
+class CircleObjectPublicist : public CircleObject
+{
+public:
+    using CircleObject::_radius;
+    using CircleObject::_footprintRadius;
+
+};
+
 template<class BaseCircle = CircleObject>
 class PyCircleObjectTrampoline : public BaseCircle
 {
@@ -21,7 +30,7 @@ public:
 
     void step() override
     {
-        PYBIND11_OVERLOAD(void, BaseCircle, step,);
+        PYBIND11_OVERLOAD_PURE(void, BaseCircle, step,);
     }
 
     bool canRegister() override

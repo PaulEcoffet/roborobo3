@@ -32,24 +32,27 @@ void PhysicalObjectFactory::makeObject(int type)
     if (gProperties.hasProperty(pytype))
     {
 #ifdef PYROBOROBO
-        std::string strpytype;
-        gProperties.checkAndGetPropertyValue(pytype, &strpytype, false);
-        gPhysicalObjects.push_back(PyPhysicalObjectFactory::makeObject(pytype, id));
+        std::string valuepytype;
+        gProperties.checkAndGetPropertyValue(pytype, &valuepytype, false);
+        gPhysicalObjects.push_back(PyPhysicalObjectFactory::makeObject(valuepytype, id));
+        return;
 #else
         throw std::runtime_error("Python is not activated here, please use pyroborobo from a python interpreter"
                                  "to run this conf\n");
 #endif
 
     }
-    if (gProperties.hasProperty(s))
+    else if (gProperties.hasProperty(s))
     {
         convertFromString<int>(type, gProperties.getProperty(s), std::dec);
     }
     else
     {
         if (gVerbose)
+        {
             std::cerr << "[MISSING] PhysicalObjectFactory: object #" << id << ", type is missing. Assume type "
                       << gPhysicalObjectDefaultType << "." << std::endl;
+        }
         type = gPhysicalObjectDefaultType;
     }
 

@@ -15,7 +15,7 @@ namespace py = pybind11;
 class PyPhysicalObjectFactory
 {
 private:
-    static py::dict objectConstructionDict;
+    static std::map<std::string, py::object> objectConstructionDict;
     static std::vector<py::object> objectList;
 
 

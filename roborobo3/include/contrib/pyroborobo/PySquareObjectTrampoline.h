@@ -31,7 +31,7 @@ public:
 
     void step() override
     {
-        PYBIND11_OVERLOAD(void, BaseSquare, step,);
+        PYBIND11_OVERLOAD_PURE(void, BaseSquare, step,);
     }
 
     bool canRegister() override
@@ -41,12 +41,12 @@ public:
 
     void registerObject() override
     {
-        PYBIND11_OVERLOAD_NAME(void, BaseSquare, "register_object", registerObject,);
+        PYBIND11_OVERLOAD_NAME(void, BaseSquare, "register", registerObject,);
     }
 
     void unregisterObject() override
     {
-        PYBIND11_OVERLOAD_NAME(void, BaseSquare, "unregister_object", unregisterObject,);
+        PYBIND11_OVERLOAD_NAME(void, BaseSquare, "unregister", unregisterObject,);
     }
 
     void isTouched(int _idAgent) override
@@ -76,7 +76,7 @@ public:
 
     std::string inspect(std::string prefix) override
     {
-        PYBIND11_OVERLOAD(std::string, BaseSquare, inspect, prefix);
+        PYBIND11_OVERLOAD_PURE(std::string, BaseSquare, inspect, prefix);
     }
 
     virtual void relocate()

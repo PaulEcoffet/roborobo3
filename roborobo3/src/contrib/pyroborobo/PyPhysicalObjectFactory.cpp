@@ -8,32 +8,42 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 
-py::dict PyPhysicalObjectFactory::objectConstructionDict; /* Might raise an exception that cannot be caught. */
+std::map<std::string, py::object>  PyPhysicalObjectFactory::objectConstructionDict; /* Might raise an exception that cannot be caught. */
 std::vector<py::object> PyPhysicalObjectFactory::objectList;
 
 PhysicalObject *PyPhysicalObjectFactory::makeObject(const std::string &type, int id)
 {
     PhysicalObject *obj = nullptr;
 
-    if (objectConstructionDict.contains(type))
+    if (objectConstructionDict.find(type) != objectConstructionDict.end())
     {
         py::dict data = PyPhysicalObjectFactory::getObjectData(id);
-        py::object pyobj = objectConstructionDict[py::str(type)](id, data);
+        py::object pyobj = objectConstructionDict[type](id, data);
+        py::print(pyobj);
         obj = pyobj.cast<PhysicalObject *>();
         objectList.emplace_back(pyobj); /* Save the object ref to avoid unexpected gc from python */
+    }
+    else
+    {
+        throw std::runtime_error(
+                std::string("this key '") + type + "' is not in the dict of physical object constructors");
     }
     return obj;
 }
 
 void PyPhysicalObjectFactory::updateObjectConstructionDict(const py::dict &constructionDict)
 {
-    PyPhysicalObjectFactory::objectConstructionDict.attr("update")(constructionDict);
+    for (auto &keyval : constructionDict)
+    {
+        auto key = keyval.first.cast<std::string>();
+        PyPhysicalObjectFactory::objectConstructionDict[key] = py::reinterpret_borrow<py::object>(keyval.second);
+    }
 }
 
 py::dict PyPhysicalObjectFactory::getObjectData(int id)
 {
     py::dict data;
-    std::string test = std::string("physicalObjects[") + std::to_string(id) + "].";
+    std::string test = std::string("physicalObject[") + std::to_string(id) + "].";
     for (const auto &keyval : gProperties)
     {
         const std::string &key = keyval.first;

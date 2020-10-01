@@ -34,6 +34,17 @@ public :
 
     void hide() override;    // wrt. screen-rendering
 
+    /* add default behavior for callbacks */
+
+    void isTouched(int _id) override
+    {};
+
+    void isWalked(int _id) override
+    {};
+
+    void isPushed(int _id, std::tuple<double, double> _speed) override
+    {};
+
 };
 
 #endif
