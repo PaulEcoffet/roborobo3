@@ -1,12 +1,12 @@
 import os
-import re
-import sys
 import platform
+import re
 import subprocess
+import sys
+from distutils.version import LooseVersion
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
-from distutils.version import LooseVersion
 
 
 class CMakeExtension(Extension):
@@ -63,7 +63,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyroborobo',
-    version='0.0.1',
+    version='0.1.1',
     author='Paul Ecoffet',
     author_email='paul.ecoffet@sorbonne-universite.fr',
     description='pyroborobo',

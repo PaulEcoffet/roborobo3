@@ -67,15 +67,31 @@ inline double getAngleToTarget( Point2d refPt , double orientation, Point2d targ
     angle = angle - orientation;
     if ( angle >= 180 )
         angle = angle - 360;
-    
+
     return angle;
 }
 
-inline double getAngleToTarget( double Ax, double Ay, double orientation, double Bx, double By)
+inline double getAngleToTarget(double Ax, double Ay, double orientation, double Bx, double By)
 {
-    Point2d refPt = Point2d(Ax,Ay);
-    Point2d targetPt = Point2d(Bx,By);
-    return getAngleToTarget(refPt,orientation,targetPt);
+    Point2d refPt = Point2d(Ax, Ay);
+    Point2d targetPt = Point2d(Bx, By);
+    return getAngleToTarget(refPt, orientation, targetPt);
+}
+
+/**
+ * @author Paul Ecoffet
+ */
+inline double principalValue(const double rad)
+{
+    const double rad_mod = fmod(rad, 2 * M_PI);
+    if (rad_mod > M_PI)
+    {
+        return rad_mod - 2 * M_PI;
+    }
+    else
+    {
+        return rad_mod;
+    }
 }
 
 

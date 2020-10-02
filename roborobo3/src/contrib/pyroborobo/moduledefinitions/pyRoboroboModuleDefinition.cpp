@@ -17,16 +17,15 @@ void addPyRoboroboBinding(py::module &m)
         Python interface to the roborobo simulator
 
 )doc")
-            .def(py::init<const std::string &, py::object &, py::object &, py::object &,
-                         py::object &, py::dict &, const py::dict &>(),
-                 "properties_file"_a,
-                 "world_observer_class"_a = py::none(),
-                 "controller_class"_a = py::none(),
-                 "world_model_class"_a = py::none(),
-                 "agent_observer_class"_a = py::none(),
-                 "object_class_dict"_a = py::dict(),
-                 "override_conf_dict"_a = py::dict(),
-                 R"doc(
+            .def_static("create", &Pyroborobo::createRoborobo,
+                        "properties_file"_a,
+                        "world_observer_class"_a = py::none(),
+                        "controller_class"_a = py::none(),
+                        "world_model_class"_a = py::none(),
+                        "agent_observer_class"_a = py::none(),
+                        "object_class_dict"_a = py::dict(),
+                        "override_conf_dict"_a = py::dict(),
+                        R"doc(
 Parameters
 ----------
 properties_file: str
@@ -66,6 +65,9 @@ override_conf_dict: dict
 
     DOES NOT WORK YET (dunno why)
 
+)doc")
+            .def_static("get", &Pyroborobo::get, R"doc(
+Return the pyroborobo instance
 )doc")
             .def("start", &Pyroborobo::start,
                  R"doc(
@@ -123,5 +125,6 @@ The World Observer of the roborobo environment
 The list of all the robots of the roborobo environment in order
 
 `PyRoborobo.start()` must have been called before using this property
-)doc");
+)doc")
+            .def_property_readonly("objects", &Pyroborobo::getObjects);
 }

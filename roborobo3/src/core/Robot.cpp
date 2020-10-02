@@ -100,10 +100,12 @@ Robot::Robot( World *__world )
 				_wm->setCameraSensorValue(r,SENSOR_TARGETNORM ,sqrt ( xTarget*xTarget + yTarget*yTarget) ); // length (**from agent center**)
 				angleCosinus = xTarget / _wm->getCameraSensorValue(r,SENSOR_TARGETNORM);
 				angleSinus   = yTarget / _wm->getCameraSensorValue(r,SENSOR_TARGETNORM);
-				if ( angleSinus >= 0 )
-					_wm->setCameraSensorValue(r,SENSOR_TARGETANGLE, acos ( angleCosinus ) + M_PI/2 ); // angle (in radian) wrt. agent center
-				else
-					_wm->setCameraSensorValue(r,SENSOR_TARGETANGLE, -acos ( angleCosinus ) + M_PI/2 + M_PI*2 );
+				if (angleSinus >= 0)
+                    _wm->setCameraSensorValue(r, SENSOR_TARGETANGLE, principalValue(
+                            acos(angleCosinus) + M_PI / 2)); // angle (in radian) wrt. agent center
+                else
+                    _wm->setCameraSensorValue(r, SENSOR_TARGETANGLE,
+                                              principalValue(-acos(angleCosinus) + M_PI / 2 + M_PI * 2));
 				r++;
 			}
 		}

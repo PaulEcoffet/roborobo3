@@ -119,22 +119,27 @@ public:
     {
         return getCameraSensorValue(i,SENSOR_DISTANCEVALUE) / getCameraSensorMaximumDistanceValue(i);
     }
-    
-    double getObjectIdFromCameraSensor( int i )
+
+    double getObjectIdFromCameraSensor(int i)
     {
-        return getCameraSensorValue(i,SENSOR_OBJECTVALUE);
+        return getCameraSensorValue(i, SENSOR_OBJECTVALUE);
     }
-    
-    double getCameraSensorMaximumDistanceValue( int i )
+
+    double getCameraSensorMaximumDistanceValue(int i)
     {
         return gSensorRange; // BEWARE: sensor[i][3] is distance btw the end point of the sensor and the **center of the agent**
     }
-    
+
+    double getCameraSensorTargetAngle(int i)
+    {
+        return getCameraSensorValue(i, SENSOR_TARGETANGLE);
+    }
+
     int getGroundSensor_redValue()
     {
         return _groundSensorValue[0];
     }
-    
+
     int getGroundSensor_greenValue()
     {
         return _groundSensorValue[1];

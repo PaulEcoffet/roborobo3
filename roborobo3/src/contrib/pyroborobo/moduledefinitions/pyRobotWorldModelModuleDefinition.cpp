@@ -12,7 +12,7 @@ namespace py = pybind11;
 void addPyRobotWorldModelBinding(py::module &m)
 {
     py::class_<RobotWorldModel, PyWorldModel>(m, "PyWorldModel")
-            .def(py::init<>())
+            .def(py::init_alias<>())
             .def("get_camera_sensors_dist", [](PyWorldModel &self)
                  { return self.getCameraSensorsDist(); },
                  R"doc(
@@ -32,6 +32,15 @@ Returns a tuple (red, green, blue) from the ground sensor of the robot
                  { return self.getCameraObjectIds(); },
                  R"doc(
 Returns a numpy array of the IDs of the objects seen by the robot
+)doc")
+            .def("get_camera_angles", [](PyWorldModel &self)
+                 {
+                     return self.getCameraAngles();
+                 },
+                 R"doc(
+Return the angles of the sensors target relative to the center of the robots in radian.
+0 -> exactly in front. [-π/2, 0] -> to the front right. [-π, -π/2] -> to the rear right.
+[0, π/2] -> front left, [π/2, π] -> rear left.
 )doc")
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive)
             .def_readwrite("translation", &RobotWorldModel::_desiredTranslationalValue)

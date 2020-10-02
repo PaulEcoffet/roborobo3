@@ -26,6 +26,33 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+Pyroborobo *Pyroborobo::instance = nullptr;
+
+
+Pyroborobo *Pyroborobo::createRoborobo(const std::string &properties_file, py::object &worldObserverClass,
+                                       py::object &agentControllerClass, py::object &worldModelClass,
+                                       py::object &agentObserverClass, py::dict &objectClassDict,
+                                       const py::dict &options)
+{
+    if (instance != nullptr)
+    {
+        throw std::runtime_error("Pyroborobo has already been instantiated");
+    }
+    instance = new Pyroborobo(properties_file, worldObserverClass, agentControllerClass, worldModelClass,
+                              agentObserverClass, objectClassDict, options);
+    return instance;
+}
+
+Pyroborobo *Pyroborobo::get()
+{
+    if (instance == nullptr)
+    {
+        throw std::runtime_error("Pyroborobo has not been created");
+    }
+    return instance;
+}
+
+
 Pyroborobo::Pyroborobo(const std::string &properties_file,
                        py::object &worldObserverClass,
                        py::object &agentControllerClass,
@@ -39,6 +66,7 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
 
     loadProperties(properties_file);
     this->overrideProperties(options);
+    PyPhysicalObjectFactory::init();
     py::object objectClass = py::none();
     if (objectClassDict.contains("_default"))
     {
@@ -149,7 +177,7 @@ bool Pyroborobo::update(size_t n_step)
     return quit;
 }
 
-std::vector<Controller *> Pyroborobo::getControllers()
+const std::vector<Controller *> &Pyroborobo::getControllers()
 {
     if (!initialized)
     {
@@ -158,7 +186,7 @@ std::vector<Controller *> Pyroborobo::getControllers()
     return controllers;
 }
 
-std::vector<RobotWorldModel *> Pyroborobo::getWorldModels()
+const std::vector<RobotWorldModel *> &Pyroborobo::getWorldModels()
 {
     if (!initialized)
     {
@@ -167,7 +195,7 @@ std::vector<RobotWorldModel *> Pyroborobo::getWorldModels()
     return worldmodels;
 }
 
-std::vector<AgentObserver *> Pyroborobo::getAgentObservers()
+const std::vector<AgentObserver *> &Pyroborobo::getAgentObservers()
 {
     if (!initialized)
     {
@@ -177,7 +205,7 @@ std::vector<AgentObserver *> Pyroborobo::getAgentObservers()
     return agentobservers;
 }
 
-std::vector<Robot *> Pyroborobo::getRobots()
+const std::vector<Robot *> &Pyroborobo::getRobots()
 {
     if (!initialized)
     {
@@ -186,9 +214,24 @@ std::vector<Robot *> Pyroborobo::getRobots()
     return robots;
 }
 
+
+const std::vector<PhysicalObject *> &Pyroborobo::getObjects()
+{
+    if (!initialized)
+    {
+        throw std::runtime_error("Objects have not been instantiated yet. Have you called roborobo.start()?");
+    }
+    return gPhysicalObjects;
+}
+
+
 void Pyroborobo::close()
 {
+    delete gConfigurationLoader;
+    gConfigurationLoader = nullptr;
+    PyPhysicalObjectFactory::close();
     closeRoborobo();
+
 }
 
 void Pyroborobo::gatherProjectInstances()
@@ -238,4 +281,9 @@ int Pyroborobo::addObjectToEnv(PhysicalObject *obj)
     obj->setId(id);
     gPhysicalObjects.emplace_back(obj);
     return id;
+}
+
+Pyroborobo::~Pyroborobo()
+{
+    // World is deleted by closeRoborobo()
 }

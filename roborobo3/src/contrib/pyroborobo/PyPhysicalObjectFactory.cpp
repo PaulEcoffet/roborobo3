@@ -8,20 +8,20 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 
-std::map<std::string, py::object>  PyPhysicalObjectFactory::objectConstructionDict; /* Might raise an exception that cannot be caught. */
-std::vector<py::object> PyPhysicalObjectFactory::objectList;
+std::map<std::string, py::object> *PyPhysicalObjectFactory::objectConstructionDict = nullptr; /* Might raise an exception that cannot be caught. */
+std::vector<py::object> *PyPhysicalObjectFactory::objectList = nullptr;
 
 PhysicalObject *PyPhysicalObjectFactory::makeObject(const std::string &type, int id)
 {
     PhysicalObject *obj = nullptr;
 
-    if (objectConstructionDict.find(type) != objectConstructionDict.end())
+    if (objectConstructionDict->find(type) != objectConstructionDict->end())
     {
         py::dict data = PyPhysicalObjectFactory::getObjectData(id);
-        py::object pyobj = objectConstructionDict[type](id, data);
+        py::object pyobj = (*objectConstructionDict)[type](id, data);
         py::print(pyobj);
         obj = pyobj.cast<PhysicalObject *>();
-        objectList.emplace_back(pyobj); /* Save the object ref to avoid unexpected gc from python */
+        objectList->emplace_back(pyobj); /* Save the object ref to avoid unexpected gc from python */
     }
     else
     {
@@ -36,7 +36,7 @@ void PyPhysicalObjectFactory::updateObjectConstructionDict(const py::dict &const
     for (auto &keyval : constructionDict)
     {
         auto key = keyval.first.cast<std::string>();
-        PyPhysicalObjectFactory::objectConstructionDict[key] = py::reinterpret_borrow<py::object>(keyval.second);
+        (*objectConstructionDict)[key] = py::reinterpret_borrow<py::object>(keyval.second);
     }
 }
 
@@ -116,3 +116,25 @@ py::dict PyPhysicalObjectFactory::getObjectData(int id)
     }
     return data;
 }
+
+void PyPhysicalObjectFactory::init()
+{
+    if (objectList == nullptr)
+    {
+        objectList = new std::vector<py::object>;
+    }
+    if (objectConstructionDict == nullptr)
+    {
+        objectConstructionDict = new std::map<std::string, py::object>;
+    }
+}
+
+void PyPhysicalObjectFactory::close()
+{
+    delete objectList;
+    objectList = nullptr;
+    delete objectConstructionDict;
+    objectConstructionDict = nullptr;
+}
+
+

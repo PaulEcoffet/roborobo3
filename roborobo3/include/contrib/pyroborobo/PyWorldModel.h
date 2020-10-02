@@ -42,6 +42,17 @@ public:
         }
         return res;
     }
+
+    py::array_t<double> getCameraAngles()
+    {
+        py::array_t<double> res(_cameraSensorsNb);
+        auto fastres = res.mutable_unchecked();
+        for (int i = 0; i < _cameraSensorsNb; i++)
+        {
+            fastres(i) = getCameraSensorTargetAngle(i);
+        }
+        return res;
+    }
 };
 
 #endif //ROBOROBO3_PYWORLDMODEL_H

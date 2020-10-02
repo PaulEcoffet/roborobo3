@@ -26,18 +26,26 @@ protected :
     // coordinates (center of object)
     double _xReal;
     double _yReal;
-    
+
     Uint8 _displayColorRed;
     Uint8 _displayColorGreen;
     Uint8 _displayColorBlue;
-    
+
     int regrowTimeMax; // max iterations before object re-appear - load from properties file.
     int regrowTime; // iterations before object re-appear
     bool registered;  // is it scheduled for regrowing? (ie. hidden)
     bool relocateObject; // relocate object when re-appear
     bool overwrite; // write object even if another object/robot will be overwritten.
 
-    bool _visible; // display option (default: true)
+    bool _visible;
+
+    void setVisible(bool visible)
+    {
+        _visible = visible;
+    }
+
+protected:
+    // display option (default: true)
 
     void init();  // called by constructor only
 

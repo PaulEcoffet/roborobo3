@@ -7,6 +7,7 @@
 
 #include <pybind11/pybind11.h>
 #include "core/World/CircleObject.h"
+#include <type_traits>
 
 
 class CircleObjectPublicist : public CircleObject
@@ -71,6 +72,17 @@ public:
     void hide() override
     {
         PYBIND11_OVERLOAD(void, BaseCircle, hide,);
+    }
+
+    void trueHide()
+    {
+        BaseCircle::_visible = false;
+        hide();
+    }
+
+    void trueShow()
+    {
+        BaseCircle::_visible = true;
     }
 
     std::string inspect(std::string prefix) override

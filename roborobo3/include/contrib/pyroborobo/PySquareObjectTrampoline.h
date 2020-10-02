@@ -89,6 +89,16 @@ public:
         PYBIND11_OVERLOAD(bool, BaseSquare, relocate, x, y);
     }
 
+    void trueHide()
+    {
+        BaseSquare::_visible = false;
+        hide();
+    }
+
+    void trueShow()
+    {
+        BaseSquare::_visible = true;
+    }
 
 };
 

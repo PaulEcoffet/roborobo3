@@ -18,13 +18,18 @@ using namespace pybind11::literals;
 class Pyroborobo
 {
 public:
-    Pyroborobo(const std::string &properties_file,
-               py::object &worldObserverClass,
-               py::object &agentControllerClass,
-               py::object &worldModelClass,
-               py::object &agentObserverClass,
-               py::dict &objectClassDict,
-               const py::dict &options);
+
+    static Pyroborobo *createRoborobo(const std::string &properties_file,
+                                      py::object &worldObserverClass,
+                                      py::object &agentControllerClass,
+                                      py::object &worldModelClass,
+                                      py::object &agentObserverClass,
+                                      py::dict &objectClassDict,
+                                      const py::dict &options);
+
+    ~Pyroborobo();
+
+    static Pyroborobo *get();
 
     void start();
 
@@ -32,11 +37,11 @@ public:
 
     int addObjectToEnv(PhysicalObject *);
 
-    std::vector<Controller *> getControllers();
+    const std::vector<Controller *> &getControllers();
 
-    std::vector<RobotWorldModel *> getWorldModels();
+    const std::vector<RobotWorldModel *> &getWorldModels();
 
-    std::vector<AgentObserver*> getAgentObservers();
+    const std::vector<AgentObserver *> &getAgentObservers();
 
     WorldObserver *getWorldObserver()
     {
@@ -47,11 +52,24 @@ public:
         return wobs;
     }
 
-    std::vector<Robot *> getRobots();
+    const std::vector<Robot *> &getRobots();
+
+    const std::vector<PhysicalObject *> &getObjects();
 
     static void close();
 
 private:
+
+    static Pyroborobo *instance;
+
+    Pyroborobo(const std::string &properties_file,
+               py::object &worldObserverClass,
+               py::object &agentControllerClass,
+               py::object &worldModelClass,
+               py::object &agentObserverClass,
+               py::dict &objectClassDict,
+               const py::dict &options);
+
 
     void gatherProjectInstances();
 

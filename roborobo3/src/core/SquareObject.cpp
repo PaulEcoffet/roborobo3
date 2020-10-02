@@ -142,7 +142,7 @@ void SquareObject::show(SDL_Surface *surface) // display on screen (called in th
 void SquareObject::hide()
 {
     //  hide footprint (draw white)
-    
+
     Uint8 r = 0xFF;
     Uint8 g = 0xFF;
     Uint8 b = 0xFF;
