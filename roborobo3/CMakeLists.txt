@@ -68,20 +68,16 @@ target_link_libraries(roborobo PRIVATE
         ${SDL2_IMAGE_LIBRARIES}
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
-        ${GZSTREAM}
-        ${ZLIB_LIBRARIES}
         Eigen3::Eigen
         )
 
 
-pybind11_add_module(pyroborobo ${LIB_SOURCE_FILES})
-target_compile_definitions(pyroborobo PUBLIC PYROBOROBO=1)
-target_link_libraries(pyroborobo PRIVATE
+pybind11_add_module(_pyroborobo ${LIB_SOURCE_FILES})
+target_compile_definitions(_pyroborobo PUBLIC PYROBOROBO=1)
+target_link_libraries(_pyroborobo PRIVATE
         ${SDL2_LIBRARIES}
         ${SDL2_IMAGE_LIBRARIES}
         ${Boost_FILESYSTEM_LIBRARY}
         ${Boost_SYSTEM_LIBRARY}
-        ${GZSTREAM}
-        ${ZLIB_LIBRARIES}
         Eigen3::Eigen
         )

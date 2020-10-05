@@ -64,5 +64,6 @@ def step(self):
             .def_property_readonly("world_model", &Controller::getWorldModel,
                                    R"doc(
 The robot's world_model.
-)doc");
+)doc")
+            .def_property_readonly("id", &Controller::getId);
 }

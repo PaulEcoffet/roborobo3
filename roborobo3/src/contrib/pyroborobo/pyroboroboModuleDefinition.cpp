@@ -22,7 +22,7 @@ namespace py = pybind11;
 using namespace pybind11::literals;
 
 
-PYBIND11_MODULE(pyroborobo, m)
+PYBIND11_MODULE(_pyroborobo, m)
 {
     addPyRoboroboBinding(m);
     addPyControllerBinding(m);

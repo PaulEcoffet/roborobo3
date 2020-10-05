@@ -8,6 +8,7 @@
 #include "WorldModels/RobotWorldModel.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/numpy.h>
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 
@@ -19,6 +20,11 @@ public:
     py::tuple getRobotGroundSensors()
     {
         return py::make_tuple(getGroundSensor_redValue(), getGroundSensor_greenValue(), getGroundSensor_blueValue());
+    }
+
+    const sensor_array &getCameraSensors()
+    {
+        return _cameraSensors;
     }
 
     py::array_t<double> getCameraSensorsDist()

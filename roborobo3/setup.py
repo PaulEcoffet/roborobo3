@@ -63,12 +63,13 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyroborobo',
-    version='0.1.1',
+    version='0.2.1',
     author='Paul Ecoffet',
     author_email='paul.ecoffet@sorbonne-universite.fr',
     description='pyroborobo',
     long_description='',
-    ext_modules=[CMakeExtension('pyroborobo')],
+    ext_modules=[CMakeExtension('_pyroborobo')],
     cmdclass=dict(build_ext=CMakeBuild),
+    packages=['pyroborobo'],
     zip_safe=False,
 )
