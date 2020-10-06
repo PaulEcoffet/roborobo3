@@ -71,5 +71,6 @@ setup(
     ext_modules=[CMakeExtension('_pyroborobo')],
     cmdclass=dict(build_ext=CMakeBuild),
     packages=['pyroborobo'],
+    packages_dir={'': 'pyroborobo'},
     zip_safe=False,
 )

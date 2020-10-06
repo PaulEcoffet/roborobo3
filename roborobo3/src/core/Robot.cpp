@@ -258,16 +258,17 @@ void Robot::reset()
 		_wm->setCameraSensorValue(i,SENSOR_DISTANCEVALUE, gSensorRange ); // range: max
 		_wm->setCameraSensorValue(i,SENSOR_OBJECTVALUE, 0 ); // type:  none
 	}
-    
-    for ( int i = 0 ; i < 3 ; i++ )
+
+    for (int i = 0; i < 3; i++)
     {
         _wm->_groundSensorValue[i] = 0; // floor sensor value (taken from gFootprintImage)
     }
-	
-	// Initialize agent observer and Behavior Control Architecture
-  
-	_agentObserver->reset();
-	_controller->reset();
+
+    // Initialize agent observer and Behavior Control Architecture
+
+    _agentObserver->reset();
+    _controller->reset();
+    _wm->reset();
 
 }
 

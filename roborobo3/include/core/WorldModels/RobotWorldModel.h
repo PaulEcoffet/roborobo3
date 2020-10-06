@@ -51,20 +51,24 @@ protected:
     //      a collection of sensors. Each sensor contains 7 (double) values:
     //      id sensor(R),sensor_origin_norm,sensor_origin_angle,sensor_target_distance_from_agent_center(!),sensor_target_angle, "current value", object Id.
     sensor_array _cameraSensors;
-    
+
     bool _initSensor;
-    
+
 public:
 
-    void initCameraSensors ( int nbSensors );
-    
+    void initCameraSensors(int nbSensors);
+
+    virtual void reset()
+    {
+    };
+
     //sensor(R),sensor_origin_norm,sensor_origin_angle,sensor_target_distance_from_agent_center(!),sensor_target_angle, "current value", object Id.
-	double getCameraSensorValue( int sensorId, int valueId )
+    double getCameraSensorValue(int sensorId, int valueId)
     {
         return _cameraSensors[sensorId][valueId];
     }
-    
-    void setCameraSensorValue(  int sensorId, int valueId, double value )
+
+    void setCameraSensorValue(int sensorId, int valueId, double value)
     {
         _cameraSensors[sensorId][valueId] = value;
     }

@@ -17,6 +17,11 @@ class PyWorldModel : public RobotWorldModel
 public:
     using RobotWorldModel::RobotWorldModel;
 
+    void reset() override
+    {
+        PYBIND11_OVERLOAD(void, RobotWorldModel, reset,);
+    }
+
     py::tuple getRobotGroundSensors()
     {
         return py::make_tuple(getGroundSensor_redValue(), getGroundSensor_greenValue(), getGroundSensor_blueValue());
