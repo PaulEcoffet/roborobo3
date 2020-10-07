@@ -67,6 +67,8 @@ World::World()
 
 World::~World()
 {
+    /*
+     * gRobots are now freed at exit thanks to shared ptr
     for (int i = 0; i != gNbOfRobots; i++)
     {
         if (gRobots[i] != nullptr)
@@ -74,6 +76,7 @@ World::~World()
     }
 
     delete _worldObserver;
+     */
 }
 
 void World::initWorld()
@@ -160,7 +163,7 @@ void World::initWorld()
 
     for (int i = 0; i != gInitialNumberOfRobots; i++)
     {
-        auto *robot = new Robot(this);
+        auto robot = std::make_shared<Robot>(this);
         this->addRobot(robot);
     }
 
@@ -416,9 +419,9 @@ bool World::loadFiles()
 }
 
 
-Robot* World::getRobot( int index )
+std::shared_ptr<Robot> World::getRobot(int index)
 {
-	return gRobots[index];
+    return gRobots[index];
 }
 
 bool World::isRobotRegistered( int index )
@@ -433,11 +436,11 @@ void World::deleteRobot (int index )
     exit(-1);
 }
 
-void World::addRobot(Robot *robot)
+void World::addRobot(std::shared_ptr<Robot> robot)
 {
-	gRobots.push_back(robot);
-	gRobotsRegistry.push_back(true);
-	_agentsVariation = true;
+    gRobots.push_back(robot);
+    gRobotsRegistry.push_back(true);
+    _agentsVariation = true;
 }
 
 void World::deleteLandmark (int __index )
@@ -457,9 +460,9 @@ int World::getIterations()
 	return _iterations;
 }
 
-WorldObserver* World::getWorldObserver()
+std::shared_ptr<WorldObserver> World::getWorldObserver()
 {
-	return _worldObserver;
+    return _worldObserver;
 }
 
 int World::getNbOfRobots()

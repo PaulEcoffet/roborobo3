@@ -51,14 +51,14 @@ void MovableObject::move()
             if (imp.first >= gRobotIndexStartOffset)
             {
                 // pushed by a robot
-                Robot *robot = gWorld->getRobot(imp.first-gRobotIndexStartOffset);
+                auto robot = gWorld->getRobot(imp.first - gRobotIndexStartOffset);
                 ux = _xReal - robot->getWorldModel()->getXReal();
                 uy = _yReal - robot->getWorldModel()->getYReal();
             }
             else
             {
                 // pushed by other object
-                PhysicalObject *object = gPhysicalObjects[imp.first];
+                auto object = gPhysicalObjects[imp.first];
                 ux = _xReal - object->getXReal();
                 uy = _yReal - object->getYReal();
             }

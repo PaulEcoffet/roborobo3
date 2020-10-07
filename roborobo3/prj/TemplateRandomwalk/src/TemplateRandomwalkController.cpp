@@ -12,7 +12,7 @@
 #define NB_SENSORS 12 // assume 12 sensors
 #include "Utilities/Sensorbelt.h"
 
-TemplateRandomwalkController::TemplateRandomwalkController( RobotWorldModel *__wm ) : Controller ( __wm )
+TemplateRandomwalkController::TemplateRandomwalkController(std::shared_ptr<RobotWorldModel> __wm) : Controller(__wm)
 {
     if ( _wm->_cameraSensorsNb != NB_SENSORS )
     {

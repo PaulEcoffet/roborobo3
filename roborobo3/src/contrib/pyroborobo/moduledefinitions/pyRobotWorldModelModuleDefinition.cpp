@@ -11,7 +11,7 @@ namespace py = pybind11;
 
 void addPyRobotWorldModelBinding(py::module &m)
 {
-    py::class_<sensor_array>(m, "sensor_array", py::buffer_protocol())
+    py::class_<sensor_array, std::shared_ptr<sensor_array>>(m, "sensor_array", py::buffer_protocol())
             .def_buffer([](sensor_array &s) {
                 return py::buffer_info(
                         s.data(),
@@ -25,7 +25,7 @@ void addPyRobotWorldModelBinding(py::module &m)
             });
 
 
-    py::class_<RobotWorldModel, PyWorldModel>(m, "_PyWorldModel")
+    py::class_<RobotWorldModel, PyWorldModel, std::shared_ptr<RobotWorldModel>>(m, "_PyWorldModel")
             .def(py::init_alias<>())
             .def("reset", &RobotWorldModel::reset)
             .def("_get_max_dist_camera", [](PyWorldModel &self)

@@ -17,24 +17,24 @@ TutorialConfigurationLoader::~TutorialConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* TutorialConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> TutorialConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new TutorialWorldObserver(wm);
+    return std::make_shared<TutorialWorldObserver>(wm);
 }
 
-RobotWorldModel* TutorialConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> TutorialConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* TutorialConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> TutorialConfigurationLoader::make_AgentObserver(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TutorialAgentObserver(wm);
+    return std::make_shared<TutorialAgentObserver>(wm);
 }
 
-Controller* TutorialConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> TutorialConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TutorialController(wm);
+    return std::make_shared<TutorialController>(wm);
 }
 
 

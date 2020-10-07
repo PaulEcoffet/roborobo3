@@ -9,12 +9,6 @@
 #include "RoboroboMain/roborobo.h"
 
 
-TemplateBoidsAgentObserver::TemplateBoidsAgentObserver( RobotWorldModel *wm )
-{
-    _wm = (RobotWorldModel*)wm;
-    
-}
-
 TemplateBoidsAgentObserver::~TemplateBoidsAgentObserver()
 {
     // nothing to do.

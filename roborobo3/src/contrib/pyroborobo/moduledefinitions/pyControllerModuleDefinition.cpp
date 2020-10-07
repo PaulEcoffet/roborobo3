@@ -23,8 +23,8 @@ namespace py = pybind11;
 
 void addPyControllerBinding(py::module &m)
 {
-    pybind11::class_<Controller, PyControllerTrampoline>(m, "PyController",
-                                                         R"doc(
+    pybind11::class_<Controller, PyControllerTrampoline, std::shared_ptr<Controller>>(m, "PyController",
+                                                                                      R"doc(
 Class to extend a Roborobo Controller in python.
 
 ..warning:
@@ -38,7 +38,7 @@ Class to extend a Roborobo Controller in python.
 
     It is also necessary to override `step` and `reset`. Not doing so leads to cryptic errors.
 )doc")
-            .def(py::init<RobotWorldModel *>(), "world_model"_a)
+            .def(py::init<std::shared_ptr<RobotWorldModel>>(), "world_model"_a)
             .def("step", &Controller::step,
                  R"doc(
 Takes the decision of the robot's next action by reading and modifying its `world_model`.

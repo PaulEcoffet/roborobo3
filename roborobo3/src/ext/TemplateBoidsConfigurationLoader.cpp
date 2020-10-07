@@ -15,24 +15,24 @@ TemplateBoidsConfigurationLoader::~TemplateBoidsConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* TemplateBoidsConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> TemplateBoidsConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new TemplateBoidsWorldObserver(wm);
+    return std::make_shared<TemplateBoidsWorldObserver>(wm);
 }
 
-RobotWorldModel* TemplateBoidsConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> TemplateBoidsConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* TemplateBoidsConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> TemplateBoidsConfigurationLoader::make_AgentObserver(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateBoidsAgentObserver(wm);
+    return std::make_shared<TemplateBoidsAgentObserver>(wm);
 }
 
-Controller* TemplateBoidsConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> TemplateBoidsConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateBoidsController(wm);
+    return std::make_shared<TemplateBoidsController>(wm);
 }
 
 #endif

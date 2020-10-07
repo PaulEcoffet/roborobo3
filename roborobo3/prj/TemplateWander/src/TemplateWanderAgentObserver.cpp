@@ -8,15 +8,6 @@
 
 
 
-TemplateWanderAgentObserver::TemplateWanderAgentObserver( )
-{
-}
-
-TemplateWanderAgentObserver::TemplateWanderAgentObserver( RobotWorldModel *__wm )
-{
-	_wm = __wm;
-}
-
 TemplateWanderAgentObserver::~TemplateWanderAgentObserver()
 {
 	// nothing to do.

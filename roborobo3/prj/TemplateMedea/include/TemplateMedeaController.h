@@ -19,8 +19,9 @@ class TemplateMedeaController : public TemplateEEController
 {
     public:
     
-        TemplateMedeaController(RobotWorldModel *wm);
-        ~TemplateMedeaController();
+        TemplateMedeaController(std::shared_ptr<RobotWorldModel> wm);
+
+    ~TemplateMedeaController();
     
         double getFitness() override;
 
@@ -36,9 +37,10 @@ class TemplateMedeaController : public TemplateEEController
         void performVariation() override;
     
         void broadcastGenome() override;
-    
-        bool sendGenome( TemplateEEController* __targetRobotController ) override;
-        bool receiveGenome( Packet* p ) override;
+
+    bool sendGenome(std::shared_ptr<TemplateEEController> __targetRobotController) override;
+
+    bool receiveGenome(Packet *p) override;
     
         void resetFitness() override;
         void updateFitness() override;

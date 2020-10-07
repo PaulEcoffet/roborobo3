@@ -13,9 +13,9 @@ AgentObserver::AgentObserver( )
 {
 }
 
-AgentObserver::AgentObserver( RobotWorldModel *__wm )
+AgentObserver::AgentObserver(std::shared_ptr<RobotWorldModel> __wm)
 {
-	_wm = (RobotWorldModel*)__wm;
+    _wm = __wm;
 }
 
 AgentObserver::~AgentObserver()
@@ -38,7 +38,7 @@ void AgentObserver::stepPost()
     // nothing to do.
 }
 
-Controller* AgentObserver::getController()
+std::shared_ptr<Controller> AgentObserver::getController()
 {
     return gWorld->getRobot(_wm->getId())->getController();
 }

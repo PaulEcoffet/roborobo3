@@ -212,7 +212,7 @@ int gPhysicalObjectDefaultSolid_h = 16;
 int gPhysicalObjectDefaultSoft_w = 22;
 int gPhysicalObjectDefaultSoft_h = 22;
 
-std::vector<PhysicalObject *> gPhysicalObjects;
+std::vector<std::shared_ptr<PhysicalObject> > gPhysicalObjects;
 
 bool gPhysicalObjectsRedraw = false;
 
@@ -323,7 +323,7 @@ Timer fps;
 int timetag = -1;
 Timer timeWatch;
 
-std::vector<Robot *> gRobots;
+std::vector<std::shared_ptr<Robot>> gRobots;
 std::vector<bool> gRobotsRegistry;
 
 /* ********************
@@ -461,7 +461,7 @@ void inspectAtPixel(int xIns, int yIns)
         if (inspectorSensorValue >= (Uint32) gRobotIndexStartOffset)
         {
             std::cout << "\tInformation from agent #" << inspectorSensorValue - gRobotIndexStartOffset << std::endl;
-            Robot *robot = gWorld->getRobot(inspectorSensorValue - gRobotIndexStartOffset);
+            auto robot = gWorld->getRobot(inspectorSensorValue - gRobotIndexStartOffset);
             std::cout << robot->inspect("\t") << std::endl;
         }
         else if (inspectorSensorValue >= (Uint32) gPhysicalObjectIndexStartOffset
@@ -469,7 +469,7 @@ void inspectAtPixel(int xIns, int yIns)
         {
             int iObj = inspectorSensorValue - gPhysicalObjectIndexStartOffset;
             std::cout << "\tInformation from Physical object #" << iObj << std::endl;
-            PhysicalObject *physicalObject = gPhysicalObjects[iObj];
+            auto physicalObject = gPhysicalObjects[iObj];
             std::cout << physicalObject->inspect("\t");
         }
     }

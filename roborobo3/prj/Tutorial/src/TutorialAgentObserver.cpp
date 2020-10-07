@@ -7,15 +7,6 @@
 #include "RoboroboMain/roborobo.h"
 
 
-TutorialAgentObserver::TutorialAgentObserver( )
-{
-}
-
-TutorialAgentObserver::TutorialAgentObserver( RobotWorldModel *__wm )
-{
-	_wm = __wm;
-}
-
 TutorialAgentObserver::~TutorialAgentObserver()
 {
 	// nothing to do.

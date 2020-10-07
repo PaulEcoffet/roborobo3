@@ -9,14 +9,18 @@
 
 class TutorialConfigurationLoader : public ConfigurationLoader
 {
-	public:
-		TutorialConfigurationLoader();
-		~TutorialConfigurationLoader();
+public:
+    TutorialConfigurationLoader();
 
-		WorldObserver *make_WorldObserver(World* wm) ;
-		RobotWorldModel *make_RobotWorldModel();
-		AgentObserver *make_AgentObserver(RobotWorldModel* wm) ;
-		Controller *make_Controller(RobotWorldModel* wm) ;
+    ~TutorialConfigurationLoader();
+
+    std::shared_ptr<WorldObserver> make_WorldObserver(World *wm);
+
+    std::shared_ptr<RobotWorldModel> make_RobotWorldModel();
+
+    std::shared_ptr<AgentObserver> make_AgentObserver(std::shared_ptr<RobotWorldModel> wm);
+
+    std::shared_ptr<Controller> make_Controller(std::shared_ptr<RobotWorldModel> wm);
 };
 
 #endif

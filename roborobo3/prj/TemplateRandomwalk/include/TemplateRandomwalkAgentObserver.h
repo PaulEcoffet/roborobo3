@@ -11,14 +11,15 @@ class RobotWorldModel;
 
 class TemplateRandomwalkAgentObserver : public AgentObserver
 {
-	public:
-		TemplateRandomwalkAgentObserver( );
-		TemplateRandomwalkAgentObserver( RobotWorldModel *__wm );
-		~TemplateRandomwalkAgentObserver();
-				
-		void reset() override;
-		void stepPre() override;
-		
+public:
+    using AgentObserver::AgentObserver;
+
+    ~TemplateRandomwalkAgentObserver();
+
+    void reset() override;
+
+    void stepPre() override;
+
 };
 
 

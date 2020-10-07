@@ -19,7 +19,7 @@ private:
 public :
 
     GateObject(int __id); // use PhysicalObjectFactory instead!
-    ~GateObject()
+    virtual ~GateObject()
     {
     }
 

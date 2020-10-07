@@ -25,7 +25,7 @@ protected:
 public :
 
     explicit SquareObject(int _id); // use PhysicalObjectFactory instead!
-    ~SquareObject() = default;
+    virtual ~SquareObject() = default;
 
     bool canRegister() override; // test if register object is possible (use both shape or footprints)
     void registerObject() override; // register object in the world (write images)

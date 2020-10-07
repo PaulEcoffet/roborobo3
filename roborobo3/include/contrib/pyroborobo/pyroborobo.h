@@ -37,13 +37,13 @@ public:
 
     int addObjectToEnv(PhysicalObject *);
 
-    const std::vector<Controller *> &getControllers();
+    const std::vector<std::shared_ptr<Controller>> & getControllers();
 
-    const std::vector<RobotWorldModel *> &getWorldModels();
+    const std::vector<std::shared_ptr<RobotWorldModel>> & getWorldModels();
 
-    const std::vector<AgentObserver *> &getAgentObservers();
+    const std::vector<std::shared_ptr<AgentObserver>> & getAgentObservers();
 
-    WorldObserver *getWorldObserver()
+    std::shared_ptr<WorldObserver> getWorldObserver()
     {
         if (wobs == nullptr || !initialized)
         {
@@ -52,9 +52,9 @@ public:
         return wobs;
     }
 
-    const std::vector<Robot *> &getRobots();
+    const std::vector<std::shared_ptr<Robot>> &getRobots();
 
-    const std::vector<PhysicalObject *> &getObjects();
+    const std::vector<std::shared_ptr<PhysicalObject>> & getObjects();
 
     static void close();
 
@@ -86,12 +86,12 @@ private:
     World *world = nullptr;
     long long currentIt = 0;
     bool initialized = false;
-    std::vector<Controller *> controllers;
-    std::vector<RobotWorldModel *> worldmodels;
-    std::vector<AgentObserver *> agentobservers;
-    std::vector<Robot *> robots;
-    std::vector<PhysicalObject *> objects;
-    WorldObserver *wobs = nullptr;
+    std::vector<std::shared_ptr<Controller> > controllers;
+    std::vector<std::shared_ptr<RobotWorldModel> > worldmodels;
+    std::vector<std::shared_ptr<AgentObserver> > agentobservers;
+    std::vector<std::shared_ptr<Robot>> robots;
+    std::vector<std::shared_ptr<PhysicalObject> > objects;
+    std::shared_ptr<WorldObserver> wobs;
 };
 
 #endif

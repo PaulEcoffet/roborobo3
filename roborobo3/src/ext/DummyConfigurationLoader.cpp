@@ -15,24 +15,24 @@ DummyConfigurationLoader::~DummyConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* DummyConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> DummyConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new DummyWorldObserver(wm);
+    return std::make_shared<DummyWorldObserver>(wm);
 }
 
-RobotWorldModel* DummyConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> DummyConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* DummyConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> DummyConfigurationLoader::make_AgentObserver(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new DummyAgentObserver(wm);
+    return std::make_shared<DummyAgentObserver>(wm);
 }
 
-Controller* DummyConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> DummyConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new DummyController(wm);
+    return std::make_shared<DummyController>(wm);
 }
 
 #endif

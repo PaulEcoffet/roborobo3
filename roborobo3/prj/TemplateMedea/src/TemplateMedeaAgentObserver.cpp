@@ -7,11 +7,6 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "RoboroboMain/roborobo.h"
 
-TemplateMedeaAgentObserver::TemplateMedeaAgentObserver( RobotWorldModel *wm ) : TemplateEEAgentObserver ( wm )
-{
-    // superclass constructor called before
-}
-
 TemplateMedeaAgentObserver::~TemplateMedeaAgentObserver()
 {
     // superclass destructor called before

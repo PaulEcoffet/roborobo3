@@ -11,16 +11,16 @@
 std::map<std::string, py::object> *PyPhysicalObjectFactory::objectConstructionDict = nullptr; /* Might raise an exception that cannot be caught. */
 std::vector<py::object> *PyPhysicalObjectFactory::objectList = nullptr;
 
-PhysicalObject *PyPhysicalObjectFactory::makeObject(const std::string &type, int id)
+std::shared_ptr<PhysicalObject> PyPhysicalObjectFactory::makeObject(const std::string &type, int id)
 {
-    PhysicalObject *obj = nullptr;
+    std::shared_ptr<PhysicalObject> obj;
 
     if (objectConstructionDict->find(type) != objectConstructionDict->end())
     {
         py::dict data = PyPhysicalObjectFactory::getObjectData(id);
         py::object pyobj = (*objectConstructionDict)[type](id, data);
         py::print(pyobj);
-        obj = pyobj.cast<PhysicalObject *>();
+        obj = pyobj.cast<std::shared_ptr<PhysicalObject> >();
         objectList->emplace_back(pyobj); /* Save the object ref to avoid unexpected gc from python */
     }
     else

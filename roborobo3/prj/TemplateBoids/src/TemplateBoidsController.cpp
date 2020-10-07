@@ -15,7 +15,7 @@
 using namespace Neural;
 
 
-TemplateBoidsController::TemplateBoidsController( RobotWorldModel *wm )
+TemplateBoidsController::TemplateBoidsController(std::shared_ptr<RobotWorldModel> wm)
 {
     _wm = wm;
     

@@ -47,7 +47,7 @@ void ForagingRegionsWorldObserver::initPre()
         // * create a new (custom) object
         
         int id = PhysicalObjectFactory::getNextId();
-        ForagingRegionsEnergyItem *object = new ForagingRegionsEnergyItem(id);
+        auto object = std::make_shared<ForagingRegionsEnergyItem>(id);
         gPhysicalObjects.push_back( object );
         
         switch ( ForagingRegionsSharedData::foragingTask )
@@ -135,7 +135,7 @@ void ForagingRegionsWorldObserver::monitorPopulation( bool localVerbose )
     
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
     {
-        ForagingRegionsController *ctl = dynamic_cast<ForagingRegionsController*>(gWorld->getRobot(i)->getController());
+        auto ctl = std::dynamic_pointer_cast<ForagingRegionsController>(gWorld->getRobot(i)->getController());
         
         if ( ctl->getWorldModel()->isAlive() == true )
         {
@@ -229,7 +229,7 @@ void ForagingRegionsWorldObserver::monitorPopulation( bool localVerbose )
     
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
     {
-        ForagingRegionsController *ctl = dynamic_cast<ForagingRegionsController*>(gWorld->getRobot(i)->getController());
+        auto ctl = std::dynamic_pointer_cast<ForagingRegionsController>(gWorld->getRobot(i)->getController());
         
         if ( ctl->getWorldModel()->isAlive() == true )
         {

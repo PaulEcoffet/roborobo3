@@ -24,15 +24,15 @@ public:
 
     static ConfigurationLoader *make_ConfigurationLoader(const std::string &configurationLoaderObjectName);
 
-    virtual WorldObserver *make_WorldObserver(World *wm) = 0;
+    virtual std::shared_ptr<WorldObserver> make_WorldObserver(World *wm) = 0;
 
-    virtual RobotWorldModel *make_RobotWorldModel() = 0;
+    virtual std::shared_ptr<RobotWorldModel> make_RobotWorldModel() = 0;
 
-    virtual AgentObserver *make_AgentObserver(RobotWorldModel *wm) = 0;
+    virtual std::shared_ptr<AgentObserver> make_AgentObserver(std::shared_ptr<RobotWorldModel> wm) = 0;
 
-    virtual Controller *make_Controller(RobotWorldModel *wm) = 0;
+    virtual std::shared_ptr<Controller> make_Controller(std::shared_ptr<RobotWorldModel> wm) = 0;
 
-    virtual PhysicalObject *make_CustomObject(int id);
+    virtual std::shared_ptr<PhysicalObject> make_CustomObject(int id);
 };
 
 

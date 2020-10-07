@@ -12,7 +12,7 @@
 #define NB_SENSORS 8 // should be coherent with gRobotSpecsImageFilename value read from the property file.
 #include "Utilities/Sensorbelt.h"
 
-TemplateWanderController::TemplateWanderController( RobotWorldModel *__wm ) : Controller ( __wm )
+TemplateWanderController::TemplateWanderController(std::shared_ptr<RobotWorldModel> __wm) : Controller(__wm)
 {
     if ( _wm->_cameraSensorsNb != NB_SENSORS )
     {

@@ -12,7 +12,7 @@
 
 using namespace Neural;
 
-ForagingRegionsController::ForagingRegionsController( RobotWorldModel *wm ) : TemplateEEController( wm )
+ForagingRegionsController::ForagingRegionsController(std::shared_ptr<RobotWorldModel> wm) : TemplateEEController(wm)
 {
     // superclass constructor called before this baseclass constructor.
     resetFitness(); // superconstructor calls parent method.
@@ -53,7 +53,7 @@ void ForagingRegionsController::stepController()
         objectOnFloorIndex = -1;
     }
 
-    PhysicalObject *lastWalkedObject = nullptr;
+    std::shared_ptr<PhysicalObject> lastWalkedObject;
     if ( objectOnFloorIndex != -1 )
         lastWalkedObject = gPhysicalObjects[objectOnFloorIndex];
     
@@ -65,8 +65,8 @@ void ForagingRegionsController::stepController()
             
             if ( firstCheckedObjectId == -1 )
                 firstCheckedObjectId = targetId;
-            
-            PhysicalObject* object = gPhysicalObjects[targetId];
+
+            std::shared_ptr<PhysicalObject> object = gPhysicalObjects[targetId];
             
             if ( object->getTimestepSinceRelocation() == 0 )
             {
@@ -257,7 +257,7 @@ void ForagingRegionsController::logCurrentState()
 }
 
 
-bool ForagingRegionsController::sendGenome(TemplateEEController *_targetRobotController)
+bool ForagingRegionsController::sendGenome(std::shared_ptr<TemplateEEController> _targetRobotController)
 {
     auto *p = new ForagingRegionsPacket();
     p->senderId = std::make_pair(_wm->getId(), _birthdate);
@@ -266,7 +266,7 @@ bool ForagingRegionsController::sendGenome(TemplateEEController *_targetRobotCon
     p->sigma = _currentSigma;
     p->regret = this->regret;
 
-    bool retValue = ((ForagingRegionsController *) _targetRobotController)->receiveGenome(p);
+    bool retValue = std::dynamic_pointer_cast<ForagingRegionsController>(_targetRobotController)->receiveGenome(p);
 
     return retValue;
 }

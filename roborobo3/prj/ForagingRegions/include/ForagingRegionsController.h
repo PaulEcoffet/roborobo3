@@ -20,7 +20,8 @@ private:
     
 public:
     
-    ForagingRegionsController(RobotWorldModel *wm);
+    ForagingRegionsController(std::shared_ptr<RobotWorldModel> wm);
+
     ~ForagingRegionsController();
     
     double getFitness() override;
@@ -50,9 +51,10 @@ protected:
     void updateFitness() override;
     
     void logCurrentState() override;
-    
-    bool sendGenome( TemplateEEController* __targetRobotController ) override;
-    bool receiveGenome( Packet* p ) override;
+
+    bool sendGenome(std::shared_ptr<TemplateEEController> __targetRobotController) override;
+
+    bool receiveGenome(Packet *p) override;
     
     void selectNaiveMO();
     

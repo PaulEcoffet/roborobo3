@@ -12,11 +12,12 @@ class RobotWorldModel;
 
 class TemplateVanillaEEAgentObserver : public TemplateEEAgentObserver
 {
-	public:
-		TemplateVanillaEEAgentObserver(RobotWorldModel *wm);
-		~TemplateVanillaEEAgentObserver();
-    
-        void stepPre() override;
+public:
+    using TemplateEEAgentObserver::TemplateEEAgentObserver;
+
+    ~TemplateVanillaEEAgentObserver();
+
+    void stepPre() override;
 };
 
 #endif

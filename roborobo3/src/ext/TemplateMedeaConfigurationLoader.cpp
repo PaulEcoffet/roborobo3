@@ -15,24 +15,24 @@ TemplateMedeaConfigurationLoader::~TemplateMedeaConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* TemplateMedeaConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> TemplateMedeaConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new TemplateMedeaWorldObserver(wm);
+    return std::make_shared<TemplateMedeaWorldObserver>(wm);
 }
 
-RobotWorldModel* TemplateMedeaConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> TemplateMedeaConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* TemplateMedeaConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> TemplateMedeaConfigurationLoader::make_AgentObserver(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateMedeaAgentObserver(wm);
+    return std::make_shared<TemplateMedeaAgentObserver>(wm);
 }
 
-Controller* TemplateMedeaConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> TemplateMedeaConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-    return new TemplateMedeaController(wm);
+    return std::make_shared<TemplateMedeaController>(wm);
 }
 
 #endif

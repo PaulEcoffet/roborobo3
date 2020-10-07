@@ -22,19 +22,24 @@ class RobotWorldModel;
 
 class AgentObserver : public Observer
 {
-	protected:
-		RobotWorldModel *_wm;
-		
-	public:
-		AgentObserver( );
-		AgentObserver( RobotWorldModel *__wm );
-		~AgentObserver();
-				
-		virtual void reset();
-        Controller* getController();
-        void stepPre() override;
-        void stepPost() override;
-		
+protected:
+    std::shared_ptr<RobotWorldModel> _wm;
+
+public:
+    AgentObserver();
+
+    AgentObserver(std::shared_ptr<RobotWorldModel> __wm);
+
+    ~AgentObserver();
+
+    virtual void reset();
+
+    std::shared_ptr<Controller> getController();
+
+    void stepPre() override;
+
+    void stepPost() override;
+
 };
 
 

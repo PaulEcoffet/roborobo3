@@ -12,11 +12,12 @@ class RobotWorldModel;
 
 class ForagingRegionsAgentObserver : public TemplateEEAgentObserver
 {
-	public:
-		ForagingRegionsAgentObserver(RobotWorldModel *wm);
-		~ForagingRegionsAgentObserver();
-    
-        void stepPre() override;
+public:
+    using TemplateEEAgentObserver::TemplateEEAgentObserver;
+
+    ~ForagingRegionsAgentObserver();
+
+    void stepPre() override;
 };
 
 #endif

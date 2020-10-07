@@ -61,31 +61,31 @@ void PhysicalObjectFactory::makeObject(int type)
         case 0:
             if ( gVerbose )
                 std::cout << "[INFO] Round Object created (type = " << type << ").\n";
-            gPhysicalObjects.push_back( new RoundObject(id) );
+            gPhysicalObjects.push_back(std::make_shared<RoundObject>(id));
             break;
         case 1:
             if ( gVerbose )
                 std::cout << "[INFO] Energy Item created (type = " << type << ").\n";
-            gPhysicalObjects.push_back(new EnergyItem(id) );
+            gPhysicalObjects.push_back(std::make_shared<EnergyItem>(id));
             break;
         case 2:
             if ( gVerbose )
                 std::cout << "[INFO] Gate Object created (type = " << type << ").\n";
-            gPhysicalObjects.push_back(new GateObject(id) );
+            gPhysicalObjects.push_back(std::make_shared<GateObject>(id));
             break;
         case 3:
             if (gVerbose)
             {
                 std::cout << "[INFO] Switch Object created (type = " << type << ").\n";
             }
-            gPhysicalObjects.push_back(new SwitchObject(id));
+            gPhysicalObjects.push_back(std::make_shared<SwitchObject>(id));
             break;
         case 4:
             if (gVerbose)
             {
                 std::cout << "[INFO] Movable Object created (type = " << type << ").\n";
             }
-            gPhysicalObjects.push_back(new MovableObject(id));
+            gPhysicalObjects.push_back(std::make_shared<MovableObject>(id));
             break;
         case -1:
             if (gVerbose)

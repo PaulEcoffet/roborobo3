@@ -95,8 +95,9 @@ protected:
     double _Yinit;
     double _dSumTravelled;
     
-    virtual bool receiveGenome( Packet* p );
-    virtual bool sendGenome( TemplateEEController* __targetRobotController );
+    virtual bool receiveGenome(Packet *p);
+
+    virtual bool sendGenome(std::shared_ptr<TemplateEEController> _targetRobotController);
     
     void reset() override;
     
@@ -114,8 +115,9 @@ protected:
     virtual void updateFitness();
     
 public:
-    
-    TemplateEEController(RobotWorldModel *wm);
+
+    TemplateEEController(std::shared_ptr<RobotWorldModel> wm);
+
     ~TemplateEEController();
     
     void step() override;

@@ -182,17 +182,17 @@ void TemplateEEWorldObserver::monitorPopulation( bool localVerbose )
     
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
     {
-        TemplateEEController *ctl = dynamic_cast<TemplateEEController*>(gWorld->getRobot(i)->getController());
-        
-        if ( ctl->getWorldModel()->isAlive() == true )
+        auto ctl = std::dynamic_pointer_cast<TemplateEEController>(gWorld->getRobot(i)->getController());
+
+        if (ctl->getWorldModel()->isAlive() == true)
         {
             activeCount++;
 
-            sumOfFitnesses += ctl->getFitness() ;
-            
-            if ( ctl->getFitness() < minFitness )
+            sumOfFitnesses += ctl->getFitness();
+
+            if (ctl->getFitness() < minFitness)
                 minFitness = ctl->getFitness();
-            if ( ctl->getFitness() > maxFitness )
+            if (ctl->getFitness() > maxFitness)
                 maxFitness = ctl->getFitness();
         }
     }

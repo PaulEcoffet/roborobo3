@@ -13,12 +13,12 @@ class RobotWorldModel;
 
 class DummyAgentObserver : public AgentObserver
 {
-	public:
-		DummyAgentObserver(RobotWorldModel *wm);
-		~DummyAgentObserver();
+public:
+    using AgentObserver::AgentObserver;
 
-		void reset();
-		void stepPre();
+    void reset() override;
+
+    void stepPre() override;
 };
 
 #endif

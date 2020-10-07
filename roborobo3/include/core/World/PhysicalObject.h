@@ -55,7 +55,7 @@ protected:
 public :
 
     explicit PhysicalObject(int _id); // use PhysicalObjectFactory instead!
-    ~PhysicalObject() = default;
+    virtual ~PhysicalObject() = default;
 
     int getId() const
     {

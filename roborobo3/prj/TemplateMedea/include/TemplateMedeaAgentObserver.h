@@ -14,7 +14,7 @@ class RobotWorldModel;
 class TemplateMedeaAgentObserver : public TemplateEEAgentObserver
 {
 	public:
-        TemplateMedeaAgentObserver( RobotWorldModel *wm );
+        using TemplateEEAgentObserver::TemplateEEAgentObserver;
 		~TemplateMedeaAgentObserver();
 
         void stepPre() override;

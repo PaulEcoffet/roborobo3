@@ -14,12 +14,14 @@ class RobotWorldModel;
 
 class TemplateWanderController : public Controller
 {
-	public:
-		TemplateWanderController( RobotWorldModel *__wm );
-		~TemplateWanderController();
-		
-		void reset();
-		void step();
+public:
+    TemplateWanderController(std::shared_ptr<RobotWorldModel> __wm);
+
+    ~TemplateWanderController();
+
+    void reset();
+
+    void step();
 
 };
 

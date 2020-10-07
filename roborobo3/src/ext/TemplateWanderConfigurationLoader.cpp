@@ -17,24 +17,25 @@ TemplateWanderConfigurationLoader::~TemplateWanderConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* TemplateWanderConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> TemplateWanderConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new TemplateWanderWorldObserver(wm);
+    return std::make_shared<TemplateWanderWorldObserver>(wm);
 }
 
-RobotWorldModel* TemplateWanderConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> TemplateWanderConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* TemplateWanderConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver>
+TemplateWanderConfigurationLoader::make_AgentObserver(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateWanderAgentObserver(wm);
+    return std::make_shared<TemplateWanderAgentObserver>(wm);
 }
 
-Controller* TemplateWanderConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> TemplateWanderConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateWanderController(wm);
+    return std::make_shared<TemplateWanderController>(wm);
 }
 
 

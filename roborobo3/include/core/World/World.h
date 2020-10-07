@@ -18,43 +18,49 @@ class LandmarkObject;
 
 class World
 {
-	protected:
+protected:
 
-		int _iterations;
+    int _iterations;
 
-		//True if there is a variation in the number of agent
-		bool _agentsVariation;
-		
-		WorldObserver *_worldObserver;
+    //True if there is a variation in the number of agent
+    bool _agentsVariation;
 
-    public:
+    std::shared_ptr<WorldObserver> _worldObserver;
 
-		World();
-		~World();
+public:
 
-		bool loadFiles();
-		//bool loadProperties( std::string __propertiesFilename );
+    World();
 
-		void initWorld();
-		void updateWorld(const Uint8 *__keyboardStates = NULL);
-		
-		Robot* getRobot( int index );
-		bool isRobotRegistered( int index );
+    ~World();
 
-		//delete an agent from the simulator. No other functions to call
-        // THIS FUNCTION SHOULD NOT BE IMPLEMENTED AND SHOULD NEVER BE CALLED
-        // Roborobo assumes that the 'agents' list indexes matches agent's id. 
-		void deleteRobot (int index );
-    
-		//add an agent in the simulator. No other functions to call
-		void addRobot(Robot *robot);
-		
-		void deleteLandmark(int __index );
-		void addLandmark(LandmarkObject* objectToAdd);
-	
-		int getIterations();
-		WorldObserver* getWorldObserver();
-		int getNbOfRobots();
+    bool loadFiles();
+    //bool loadProperties( std::string __propertiesFilename );
+
+    void initWorld();
+
+    void updateWorld(const Uint8 *__keyboardStates = NULL);
+
+    std::shared_ptr<Robot> getRobot(int index);
+
+    bool isRobotRegistered(int index);
+
+    //delete an agent from the simulator. No other functions to call
+    // THIS FUNCTION SHOULD NOT BE IMPLEMENTED AND SHOULD NEVER BE CALLED
+    // Roborobo assumes that the 'agents' list indexes matches agent's id.
+    void deleteRobot(int index);
+
+    //add an agent in the simulator. No other functions to call
+    void addRobot(std::shared_ptr<Robot> robot);
+
+    void deleteLandmark(int __index);
+
+    void addLandmark(LandmarkObject *objectToAdd);
+
+    int getIterations();
+
+    std::shared_ptr<WorldObserver> getWorldObserver();
+
+    int getNbOfRobots();
 };
 
 

@@ -13,12 +13,14 @@ class RobotWorldModel;
 
 class TemplateBoidsAgentObserver : public AgentObserver
 {
-	public:
-		TemplateBoidsAgentObserver(RobotWorldModel *wm);
-		~TemplateBoidsAgentObserver();
+public:
+    using AgentObserver::AgentObserver;
 
-		void reset() override;
-		void stepPre() override;
+    ~TemplateBoidsAgentObserver();
+
+    void reset() override;
+
+    void stepPre() override;
 
 };
 

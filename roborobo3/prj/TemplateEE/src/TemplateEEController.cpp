@@ -17,7 +17,7 @@
 
 using namespace Neural;
 
-TemplateEEController::TemplateEEController( RobotWorldModel *wm )
+TemplateEEController::TemplateEEController(std::shared_ptr<RobotWorldModel> wm)
 {
     _wm = wm;
 
@@ -924,8 +924,8 @@ void TemplateEEController::broadcastGenome()
         {
             targetIndex = targetIndex - gRobotIndexStartOffset; // convert image registering index into robot id.
 
-            auto *targetRobotController = dynamic_cast<TemplateEEController *>(gWorld->getRobot(targetIndex)
-                    ->getController());
+            auto targetRobotController = std::dynamic_pointer_cast<TemplateEEController>(gWorld->getRobot(targetIndex)
+                                                                                                 ->getController());
 
             if (!targetRobotController)
             {
@@ -1140,7 +1140,7 @@ void TemplateEEController::updateFitness()
     std::cout << "[WARNING] TemplateEEController::updateFitness() called -- nothing to do. Forgot to implement?\n";
 }
 
-bool TemplateEEController::sendGenome(TemplateEEController *_targetRobotController)
+bool TemplateEEController::sendGenome(std::shared_ptr<TemplateEEController> _targetRobotController)
 {
     // other agent stores my genome. Contaminant stragegy.
     // Note that medea does not use fitnessValue (default value: 0)

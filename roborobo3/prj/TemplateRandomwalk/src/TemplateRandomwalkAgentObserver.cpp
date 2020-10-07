@@ -6,16 +6,6 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "RoboroboMain/roborobo.h"
 
-
-TemplateRandomwalkAgentObserver::TemplateRandomwalkAgentObserver( )
-{
-}
-
-TemplateRandomwalkAgentObserver::TemplateRandomwalkAgentObserver( RobotWorldModel *__wm )
-{
-	_wm = __wm;
-}
-
 TemplateRandomwalkAgentObserver::~TemplateRandomwalkAgentObserver()
 {
 	// nothing to do.

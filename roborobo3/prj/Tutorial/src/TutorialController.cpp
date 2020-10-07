@@ -13,7 +13,7 @@
 #define NB_SENSORS 12 // should be coherent with gRobotSpecsImageFilename value read from the property file.
 #include "Utilities/Sensorbelt.h"
 
-TutorialController::TutorialController( RobotWorldModel *__wm ) : Controller ( __wm )
+TutorialController::TutorialController(std::shared_ptr<RobotWorldModel> _wm) : Controller(_wm)
 {
     if ( _wm->_cameraSensorsNb != NB_SENSORS )
     {
@@ -79,7 +79,7 @@ void TutorialController::step()
                     
                     // accessing the target robot's controller
                     // can be useful if additional methods have been implemented (e.g. communication)
-                    TutorialController* targetRobotController = dynamic_cast<TutorialController*>(getRobotControllerAt(i));
+                    auto targetRobotController = std::dynamic_pointer_cast<TutorialController>(getRobotControllerAt(i));
                     std::cout << "\t\t      [double-check] target robot's id really is #" << targetRobotController->getId() << "\n"; // example of use
                 }
                 else

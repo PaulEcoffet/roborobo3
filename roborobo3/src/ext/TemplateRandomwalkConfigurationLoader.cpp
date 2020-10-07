@@ -17,24 +17,25 @@ TemplateRandomwalkConfigurationLoader::~TemplateRandomwalkConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* TemplateRandomwalkConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> TemplateRandomwalkConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new TemplateRandomwalkWorldObserver(wm);
+    return std::make_shared<TemplateRandomwalkWorldObserver>(wm);
 }
 
-RobotWorldModel* TemplateRandomwalkConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> TemplateRandomwalkConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* TemplateRandomwalkConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> TemplateRandomwalkConfigurationLoader::make_AgentObserver(
+        std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateRandomwalkAgentObserver(wm);
+    return std::make_shared<TemplateRandomwalkAgentObserver>(wm);
 }
 
-Controller* TemplateRandomwalkConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> TemplateRandomwalkConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateRandomwalkController(wm);
+    return std::make_shared<TemplateRandomwalkController>(wm);
 }
 
 

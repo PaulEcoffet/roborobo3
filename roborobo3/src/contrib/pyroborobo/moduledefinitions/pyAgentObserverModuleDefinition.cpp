@@ -19,7 +19,7 @@
 
 void addPyAgentObserverBinding(py::module &m)
 {
-    pybind11::class_<WorldObserver>(m, "PyWorldObserver")
+    pybind11::class_<WorldObserver, std::shared_ptr<WorldObserver>>(m, "PyWorldObserver")
             .def(py::init<World *>(), "World"_a, py::return_value_policy::reference)
             .def("step_pre", &WorldObserver::stepPre)
             .def("step_post", &WorldObserver::stepPost);

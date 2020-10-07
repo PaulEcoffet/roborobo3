@@ -15,24 +15,25 @@ ForagingRegionsConfigurationLoader::~ForagingRegionsConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* ForagingRegionsConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> ForagingRegionsConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new ForagingRegionsWorldObserver(wm);
+    return std::make_shared<ForagingRegionsWorldObserver>(wm);
 }
 
-RobotWorldModel* ForagingRegionsConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> ForagingRegionsConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* ForagingRegionsConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> ForagingRegionsConfigurationLoader::make_AgentObserver(
+        std::shared_ptr<RobotWorldModel> wm)
 {
-	return new ForagingRegionsAgentObserver(wm);
+    return std::make_shared<ForagingRegionsAgentObserver>(wm);
 }
 
-Controller* ForagingRegionsConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> ForagingRegionsConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new ForagingRegionsController(wm);
+    return std::make_shared<ForagingRegionsController>(wm);
 }
 
 #endif

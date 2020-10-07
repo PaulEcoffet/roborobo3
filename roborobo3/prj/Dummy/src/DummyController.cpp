@@ -11,10 +11,6 @@
 using namespace Neural;
 
 
-DummyController::DummyController( RobotWorldModel *wm )
-{
-    _wm = wm;
-}
 
 DummyController::~DummyController()
 {

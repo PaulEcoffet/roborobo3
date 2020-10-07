@@ -17,24 +17,24 @@ TemplateEEConfigurationLoader::~TemplateEEConfigurationLoader()
 	//nothing to do
 }
 
-WorldObserver* TemplateEEConfigurationLoader::make_WorldObserver(World* wm)
+std::shared_ptr<WorldObserver> TemplateEEConfigurationLoader::make_WorldObserver(World *wm)
 {
-	return new TemplateEEWorldObserver(wm);
+    return std::make_shared<TemplateEEWorldObserver>(wm);
 }
 
-RobotWorldModel* TemplateEEConfigurationLoader::make_RobotWorldModel()
+std::shared_ptr<RobotWorldModel> TemplateEEConfigurationLoader::make_RobotWorldModel()
 {
-	return new RobotWorldModel();
+    return std::make_shared<RobotWorldModel>();
 }
 
-AgentObserver* TemplateEEConfigurationLoader::make_AgentObserver(RobotWorldModel* wm)
+std::shared_ptr<AgentObserver> TemplateEEConfigurationLoader::make_AgentObserver(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateEEAgentObserver(wm);
+    return std::make_shared<TemplateEEAgentObserver>(wm);
 }
 
-Controller* TemplateEEConfigurationLoader::make_Controller(RobotWorldModel* wm)
+std::shared_ptr<Controller> TemplateEEConfigurationLoader::make_Controller(std::shared_ptr<RobotWorldModel> wm)
 {
-	return new TemplateEEController(wm);
+    return std::make_shared<TemplateEEController>(wm);
 }
 
 #endif

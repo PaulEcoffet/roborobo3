@@ -17,7 +17,7 @@ class DummyController : public Controller
     
 public:
     
-    DummyController(RobotWorldModel *wm);
+    using Controller::Controller;
     ~DummyController();
     
     void reset();

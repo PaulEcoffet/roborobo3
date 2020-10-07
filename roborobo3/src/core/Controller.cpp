@@ -16,7 +16,7 @@ Controller::Controller(  )
     lastRefreshIteration = -1;
 }
 
-Controller::Controller( RobotWorldModel *__wm )
+Controller::Controller(std::shared_ptr<RobotWorldModel> __wm)
 {
     lastRefreshIteration = -1;
 	_wm = __wm;
@@ -388,15 +388,16 @@ double Controller::getBlueGroundDetector( )
     return blueGroundDetectors;
 }
 
-Controller* Controller::getRobotControllerAt ( int sensorId )
+std::shared_ptr<Controller> Controller::getRobotControllerAt(int sensorId)
 {
-    if ( gSensoryInputs_isOtherAgent == false )
+    if (gSensoryInputs_isOtherAgent == false)
     {
         std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
         exit(-1);
     }
-    if ( checkRefresh() == false ) { refreshInputs(); }
-    Controller* targetRobotController = dynamic_cast<Controller*>(gWorld->getRobot(getRobotIdAt(sensorId))->getController());
-    return targetRobotController;
-    
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return std::dynamic_pointer_cast<Controller>(gWorld->getRobot(getRobotIdAt(sensorId))->getController());
 }

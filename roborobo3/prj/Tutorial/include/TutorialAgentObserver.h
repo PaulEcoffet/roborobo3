@@ -11,14 +11,15 @@ class RobotWorldModel;
 
 class TutorialAgentObserver : public AgentObserver
 {
-	public:
-		TutorialAgentObserver( );
-		TutorialAgentObserver( RobotWorldModel *__wm );
-		~TutorialAgentObserver();
-				
-		void reset() override;
-		void stepPre() override;
-		
+public:
+    using AgentObserver::AgentObserver;
+
+    ~TutorialAgentObserver();
+
+    void reset() override;
+
+    void stepPre() override;
+
 };
 
 

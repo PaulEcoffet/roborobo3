@@ -26,7 +26,7 @@ public:
 
     static void close();
 
-    static PhysicalObject *makeObject(const std::string &type, int id);
+    static std::shared_ptr<PhysicalObject> makeObject(const std::string &type, int id);
 
     static void updateObjectConstructionDict(const py::dict &constructionDict);
 

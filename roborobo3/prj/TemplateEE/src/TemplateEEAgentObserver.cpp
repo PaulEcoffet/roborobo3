@@ -9,12 +9,6 @@
 #include "RoboroboMain/roborobo.h"
 
 
-TemplateEEAgentObserver::TemplateEEAgentObserver( RobotWorldModel *wm )
-{
-    _wm = (RobotWorldModel*)wm;
-    
-}
-
 TemplateEEAgentObserver::~TemplateEEAgentObserver()
 {
     // nothing to do.

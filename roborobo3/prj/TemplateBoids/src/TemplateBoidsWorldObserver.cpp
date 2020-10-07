@@ -111,7 +111,8 @@ void TemplateBoidsWorldObserver::monitorPopulation( bool localVerbose )
     int activeCount = 0;
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
     {
-        if ( (dynamic_cast<TemplateBoidsController*>(gWorld->getRobot(i)->getController()))->getWorldModel()->isAlive() == true )
+        if ((std::dynamic_pointer_cast<TemplateBoidsController>(gWorld->getRobot(i)->getController()))->getWorldModel()
+                    ->isAlive() == true)
             activeCount++;
     }
     

@@ -119,8 +119,7 @@ Robot::Robot( World *__world )
 
 Robot::~Robot()
 {
-	delete _controller;
-	delete _agentObserver;
+
 }
 
 void Robot::reset()

@@ -14,12 +14,14 @@ class RobotWorldModel;
 
 class TutorialController : public Controller
 {
-	public:
-		TutorialController( RobotWorldModel *__wm );
-		~TutorialController();
-    
-		void reset();
-		void step();
+public:
+    TutorialController(std::shared_ptr<RobotWorldModel> _wm);
+
+    ~TutorialController();
+
+    void reset();
+
+    void step();
 };
 
 

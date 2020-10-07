@@ -11,12 +11,6 @@
 #include "RoboroboMain/roborobo.h"
 #include "World/World.h"
 
-
-ForagingRegionsAgentObserver::ForagingRegionsAgentObserver( RobotWorldModel *wm ) : TemplateEEAgentObserver ( wm )
-{
-    // superclass constructor called before
-}
-
 ForagingRegionsAgentObserver::~ForagingRegionsAgentObserver()
 {
     // superclass destructor called before
@@ -50,14 +44,14 @@ void ForagingRegionsAgentObserver::stepPre()
         {
             if ( ForagingRegionsSharedData::foragingTask == 1 )
                 _wm->_fitnessValue = _wm->_fitnessValue + 1;
-            ForagingRegionsController *ctl = dynamic_cast<ForagingRegionsController*>(getController());
+            auto ctl = std::dynamic_pointer_cast<ForagingRegionsController>(getController());
             ctl->nbForagedItemType0++;
         }
         else
         {
             if ( ForagingRegionsSharedData::foragingTask == 1 )
                 _wm->_fitnessValue = _wm->_fitnessValue - 1;
-            ForagingRegionsController *ctl = dynamic_cast<ForagingRegionsController*>(getController());
+            auto ctl = std::dynamic_pointer_cast<ForagingRegionsController>(getController());
             ctl->nbForagedItemType1++;
         }
     }

@@ -20,7 +20,8 @@ private:
     
 public:
     
-    TemplateBoidsController(RobotWorldModel *wm);
+    TemplateBoidsController(std::shared_ptr<RobotWorldModel> wm);
+
     ~TemplateBoidsController();
     
     void reset();

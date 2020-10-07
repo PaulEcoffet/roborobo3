@@ -7,7 +7,7 @@
 
 using namespace Neural;
 
-TemplateMedeaController::TemplateMedeaController( RobotWorldModel *wm ) : TemplateEEController( wm )
+TemplateMedeaController::TemplateMedeaController(std::shared_ptr<RobotWorldModel> wm) : TemplateEEController(wm)
 {
     // superclass constructor called before this baseclass constructor.
     resetFitness(); // not used
@@ -53,7 +53,7 @@ void TemplateMedeaController::broadcastGenome()
     TemplateEEController::broadcastGenome();
 }
 
-bool TemplateMedeaController::sendGenome( TemplateEEController* __targetRobotController )
+bool TemplateMedeaController::sendGenome(std::shared_ptr<TemplateEEController> __targetRobotController)
 {
     return TemplateEEController::sendGenome(__targetRobotController);
 }

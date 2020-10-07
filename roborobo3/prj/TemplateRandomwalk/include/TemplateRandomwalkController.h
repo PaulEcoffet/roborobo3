@@ -14,18 +14,20 @@ class RobotWorldModel;
 
 class TemplateRandomwalkController : public Controller
 {
-	public:
-		TemplateRandomwalkController( RobotWorldModel *__wm );
-		~TemplateRandomwalkController();
-    
-        std::vector<double> _params;
-		
-		void reset();
-		void step();
-    
-        void monitorSensoryInformation();
-    
-        std::string inspect( std::string prefix = "" );
+public:
+    TemplateRandomwalkController(std::shared_ptr<RobotWorldModel> __wm);
+
+    ~TemplateRandomwalkController();
+
+    std::vector<double> _params;
+
+    void reset();
+
+    void step();
+
+    void monitorSensoryInformation();
+
+    std::string inspect(std::string prefix = "");
 };
 
 

@@ -45,11 +45,12 @@ void TemplateRandomwalkWorldObserver::stepPre()
 
         for ( int i = 0 ; i != gWorld->getNbOfRobots() ; i++ )
         {
-            Robot *robot = (gWorld->getRobot(i));
+            std::shared_ptr<Robot> robot = (gWorld->getRobot(i));
             
             (*robot).setCoordReal( 100 + (i*50)%800 , 100 + ( i*50/800 * 50 )  );
-            
-            TemplateRandomwalkController *controller = ((TemplateRandomwalkController*)(gWorld->getRobot(i)->getController()));
+
+            auto controller = std::dynamic_pointer_cast<TemplateRandomwalkController>(
+                    gWorld->getRobot(i)->getController());
             
             for ( size_t j = 0 ; j != (*controller)._params.size() ; j++ )
             {

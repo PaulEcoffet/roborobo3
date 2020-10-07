@@ -10,7 +10,7 @@
 
 using namespace Neural;
 
-TemplateVanillaEEController::TemplateVanillaEEController( RobotWorldModel *wm ) : TemplateEEController( wm )
+TemplateVanillaEEController::TemplateVanillaEEController(std::shared_ptr<RobotWorldModel> wm) : TemplateEEController(wm)
 {
     // superclass constructor called before this baseclass constructor.
     resetFitness(); // superconstructor calls parent method.
@@ -56,7 +56,7 @@ void TemplateVanillaEEController::broadcastGenome()
     TemplateEEController::broadcastGenome();
 }
 
-bool TemplateVanillaEEController::sendGenome( TemplateEEController* __targetRobotController )
+bool TemplateVanillaEEController::sendGenome(std::shared_ptr<TemplateEEController> __targetRobotController)
 {
     return TemplateEEController::sendGenome(__targetRobotController);
 }

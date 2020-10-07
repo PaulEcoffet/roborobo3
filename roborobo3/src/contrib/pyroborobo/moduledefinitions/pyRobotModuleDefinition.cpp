@@ -12,7 +12,7 @@ using namespace pybind11::literals;
 
 void addPyRobotBinding(py::module &m)
 {
-    py::class_<Robot>(m, "PyRobot")
+    py::class_<Robot, std::shared_ptr<Robot>>(m, "PyRobot")
             .def("set_position", [](Robot &self, int x, int y)
             {
                 self.unregisterRobot();

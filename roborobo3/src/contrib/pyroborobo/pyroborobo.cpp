@@ -177,7 +177,7 @@ bool Pyroborobo::update(size_t n_step)
     return quit;
 }
 
-const std::vector<Controller *> &Pyroborobo::getControllers()
+const std::vector<std::shared_ptr<Controller>> & Pyroborobo::getControllers()
 {
     if (!initialized)
     {
@@ -186,7 +186,7 @@ const std::vector<Controller *> &Pyroborobo::getControllers()
     return controllers;
 }
 
-const std::vector<RobotWorldModel *> &Pyroborobo::getWorldModels()
+const std::vector<std::shared_ptr<RobotWorldModel>> & Pyroborobo::getWorldModels()
 {
     if (!initialized)
     {
@@ -195,7 +195,7 @@ const std::vector<RobotWorldModel *> &Pyroborobo::getWorldModels()
     return worldmodels;
 }
 
-const std::vector<AgentObserver *> &Pyroborobo::getAgentObservers()
+const std::vector<std::shared_ptr<AgentObserver>> & Pyroborobo::getAgentObservers()
 {
     if (!initialized)
     {
@@ -205,7 +205,7 @@ const std::vector<AgentObserver *> &Pyroborobo::getAgentObservers()
     return agentobservers;
 }
 
-const std::vector<Robot *> &Pyroborobo::getRobots()
+const std::vector<std::shared_ptr<Robot>> & Pyroborobo::getRobots()
 {
     if (!initialized)
     {
@@ -215,7 +215,7 @@ const std::vector<Robot *> &Pyroborobo::getRobots()
 }
 
 
-const std::vector<PhysicalObject *> &Pyroborobo::getObjects()
+const std::vector<std::shared_ptr<PhysicalObject>> & Pyroborobo::getObjects()
 {
     if (!initialized)
     {
@@ -251,7 +251,7 @@ void Pyroborobo::gatherProjectInstances()
 
     for (size_t i = 0; i < nbRob; i++)
     {
-        auto *rob = world->getRobot(i);
+        auto rob = world->getRobot(i);
         robots.emplace_back(rob);
         worldmodels.emplace_back(rob->getWorldModel());
         agentobservers.emplace_back(rob->getObserver());

@@ -90,7 +90,7 @@ extern long int gVersion;
 class World;
 extern World *gWorld;				// pointer to the World
 
-extern std::vector<Robot*> gRobots;
+extern std::vector<std::shared_ptr<Robot>> gRobots;
 extern std::vector<bool> gRobotsRegistry;
 
 extern int	gInitialNumberOfRobots;			// number of robots that should be created at start-up
@@ -159,7 +159,7 @@ extern int gPhysicalObjectDefaultSolid_h;
 extern int gPhysicalObjectDefaultSoft_w;
 extern int gPhysicalObjectDefaultSoft_h;
 
-extern std::vector<PhysicalObject*> gPhysicalObjects; // list of inanimate objects (landmarks).
+extern std::vector<std::shared_ptr<PhysicalObject> > gPhysicalObjects; // list of inanimate objects (landmarks).
 extern bool gPhysicalObjectsRedraw;
 
 extern bool gEnergyLevel; // energy level exists? yes/no

@@ -73,7 +73,7 @@ ConfigurationLoader *ConfigurationLoader::make_ConfigurationLoader(const std::st
 
 }
 
-PhysicalObject *ConfigurationLoader::make_CustomObject(int id)
+std::shared_ptr<PhysicalObject> ConfigurationLoader::make_CustomObject(int id)
 {
     throw std::runtime_error("No custom object definition for this Configuration");
     return nullptr;

@@ -19,47 +19,55 @@ class RobotWorldModel;
 
 class Controller
 {
-    private:
-    
-        int lastRefreshIteration;
-        bool checkRefresh();
-        void refreshInputs();
+private:
 
-	protected:
-    
-		RobotWorldModel *_wm;
+    int lastRefreshIteration;
 
-        std::vector<double> distanceSensors;
-        std::vector<int> objectDetectors;
-        std::vector<int> objectTypeDetectors;
-        std::vector<int> robotDetectors;
-        std::vector<int> robotGroupDetector;
-        std::vector<double> robotRelativeOrientationDetectors;
-        std::vector<int> wallDetectors;
-    
-        double redGroundDetectors;
+    bool checkRefresh();
+
+    void refreshInputs();
+
+protected:
+
+    std::shared_ptr<RobotWorldModel> _wm;
+
+    std::vector<double> distanceSensors;
+    std::vector<int> objectDetectors;
+    std::vector<int> objectTypeDetectors;
+    std::vector<int> robotDetectors;
+    std::vector<int> robotGroupDetector;
+    std::vector<double> robotRelativeOrientationDetectors;
+    std::vector<int> wallDetectors;
+
+    double redGroundDetectors;
         double greenGroundDetectors;
-        double blueGroundDetectors;
+    double blueGroundDetectors;
 
-        double landmark_closest_DistanceDetector;
-        double landmark_closest_DirectionDetector;
+    double landmark_closest_DistanceDetector;
+    double landmark_closest_DirectionDetector;
 
-        // remark: other landmarks can be accessed directly from _wm->updateLandmarkSensor(id_landmark).
+    // remark: other landmarks can be accessed directly from _wm->updateLandmarkSensor(id_landmark).
 
-	public:
-    
-		Controller( );
-		Controller( RobotWorldModel *__wm );
-        virtual ~Controller();
-				
-		virtual void reset() = 0;
-		virtual void step() = 0;
-    
-        RobotWorldModel* getWorldModel() { return _wm; }
-    
-        virtual std::string inspect( std::string prefix = "" );
-    
-        // #### #### #### #### #### #### #### #### #### #### #### #### ####
+public:
+
+    Controller();
+
+    Controller(std::shared_ptr<RobotWorldModel> __wm);
+
+    virtual ~Controller();
+
+    virtual void reset() = 0;
+
+    virtual void step() = 0;
+
+    std::shared_ptr<RobotWorldModel> getWorldModel()
+    {
+        return _wm;
+    }
+
+    virtual std::string inspect(std::string prefix = "");
+
+    // #### #### #### #### #### #### #### #### #### #### #### #### ####
         //
         // Accessing methods
         //
@@ -96,13 +104,13 @@ class Controller
         // returns target robot's orientation wrt this robot's facing direction (relevant if target robot exists), mapped to [-1,+1]
         // i.e. if both robots roughly go in the same direction, it returns a value around 0. If opposite directions, value returned is close to -1 or +1  
         double getRobotRelativeOrientationAt( int sensorId );
-    
-        // return the target robot's controller
-        // enable to access *all* information from the target robot's controller
-        // this is a very powerful method and should be used with care
-        // don't forget to cast the result to the relevant Controller subclass
-        // example of use: implement message-based communication (if Controller class is extended)
-        Controller* getRobotControllerAt ( int sensorId );
+
+    // return the target robot's controller
+    // enable to access *all* information from the target robot's controller
+    // this is a very powerful method and should be used with care
+    // don't forget to cast the result to the relevant Controller subclass
+    // example of use: implement message-based communication (if Controller class is extended)
+    std::shared_ptr<Controller> getRobotControllerAt(int sensorId);
     
         // return a value in [0,1] (red component)
         double getRedGroundDetector( );

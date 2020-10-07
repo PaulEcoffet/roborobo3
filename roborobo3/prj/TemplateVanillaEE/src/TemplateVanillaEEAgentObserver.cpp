@@ -7,11 +7,6 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "World/PhysicalObject.h"
 
-TemplateVanillaEEAgentObserver::TemplateVanillaEEAgentObserver( RobotWorldModel *wm ) : TemplateEEAgentObserver ( wm )
-{
-    // superclass constructor called before
-}
-
 TemplateVanillaEEAgentObserver::~TemplateVanillaEEAgentObserver()
 {
     // superclass destructor called before
