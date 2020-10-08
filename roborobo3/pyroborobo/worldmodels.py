@@ -50,7 +50,7 @@ class PyWorldModel(_PyWorldModel):
 
     @property
     def camera_objects_ids(self):
-        return np.asarray(self._camerasensors[:, _SENSOR_OBJECTVALUE], dtype=int)
+        return self._camerasensors[:, _SENSOR_OBJECTVALUE]
 
     @property
     def camera_pixel_distance(self):

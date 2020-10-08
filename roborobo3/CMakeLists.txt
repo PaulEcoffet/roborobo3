@@ -1,10 +1,12 @@
 cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
 
-
-set(CMAKE_BUILD_TYPE Debug)
+if (NOT DEFINED CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Debug)
+endif ()
+message("Type of build: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Wall -O3 -g")
+set(CMAKE_CXX_FLAGS "-Wall -O3")
 
 
 #SET(PYTHON_EXECUTABLE /home/pecoffet/anaconda3/bin/python)
@@ -34,7 +36,7 @@ include_directories(include/core)
 include_directories(include/ext)
 include_directories(prj)
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pyroborobo/")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build/")
 if (NOT DEFINED CMAKE_LIBRARY_OUTPUT_DIRECTORY)
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/pyroborobo/")
 endif()

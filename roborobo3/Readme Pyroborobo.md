@@ -14,7 +14,7 @@ git clone -b cleanpyroborobo https://github.com/PaulEcoffet/roborobo3.git
 Then, we must compile pyroborobo with the python interpreter that *you* intend to use for your own projects. You may want to create a new conda environment.
 
 ```bash
-conda create --name pyrob numpy pybind11 ipython
+conda create --name pyrob numpy pybind11
 conda activate pyrob
 ```
 
