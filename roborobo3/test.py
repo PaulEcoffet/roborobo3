@@ -1,31 +1,23 @@
-from pyroborobo import Pyroborobo, PyController
-import numpy as np
+from pyroborobo import PyController, Pyroborobo
 
 
 class MyController(PyController):
-    def __init__(self, wm):
-        PyController.__init__(self, wm)  # NEEDED otherwise segfault, pybind limitation
-        self.wm = wm
+    def __init__(self, world_model):
+        # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
+        PyController.__init__(self, world_model)
+        print("I'm a Python controller")
 
     def reset(self):
-        pass
+        print("I'm initialised")
 
-    def step(self):
-        sensors = self.wm.getCameraSensorsDist()
-        if np.all(sensors[2:7] > 0.5):
-            self.wm.speed = 1
-            self.wm.rotspeed = 0
-        else:
-            self.wm.speed = 0
-            self.wm.rotspeed = 20
+    def step(self):  # step is called at each time step
+        self.world_model.translation = 2  # Let's go forward
+        self.world_model.rotation = 0  # and do not turn
 
 
 if __name__ == "__main__":
-    # Use a dummy world observer that doesn't call any dynamic_cast
-    rob = Pyroborobo("config/template_randomwalk.properties", "dummy", MyController, None, None, {})
-    print(rob)
-    rob.start()
-    stop = False
-    while not stop:
-        stop = rob.update(1000)  # update for 1000 time step before going back in python mode, except if quit early
-    rob.close()
+    rob = Pyroborobo.create("config/template_wander_smallrobots.properties",
+                            None, MyController, None, None, {}, {})
+    # rob.start()
+    rob.update(1000)
+    Pyroborobo.close()

@@ -5,6 +5,7 @@
 #include "contrib/pyroborobo/ModuleDefinitions/pyRoboroboModuleDefinition.h"
 
 #include <pybind11/pybind11.h>
+#include <pybind11/attr.h>
 #include <contrib/pyroborobo/pyroborobo.h>
 
 namespace py = pybind11;

@@ -73,4 +73,5 @@ setup(
     packages=['pyroborobo'],
     packages_dir={'': 'pyroborobo'},
     zip_safe=False,
+    debug=True
 )

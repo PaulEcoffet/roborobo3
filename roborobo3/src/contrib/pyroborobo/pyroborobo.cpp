@@ -128,6 +128,10 @@ void Pyroborobo::start()
 
 bool Pyroborobo::update(size_t n_step)
 {
+    if (gWorld == nullptr)
+    {
+        throw std::runtime_error("No Environment. Did you forget to call rob.start()?");
+    }
     bool quit = false;
     size_t i = 0;
     while (i < n_step && !quit) /* i++ after update if not pausemode */
@@ -136,8 +140,12 @@ bool Pyroborobo::update(size_t n_step)
         {
             gWorld->updateWorld();
             if (gWorld->getIterations() % 10000 == 0)
+            {
                 if (gVerbose)
+                {
                     std::cout << ".";
+                }
+            }
 
             // monitor trajectories (if needed)
             if (gTrajectoryMonitor)
