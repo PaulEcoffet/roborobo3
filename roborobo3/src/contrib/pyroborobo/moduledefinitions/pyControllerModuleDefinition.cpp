@@ -2,7 +2,7 @@
 // Created by Paul Ecoffet on 25/09/2020.
 //
 
-#include "contrib/pyroborobo/ModuleDefinitions/pyAgentObserverModuleDefinition.h"
+#include "contrib/pyroborobo/ModuleDefinitions/pyWorldObserverModuleDefinition.h"
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotWorldModelModuleDefinition.h>
 #include <contrib/pyroborobo/PySquareObjectTrampoline.h>
 #include <contrib/pyroborobo/PyCircleObjectTrampoline.h>
@@ -27,18 +27,21 @@ void addPyControllerBinding(py::module &m)
                                                                                       R"doc(
 Class to extend a Roborobo Controller in python.
 
-..warning:
-    If the __init__ is override, it is absolutely necessary to call the PyController constructor by doing :
-    ```
-    def __init__(self, world_model):
-        PyController.__init__(self, world_model)
-    ```
+.. warning::
+    If the __init__ is overridden, it is absolutely necessary to call the PyController constructor by doing :
+
+    .. code-block:: python
+
+        def __init__(self, world_model):
+            PyController.__init__(self, world_model)
 
     Not doing so leads to cryptic errors due to the interface between python and c++.
 
     It is also necessary to override `step` and `reset`. Not doing so leads to cryptic errors.
+
+
 )doc")
-            .def(py::init<std::shared_ptr<RobotWorldModel>>(), "world_model"_a)
+            .def(py::init<std::shared_ptr<RobotWorldModel>>(), "world_model"_a, "")
             .def("step", &Controller::step,
                  R"doc(
 Takes the decision of the robot's next action by reading and modifying its `world_model`.

@@ -27,6 +27,8 @@ void addPyRoboroboBinding(py::module &m)
                         "object_class_dict"_a = py::dict(),
                         "override_conf_dict"_a = py::dict(),
                         R"doc(
+Create the singleton Pyroborobo
+
 Parameters
 ----------
 properties_file: str
@@ -87,10 +89,11 @@ quit: bool
 
 Example
 ------------
-
+```
 >>> roborobo.update(1000)  # run simulation for 1000 time steps
 >>> agents.learn()  # trigger agents' learning algorithms
 >>> roborobo.update(1000)  # Continue the simulation for 1000 more time steps
+```
 )doc")
             .def("close", &Pyroborobo::close,
                  R"doc(

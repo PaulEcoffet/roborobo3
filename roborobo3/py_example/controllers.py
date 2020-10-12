@@ -1,7 +1,7 @@
 from pyroborobo import Pyroborobo, PyController, PyWorldModel
 
 
-class MyController(PyController):
+class SimpleController(PyController):
     world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
 
     def __init__(self, world_model):
@@ -23,15 +23,3 @@ class MyController(PyController):
             self.world_model.rotation = 10  # turn right
         elif camera_dist[3] < camera_max_range:  # Otherwise, if we see something on our right
             self.world_model.rotation = -10  # turn left
-
-
-rob = Pyroborobo.create("config/pywander.properties",
-                        None,
-                        MyController,
-                        PyWorldModel,
-                        None,
-                        {},
-                        {})
-rob.start()
-rob.update(10000)
-Pyroborobo.close()

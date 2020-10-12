@@ -15,12 +15,13 @@
 #include <pyroborobo/pyroborobo.h>
 #include <pybind11/stl.h>
 #include <pybind11/pybind11.h>
-#include "contrib/pyroborobo/ModuleDefinitions/pyAgentObserverModuleDefinition.h"
+#include "contrib/pyroborobo/ModuleDefinitions/pyWorldObserverModuleDefinition.h"
 
-void addPyAgentObserverBinding(py::module &m)
+void addPyWorldObserverBinding(py::module &m)
 {
     pybind11::class_<WorldObserver, std::shared_ptr<WorldObserver>>(m, "PyWorldObserver")
-            .def(py::init<World *>(), "World"_a, py::return_value_policy::reference)
-            .def("step_pre", &WorldObserver::stepPre)
-            .def("step_post", &WorldObserver::stepPost);
+            .def(py::init<World *>(), "World"_a, py::return_value_policy::reference,
+                 R"doc()doc")
+            .def("step_pre", &WorldObserver::stepPre, R"doc()doc")
+            .def("step_post", &WorldObserver::stepPost, R"doc()doc");
 }

@@ -14,7 +14,7 @@
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotWorldModelModuleDefinition.h>
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotModuleDefinition.h>
 #include <contrib/pyroborobo/ModuleDefinitions/pyObjectsModuleDefinition.h>
-#include "contrib/pyroborobo/ModuleDefinitions/pyAgentObserverModuleDefinition.h"
+#include "contrib/pyroborobo/ModuleDefinitions/pyWorldObserverModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyControllerModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyRoboroboModuleDefinition.h"
 
@@ -27,7 +27,7 @@ PYBIND11_MODULE(_pyroborobo, m)
     addPyRoboroboBinding(m);
     addPyControllerBinding(m);
     addPyRobotWorldModelBinding(m);
-    addPyAgentObserverBinding(m);
+    addPyWorldObserverBinding(m);
     py::class_<World> world_def(m, "World");
     addPyRobotBinding(m);
     addPyObjectsBindings(m);
