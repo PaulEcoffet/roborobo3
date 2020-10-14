@@ -56,7 +56,7 @@ protected:
 
 public:
 
-    void initCameraSensors(int nbSensors);
+    virtual void initCameraSensors(int nbSensors);
 
     virtual void reset()
     {

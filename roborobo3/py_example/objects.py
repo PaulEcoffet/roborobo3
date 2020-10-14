@@ -59,3 +59,32 @@ class GateObject(SquareObject):
         self.hide()
         self.unregister()
         self.cur_regrow = self.regrow_time
+
+
+class ResourceObject(CircleObject):
+    def __init__(self, id_, data):
+        CircleObject.__init__(self, id_)  # Do not forget to call super constructor
+        self.regrow_time = 100
+        self.cur_regrow = 0
+        self.triggered = False
+        self.rob = Pyroborobo.get()  # Get pyroborobo singleton
+
+    def reset(self):
+        self.show()
+        self.register()
+        self.triggered = False
+        self.cur_regrow = 0
+
+    def step(self):
+        if self.triggered:
+            self.cur_regrow -= 1
+            if self.cur_regrow <= 0:
+                self.show()
+                self.register()
+                self.triggered = False
+
+    def is_walked(self, id):
+        self.triggered = True
+        self.cur_regrow = self.regrow_time
+        self.hide()
+        self.unregister()

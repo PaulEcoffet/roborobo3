@@ -18,6 +18,9 @@ class PyWorldModel(_PyWorldModel):
     """
     Attributes
     ----------
+    maxdistcamera: int
+        Max distance at which the camera sensors can see
+
     f_sensors: List[int]
         sensor indices exactly in front of the robot
 
@@ -38,7 +41,8 @@ class PyWorldModel(_PyWorldModel):
     def __init__(self):
         _PyWorldModel.__init__(self)
 
-    def reset(self):
+    def _init_camera_sensors(self, nbsensors):
+        super()._init_camera_sensors(nbsensors)
         self._camerasensors = np.asarray(self._get_camera_sensors())
         self.maxdistcamera = self._get_max_dist_camera()
         cam_angles = self.camera_angles
@@ -50,22 +54,32 @@ class PyWorldModel(_PyWorldModel):
 
     @property
     def camera_objects_ids(self):
+        """`numpy.view` of the object ids in sight of each sensors
+
+        The ids are stored as double, as they are in roborobo. casting them in int can be *slow*."""
         return self._camerasensors[:, _SENSOR_OBJECTVALUE]
 
     @property
     def camera_pixel_distance(self):
+        """`numpy.view` of the distance of obstacle seen by camera in pixel (Fast)
+
+        If the value is `~PyWorldModel.maxdistcamera`, then there is no object in sight for this sensors.
+        """
         return self._camerasensors[:, _SENSOR_DISTANCEVALUE]
 
     @property
     def camera_normalized_distance(self):
-        """numpy view of the normalized distances of the objects seen by the robot sensors. If the distance is 1,
-no object is seen by the sensor. If the distance is 0, the object is right next to the robot."""
+        """`numpy.view` of the normalized distance of obstacle seen by camera (Slow).
+
+        If the distance is 1, no object is seen by the sensor. If the distance is 0,
+        the object is right next to the robot."""
         return self.camera_pixel_distance / self.maxdistcamera
 
     @property
     def camera_angles(self):
-        """numpy view of the angles of the sensors target relative to the center of the robots in radian.
-0 -> exactly in front. [-π/2, 0] -> to the front right. [-π, -π/2] -> to the rear right.
-[0, π/2] -> front left, [π/2, π] -> rear left.
+        """`numpy.view` of the angles of the sensors target relative to the center of the robots in radian.
+
+        0 -> exactly in front. [-π/2, 0] -> to the front right. [-π, -π/2] -> to the rear right.
+        [0, π/2] -> front left, [π/2, π] -> rear left.
 """
         return self._camerasensors[:, _SENSOR_TARGETANGLE]

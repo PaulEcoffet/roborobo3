@@ -64,7 +64,11 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
         currentIt(0)
 {
 
-    loadProperties(properties_file);
+    bool success = loadProperties(properties_file);
+    if (!success)
+    {
+        std::runtime_error("Impossible to load the property files. Did you provide the correct path?");
+    }
     this->overrideProperties(options);
     PyPhysicalObjectFactory::init();
     py::object objectClass = py::none();

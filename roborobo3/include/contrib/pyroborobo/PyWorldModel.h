@@ -22,6 +22,11 @@ public:
         PYBIND11_OVERLOAD(void, RobotWorldModel, reset,);
     }
 
+    void initCameraSensors(int nbsensors) override
+    {
+        PYBIND11_OVERLOAD_NAME(void, RobotWorldModel, "_init_camera_sensors", initCameraSensors, nbsensors);
+    }
+
     py::tuple getRobotGroundSensors()
     {
         return py::make_tuple(getGroundSensor_redValue(), getGroundSensor_greenValue(), getGroundSensor_blueValue());

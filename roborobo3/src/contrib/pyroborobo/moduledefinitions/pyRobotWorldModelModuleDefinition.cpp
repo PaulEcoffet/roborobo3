@@ -8,6 +8,7 @@
 #include <contrib/pyroborobo/PyWorldModel.h>
 
 namespace py = pybind11;
+using namespace pybind11::literals;
 
 void addPyRobotWorldModelBinding(py::module &m)
 {
@@ -50,5 +51,12 @@ Robot's desired rotation speed in degrees.
 )doc")
             .def_readwrite("fitness", &RobotWorldModel::_fitnessValue, R"doc(
 Robot's actual fitness
+)doc")
+            .def("_init_camera_sensors", &RobotWorldModel::initCameraSensors, "nbsensors"_a,
+                 R"doc(
+prepare the new sensors, must call super
+
+This method allow the preparation of the sensors properties. Look at
+`~Pyroborobo.PyWorldModel` source for an example.
 )doc");
 }

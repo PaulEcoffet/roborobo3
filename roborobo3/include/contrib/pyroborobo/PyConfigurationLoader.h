@@ -125,17 +125,6 @@ public:
 
     std::shared_ptr<PhysicalObject> make_CustomObject(int id) override
     {
-        if (agentControllerClass.is(py::none()))
-        {
-            return fallbackconf->make_CustomObject(id);
-        }
-        else
-        {
-            py::object py_object = objectClass(id);
-            allocated.push_back(py_object);
-            auto c_object = py_object.cast<std::shared_ptr<PhysicalObject> >();
-            return c_object;
-        }
     }
 
 private:
