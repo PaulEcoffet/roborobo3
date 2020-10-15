@@ -2,8 +2,8 @@
 // Created by Paul Ecoffet on 08/06/2020.
 //
 
-#ifndef ROBOROBO3_PYCONTROLLERTRAMPOLINE_H
-#define ROBOROBO3_PYCONTROLLERTRAMPOLINE_H
+#ifndef ROBOROBO3_CONTROLLERTRAMPOLINE_H
+#define ROBOROBO3_CONTROLLERTRAMPOLINE_H
 
 #include "WorldModels/RobotWorldModel.h"
 #include "Controllers/Controller.h"
@@ -13,7 +13,7 @@
 #include <pybind11/pybind11.h>
 #include "contrib/pyroborobo/pyroborobo.h"
 
-class PyControllerTrampoline : public Controller
+class ControllerTrampoline : public Controller
 {
 public:
     /* Inherit the constructors */
@@ -51,4 +51,4 @@ public:
 
 };
 
-#endif //ROBOROBO3_PYCONTROLLERTRAMPOLINE_H
+#endif //ROBOROBO3_CONTROLLERTRAMPOLINE_H

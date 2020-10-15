@@ -2,8 +2,8 @@
 // Created by Paul Ecoffet on 08/06/2020.
 //
 
-#ifndef ROBOROBO3_PYWORLDMODEL_H
-#define ROBOROBO3_PYWORLDMODEL_H
+#ifndef ROBOROBO3_ROBOTWORLDMODELTRAMPOLINE_H
+#define ROBOROBO3_ROBOTWORLDMODELTRAMPOLINE_H
 
 #include "WorldModels/RobotWorldModel.h"
 #include <pybind11/pybind11.h>
@@ -12,7 +12,7 @@
 
 namespace py = pybind11;
 
-class PyWorldModel : public RobotWorldModel
+class RobotWorldModelTrampoline : public RobotWorldModel
 {
 public:
     using RobotWorldModel::RobotWorldModel;
@@ -71,4 +71,4 @@ public:
     }
 };
 
-#endif //ROBOROBO3_PYWORLDMODEL_H
+#endif //ROBOROBO3_ROBOTWORLDMODELTRAMPOLINE_H

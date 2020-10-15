@@ -2,13 +2,13 @@
 // Created by pecoffet on 01/10/2020.
 //
 
-#ifndef ROBOROBO3_PYPHYSICALOBJECTTRAMPOLINE_H
-#define ROBOROBO3_PYPHYSICALOBJECTTRAMPOLINE_H
+#ifndef ROBOROBO3_PHYSICALOBJECTTRAMPOLINE_H
+#define ROBOROBO3_PHYSICALOBJECTTRAMPOLINE_H
 
 #include <pybind11/pybind11.h>
 #include <core/World/PhysicalObject.h>
 
-class PyPhysicalObjectTrampoline : public PhysicalObject
+class PhysicalObjectTrampoline : public PhysicalObject
 {
 public:
     using PhysicalObject::PhysicalObject;
@@ -60,4 +60,4 @@ public:
 };
 
 
-#endif //ROBOROBO3_PYPHYSICALOBJECTTRAMPOLINE_H
+#endif //ROBOROBO3_PHYSICALOBJECTTRAMPOLINE_H

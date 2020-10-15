@@ -2,8 +2,8 @@
 // Created by Paul Ecoffet on 17/09/2020.
 //
 
-#ifndef ROBOROBO3_PYCIRCLEOBJECTTRAMPOLINE_H
-#define ROBOROBO3_PYCIRCLEOBJECTTRAMPOLINE_H
+#ifndef ROBOROBO3_CIRCLEOBJECTTRAMPOLINE_H
+#define ROBOROBO3_CIRCLEOBJECTTRAMPOLINE_H
 
 #include <pybind11/pybind11.h>
 #include "core/World/CircleObject.h"
@@ -19,12 +19,12 @@ public:
 };
 
 template<class BaseCircle = CircleObject>
-class PyCircleObjectTrampoline : public BaseCircle
+class CircleObjectTrampoline : public BaseCircle
 {
 public:
     using BaseCircle::BaseCircle;
 
-    PyCircleObjectTrampoline(int id, const pybind11::dict &data) : BaseCircle(id)
+    CircleObjectTrampoline(int id, const pybind11::dict &data) : BaseCircle(id)
     {
         (void) data;
     }
@@ -104,4 +104,4 @@ public:
 };
 
 
-#endif //ROBOROBO3_PYCIRCLEOBJECTTRAMPOLINE_H
+#endif //ROBOROBO3_CIRCLEOBJECTTRAMPOLINE_H

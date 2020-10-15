@@ -2,11 +2,11 @@
 // Created by Paul Ecoffet on 25/09/2020.
 //
 
-#include <contrib/pyroborobo/PySquareObjectTrampoline.h>
-#include <contrib/pyroborobo/PyCircleObjectTrampoline.h>
+#include <contrib/pyroborobo/SquareObjectTrampoline.h>
+#include <contrib/pyroborobo/CircleObjectTrampoline.h>
 #include <core/RoboroboMain/roborobo.h>
-#include <contrib/pyroborobo/PyControllerTrampoline.h>
-#include <contrib/pyroborobo/PyWorldModel.h>
+#include <contrib/pyroborobo/ControllerTrampoline.h>
+#include <contrib/pyroborobo/RobotWorldModelTrampoline.h>
 #include <core/Agents/Robot.h>
 #include <core/World/World.h>
 #include <core/Observers/WorldObserver.h>
@@ -19,9 +19,13 @@
 
 void addPyWorldObserverBinding(py::module &m)
 {
-    pybind11::class_<WorldObserver, std::shared_ptr<WorldObserver>>(m, "PyWorldObserver")
+    pybind11::class_<WorldObserver, std::shared_ptr<WorldObserver>>(m, "WorldObserver")
             .def(py::init<World *>(), "World"_a, py::return_value_policy::reference,
                  R"doc()doc")
-            .def("step_pre", &WorldObserver::stepPre, R"doc()doc")
-            .def("step_post", &WorldObserver::stepPost, R"doc()doc");
+            .def("step_pre", &WorldObserver::stepPre, R"doc(
+Call at each time step before the steps of objects and robots
+)doc")
+            .def("step_post", &WorldObserver::stepPost, R"doc(
+Call at each time step after the steps of objects and robots
+)doc");
 }

@@ -1,7 +1,7 @@
 from typing import List
 
 import numpy as np
-from _pyroborobo import _PyWorldModel
+from _pyroborobo import RobotWorldModel
 
 # Imported from roborobo definitions in RobotWorldModel.h
 
@@ -14,7 +14,7 @@ _SENSOR_DISTANCEVALUE = 5
 _SENSOR_OBJECTVALUE = 6
 
 
-class PyWorldModel(_PyWorldModel):
+class PyWorldModel(RobotWorldModel):
     """
     Attributes
     ----------
@@ -39,7 +39,7 @@ class PyWorldModel(_PyWorldModel):
     """
 
     def __init__(self):
-        _PyWorldModel.__init__(self)
+        RobotWorldModel.__init__(self)
 
     def _init_camera_sensors(self, nbsensors):
         super()._init_camera_sensors(nbsensors)
@@ -54,14 +54,14 @@ class PyWorldModel(_PyWorldModel):
 
     @property
     def camera_objects_ids(self):
-        """`numpy.view` of the object ids in sight of each sensors
+        """numpy.ndarray: view of the object ids in sight of each sensors
 
         The ids are stored as double, as they are in roborobo. casting them in int can be *slow*."""
         return self._camerasensors[:, _SENSOR_OBJECTVALUE]
 
     @property
     def camera_pixel_distance(self):
-        """`numpy.view` of the distance of obstacle seen by camera in pixel (Fast)
+        """numpy.ndarray: view of the distance of obstacle seen by camera in pixel (Fast)
 
         If the value is `~PyWorldModel.maxdistcamera`, then there is no object in sight for this sensors.
         """
@@ -69,7 +69,7 @@ class PyWorldModel(_PyWorldModel):
 
     @property
     def camera_normalized_distance(self):
-        """`numpy.view` of the normalized distance of obstacle seen by camera (Slow).
+        """numpy.ndarray: view of the normalized distance of obstacle seen by camera (Slow).
 
         If the distance is 1, no object is seen by the sensor. If the distance is 0,
         the object is right next to the robot."""
@@ -77,7 +77,7 @@ class PyWorldModel(_PyWorldModel):
 
     @property
     def camera_angles(self):
-        """`numpy.view` of the angles of the sensors target relative to the center of the robots in radian.
+        """numpy.ndarray: view of the angles of the sensors target relative to the center of the robots in radian.
 
         0 -> exactly in front. [-π/2, 0] -> to the front right. [-π, -π/2] -> to the rear right.
         [0, π/2] -> front left, [π/2, π] -> rear left.

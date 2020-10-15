@@ -78,7 +78,7 @@ public:
         {
             py::object py_worldmodel = worldModelClass();
             allocated.push_back(py_worldmodel);
-            auto c_worldmodel = py_worldmodel.cast<std::shared_ptr<PyWorldModel> >();
+            auto c_worldmodel = py_worldmodel.cast<std::shared_ptr<RobotWorldModelTrampoline> >();
             return c_worldmodel;
         }
     }

@@ -2,8 +2,8 @@
 // Created by Paul Ecoffet on 25/09/2020.
 //
 
-#ifndef ROBOROBO3_PYSQUAREOBJECTTRAMPOLINE_H
-#define ROBOROBO3_PYSQUAREOBJECTTRAMPOLINE_H
+#ifndef ROBOROBO3_SQUAREOBJECTTRAMPOLINE_H
+#define ROBOROBO3_SQUAREOBJECTTRAMPOLINE_H
 
 #include <core/World/SquareObject.h>
 #include <pybind11/pybind11.h>
@@ -19,12 +19,12 @@ public:
 };
 
 template<class BaseSquare = SquareObject>
-class PySquareObjectTrampoline : public BaseSquare
+class SquareObjectTrampoline : public BaseSquare
 {
 public:
     using BaseSquare::BaseSquare;
 
-    PySquareObjectTrampoline(int id, const pybind11::dict &data) : BaseSquare(id)
+    SquareObjectTrampoline(int id, const pybind11::dict &data) : BaseSquare(id)
     {
         (void) data;
     };
@@ -103,4 +103,4 @@ public:
 };
 
 
-#endif //ROBOROBO3_PYSQUAREOBJECTTRAMPOLINE_H
+#endif //ROBOROBO3_SQUAREOBJECTTRAMPOLINE_H

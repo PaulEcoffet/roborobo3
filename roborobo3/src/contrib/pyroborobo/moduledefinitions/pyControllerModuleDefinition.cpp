@@ -4,11 +4,11 @@
 
 #include "contrib/pyroborobo/ModuleDefinitions/pyWorldObserverModuleDefinition.h"
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotWorldModelModuleDefinition.h>
-#include <contrib/pyroborobo/PySquareObjectTrampoline.h>
-#include <contrib/pyroborobo/PyCircleObjectTrampoline.h>
+#include <contrib/pyroborobo/SquareObjectTrampoline.h>
+#include <contrib/pyroborobo/CircleObjectTrampoline.h>
 #include <core/RoboroboMain/roborobo.h>
-#include <contrib/pyroborobo/PyControllerTrampoline.h>
-#include <contrib/pyroborobo/PyWorldModel.h>
+#include <contrib/pyroborobo/ControllerTrampoline.h>
+#include <contrib/pyroborobo/RobotWorldModelTrampoline.h>
 #include <core/Agents/Robot.h>
 #include <core/World/World.h>
 #include <core/Observers/WorldObserver.h>
@@ -23,8 +23,8 @@ namespace py = pybind11;
 
 void addPyControllerBinding(py::module &m)
 {
-    pybind11::class_<Controller, PyControllerTrampoline, std::shared_ptr<Controller>>(m, "PyController",
-                                                                                      R"doc(
+    pybind11::class_<Controller, ControllerTrampoline, std::shared_ptr<Controller>>(m, "Controller",
+                                                                                    R"doc(
 Class to extend a Roborobo Controller in python.
 
 .. warning::

@@ -19,6 +19,9 @@ endif ()
 
 find_package(pybind11 REQUIRED)
 
+get_cmake_property(_variableNames VARIABLES)
+list(SORT _variableNames)
+
 message("Installing for ${PYTHON_EXECUTABLE}")
 
 file(

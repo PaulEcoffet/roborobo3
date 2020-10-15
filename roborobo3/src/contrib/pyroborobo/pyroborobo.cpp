@@ -11,8 +11,8 @@
 #include "Utilities/Graphics.h"
 #include "RoboroboMain/main.h"
 #include "Controllers/Controller.h"
-#include "contrib/pyroborobo/PyControllerTrampoline.h"
-#include "contrib/pyroborobo/PyWorldModel.h"
+#include "contrib/pyroborobo/ControllerTrampoline.h"
+#include "contrib/pyroborobo/RobotWorldModelTrampoline.h"
 #include "World/World.h"
 #include "contrib/pyroborobo/PyConfigurationLoader.h"
 #include <pybind11/pybind11.h>

@@ -5,7 +5,7 @@
 #include "contrib/pyroborobo/ModuleDefinitions/pyRobotWorldModelModuleDefinition.h"
 #include <pybind11/pybind11.h>
 #include <core/WorldModels/RobotWorldModel.h>
-#include <contrib/pyroborobo/PyWorldModel.h>
+#include <contrib/pyroborobo/RobotWorldModelTrampoline.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -26,35 +26,36 @@ void addPyRobotWorldModelBinding(py::module &m)
             });
 
 
-    py::class_<RobotWorldModel, PyWorldModel, std::shared_ptr<RobotWorldModel>>(m, "_PyWorldModel")
+    py::class_<RobotWorldModel, RobotWorldModelTrampoline, std::shared_ptr<RobotWorldModel>>(m, "RobotWorldModel")
             .def(py::init_alias<>())
             .def("reset", &RobotWorldModel::reset)
-            .def("_get_max_dist_camera", [](PyWorldModel &self) { return gSensorRange; })
-            .def("_get_camera_sensors", [](PyWorldModel &self) -> const sensor_array & {
+            .def("_get_max_dist_camera", [](RobotWorldModelTrampoline &self) { return gSensorRange; })
+            .def("_get_camera_sensors", [](RobotWorldModelTrampoline &self) -> const sensor_array & {
                      return self.getCameraSensors();
                  }, py::return_value_policy::reference,
                  R"doc(
-Return the buffer view of the camera. Should not be called, use
+Return the buffer view of the camera. Should not be called, use PyWorldModel.
 )doc")
-            .def("get_ground_sensor_values", [](PyWorldModel &self) { return self.getRobotGroundSensors(); },
+            .def("get_ground_sensor_values",
+                 [](RobotWorldModelTrampoline &self) { return self.getRobotGroundSensors(); },
                  R"doc(
-Returns a tuple (red, green, blue) from the ground sensor of the robot
+tuple(int,int,int): (red, green, blue) from the ground sensor of the robot
 )doc")
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive, R"doc(
-State if the robot is alive
+bool: State if the robot is alive
 )doc")
             .def_readwrite("translation", &RobotWorldModel::_desiredTranslationalValue, R"doc(
-Robot's desired translation speed in pixels.
+double: Robot's desired translation speed in pixels.
 )doc")
             .def_readwrite("rotation", &RobotWorldModel::_desiredRotationalVelocity, R"doc(
-Robot's desired rotation speed in degrees.
+double: Robot's desired rotation speed in degrees.
 )doc")
             .def_readwrite("fitness", &RobotWorldModel::_fitnessValue, R"doc(
-Robot's actual fitness
+double: Robot's actual fitness
 )doc")
             .def("_init_camera_sensors", &RobotWorldModel::initCameraSensors, "nbsensors"_a,
                  R"doc(
-prepare the new sensors, must call super
+Prepare the new sensors, must call super
 
 This method allow the preparation of the sensors properties. Look at
 `~Pyroborobo.PyWorldModel` source for an example.

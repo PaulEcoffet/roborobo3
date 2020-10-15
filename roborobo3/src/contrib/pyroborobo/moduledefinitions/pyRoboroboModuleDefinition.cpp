@@ -33,36 +33,37 @@ Parameters
 ----------
 properties_file: str
     Properties file for the roborobo simulator
+
 world_observer_class: Class inherited from PyWorldObserver or str or None
-    Class used to instantiate the WorldObserver. It must inherit from `PyWorldObserver`.
+    Class used to instantiate the WorldObserver. It must inherit from :class:`~pyroborobo.PyWorldObserver`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
 controller_class: Class inherited from PyController or str or None
-    Class used to instantiate the Controllers. It must inherit from `PyController`.
+    Class used to instantiate the Controllers. It must inherit from :class:`~pyrobobobo.PyController`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
 world_model_class: Class inherited from PyWorldModel or str or None
-    Class used to instantiate the WorldModels. It must inherit from `PyWorldModel`.
+    Class used to instantiate the WorldModels. It must inherit from :class:`~pyroborobo.PyWorldModel`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
 agent_observer_class: Class inherited from PyAgentObserver or str or None
-    Class used to instantiate the AgentObservers. It must inherit from `PyAgentObservers`.
+    Class used to instantiate the AgentObservers. It must inherit from :class:`~pyroborobo.PyAgentObserver`.
     It is possible to pass `None`, in which case the C++ class loaded by the loader configuration is used.
     Finally, it is possible to pass the string "dummy", in this case, a minimal class that does not perform any action
     is used.
 
 object_class_dict: Dict of string -> class inherited from PhysicalObject
     Dict of classes that are used to instantiate physical object from the pytype argument in conf file.
-    The classes must be inherited from `PyCircleObject`, `PySquareObject` and their subclasses.
+    The classes must be inherited from :class:`pyroborobo.PyCircleObject`, :class:`pyroborobo.PySquareObject` and their subclasses.
 
 override_conf_dict: dict
-    Dictionary which updates the configuration file loaded by the `properties_file` parameter.
+    Dictionary which updates the configuration file loaded by the ``properties_file`` parameter.
     Dictionary key/value pairs already present in the configuration file are overwritten. Key/value pairs that do not
     exist in the configuration file are added.
 
@@ -85,9 +86,9 @@ modify the classes used to instantiate the different modules of the simulator or
 )doc")
             .def("update", &Pyroborobo::update, "nb_updates"_a,
                  R"doc(
-Performs a simulator evaluation of `nb_updates' time steps.
+Performs a simulator evaluation of `nb_updates` time steps.
 
-It is possible to call `update' multiple times. If the simulator is paused, then the frame generation has no impact
+It is possible to call `update` multiple times. If the simulator is paused, then the frame generation has no impact
 on the number of updates.
 
 Parameters
@@ -120,25 +121,25 @@ self: pyroborobo.Pyroborobo
 )doc")
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(
-:obj:`list` of :obj:`pyroborobo.Controller`: The ordered list of all the controllers in the simulation
+:class:`list` of :class:`~pyroborobo.PyController`: The ordered list of all the controllers in the simulation
 
 .. warning::
-    `~pyroborobo.Pyroborobo.start` must have been called before using this property
+    :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("world_models", &Pyroborobo::getWorldModels, py::return_value_policy::reference,
                                    R"doc(
-:obj:`list` of :obj:`pyroborobo.WorldModel`: The ordered list of all the world models in the simulation
+:class:`list` of :obj:`pyroborobo.WorldModel`: The ordered list of all the world models in the simulation
 
 .. warning::
-    `~pyroborobo.Pyroborobo.start` must have been called before using this property
+    :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("agent_observers", &Pyroborobo::getAgentObservers,
                                    py::return_value_policy::reference,
                                    R"doc(
-:obj:`list` of :obj:`pyroborobo.AgentObserver`: The ordered list of all the agent observers in the simulation
+:class:`list` of :class:`pyroborobo.PyAgentObserver`: The ordered list of all the agent observers in the simulation
 
 .. warning::
-    `~pyroborobo.Pyroborobo.start` must have been called before using this property
+    :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("world_observer", &Pyroborobo::getWorldObserver, py::return_value_policy::reference,
                                    R"doc(
@@ -149,12 +150,14 @@ self: pyroborobo.Pyroborobo
 )doc")
             .def_property_readonly("robots", &Pyroborobo::getRobots, py::return_value_policy::reference,
                                    R"doc(
-:obj:`list` of :obj:`pyroborobo.Robot`: The ordered list of all the robots in the simulation
+:class:`list` of :class:`pyroborobo.PyRobot`: The ordered list of all the robots in the simulation
 
 .. warning::
     `~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
-            .def_property_readonly("objects", &Pyroborobo::getObjects)
+            .def_property_readonly("objects", &Pyroborobo::getObjects, R"doc(
+:class:`list` of :class:`pyroborobo.PhysicalObject`: The ordered list of all the objects in the simulation.
+)doc")
             .def_property_readonly("robot_index_offset", []()
             { return gRobotIndexStartOffset; }, R"doc(
 int: Index at which the robot ids start
