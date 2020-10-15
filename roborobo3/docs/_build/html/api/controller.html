@@ -176,7 +176,12 @@
 </pre></div>
 </div>
 <p>Not doing so leads to cryptic errors due to the interface between python and c++.</p>
-<p>It is also necessary to override <cite>step</cite> and <cite>reset</cite>. Not doing so leads to cryptic errors.</p>
+<p>It is also necessary to override <a class="reference internal" href="#pyroborobo.PyController.step"
+                                       title="pyroborobo.PyController.step"><code
+        class="xref any py py-meth docutils literal notranslate"><span class="pre">step</span></code></a> and <a
+        class="reference internal" href="#pyroborobo.PyController.reset" title="pyroborobo.PyController.reset"><code
+        class="xref any py py-meth docutils literal notranslate"><span class="pre">reset</span></code></a>. Not doing so
+    leads to cryptic errors.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
@@ -198,21 +203,40 @@
 <td><p></p></td>
 </tr>
 <tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.PyController.step" title="pyroborobo.PyController.step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step</span></code></a>(self)</p></td>
-<td><p>Takes the decision of the robot’s next action by reading and modifying its <cite>world_model</cite>.</p></td>
+    <td><p>Takes the decision of the robot’s next action by reading and modifying its <a class="reference internal"
+                                                                                         href="world_model.html"><span
+            class="doc">PyWorldModel</span></a>.</p></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-<dt id="pyroborobo.PyController.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.PyController</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyroborobo.PyController.reset" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.PyController.reset">
+        <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span
+            class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.PyController</span></em><span
+            class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                   href="https://docs.python.org/2/library/constants.html#None"
+                                                   title="(in Python v2.7)">None</a><a class="headerlink"
+                                                                                       href="#pyroborobo.PyController.reset"
+                                                                                       title="Permalink to this definition">¶</a>
+    </dt>
 <dd></dd></dl>
 
-<dl class="py method">
-<dt id="pyroborobo.PyController.step">
-<code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.PyController</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyroborobo.PyController.step" title="Permalink to this definition">¶</a></dt>
-<dd><p>Takes the decision of the robot’s next action by reading and modifying its <cite>world_model</cite>.
-Called at each time step of the simulation.</p>
-</dd></dl>
+    <dl class="py method">
+        <dt id="pyroborobo.PyController.step">
+            <code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span
+                class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.PyController</span></em><span
+                class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                       href="https://docs.python.org/2/library/constants.html#None"
+                                                       title="(in Python v2.7)">None</a><a class="headerlink"
+                                                                                           href="#pyroborobo.PyController.step"
+                                                                                           title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>Takes the decision of the robot’s next action by reading and modifying its <a class="reference internal"
+                                                                                             href="world_model.html"><span
+                class="doc">PyWorldModel</span></a>.
+            Called at each time step of the simulation.</p>
+        </dd>
+    </dl>
 
 <dl class="py method">
 <dt id="pyroborobo.PyController.world_model">

@@ -71,64 +71,94 @@ override_conf_dict: dict
 )doc")
             .def_static("get", &Pyroborobo::get, R"doc(
 Return the pyroborobo instance
+
+Returns
+-------
+pyroborobo.Pyroborobo
 )doc")
             .def("start", &Pyroborobo::start,
                  R"doc(
+Starts the simulator.
+
 Starts the simulator, creates the window if the batch mode is not activated. Once started, it is impossible to
 modify the classes used to instantiate the different modules of the simulator or to change its configuration.
 )doc")
             .def("update", &Pyroborobo::update, "nb_updates"_a,
                  R"doc(
-Performs a simulator evaluation of `nb_updates' time steps. It is possible to call `update' multiple times.
+Performs a simulator evaluation of `nb_updates' time steps.
+
+It is possible to call `update' multiple times. If the simulator is paused, then the frame generation has no impact
+on the number of updates.
+
+Parameters
+----------
+self: pyroborobo.Pyroborobo
+nb_updates: int
+    The number of simulator updates to do.
+    If the simulator is paused, then the frame generation has no impact on the number of updates.
 
 Returns
 -------
-
-quit: bool
+bool
     Has the end of the simulation been requested, either by roborobo itself or by closing the window
 
 Example
-------------
-```
+-------
+
 >>> roborobo.update(1000)  # run simulation for 1000 time steps
 >>> agents.learn()  # trigger agents' learning algorithms
 >>> roborobo.update(1000)  # Continue the simulation for 1000 more time steps
-```
+
 )doc")
             .def("close", &Pyroborobo::close,
                  R"doc(
 Exit the simulator nicely
+
+Parameters
+----------
+self: pyroborobo.Pyroborobo
 )doc")
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(
-The List of all the controllers in the Roborobo environment in order
+:obj:`list` of :obj:`pyroborobo.Controller`: The ordered list of all the controllers in the simulation
 
-`PyRoborobo.start()` must have been called before using this property
+.. warning::
+    `~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("world_models", &Pyroborobo::getWorldModels, py::return_value_policy::reference,
                                    R"doc(
-The list of all world models of the roborobo environment in order
+:obj:`list` of :obj:`pyroborobo.WorldModel`: The ordered list of all the world models in the simulation
 
-`PyRoborobo.start()` must have been called before using this property
+.. warning::
+    `~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("agent_observers", &Pyroborobo::getAgentObservers,
                                    py::return_value_policy::reference,
                                    R"doc(
-The list of all agent observers of the roborobo environment in order
+:obj:`list` of :obj:`pyroborobo.AgentObserver`: The ordered list of all the agent observers in the simulation
 
-`PyRoborobo.start()` must have been called before using this property
+.. warning::
+    `~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("world_observer", &Pyroborobo::getWorldObserver, py::return_value_policy::reference,
                                    R"doc(
-The World Observer of the roborobo environment
+:obj:`pyroborobo.PyWorldObserver`: The World Observer of the roborobo environment
 
-`PyRoborobo.start()` must have been called before using this property
+.. warning::
+    `~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("robots", &Pyroborobo::getRobots, py::return_value_policy::reference,
                                    R"doc(
-The list of all the robots of the roborobo environment in order
+:obj:`list` of :obj:`pyroborobo.Robot`: The ordered list of all the robots in the simulation
 
-`PyRoborobo.start()` must have been called before using this property
+.. warning::
+    `~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
-            .def_property_readonly("objects", &Pyroborobo::getObjects);
+            .def_property_readonly("objects", &Pyroborobo::getObjects)
+            .def_property_readonly("robot_index_offset", []()
+            { return gRobotIndexStartOffset; }, R"doc(
+int: Index at which the robot ids start
+
+Everything under this offset must be considered a physical objects. Everything above is a robot.
+)doc");
 }

@@ -75,6 +75,12 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
+intersphinx_mapping = {'python': ('http://docs.python.org/2', None),
+                       'numpy': ('http://docs.scipy.org/doc/numpy/', None),
+                       'pybind11': ('http://pybind11.readthedocs.io/', None)
+                       }
+default_role = 'any'
+
 
 def setup(app):
     app.add_config_value('recommonmark_config', {

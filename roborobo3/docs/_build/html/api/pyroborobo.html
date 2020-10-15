@@ -213,12 +213,16 @@
 <dt id="pyroborobo.Pyroborobo.agent_observers">
 <em class="property">property </em><code class="sig-name descname">agent_observers</code><a class="headerlink" href="#pyroborobo.Pyroborobo.agent_observers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of all agent observers of the roborobo environment in order</p>
-<p><cite>PyRoborobo.start()</cite> must have been called before using this property</p>
+<p><code class="xref any docutils literal notranslate"><span class="pre">PyRoborobo.start()</span></code> must have been
+    called before using this property</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyroborobo.Pyroborobo.close" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.close">
+        <code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span>
+        &#x2192; <a class="reference external" href="https://docs.python.org/2/library/constants.html#None"
+                    title="(in Python v2.7)">None</a><a class="headerlink" href="#pyroborobo.Pyroborobo.close"
+                                                        title="Permalink to this definition">¶</a></dt>
 <dd><p>Exit the simulator nicely</p>
 </dd></dl>
 
@@ -226,47 +230,121 @@
 <dt id="pyroborobo.Pyroborobo.controllers">
 <em class="property">property </em><code class="sig-name descname">controllers</code><a class="headerlink" href="#pyroborobo.Pyroborobo.controllers" title="Permalink to this definition">¶</a></dt>
 <dd><p>The List of all the controllers in the Roborobo environment in order</p>
-<p><cite>PyRoborobo.start()</cite> must have been called before using this property</p>
+    <p><code class="xref any docutils literal notranslate"><span class="pre">PyRoborobo.start()</span></code> must have
+        been called before using this property</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.create">
-<em class="property">static </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">properties_file</span><span class="p">:</span> <span class="n">str</span></em>, <em class="sig-param"><span class="n">world_observer_class</span><span class="p">:</span> <span class="n">object</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">controller_class</span><span class="p">:</span> <span class="n">object</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">world_model_class</span><span class="p">:</span> <span class="n">object</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">agent_observer_class</span><span class="p">:</span> <span class="n">object</span> <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">object_class_dict</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">override_conf_dict</span><span class="p">:</span> <span class="n">dict</span> <span class="o">=</span> <span class="default_value">{}</span></em><span class="sig-paren">)</span> &#x2192; _pyroborobo.Pyroborobo<a class="headerlink" href="#pyroborobo.Pyroborobo.create" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.create">
+        <em class="property">static </em><code class="sig-name descname">create</code><span
+            class="sig-paren">(</span><em class="sig-param"><span class="n">properties_file</span><span
+            class="p">:</span> <span class="n"><a class="reference external"
+                                                  href="https://docs.python.org/2/library/functions.html#str"
+                                                  title="(in Python v2.7)">str</a></span></em>, <em
+            class="sig-param"><span class="n">world_observer_class</span><span class="p">:</span> <span class="n"><a
+            class="reference external" href="https://docs.python.org/2/library/functions.html#object"
+            title="(in Python v2.7)">object</a></span> <span class="o">=</span> <span class="default_value">None</span></em>,
+        <em class="sig-param"><span class="n">controller_class</span><span class="p">:</span> <span class="n"><a
+                class="reference external" href="https://docs.python.org/2/library/functions.html#object"
+                title="(in Python v2.7)">object</a></span> <span class="o">=</span> <span
+                class="default_value">None</span></em>, <em class="sig-param"><span
+            class="n">world_model_class</span><span class="p">:</span> <span class="n"><a class="reference external"
+                                                                                          href="https://docs.python.org/2/library/functions.html#object"
+                                                                                          title="(in Python v2.7)">object</a></span>
+        <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">agent_observer_class</span><span
+            class="p">:</span> <span class="n"><a class="reference external"
+                                                  href="https://docs.python.org/2/library/functions.html#object"
+                                                  title="(in Python v2.7)">object</a></span> <span class="o">=</span>
+        <span class="default_value">None</span></em>, <em class="sig-param"><span
+            class="n">object_class_dict</span><span class="p">:</span> <span class="n"><a class="reference external"
+                                                                                          href="https://docs.python.org/2/library/stdtypes.html#dict"
+                                                                                          title="(in Python v2.7)">dict</a></span>
+        <span class="o">=</span> <span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">override_conf_dict</span><span
+            class="p">:</span> <span class="n"><a class="reference external"
+                                                  href="https://docs.python.org/2/library/stdtypes.html#dict"
+                                                  title="(in Python v2.7)">dict</a></span> <span class="o">=</span>
+        <span class="default_value">{}</span></em><span class="sig-paren">)</span> &#x2192; _pyroborobo.Pyroborobo<a
+            class="headerlink" href="#pyroborobo.Pyroborobo.create" title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the singleton Pyroborobo</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
-<dd class="field-odd"><dl>
-<dt><strong>properties_file: str</strong></dt><dd><p>Properties file for the roborobo simulator</p>
-</dd>
-<dt><strong>world_observer_class: Class inherited from PyWorldObserver or str or None</strong></dt><dd><p>Class used to instantiate the WorldObserver. It must inherit from <cite>PyWorldObserver</cite>.
-It is possible to pass <cite>None</cite>, in which case the C++ class loaded by the loader configuration is used.
-Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any action
-is used.</p>
-</dd>
-<dt><strong>controller_class: Class inherited from PyController or str or None</strong></dt><dd><p>Class used to instantiate the Controllers. It must inherit from <cite>PyController</cite>.
-It is possible to pass <cite>None</cite>, in which case the C++ class loaded by the loader configuration is used.
-Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any action
-is used.</p>
-</dd>
-<dt><strong>world_model_class: Class inherited from PyWorldModel or str or None</strong></dt><dd><p>Class used to instantiate the WorldModels. It must inherit from <cite>PyWorldModel</cite>.
-It is possible to pass <cite>None</cite>, in which case the C++ class loaded by the loader configuration is used.
-Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any action
-is used.</p>
-</dd>
-<dt><strong>agent_observer_class: Class inherited from PyAgentObserver or str or None</strong></dt><dd><p>Class used to instantiate the AgentObservers. It must inherit from <cite>PyAgentObservers</cite>.
-It is possible to pass <cite>None</cite>, in which case the C++ class loaded by the loader configuration is used.
-Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any action
-is used.</p>
-</dd>
-<dt><strong>object_class_dict: Dict of string -&gt; class inherited from PhysicalObject</strong></dt><dd><p>Dict of classes that are used to instantiate physical object from the pytype argument in conf file.
-The classes must be inherited from <cite>PyCircleObject</cite>, <cite>PySquareObject</cite> and their subclasses.</p>
-</dd>
-<dt><strong>override_conf_dict: dict</strong></dt><dd><p>Dictionary which updates the configuration file loaded by the <cite>properties_file</cite> parameter.
-Dictionary key/value pairs already present in the configuration file are overwritten. Key/value pairs that do not
-exist in the configuration file are added.</p>
-<p>DOES NOT WORK YET (dunno why)</p>
-</dd>
-</dl>
+<dd class="field-odd">
+    <dl>
+        <dt><strong>properties_file: str</strong></dt>
+        <dd><p>Properties file for the roborobo simulator</p>
+        </dd>
+        <dt><strong>world_observer_class: Class inherited from PyWorldObserver or str or None</strong></dt>
+        <dd><p>Class used to instantiate the WorldObserver. It must inherit from <a class="reference internal"
+                                                                                    href="worldobserver.html#pyroborobo.PyWorldObserver"
+                                                                                    title="pyroborobo.PyWorldObserver"><code
+                class="xref any py py-class docutils literal notranslate"><span
+                class="pre">PyWorldObserver</span></code></a>.
+            It is possible to pass <a class="reference external"
+                                      href="https://docs.python.org/2/library/constants.html#None"
+                                      title="(in Python v2.7)"><code class="xref any docutils literal notranslate"><span
+                    class="pre">None</span></code></a>, in which case the C++ class loaded by the loader configuration
+            is used.
+            Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any
+            action
+            is used.</p>
+        </dd>
+        <dt><strong>controller_class: Class inherited from PyController or str or None</strong></dt>
+        <dd><p>Class used to instantiate the Controllers. It must inherit from <a class="reference internal"
+                                                                                  href="controller.html#pyroborobo.PyController"
+                                                                                  title="pyroborobo.PyController"><code
+                class="xref any py py-class docutils literal notranslate"><span
+                class="pre">PyController</span></code></a>.
+            It is possible to pass <a class="reference external"
+                                      href="https://docs.python.org/2/library/constants.html#None"
+                                      title="(in Python v2.7)"><code class="xref any docutils literal notranslate"><span
+                    class="pre">None</span></code></a>, in which case the C++ class loaded by the loader configuration
+            is used.
+            Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any
+            action
+            is used.</p>
+        </dd>
+        <dt><strong>world_model_class: Class inherited from PyWorldModel or str or None</strong></dt>
+        <dd><p>Class used to instantiate the WorldModels. It must inherit from <a class="reference internal"
+                                                                                  href="world_model.html#pyroborobo.PyWorldModel"
+                                                                                  title="pyroborobo.PyWorldModel"><code
+                class="xref any py py-class docutils literal notranslate"><span
+                class="pre">PyWorldModel</span></code></a>.
+            It is possible to pass <a class="reference external"
+                                      href="https://docs.python.org/2/library/constants.html#None"
+                                      title="(in Python v2.7)"><code class="xref any docutils literal notranslate"><span
+                    class="pre">None</span></code></a>, in which case the C++ class loaded by the loader configuration
+            is used.
+            Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any
+            action
+            is used.</p>
+        </dd>
+        <dt><strong>agent_observer_class: Class inherited from PyAgentObserver or str or None</strong></dt>
+        <dd><p>Class used to instantiate the AgentObservers. It must inherit from <code
+                class="xref any docutils literal notranslate"><span class="pre">PyAgentObservers</span></code>.
+            It is possible to pass <a class="reference external"
+                                      href="https://docs.python.org/2/library/constants.html#None"
+                                      title="(in Python v2.7)"><code class="xref any docutils literal notranslate"><span
+                    class="pre">None</span></code></a>, in which case the C++ class loaded by the loader configuration
+            is used.
+            Finally, it is possible to pass the string “dummy”, in this case, a minimal class that does not perform any
+            action
+            is used.</p>
+        </dd>
+        <dt><strong>object_class_dict: Dict of string -&gt; class inherited from PhysicalObject</strong></dt>
+        <dd><p>Dict of classes that are used to instantiate physical object from the pytype argument in conf file.
+            The classes must be inherited from <code class="xref any docutils literal notranslate"><span class="pre">PyCircleObject</span></code>,
+            <code class="xref any docutils literal notranslate"><span class="pre">PySquareObject</span></code> and their
+            subclasses.</p>
+        </dd>
+        <dt><strong>override_conf_dict: dict</strong></dt>
+        <dd><p>Dictionary which updates the configuration file loaded by the <code
+                class="xref any docutils literal notranslate"><span class="pre">properties_file</span></code> parameter.
+            Dictionary key/value pairs already present in the configuration file are overwritten. Key/value pairs that
+            do not
+            exist in the configuration file are added.</p>
+            <p>DOES NOT WORK YET (dunno why)</p>
+        </dd>
+    </dl>
 </dd>
 </dl>
 </dd></dl>
@@ -281,19 +359,34 @@ exist in the configuration file are added.</p>
 <dt id="pyroborobo.Pyroborobo.robots">
 <em class="property">property </em><code class="sig-name descname">robots</code><a class="headerlink" href="#pyroborobo.Pyroborobo.robots" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of all the robots of the roborobo environment in order</p>
-<p><cite>PyRoborobo.start()</cite> must have been called before using this property</p>
+    <p><code class="xref any docutils literal notranslate"><span class="pre">PyRoborobo.start()</span></code> must have
+        been called before using this property</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.Pyroborobo</span></em><span class="sig-paren">)</span> &#x2192; None<a class="headerlink" href="#pyroborobo.Pyroborobo.start" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.start">
+        <code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span
+            class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.Pyroborobo</span></em><span
+            class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                   href="https://docs.python.org/2/library/constants.html#None"
+                                                   title="(in Python v2.7)">None</a><a class="headerlink"
+                                                                                       href="#pyroborobo.Pyroborobo.start"
+                                                                                       title="Permalink to this definition">¶</a>
+    </dt>
 <dd><p>Starts the simulator, creates the window if the batch mode is not activated. Once started, it is impossible to
 modify the classes used to instantiate the different modules of the simulator or to change its configuration.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.Pyroborobo</span></em>, <em class="sig-param"><span class="n">nb_updates</span><span class="p">:</span> <span class="n">int</span></em><span class="sig-paren">)</span> &#x2192; bool<a class="headerlink" href="#pyroborobo.Pyroborobo.update" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.update">
+        <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span
+            class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.Pyroborobo</span></em>, <em
+            class="sig-param"><span class="n">nb_updates</span><span class="p">:</span> <span class="n"><a
+            class="reference external" href="https://docs.python.org/2/library/functions.html#int"
+            title="(in Python v2.7)">int</a></span></em><span class="sig-paren">)</span> &#x2192; <a
+            class="reference external" href="https://docs.python.org/2/library/functions.html#bool"
+            title="(in Python v2.7)">bool</a><a class="headerlink" href="#pyroborobo.Pyroborobo.update"
+                                                title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a simulator evaluation of <a href="#id5"><span class="problematic" id="id6">`</span></a>nb_updates’ time steps. It is possible to call <a href="#id7"><span class="problematic" id="id8">`</span></a>update’ multiple times.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -309,14 +402,16 @@ modify the classes used to instantiate the different modules of the simulator or
 <dt id="pyroborobo.Pyroborobo.world_models">
 <em class="property">property </em><code class="sig-name descname">world_models</code><a class="headerlink" href="#pyroborobo.Pyroborobo.world_models" title="Permalink to this definition">¶</a></dt>
 <dd><p>The list of all world models of the roborobo environment in order</p>
-<p><cite>PyRoborobo.start()</cite> must have been called before using this property</p>
+    <p><code class="xref any docutils literal notranslate"><span class="pre">PyRoborobo.start()</span></code> must have
+        been called before using this property</p>
 </dd></dl>
 
 <dl class="py method">
 <dt id="pyroborobo.Pyroborobo.world_observer">
 <em class="property">property </em><code class="sig-name descname">world_observer</code><a class="headerlink" href="#pyroborobo.Pyroborobo.world_observer" title="Permalink to this definition">¶</a></dt>
 <dd><p>The World Observer of the roborobo environment</p>
-<p><cite>PyRoborobo.start()</cite> must have been called before using this property</p>
+    <p><code class="xref any docutils literal notranslate"><span class="pre">PyRoborobo.start()</span></code> must have
+        been called before using this property</p>
 </dd></dl>
 
 </dd></dl>
