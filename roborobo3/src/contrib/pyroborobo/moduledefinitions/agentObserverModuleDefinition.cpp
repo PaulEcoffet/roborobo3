@@ -12,7 +12,16 @@ void addAgentObserverBindings(pybind11::module &m)
 {
     py::class_<AgentObserver, AgentObserverTrampoline, std::shared_ptr<AgentObserver> >(m, "AgentObserver")
             .def(py::init<std::shared_ptr<RobotWorldModel>>(), "world_model"_a)
-            .def("reset", &AgentObserver::reset)
-            .def("step_pre", &AgentObserver::stepPre)
-            .def("step_post", &AgentObserver::stepPost);
+            .def("reset", &AgentObserver::reset,
+                 R"(
+Reset the agent observer
+)")
+            .def("step_pre", &AgentObserver::stepPre,
+                 R"doc(
+Called at each timestep before the agent's controller.
+)doc")
+            .def("step_post", &AgentObserver::stepPost,
+                 R"doc(
+Called at each timestep after the agent's controller.
+)doc");
 }

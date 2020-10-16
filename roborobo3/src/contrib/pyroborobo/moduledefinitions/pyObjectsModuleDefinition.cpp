@@ -15,15 +15,42 @@ using namespace pybind11::literals;
 
 void addPyObjectsBindings(py::module &m)
 {
-    py::class_<PhysicalObject, PhysicalObjectTrampoline, std::shared_ptr<PhysicalObject >>(m, "PhysicalObject")
+    py::class_<PhysicalObject, PhysicalObjectTrampoline, std::shared_ptr<PhysicalObject >>(m, "PhysicalObject",
+            R"doc(
+Abstract Base Class for all roborobo physical objects.
+
+A Physical object is a element in the roborobo simulator with a shape, it can move, disappear, and impact other
+objects or robots. Objects have several callbacks that are called by roborobo.
+
+Objects, once created, always exist in the roborobo simulator. Robots and other objects can interact with them if the
+objects are *registered*. When an object is registered, that means that the simulator takes its physics into account.
+
+Being registered is different from being visible. An object can be made visible (to the human) using the
+:meth:`show` method, or invisible using the :meth:`hide`. If an object is visible and unregistered, it will be visible
+to the humans but robot will *not* see them or collide with them. If an object is invisible and registered, the robots
+will see them and collide with them but the object will not be rendered on the window or screenshot.
+
+You can force roborobo to display all registered elements using the X-ray mode. You can activate the x-ray mode by
+pressing :kbd:`x` on your keyboard when roborobo is rendered in a GUI.
+
+The :meth:`step` method is called at each time step before the robots' step method. The callback :meth:`is_touched`
+is called when a robot has the
+object in sight, :meth:`is_walked` is called when a robot walk on the "soft" surface of the object, and the method
+:meth:`is_pushed` is called when a robot collide with the object.
+
+PhysicalObject cannot be instantiated by itself, only its subclasses :class:`SquareObject` and
+:class:`CircleObject` and their subclasses can be created.
+
+Read :doc:`/tuto/objects` for a tutorial on how to use Objects.
+
+)doc")
             .def(py::init<int>(), "id"_a, py::return_value_policy::reference)
             .def("can_register", &PhysicalObject::canRegister, R"doc(
 Can the object be register at its position
 
 Returns
 -------
-
-A boolean saying if the object can register at its actual position
+bool: can object register at its actual position
 )doc")
             .def("register", &PhysicalObject::registerObject, "register the object")
             .def("unregister", &PhysicalObject::unregisterObject, "unregister the object")
@@ -43,10 +70,28 @@ A boolean saying if the object can register at its actual position
                  "set the coordinates without checking.");
 
     py::class_<SquareObject, SquareObjectTrampoline<>, PhysicalObject, std::shared_ptr
-            <SquareObject >> (m, "SquareObject")
-                                                                                   .def(py::init_alias<int>(), "id"_a,
-                                                                                        py::return_value_policy::reference,
-                                                                                        "")
+            <SquareObject >> (m, "SquareObject", R"doc(
+SquareObject(id: int, data: dict) -> SquareObject
+
+Physical object with an axis-aligned rectangular shape
+
+Read :doc:`/tuto/objects` for a tutorial on how to use Objects.
+
+Parameters
+----------
+id: int
+    The id of the object
+data: dict (optional)
+    The data for the object read from the properties file
+
+See also
+--------
+PhysicalObject: Reference for physical objects
+
+)doc")
+            .def(py::init_alias<int>(), "id"_a,
+                 py::return_value_policy::reference,
+                 "")
             .def(py::init_alias<int, const py::dict &>(),
                  "id"_a, "data"_a,
                  py::return_value_policy::reference,
@@ -133,10 +178,30 @@ speed: tuple(double, double)
                            "int: the width of the soft part of the object (can be walked on) in pixel");
 
     py::class_<CircleObject, CircleObjectTrampoline<>, PhysicalObject, std::shared_ptr
-            <CircleObject >> (m, "CircleObject")
-                                                                                   .def(py::init_alias<int>(), "id"_a,
-                                                                                        py::return_value_policy::reference,
-                                                                                        "")
+            <CircleObject >> (m, "CircleObject",
+                    R"doc(
+CircleObject(id: int, data: dict) -> CircleObject
+
+Physical object with a circular shape
+
+Read :doc:`/tuto/objects` for a tutorial on how to use Objects.
+
+Parameters
+----------
+id: int
+    The id of the object
+data: dict (optional)
+    The data for the object read from the properties file
+
+See also
+--------
+PhysicalObject: Reference for physical objects
+
+
+)doc")
+            .def(py::init_alias<int>(), "id"_a,
+                 py::return_value_policy::reference,
+                 "")
             .def(py::init_alias<int, const py::dict &>(),
                  "id"_a, "data"_a,
                  py::return_value_policy::reference,

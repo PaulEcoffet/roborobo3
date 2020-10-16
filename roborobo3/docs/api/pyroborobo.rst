@@ -7,3 +7,4 @@ Pyroborobo
 
 .. autoclass:: pyroborobo.Pyroborobo
     :members:
+

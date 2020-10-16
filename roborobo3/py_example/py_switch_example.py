@@ -1,4 +1,4 @@
-from pyroborobo import Pyroborobo, PyController, PyWorldModel
+from pyroborobo import Pyroborobo, Controller, PyWorldModel
 from controllers import SimpleController
 from objects import SwitchObject, GateObject
 

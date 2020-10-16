@@ -3,6 +3,12 @@
 Objects
 =======
 
+PhysicalObject
+--------------
+
+.. autoclass:: PhysicalObject
+    :members:
+
 SquareObject
 ------------
 
@@ -14,3 +20,4 @@ CircleObject
 
 .. autoclass:: CircleObject
     :members:
+

@@ -7,13 +7,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PyController &mdash; Pyroborobo 0.2 documentation</title>
+  <title>Controller &mdash; Pyroborobo 0.4 documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
 
   
   
@@ -38,7 +37,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Pyroborobo" href="pyroborobo.html" />
-    <link rel="prev" title="PyAgentObserver" href="agent_observer.html" /> 
+    <link rel="prev" title="AgentObserver" href="agent_observer.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -83,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tuto/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tuto/basic_usage.html">How to use pyroborobo</a></li>
@@ -91,12 +90,12 @@
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="agent_observer.html">PyAgentObserver</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PyController</a></li>
+<li class="toctree-l1"><a class="reference internal" href="agent_observer.html">AgentObserver</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Controller</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyroborobo.html">Pyroborobo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="squareobject.html">Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="world_model.html">PyWorldModel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="worldobserver.html">PyWorldObserver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_model.html">World Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="worldobserver.html">WorldObserver</a></li>
 </ul>
 
             
@@ -143,7 +142,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>PyController</li>
+      <li>Controller</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -162,11 +161,11 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pycontroller">
-<h1>PyController<a class="headerlink" href="#pycontroller" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="controller">
+<h1>Controller<a class="headerlink" href="#controller" title="Permalink to this headline">¶</a></h1>
 <dl class="py class">
-<dt id="pyroborobo.PyController">
-<em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">PyController</code><a class="headerlink" href="#pyroborobo.PyController" title="Permalink to this definition">¶</a></dt>
+<dt id="pyroborobo.Controller">
+<em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">Controller</code><a class="headerlink" href="#pyroborobo.Controller" title="Permalink to this definition">¶</a></dt>
 <dd><p>Class to extend a Roborobo Controller in python.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -176,18 +175,14 @@
 </pre></div>
 </div>
 <p>Not doing so leads to cryptic errors due to the interface between python and c++.</p>
-<p>It is also necessary to override <a class="reference internal" href="#pyroborobo.PyController.step"
-                                       title="pyroborobo.PyController.step"><code
-        class="xref any py py-meth docutils literal notranslate"><span class="pre">step</span></code></a> and <a
-        class="reference internal" href="#pyroborobo.PyController.reset" title="pyroborobo.PyController.reset"><code
-        class="xref any py py-meth docutils literal notranslate"><span class="pre">reset</span></code></a>. Not doing so
-    leads to cryptic errors.</p>
+<p>It is also necessary to override <a class="reference internal" href="#pyroborobo.Controller.step" title="pyroborobo.Controller.step"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">step</span></code></a> and <a class="reference internal" href="agent_observer.html#pyroborobo.AgentObserver.reset" title="pyroborobo.AgentObserver.reset"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">reset</span></code></a>. Not doing so leads to cryptic errors.</p>
 </div>
 <dl class="field-list simple">
 <dt class="field-odd">Attributes</dt>
 <dd class="field-odd"><dl class="simple">
-<dt><strong>id</strong></dt><dd></dd>
-<dt><a class="reference internal" href="#pyroborobo.PyController.world_model" title="pyroborobo.PyController.world_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">world_model</span></code></a></dt><dd><p>The robot’s world_model.</p>
+<dt><a class="reference internal" href="#pyroborobo.Controller.id" title="pyroborobo.Controller.id"><code class="xref py py-obj docutils literal notranslate"><span class="pre">id</span></code></a></dt><dd><p>int: Robot unique ID.</p>
+</dd>
+<dt><a class="reference internal" href="#pyroborobo.Controller.world_model" title="pyroborobo.Controller.world_model"><code class="xref py py-obj docutils literal notranslate"><span class="pre">world_model</span></code></a></dt><dd><p>pyroborobo.WorldModel: The robot’s world_model</p>
 </dd>
 </dl>
 </dd>
@@ -199,49 +194,63 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.PyController.reset" title="pyroborobo.PyController.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(self)</p></td>
-<td><p></p></td>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Controller.step" title="pyroborobo.Controller.step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step</span></code></a></p></td>
+<td><p>Takes the decision of the robot’s next action</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.PyController.step" title="pyroborobo.PyController.step"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step</span></code></a>(self)</p></td>
-    <td><p>Takes the decision of the robot’s next action by reading and modifying its <a class="reference internal"
-                                                                                         href="world_model.html"><span
-            class="doc">PyWorldModel</span></a>.</p></td>
+</tbody>
+</table>
+<table class="docutils align-default">
+<colgroup>
+<col style="width: 47%" />
+<col style="width: 53%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><strong>reset</strong></p></td>
+<td></td>
 </tr>
 </tbody>
 </table>
 <dl class="py method">
-    <dt id="pyroborobo.PyController.reset">
-        <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span
-            class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.PyController</span></em><span
-            class="sig-paren">)</span> &#x2192; <a class="reference external"
-                                                   href="https://docs.python.org/2/library/constants.html#None"
-                                                   title="(in Python v2.7)">None</a><a class="headerlink"
-                                                                                       href="#pyroborobo.PyController.reset"
-                                                                                       title="Permalink to this definition">¶</a>
-    </dt>
-<dd></dd></dl>
-
-    <dl class="py method">
-        <dt id="pyroborobo.PyController.step">
-            <code class="sig-name descname">step</code><span class="sig-paren">(</span><em class="sig-param"><span
-                class="n">self</span><span class="p">:</span> <span class="n">_pyroborobo.PyController</span></em><span
-                class="sig-paren">)</span> &#x2192; <a class="reference external"
-                                                       href="https://docs.python.org/2/library/constants.html#None"
-                                                       title="(in Python v2.7)">None</a><a class="headerlink"
-                                                                                           href="#pyroborobo.PyController.step"
-                                                                                           title="Permalink to this definition">¶</a>
-        </dt>
-        <dd><p>Takes the decision of the robot’s next action by reading and modifying its <a class="reference internal"
-                                                                                             href="world_model.html"><span
-                class="doc">PyWorldModel</span></a>.
-            Called at each time step of the simulation.</p>
-        </dd>
-    </dl>
+<dt id="pyroborobo.Controller.id">
+<em class="property">property </em><code class="sig-name descname">id</code><a class="headerlink" href="#pyroborobo.Controller.id" title="Permalink to this definition">¶</a></dt>
+<dd><p>Robot unique ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></p>
+</dd>
+</dl>
+</dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.PyController.world_model">
-<em class="property">property </em><code class="sig-name descname">world_model</code><a class="headerlink" href="#pyroborobo.PyController.world_model" title="Permalink to this definition">¶</a></dt>
-<dd><p>The robot’s world_model.</p>
+<dt id="pyroborobo.Controller.step">
+<code class="sig-name descname">step</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Controller.step" title="Permalink to this definition">¶</a></dt>
+<dd><p>Takes the decision of the robot’s next action</p>
+<p>You can access the sensors and effectors of the robot by reading and modifying its <a class="reference internal" href="#pyroborobo.Controller.world_model" title="pyroborobo.Controller.world_model"><code class="xref py py-attr docutils literal notranslate"><span class="pre">world_model</span></code></a>.</p>
+<p>Called at each time step of the simulation.</p>
+<p class="rubric">Examples</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="gp">... </span>    <span class="n">distance</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">world_model</span><span class="o">.</span><span class="n">camera_dist</span>
+<span class="gp">... </span>    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">distance</span> <span class="o">&lt;</span> <span class="mf">0.5</span><span class="p">):</span>
+<span class="gp">... </span>        <span class="c1"># Nothing around, we can go forward without turning</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">world_model</span><span class="o">.</span><span class="n">translation</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">world_model</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">... </span>    <span class="k">else</span><span class="p">:</span>
+<span class="gp">... </span>        <span class="c1"># There are obstacles, we go around in circles slowly</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">world_model</span><span class="o">.</span><span class="n">translation</span> <span class="o">=</span> <span class="mf">0.5</span>
+<span class="gp">... </span>        <span class="bp">self</span><span class="o">.</span><span class="n">world_model</span><span class="o">.</span><span class="n">rotation</span> <span class="o">=</span> <span class="mi">15</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyroborobo.Controller.world_model">
+<em class="property">property </em><code class="sig-name descname">world_model</code><a class="headerlink" href="#pyroborobo.Controller.world_model" title="Permalink to this definition">¶</a></dt>
+<dd><p>The robot’s world_model</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type</dt>
+<dd class="field-odd"><p>pyroborobo.WorldModel</p>
+</dd>
+</dl>
 </dd></dl>
 
 </dd></dl>
@@ -259,7 +268,7 @@
         <a href="pyroborobo.html" class="btn btn-neutral float-right" title="Pyroborobo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="agent_observer.html" class="btn btn-neutral float-left" title="PyAgentObserver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="agent_observer.html" class="btn btn-neutral float-left" title="AgentObserver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

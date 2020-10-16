@@ -1,9 +1,8 @@
 .. currentmodule:: pyroborobo
 
-PyAgentObserver
+AgentObserver
 =============
 
-TODO: must be implemented
-
-.. autoclass:: PyAgentObserver
+.. autoclass:: AgentObserver
     :members:
+

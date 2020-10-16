@@ -1,13 +1,13 @@
-from pyroborobo import PyController, PyWorldModel
+from pyroborobo import Controller, PyWorldModel
 
 
-class SimpleController(PyController):
+class SimpleController(Controller):
     world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
     robot_index_offset = 1048576
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
-        PyController.__init__(self, world_model)
+        Controller.__init__(self, world_model)
         print("I'm a Python controller")
 
     def reset(self):

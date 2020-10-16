@@ -1,7 +1,8 @@
 .. currentmodule:: pyroborobo
 
-PyController
-============
+Controller
+==========
 
-.. autoclass:: PyController
+.. autoclass:: Controller
     :members:
+

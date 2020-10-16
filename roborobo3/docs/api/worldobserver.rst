@@ -1,7 +1,8 @@
 .. currentmodule:: pyroborobo
 
-PyWorldObserver
-===============
+WorldObserver
+=============
 
-.. autoclass:: PyWorldObserver
+.. autoclass:: WorldObserver
     :members:
+

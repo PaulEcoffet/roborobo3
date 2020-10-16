@@ -2,7 +2,7 @@
 
 ```eval_rst 
 .. note::
-    The source code for this tutorial can be found in `py_example/objects.py` and `py_example/py_switch_example.py`
+    The source code for this tutorial can be found in ``py_example/objects.py`` and ``py_example/py_switch_example.py``.
 
 ```
 
@@ -71,8 +71,7 @@ class GateObject(SquareObject):
         self.cur_regrow = self.regrow_time
 ```
 
-Now, we need to tell in our configuration file that we want to use the objects that we defined. To do so, let's update our config file. For instance, if we work on `py_example/py_switch_example.py` we can see the
-difference between the two config files `py_example/config/pywander.properties` and `py_example/config/pywander_pyobj.properties`. The edits are as simple as :
+Now, we need to tell in our configuration file that we want to use the objects that we defined. To do so, let's update our config file. For instance, if we work on `py_example/py_switch_example.py` we can see the difference between the two config files `py_example/config/pywander.properties` and `py_example/config/pywander_pyobj.properties`. The edits are as simple as :
 
 ```
   # Here we declare that we want a python object with the id "gate"
@@ -82,8 +81,7 @@ physicalObjects[1].pytype = switch
 physcialObjects[1].sendMessageTo = 0
 ```
 
-Then, when we create our Pyroborobo object, we must pass a dictionary mapping the
-pytype key to our object classes. The Controller classes comes from the previous tutorial
+Then, when we create our Pyroborobo object, we must pass a dictionary mapping the `pytype` key to our object classes. The Controller classes comes from the previous tutorial
 
 ```python
 rob = Pyroborobo.create("config/pywander_pyobj.properties",

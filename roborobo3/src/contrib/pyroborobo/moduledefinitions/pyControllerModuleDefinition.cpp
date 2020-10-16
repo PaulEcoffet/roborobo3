@@ -46,20 +46,20 @@ Class to extend a Roborobo Controller in python.
                  R"doc(
 Takes the decision of the robot's next action
 
-You can access the sensors and effectors of the robot by reading and modifying its `~pyroborobo.PyController.world_model`.
+You can access the sensors and effectors of the robot by reading and modifying its :attr:`~pyroborobo.Controller.world_model`.
 
 Called at each time step of the simulation.
 
-Example
--------
+Examples
+---------
 >>> def step(self):
-...     distance = self.world_model.get_camera_sensors_dist()
-...     if all(distance < 0.5):
-...         # Nothing around, we can go forward without turning #
+...     distance = self.world_model.camera_dist
+...     if np.all(distance < 0.5):
+...         # Nothing around, we can go forward without turning
 ...         self.world_model.translation = 2
 ...         self.world_model.rotation = 0
 ...     else:
-...         # There are obstacles, we go around in circles slowly #
+...         # There are obstacles, we go around in circles slowly
 ...         self.world_model.translation = 0.5
 ...         self.world_model.rotation = 15
 

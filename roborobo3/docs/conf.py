@@ -27,7 +27,7 @@ copyright = '2020, Paul Ecoffet, Nicolas Bredeche'
 author = 'Paul Ecoffet, Nicolas Bredeche'
 
 # The full version, including alpha/beta/rc tags
-release = '0.2'
+release = '0.4'
 
 # -- General configuration ---------------------------------------------------
 
@@ -38,11 +38,9 @@ extensions = [
     'numpydoc',
     'sphinx.ext.autodoc',
     'sphinx.ext.intersphinx',
-    'sphinx.ext.autosummary',
     'sphinx.ext.napoleon',
     'recommonmark',
-    'sphinx.ext.inheritance_diagram',
-    'sphinx_rtd_theme'
+    'sphinx_rtd_theme',
 ]
 
 source_suffix = {
@@ -51,7 +49,6 @@ source_suffix = {
     '.md': 'markdown',
 }
 
-autosummary_generate = True
 master_doc = 'index'
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
@@ -75,12 +72,11 @@ html_theme = 'sphinx_rtd_theme'
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ['_static']
 
-intersphinx_mapping = {'python': ('http://docs.python.org/2', None),
-                       'numpy': ('http://docs.scipy.org/doc/numpy/', None),
-                       'pybind11': ('http://pybind11.readthedocs.io/', None)
+intersphinx_mapping = {'python': ('http://docs.python.org/3', None),
+                       'numpy': ('https://numpy.org/doc/stable/', None),
+                       'pybind11': ('http://pybind11.readthedocs.io/en/stable/', None)
                        }
 default_role = 'any'
-
 
 def setup(app):
     app.add_config_value('recommonmark_config', {

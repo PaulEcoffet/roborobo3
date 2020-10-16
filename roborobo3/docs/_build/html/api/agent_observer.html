@@ -7,13 +7,12 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>PyAgentObserver &mdash; Pyroborobo 0.2 documentation</title>
+  <title>AgentObserver &mdash; Pyroborobo 0.4 documentation</title>
   
 
   
   <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-  <link rel="stylesheet" href="../_static/graphviz.css" type="text/css" />
 
   
   
@@ -37,7 +36,7 @@
     
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="PyController" href="controller.html" />
+    <link rel="next" title="Controller" href="controller.html" />
     <link rel="prev" title="Object Creation" href="../tuto/objects.html" /> 
 </head>
 
@@ -83,7 +82,7 @@
               
             
             
-              <p class="caption"><span class="caption-text">Contents:</span></p>
+              <p class="caption"><span class="caption-text">Contents</span></p>
 <ul>
 <li class="toctree-l1"><a class="reference internal" href="../tuto/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="../tuto/basic_usage.html">How to use pyroborobo</a></li>
@@ -91,12 +90,12 @@
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">PyAgentObserver</a></li>
-<li class="toctree-l1"><a class="reference internal" href="controller.html">PyController</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AgentObserver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="controller.html">Controller</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyroborobo.html">Pyroborobo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="squareobject.html">Objects</a></li>
-<li class="toctree-l1"><a class="reference internal" href="world_model.html">PyWorldModel</a></li>
-<li class="toctree-l1"><a class="reference internal" href="worldobserver.html">PyWorldObserver</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world_model.html">World Models</a></li>
+<li class="toctree-l1"><a class="reference internal" href="worldobserver.html">WorldObserver</a></li>
 </ul>
 
             
@@ -143,7 +142,7 @@
     
       <li><a href="../index.html" class="icon icon-home"></a> &raquo;</li>
         
-      <li>PyAgentObserver</li>
+      <li>AgentObserver</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -162,9 +161,49 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="pyagentobserver">
-<h1>PyAgentObserver<a class="headerlink" href="#pyagentobserver" title="Permalink to this headline">¶</a></h1>
-<p>TODO: must be implemented</p>
+  <div class="section" id="agentobserver">
+<h1>AgentObserver<a class="headerlink" href="#agentobserver" title="Permalink to this headline">¶</a></h1>
+<dl class="py class">
+<dt id="pyroborobo.AgentObserver">
+<em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">AgentObserver</code><a class="headerlink" href="#pyroborobo.AgentObserver" title="Permalink to this definition">¶</a></dt>
+<dd><p class="rubric">Methods</p>
+<table class="longtable docutils align-default">
+<colgroup>
+<col style="width: 10%" />
+<col style="width: 90%" />
+</colgroup>
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.AgentObserver.reset" title="pyroborobo.AgentObserver.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a></p></td>
+<td><p>Reset the agent observer</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.AgentObserver.step_post" title="pyroborobo.AgentObserver.step_post"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_post</span></code></a></p></td>
+<td><p>Called at each timestep after the agent’s controller.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.AgentObserver.step_pre" title="pyroborobo.AgentObserver.step_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_pre</span></code></a></p></td>
+<td><p>Called at each timestep before the agent’s controller.</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="py method">
+<dt id="pyroborobo.AgentObserver.reset">
+<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.AgentObserver.reset" title="Permalink to this definition">¶</a></dt>
+<dd><p>Reset the agent observer</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyroborobo.AgentObserver.step_post">
+<code class="sig-name descname">step_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.AgentObserver.step_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called at each timestep after the agent’s controller.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyroborobo.AgentObserver.step_pre">
+<code class="sig-name descname">step_pre</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.AgentObserver.step_pre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called at each timestep before the agent’s controller.</p>
+</dd></dl>
+
+</dd></dl>
+
 </div>
 
 
@@ -175,7 +214,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="controller.html" class="btn btn-neutral float-right" title="PyController" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="controller.html" class="btn btn-neutral float-right" title="Controller" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="../tuto/objects.html" class="btn btn-neutral float-left" title="Object Creation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

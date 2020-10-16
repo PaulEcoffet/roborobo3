@@ -69,6 +69,9 @@ override_conf_dict: dict
 
     DOES NOT WORK YET (dunno why)
 
+Returns
+-------
+pyroborobo.Pyroborobo: The pyroborobo instance
 )doc")
             .def_static("get", &Pyroborobo::get, R"doc(
 Return the pyroborobo instance
@@ -86,7 +89,7 @@ modify the classes used to instantiate the different modules of the simulator or
 )doc")
             .def("update", &Pyroborobo::update, "nb_updates"_a,
                  R"doc(
-Performs a simulator evaluation of `nb_updates` time steps.
+Performs a simulator evaluation of ``nb_updates`` time steps.
 
 It is possible to call `update` multiple times. If the simulator is paused, then the frame generation has no impact
 on the number of updates.
@@ -103,8 +106,8 @@ Returns
 bool
     Has the end of the simulation been requested, either by roborobo itself or by closing the window
 
-Example
--------
+Examples
+---------
 
 >>> roborobo.update(1000)  # run simulation for 1000 time steps
 >>> agents.learn()  # trigger agents' learning algorithms
@@ -115,20 +118,18 @@ Example
                  R"doc(
 Exit the simulator nicely
 
-Parameters
-----------
-self: pyroborobo.Pyroborobo
+Once the simulator is closed, it cannot be reopen in the same python interpreter.
 )doc")
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(
-:class:`list` of :class:`~pyroborobo.PyController`: The ordered list of all the controllers in the simulation
+:class:`list` of :class:`~pyroborobo.Controller`: The ordered list of all the controllers in the simulation
 
 .. warning::
     :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("world_models", &Pyroborobo::getWorldModels, py::return_value_policy::reference,
                                    R"doc(
-:class:`list` of :obj:`pyroborobo.WorldModel`: The ordered list of all the world models in the simulation
+:class:`list` of :class:`~pyroborobo.WorldModel`: The ordered list of all the world models in the simulation
 
 .. warning::
     :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
@@ -136,24 +137,24 @@ self: pyroborobo.Pyroborobo
             .def_property_readonly("agent_observers", &Pyroborobo::getAgentObservers,
                                    py::return_value_policy::reference,
                                    R"doc(
-:class:`list` of :class:`pyroborobo.PyAgentObserver`: The ordered list of all the agent observers in the simulation
+:class:`list` of :class:`~pyroborobo.AgentObserver`: The ordered list of all the agent observers in the simulation
 
 .. warning::
     :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("world_observer", &Pyroborobo::getWorldObserver, py::return_value_policy::reference,
                                    R"doc(
-:obj:`pyroborobo.PyWorldObserver`: The World Observer of the roborobo environment
+:obj:`pyroborobo.WorldObserver`: The World Observer of the roborobo environment
 
 .. warning::
-    `~pyroborobo.Pyroborobo.start` must have been called before using this property
+    :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("robots", &Pyroborobo::getRobots, py::return_value_policy::reference,
                                    R"doc(
-:class:`list` of :class:`pyroborobo.PyRobot`: The ordered list of all the robots in the simulation
+:class:`list` of :class:`pyroborobo.Robot`: The ordered list of all the robots in the simulation
 
 .. warning::
-    `~pyroborobo.Pyroborobo.start` must have been called before using this property
+    :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
 )doc")
             .def_property_readonly("objects", &Pyroborobo::getObjects, R"doc(
 :class:`list` of :class:`pyroborobo.PhysicalObject`: The ordered list of all the objects in the simulation.
@@ -162,6 +163,6 @@ self: pyroborobo.Pyroborobo
             { return gRobotIndexStartOffset; }, R"doc(
 int: Index at which the robot ids start
 
-Everything under this offset must be considered a physical objects. Everything above is a robot.
+Everything under this offset is a physical objects. Everything above is a robot.
 )doc");
 }

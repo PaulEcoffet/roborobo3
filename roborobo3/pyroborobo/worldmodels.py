@@ -63,7 +63,7 @@ class PyWorldModel(RobotWorldModel):
     def camera_pixel_distance(self):
         """numpy.ndarray: view of the distance of obstacle seen by camera in pixel (Fast)
 
-        If the value is `~PyWorldModel.maxdistcamera`, then there is no object in sight for this sensors.
+        If the value is :attr:`~PyWorldModel.maxdistcamera`, then there is no object in sight for this sensors.
         """
         return self._camerasensors[:, _SENSOR_DISTANCEVALUE]
 
