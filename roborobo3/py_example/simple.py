@@ -1,4 +1,4 @@
-from pyroborobo import Pyroborobo, PyController, PyWorldModel
+from pyroborobo import Pyroborobo, PyWorldModel
 from controllers import SimpleController
 
 if __name__ == "__main__":
