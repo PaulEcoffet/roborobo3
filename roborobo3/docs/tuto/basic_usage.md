@@ -47,15 +47,15 @@ Pyroborobo.close()
 
 Here, roborobo uses the Controllers, WorldModels, WorldObserver, PhysicalObjects and AgentObservers from the C++ Configuration Loader given in the configuration file. We can override these classes by python classes.
 
-To do so, we must create a class that codes the new behaviour and provide it to the `Pyroborobo.create` method. The class that we use must inherit from the *Py* variant of the base class. Let's say we want to code a new Controller, to do so we create a new class `SimpleController` that inherits from `PyController`. Like in roborobo, we must provide a `step` method and a `reset` method to this controller. Let's add this to our `main.py` document before creating the `Pyroborobo` object.
+To do so, we must create a class that codes the new behaviour and provide it to the `Pyroborobo.create` method. The class that we use must inherit from the *Py* variant of the base class. Let's say we want to code a new Controller, to do so we create a new class `SimpleController` that inherits from `Controller`. Like in roborobo, we must provide a `step` method and a `reset` method to this controller. Let's add this to our `main.py` document before creating the `Pyroborobo` object.
 
 ```python
-from pyroborobo import PyController
+from pyroborobo import Controller
 
-class SimpleController(PyController):
+class SimpleController(Controller):
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
-        PyController.__init__(world_model) 
+        Controller.__init__(world_model) 
         print("I'm a Python controller")
 
     def reset(self):
@@ -75,12 +75,12 @@ rob = Pyroborobo.create("config/template_wander_smallrobots.properties",
 
 This is what `main.py` should look like : 
 ```python
-from pyroborobo import PyController, Pyroborobo, PyWorldModel
+from pyroborobo import Controller, Pyroborobo, PyWorldModel
 
-class SimpleController(PyController):
+class SimpleController(Controller):
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
-        PyController.__init__(self, world_model) 
+        Controller.__init__(self, world_model) 
         print("I'm a Python controller")
 
     def reset(self):
@@ -97,20 +97,20 @@ rob.update(1000)
 Pyroborobo.close()
 ```
 
-The controller has a world_model object to access and manipulate the robot behaviour. By default, the world_model object is a binding to the RobotWorldModel object and the available methods and fields are limited. Even if you have extended in cpp the RobotWorldModel, only the RobotWorldModel fields and methods are accessible.
+The controller has a world_model object to access and manipulate the robot behaviour. By default, the world_model object is a binding to the `RobotWorldModel` object and the available methods and fields are limited. Even if you have extended in cpp the `RobotWorldModel`, only the `RobotWorldModel` fields and methods are accessible.
 
 It is also possible to override RobotWorldModel to extend its functionalities. pyroborobo provides the class `PyWorldModel` which already add many functionalities like the access to the camera sensors. We must tell that we want to use `PyWorldModel` to our `Pyroborobo` object.
 Let's create a very simple obstacle avoidance controller.
 
 ```python
-from pyroborobo import Pyroborobo, PyController, PyWorldModel
+from pyroborobo import Pyroborobo, Controller, PyWorldModel
 
-class SimpleController(PyController):
+class SimpleController(Controller):
     world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
-        PyController.__init__(self, world_model) 
+        Controller.__init__(self, world_model) 
         print("I'm a Python controller")
 
     def reset(self):

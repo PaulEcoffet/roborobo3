@@ -198,13 +198,13 @@ the <code class="docutils literal notranslate"><span class="pre">update(nb_updat
 </pre></div>
 </div>
 <p>Here, roborobo uses the Controllers, WorldModels, WorldObserver, PhysicalObjects and AgentObservers from the C++ Configuration Loader given in the configuration file. We can override these classes by python classes.</p>
-<p>To do so, we must create a class that codes the new behaviour and provide it to the <code class="docutils literal notranslate"><span class="pre">Pyroborobo.create</span></code> method. The class that we use must inherit from the <em>Py</em> variant of the base class. Let’s say we want to code a new Controller, to do so we create a new class <code class="docutils literal notranslate"><span class="pre">SimpleController</span></code> that inherits from <code class="docutils literal notranslate"><span class="pre">PyController</span></code>. Like in roborobo, we must provide a <code class="docutils literal notranslate"><span class="pre">step</span></code> method and a <code class="docutils literal notranslate"><span class="pre">reset</span></code> method to this controller. Let’s add this to our <code class="docutils literal notranslate"><span class="pre">main.py</span></code> document before creating the <code class="docutils literal notranslate"><span class="pre">Pyroborobo</span></code> object.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">PyController</span>
+<p>To do so, we must create a class that codes the new behaviour and provide it to the <code class="docutils literal notranslate"><span class="pre">Pyroborobo.create</span></code> method. The class that we use must inherit from the <em>Py</em> variant of the base class. Let’s say we want to code a new Controller, to do so we create a new class <code class="docutils literal notranslate"><span class="pre">SimpleController</span></code> that inherits from <code class="docutils literal notranslate"><span class="pre">Controller</span></code>. Like in roborobo, we must provide a <code class="docutils literal notranslate"><span class="pre">step</span></code> method and a <code class="docutils literal notranslate"><span class="pre">reset</span></code> method to this controller. Let’s add this to our <code class="docutils literal notranslate"><span class="pre">main.py</span></code> document before creating the <code class="docutils literal notranslate"><span class="pre">Pyroborobo</span></code> object.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Controller</span>
 
-<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">PyController</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
         <span class="c1"># It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart</span>
-        <span class="n">PyController</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">world_model</span><span class="p">)</span> 
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">world_model</span><span class="p">)</span> 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -221,12 +221,12 @@ the <code class="docutils literal notranslate"><span class="pre">update(nb_updat
 </pre></div>
 </div>
 <p>This is what <code class="docutils literal notranslate"><span class="pre">main.py</span></code> should look like :</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">PyController</span><span class="p">,</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">PyWorldModel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">PyWorldModel</span>
 
-<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">PyController</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
         <span class="c1"># It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart</span>
-        <span class="n">PyController</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">)</span> 
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">)</span> 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
@@ -243,17 +243,17 @@ the <code class="docutils literal notranslate"><span class="pre">update(nb_updat
 <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-<p>The controller has a world_model object to access and manipulate the robot behaviour. By default, the world_model object is a binding to the RobotWorldModel object and the available methods and fields are limited. Even if you have extended in cpp the RobotWorldModel, only the RobotWorldModel fields and methods are accessible.</p>
+<p>The controller has a world_model object to access and manipulate the robot behaviour. By default, the world_model object is a binding to the <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code> object and the available methods and fields are limited. Even if you have extended in cpp the <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code>, only the <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code> fields and methods are accessible.</p>
 <p>It is also possible to override RobotWorldModel to extend its functionalities. pyroborobo provides the class <code class="docutils literal notranslate"><span class="pre">PyWorldModel</span></code> which already add many functionalities like the access to the camera sensors. We must tell that we want to use <code class="docutils literal notranslate"><span class="pre">PyWorldModel</span></code> to our <code class="docutils literal notranslate"><span class="pre">Pyroborobo</span></code> object.
 Let’s create a very simple obstacle avoidance controller.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">PyController</span><span class="p">,</span> <span class="n">PyWorldModel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PyWorldModel</span>
 
-<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">PyController</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
     <span class="n">world_model</span><span class="p">:</span> <span class="n">PyWorldModel</span>  <span class="c1"># Predeclare that world_model is a PyWorldModel for better code completion</span>
 
     <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
         <span class="c1"># It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart</span>
-        <span class="n">PyController</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">)</span> 
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">)</span> 
         <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
 
     <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
