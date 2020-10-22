@@ -43,6 +43,8 @@ class TutorialController(Controller):
                     print(f"\trobot id: {robid}")
                     print(f"\trobot object: {self.rob.robots[robid]}")
                     print(f"\trobot's controller: {self.get_robot_controller_at(i)}")
+                    ctl = self.get_robot_controller_at(i)
+                    print(f"\tThis robot is at {ctl.absolute_position} with orientation {ctl.world_model.absolute_orientation}.")
                 elif not is_wall and self.world_model.camera_objects_ids[i] >= 0:  # then it's an object
                     print(f"\tphysical object instance: {self.get_object_at(i)}")
 
