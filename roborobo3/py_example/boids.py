@@ -53,20 +53,24 @@ class BoidsController(Controller):
                 else:
                     self.world_model.rotation = 180 * self.rotspeed
                 self.world_model.translation = 1
-                break
-            elif dist < orientation_radius and camera_id[i] > self.rob_offset:
+                return
+        for i, dist in enumerate(camera_dist):
+            if dist < orientation_radius and camera_id[i] > self.rob_offset:
                 orient_angle = angle_diff(own_orientation, self.get_orientation(int(camera_id[i])))
                 self.world_model.rotation = -orient_angle * self.rotspeed
-                break
-            elif dist < camera_max_range and camera_id[i] > self.rob_offset:
+                return
+        for i, dist in enumerate(camera_dist):
+            if dist < camera_max_range and camera_id[i] > self.rob_offset:
                 self.world_model.rotation = camera_angle[i] * self.rotspeed
-                break
+                return
 
 
 if __name__ == "__main__":
-    rob = Pyroborobo.create("config/pyboids.properties",
+    rob = Pyroborobo.create("config/template_boids.properties",
                             controller_class=BoidsController,
-                            world_model_class=PyWorldModel)
+                            world_model_class=PyWorldModel,
+                            world_observer_class="dummy",
+                            agent_observer_class="dummy")
     rob.start()
     rob.update(100000)
     Pyroborobo.close()
