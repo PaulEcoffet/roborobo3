@@ -45,6 +45,12 @@ Then, to install pyroborobo, run in the pyroborobo directory:
 python setup.py install --force
 ```
 
+The documentation is available by opening:
+
+```
+~/Documents/MyPyroboroboRepo/docs/_build/html/index.html
+```
+
 ## Mac OS
 
 First, download the project :
@@ -86,4 +92,11 @@ Then, to install pyroborobo, run
 
 ```
 python setup.py install --force
+```
+
+
+The documentation is available by opening:
+
+```
+~/Documents/MyPyroboroboRepo/docs/_build/html/index.html
 ```
