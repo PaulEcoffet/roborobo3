@@ -2,7 +2,11 @@
 
 ## Linux
 
-First, download the project :
+First, download the project. make sure you have git and make tools
+
+```bash
+sudo apt install git build-essential cmake 
+```
 
 ```bash
 cd ~/Documents/MyPyroboroboRepo
