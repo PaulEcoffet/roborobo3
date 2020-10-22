@@ -17,6 +17,10 @@ else ()
     message("PYTHON_EXECUTABLE environment variable is not set")
 endif ()
 
+if (DEFINED ENV{CONDA_PREFIX})
+    list(APPEND CMAKE_MODULE_PATH "${CONDA_PREFIX}/share/cmake/")
+endif ()
+
 find_package(pybind11 REQUIRED)
 
 get_cmake_property(_variableNames VARIABLES)
