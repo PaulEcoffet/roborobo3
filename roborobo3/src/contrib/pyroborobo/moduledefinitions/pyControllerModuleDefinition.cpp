@@ -53,7 +53,7 @@ Called at each time step of the simulation.
 Examples
 ---------
 >>> def step(self):
-...     distance = self.world_model.camera_dist
+...     distance = self.world_model.camera_pixel_distance
 ...     if np.all(distance < 0.5):
 ...         # Nothing around, we can go forward without turning
 ...         self.world_model.translation = 2
@@ -64,7 +64,16 @@ Examples
 ...         self.world_model.rotation = 15
 
 )doc")
-            .def("reset", &Controller::reset)
+            .def("reset", &Controller::reset, "call at the initialisation of roborobo")
+            .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a, "Get the robot instance seen by the sensor ``sensor_id``")
+            .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a, "Get the robot's controller seen by the sensor ``sensor_id``")
+            .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a, "Get the physical object seen by the sensor ``sensor_id``")
+            .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a, "Tell if it's a wall seen by the sensor ``sensor_id``")
+            .def_property_readonly("absolute_position", [](Controller& self) -> std::tuple<double, double> {
+                auto pos = self.getPosition();
+                return {pos.x, pos.y};
+                },
+                          "Robot's absolute position")
             .def_property_readonly("world_model", &Controller::getWorldModel,
                                    R"doc(
 pyroborobo.WorldModel: The robot's world_model

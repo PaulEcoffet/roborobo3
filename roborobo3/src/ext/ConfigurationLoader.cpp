@@ -1,3 +1,4 @@
+#include <ext/Config/DummyConfigurationLoader.h>
 #include "Config/ConfigurationLoader.h"
 #include "Config/TemplateWanderConfigurationLoader.h"
 #include "Config/TemplateBoidsConfigurationLoader.h"
@@ -65,6 +66,10 @@ ConfigurationLoader *ConfigurationLoader::make_ConfigurationLoader(const std::st
         return new TutorialConfigurationLoader();
     }
 #endif
+    else if (configurationLoaderObjectName == "DummyConfigurationLoader")
+    {
+        return new DummyConfigurationLoader();
+    }
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
     else
     {
