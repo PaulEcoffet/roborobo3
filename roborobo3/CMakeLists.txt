@@ -9,7 +9,7 @@ set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_FLAGS "-Wall")
 
 
-#SET(PYTHON_EXECUTABLE /home/pecoffet/anaconda3/bin/python)
+#SET(PYTHON_EXECUTABLE /home/pecoffet/anaConda3/bin/python)
 
 if (DEFINED ENV{PYTHON_EXECUTABLE})
     SET(PYTHON_EXECUTABLE $ENV{PYTHON_EXECUTABLE})
@@ -18,8 +18,12 @@ else ()
 endif ()
 
 if (DEFINED ENV{CONDA_PREFIX})
+    message("Conda env found, using " $ENV{CONDA_PREFIX})
     list(APPEND CMAKE_MODULE_PATH "$ENV{CONDA_PREFIX}/share/cmake/")
-endif ()
+    set(pybind11_DIR "$ENV{CONDA_PREFIX}/share/cmake/pybind11")
+else()
+    message("No conda environment found")
+endif()
 
 find_package(pybind11 REQUIRED)
 
