@@ -81,12 +81,17 @@ inline double getAngleToTarget(double Ax, double Ay, double orientation, double 
 /**
  * @author Paul Ecoffet
  */
-inline double principalValue(const double rad)
+inline double principalValue(const double rad, const bool degree=false)
 {
-    const double rad_mod = fmod(rad, 2 * M_PI);
-    if (rad_mod > M_PI)
+    double lim = M_PI;
+    if (degree)
     {
-        return rad_mod - 2 * M_PI;
+        lim = 180;
+    }
+    const double rad_mod = fmod(rad, 2 * lim);
+    if (rad_mod > lim)
+    {
+        return rad_mod - 2 * lim;
     }
     else
     {

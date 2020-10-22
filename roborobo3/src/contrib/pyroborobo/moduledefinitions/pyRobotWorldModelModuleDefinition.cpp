@@ -6,6 +6,7 @@
 #include <pybind11/pybind11.h>
 #include <core/WorldModels/RobotWorldModel.h>
 #include <contrib/pyroborobo/RobotWorldModelTrampoline.h>
+#include <core/Utilities/Geometry.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -52,6 +53,17 @@ double: Robot's desired rotation speed in degrees.
 )doc")
             .def_readwrite("fitness", &RobotWorldModel::_fitnessValue, R"doc(
 double: Robot's actual fitness
+)doc")
+            .def_property("absolute_orientation", [] (RobotWorldModel& self)
+                {
+                    return principalValue(self._agentAbsoluteOrientation, true);
+                },
+                [] (RobotWorldModel& self, double angle)
+                {
+                    self._agentAbsoluteOrientation = principalValue(angle, true);
+                },
+                R"doc(
+double: Robot's absolute orientation in principal value (between (-180, 180]).
 )doc")
             .def("_init_camera_sensors", &RobotWorldModel::initCameraSensors, "nbsensors"_a,
                  R"doc(

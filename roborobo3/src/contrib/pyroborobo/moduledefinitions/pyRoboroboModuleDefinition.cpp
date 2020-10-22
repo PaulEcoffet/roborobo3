@@ -159,7 +159,7 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
             .def_property_readonly("objects", &Pyroborobo::getObjects, R"doc(
 :class:`list` of :class:`pyroborobo.PhysicalObject`: The ordered list of all the objects in the simulation.
 )doc")
-            .def_property_readonly("robot_index_offset", []()
+            .def_property_readonly("robot_index_offset", [](Pyroborobo& self)
             { return gRobotIndexStartOffset; }, R"doc(
 int: Index at which the robot ids start
 

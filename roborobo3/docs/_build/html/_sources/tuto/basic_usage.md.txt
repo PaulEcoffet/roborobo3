@@ -8,7 +8,7 @@
 Let's make a new directory containing our pyroborobo project.
 
 ```bash
-cd ~/Documents/ 
+cd ~/Documents/
 mkdir pyrob_proj
 cd pyrob_proj
 ```
@@ -16,8 +16,8 @@ cd pyrob_proj
 We must then import the roborobo configs and data that we intend to use.
 
 ```bash
-cp ~/path/to/roborobo/data data
-cp ~/path/to/roborobo/config config
+cp ~/path/to/roborobo/roborobo3/roborobo3/data data
+cp ~/path/to/roborobo//roborobo3/roborobo3/config config
 ```
 
 Then create a python file (for instance `main.py`) which will contain our python code.
@@ -29,7 +29,7 @@ the Pyrororobo object. It takes as a first argument the configuration file for p
 In `main.py`:
 ```python
 from pyroborobo import Pyroborobo
-rob = Pyroborobo.create("../config/template_wander_smallrobots.properties")
+rob = Pyroborobo.create("config/template_wander_smallrobots.properties")
 ```
 
 Then, roborobo must be started with the `start` method. Simulation time steps are triggered with

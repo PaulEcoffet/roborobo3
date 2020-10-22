@@ -9,7 +9,7 @@ sudo apt install git build-essential cmake
 ```
 
 ```bash
-cd ~/Documents/MyPyroboroboRepo
+cd <yourpyroborobofolder>
 git clone -b cleanpyroborobo https://github.com/PaulEcoffet/roborobo3.git
 ```
 
@@ -42,21 +42,24 @@ sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
 Then, to install pyroborobo, run in the pyroborobo directory:
 
 ```
+cd roborobo3/roborobo3
 python setup.py install --force
 ```
 
 The documentation is available by opening:
 
+```open
+xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
-~/Documents/MyPyroboroboRepo/docs/_build/html/index.html
-```
+
+Many examples are available on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_ 
 
 ## Mac OS
 
 First, download the project :
 
 ```bash
-cd ~/Documents/MyPyroboroboRepo
+cd <yourpyroborobofolder>
 git clone -b cleanpyroborobo https://github.com/PaulEcoffet/roborobo3.git
 ```
 
@@ -91,12 +94,15 @@ brew install boost
 Then, to install pyroborobo, run
 
 ```
+cd roborobo3/roborobo3
 python setup.py install --force
 ```
 
 
 The documentation is available by opening:
 
+```bash
+open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
-~/Documents/MyPyroboroboRepo/docs/_build/html/index.html
-```
+
+Many examples are available on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_ 

@@ -165,14 +165,14 @@
 <p>The source code for this tutorial can be found in py_example/controllers.py and py_example/simple.py</p>
 </div>
 <p>Let’s make a new directory containing our pyroborobo project.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/Documents/ 
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> ~/Documents/
 mkdir pyrob_proj
 <span class="nb">cd</span> pyrob_proj
 </pre></div>
 </div>
 <p>We must then import the roborobo configs and data that we intend to use.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp ~/path/to/roborobo/data data
-cp ~/path/to/roborobo/config config
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>cp ~/path/to/roborobo/roborobo3/roborobo3/data data
+cp ~/path/to/roborobo//roborobo3/roborobo3/config config
 </pre></div>
 </div>
 <p>Then create a python file (for instance <code class="docutils literal notranslate"><span class="pre">main.py</span></code>) which will contain our python code.</p>
@@ -181,7 +181,7 @@ the Pyrororobo object. It takes as a first argument the configuration file for p
 <code class="docutils literal notranslate"><span class="pre">Pyroborobo.create()</span></code> can take more arguments that we will discuss later on.</p>
 <p>In <code class="docutils literal notranslate"><span class="pre">main.py</span></code>:</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Pyroborobo</span>
-<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;../config/template_wander_smallrobots.properties&quot;</span><span class="p">)</span>
+<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;config/template_wander_smallrobots.properties&quot;</span><span class="p">)</span>
 </pre></div>
 </div>
 <p>Then, roborobo must be started with the <code class="docutils literal notranslate"><span class="pre">start</span></code> method. Simulation time steps are triggered with
