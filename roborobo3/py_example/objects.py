@@ -24,7 +24,7 @@ class SwitchObject(CircleObject):
                 self.register()
                 self.triggered = False
 
-    def is_walked(self, id):
+    def is_walked(self, rob_id):
         print("I'm walked")
         self.triggered = True
         self.rob.objects[self.gate_id].open()
@@ -83,7 +83,7 @@ class ResourceObject(CircleObject):
                 self.register()
                 self.triggered = False
 
-    def is_walked(self, id):
+    def is_walked(self, rob_id):
         self.triggered = True
         self.cur_regrow = self.regrow_time
         self.hide()

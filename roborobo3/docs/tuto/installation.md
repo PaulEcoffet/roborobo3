@@ -34,6 +34,7 @@ conda install pybind11 numpy
 Then, you must install some dependencies from your package manager. Here are the one from ubuntu:
 
 ```bash
+sudo apt-get install cmake buildessentials
 sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
 ```
 

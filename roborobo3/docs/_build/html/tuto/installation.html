@@ -24,7 +24,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -89,6 +88,8 @@
 </li>
 <li class="toctree-l1"><a class="reference internal" href="basic_usage.html">How to use pyroborobo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="objects.html">Object Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="write_custom_cpp_bindings.html">Custom C++ Bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul>
@@ -188,16 +189,17 @@ conda activate pyrob
 </pre></div>
 </div>
 <p>Then, you must install some dependencies from your package manager. Here are the one from ubuntu:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>sudo apt-get install cmake buildessentials
+sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
 </pre></div>
 </div>
 <p>Then, to install pyroborobo, run in the pyroborobo directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">roborobo3</span><span class="o">/</span><span class="n">roborobo3</span>
-<span class="n">python</span> <span class="n">setup</span><span class="o">.</span><span class="n">py</span> <span class="n">install</span> <span class="o">--</span><span class="n">force</span>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="nb">cd</span> roborobo3/roborobo3
+python setup.py install --force
 </pre></div>
 </div>
 <p>The documentation is available by opening:</p>
-<div class="highlight-open notranslate"><div class="highlight"><pre><span></span>xdg-open &lt;yourpyroborobofolder&gt;/roborobo3/roborobo3/docs/_build/html/index.html
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>xdg-open &lt;yourpyroborobofolder&gt;/roborobo3/roborobo3/docs/_build/html/index.html
 </pre></div>
 </div>
 <p>Many examples are available on <code class="docutils literal notranslate"><span class="pre">github</span> <span class="pre">in</span> <span class="pre">the</span> <span class="pre">py_example</span> <span class="pre">folder</span> <span class="pre">&lt;https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example&gt;</span></code>_</p>
@@ -224,8 +226,9 @@ conda activate pyrob
 </div>
 <p>I use the SDL2 from brew, it <em>might</em> work with the .framework. If it does not :</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>brew install sdl2
-brew install sdl2-image
+brew install sdl2_image
 brew install boost
+brew install cmake
 </pre></div>
 </div>
 <p>Then, to install pyroborobo, run</p>

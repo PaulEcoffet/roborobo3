@@ -9,6 +9,8 @@ Pyroborobo's documentation
    tuto/installation
    tuto/basic_usage
    tuto/objects
+   tuto/write_custom_cpp_bindings
+   tuto/troubleshooting
 
 
 .. toctree::

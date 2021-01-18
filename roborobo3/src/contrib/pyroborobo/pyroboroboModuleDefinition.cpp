@@ -13,6 +13,7 @@
 #include "contrib/pyroborobo/ModuleDefinitions/pyControllerModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyRoboroboModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/agentObserverModuleDefinition.h"
+#include "contrib/pyroborobo/customModuleDefinitions.h"
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -30,5 +31,5 @@ PYBIND11_MODULE(_pyroborobo, m)
     addPyRobotBinding(m);
     addPyObjectsBindings(m);
     addAgentObserverBindings(m);
-
+    addCustomBindings(m);
 }

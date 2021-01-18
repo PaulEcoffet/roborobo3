@@ -24,7 +24,6 @@
         <script src="_static/jquery.js"></script>
         <script src="_static/underscore.js"></script>
         <script src="_static/doctools.js"></script>
-        <script src="_static/language_data.js"></script>
     
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
@@ -83,6 +82,8 @@
 <li class="toctree-l1"><a class="reference internal" href="tuto/installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tuto/basic_usage.html">How to use pyroborobo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="tuto/objects.html">Object Creation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tuto/write_custom_cpp_bindings.html">Custom C++ Bindings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="tuto/troubleshooting.html">Troubleshooting</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul>
@@ -165,6 +166,7 @@
  | <a href="#H"><strong>H</strong></a>
  | <a href="#I"><strong>I</strong></a>
  | <a href="#M"><strong>M</strong></a>
+ | <a href="#N"><strong>N</strong></a>
  | <a href="#O"><strong>O</strong></a>
  | <a href="#P"><strong>P</strong></a>
  | <a href="#R"><strong>R</strong></a>
@@ -177,9 +179,11 @@
 <h2 id="A">A</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/world_model.html#pyroborobo.PyWorldModel.absolute_orientation">absolute_orientation() (pyroborobo.PyWorldModel property)</a>
+      <li><a href="api/controller.html#pyroborobo.Controller.absolute_orientation">absolute_orientation() (pyroborobo.Controller property)</a>
 
       <ul>
+        <li><a href="api/world_model.html#pyroborobo.PyWorldModel.absolute_orientation">(pyroborobo.PyWorldModel property)</a>
+</li>
         <li><a href="api/world_model.html#pyroborobo.RobotWorldModel.absolute_orientation">(pyroborobo.RobotWorldModel property)</a>
 </li>
       </ul></li>
@@ -255,19 +259,17 @@
   <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/pyroborobo.html#pyroborobo.Pyroborobo.get">get() (pyroborobo.Pyroborobo static method)</a>
 </li>
-      <li><a href="api/world_model.html#pyroborobo.PyWorldModel.get_ground_sensor_values">get_ground_sensor_values() (pyroborobo.PyWorldModel method)</a>
-
-      <ul>
-        <li><a href="api/world_model.html#pyroborobo.RobotWorldModel.get_ground_sensor_values">(pyroborobo.RobotWorldModel method)</a>
+      <li><a href="api/controller.html#pyroborobo.Controller.get_ground_sensor_values">get_ground_sensor_values() (pyroborobo.Controller method)</a>
 </li>
-      </ul></li>
-  </ul></td>
-  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/controller.html#pyroborobo.Controller.get_object_at">get_object_at() (pyroborobo.Controller method)</a>
 </li>
+  </ul></td>
+  <td style="width: 33%; vertical-align: top;"><ul>
       <li><a href="api/controller.html#pyroborobo.Controller.get_robot_controller_at">get_robot_controller_at() (pyroborobo.Controller method)</a>
 </li>
       <li><a href="api/controller.html#pyroborobo.Controller.get_robot_id_at">get_robot_id_at() (pyroborobo.Controller method)</a>
+</li>
+      <li><a href="api/controller.html#pyroborobo.Controller.get_robot_relative_orientation_at">get_robot_relative_orientation_at() (pyroborobo.Controller method)</a>
 </li>
       <li><a href="api/controller.html#pyroborobo.Controller.get_wall_at">get_wall_at() (pyroborobo.Controller method)</a>
 </li>
@@ -345,6 +347,14 @@
   </ul></td>
 </tr></table>
 
+<h2 id="N">N</h2>
+<table style="width: 100%" class="indextable genindextable"><tr>
+  <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/controller.html#pyroborobo.Controller.nb_sensors">nb_sensors() (pyroborobo.Controller property)</a>
+</li>
+  </ul></td>
+</tr></table>
+
 <h2 id="O">O</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
@@ -409,9 +419,11 @@
 </li>
       <li><a href="api/world_model.html#pyroborobo.RobotWorldModel">RobotWorldModel (class in pyroborobo)</a>
 </li>
-      <li><a href="api/world_model.html#pyroborobo.PyWorldModel.rotation">rotation() (pyroborobo.PyWorldModel property)</a>
+      <li><a href="api/controller.html#pyroborobo.Controller.rotation">rotation() (pyroborobo.Controller property)</a>
 
       <ul>
+        <li><a href="api/world_model.html#pyroborobo.PyWorldModel.rotation">(pyroborobo.PyWorldModel property)</a>
+</li>
         <li><a href="api/world_model.html#pyroborobo.RobotWorldModel.rotation">(pyroborobo.RobotWorldModel property)</a>
 </li>
       </ul></li>
@@ -437,6 +449,10 @@
         <li><a href="api/squareobject.html#pyroborobo.SquareObject.set_coordinates">(pyroborobo.SquareObject method)</a>
 </li>
       </ul></li>
+      <li><a href="api/controller.html#pyroborobo.Controller.set_rotation">set_rotation() (pyroborobo.Controller method)</a>
+</li>
+      <li><a href="api/controller.html#pyroborobo.Controller.set_translation">set_translation() (pyroborobo.Controller method)</a>
+</li>
       <li><a href="api/squareobject.html#pyroborobo.CircleObject.show">show() (pyroborobo.CircleObject method)</a>
 
       <ul>
@@ -447,10 +463,10 @@
 </li>
       <li><a href="api/squareobject.html#pyroborobo.SquareObject.soft_width">soft_width() (pyroborobo.SquareObject property)</a>
 </li>
-      <li><a href="api/squareobject.html#pyroborobo.SquareObject.solid_height">solid_height() (pyroborobo.SquareObject property)</a>
-</li>
   </ul></td>
   <td style="width: 33%; vertical-align: top;"><ul>
+      <li><a href="api/squareobject.html#pyroborobo.SquareObject.solid_height">solid_height() (pyroborobo.SquareObject property)</a>
+</li>
       <li><a href="api/squareobject.html#pyroborobo.SquareObject.solid_width">solid_width() (pyroborobo.SquareObject property)</a>
 </li>
       <li><a href="api/squareobject.html#pyroborobo.SquareObject">SquareObject (class in pyroborobo)</a>
@@ -485,9 +501,11 @@
 <h2 id="T">T</h2>
 <table style="width: 100%" class="indextable genindextable"><tr>
   <td style="width: 33%; vertical-align: top;"><ul>
-      <li><a href="api/world_model.html#pyroborobo.PyWorldModel.translation">translation() (pyroborobo.PyWorldModel property)</a>
+      <li><a href="api/controller.html#pyroborobo.Controller.translation">translation() (pyroborobo.Controller property)</a>
 
       <ul>
+        <li><a href="api/world_model.html#pyroborobo.PyWorldModel.translation">(pyroborobo.PyWorldModel property)</a>
+</li>
         <li><a href="api/world_model.html#pyroborobo.RobotWorldModel.translation">(pyroborobo.RobotWorldModel property)</a>
 </li>
       </ul></li>

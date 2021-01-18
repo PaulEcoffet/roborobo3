@@ -17,20 +17,20 @@ class TutorialController(Controller):
 
     def step(self):  # step is called at each time step
         # Simple avoidance
-        self.world_model.translation = 2  # Let's go forward
-        self.world_model.rotation = 0
+        self.set_translation(1)  # Let's go forward
+        self.set_rotation(0)
         # Now, our world_model object is a PyWorldModel, we can have access to camera_* properties
         camera_dist = self.world_model.camera_pixel_distance
         camera_max_range = self.world_model.maxdistcamera
         if (camera_dist[1] < camera_max_range  # if we see something on our right
                 or camera_dist[2] < camera_max_range):  # or in front of us
-            self.world_model.rotation = 10  # turn left
+            self.set_rotation(1)  # turn left
         elif camera_dist[3] < camera_max_range:  # Otherwise, if we see something on our left
-            self.world_model.rotation = -10  # turn right
+            self.set_rotation(-1)  # turn right
         # now let's get talkative
         if self.id == 0:
-            print(f"I am {self}, {self.id}, at position {self.absolute_position} and orientation {self.world_model.absolute_orientation}")
-            for i in range(len(self.world_model.camera_pixel_distance)):
+            print(f"I am {self}, {self.id}, at position {self.absolute_position} and orientation {self.absolute_orientation}")
+            for i in range(self.nb_sensors):
                 print(f"Sensor {i}:")
                 print(f"\tdist: {self.world_model.camera_pixel_distance[i]}")
                 print(f"\tid: {self.world_model.camera_objects_ids[i]}")
@@ -44,7 +44,7 @@ class TutorialController(Controller):
                     print(f"\trobot object: {self.rob.robots[robid]}")
                     print(f"\trobot's controller: {self.get_robot_controller_at(i)}")
                     ctl = self.get_robot_controller_at(i)
-                    print(f"\tThis robot is at {ctl.absolute_position} with orientation {ctl.world_model.absolute_orientation}.")
+                    print(f"\tThis robot is at {ctl.absolute_position} with orientation {ctl.absolute_orientation}.")
                 elif not is_wall and self.world_model.camera_objects_ids[i] >= 0:  # then it's an object
                     print(f"\tphysical object instance: {self.get_object_at(i)}")
 

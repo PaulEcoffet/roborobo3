@@ -38,27 +38,27 @@ class BoidsController(Controller):
         return self.rob.world_models[robot_id].absolute_orientation
 
     def step(self):  # step is called at each time step
-        self.world_model.translation = 2  # Let's go forward
-        self.world_model.rotation = 0
+        self.set_translation(1)  # Let's go forward
+        self.set_rotation(0)
         camera_dist = self.world_model.camera_pixel_distance
         camera_id = self.world_model.camera_objects_ids
         camera_angle_rad = self.world_model.camera_angles
         camera_angle = camera_angle_rad * 180 / np.pi
-        own_orientation = self.world_model.absolute_orientation
+        own_orientation = self.absolute_orientation
         for i in np.argsort(camera_dist):  # get the index from the closest to the farthest
             if camera_angle[i] < -270 or camera_angle[i] > 270:
                 continue
             dist = camera_dist[i]
             if dist < self.repulse_radius:
                 if camera_angle[i] != 0:
-                    self.world_model.rotation = np.clip(-camera_angle[i], -self.maxrot, self.maxrot)
+                    self.set_rotation(-camera_angle_rad[i] / np.pi)
                 else:
-                    self.world_model.rotation = self.maxrot
+                    self.set_rotation(1)
             elif dist < self.orientation_radius and camera_id[i] > self.rob_offset:
-                orient_angle = angle_diff(own_orientation, self.get_orientation(int(camera_id[i])))
-                self.world_model.rotation = np.clip(-orient_angle, -self.maxrot, self.maxrot)
+                orient_angle = self.get_robot_relative_orientation_at(i)
+                self.set_rotation(orient_angle / np.pi)
             elif dist < self.camera_max_range and camera_id[i] > self.rob_offset:
-                self.world_model.rotation = np.clip(camera_angle[i], -self.maxrot, self.maxrot)
+                self.set_rotation(camera_angle_rad[i] / np.pi)
             return
 
 

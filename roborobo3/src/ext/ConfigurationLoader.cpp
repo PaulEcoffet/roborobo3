@@ -8,6 +8,7 @@
 #include "Config/TemplateMedeaConfigurationLoader.h"
 #include "Config/ForagingRegionsConfigurationLoader.h"
 #include "Config/TutorialConfigurationLoader.h"
+#include "Config/DistAwareConfigurationLoader.h"
 //###DO-NOT-DELETE-THIS-LINE###TAG:INCLUDE###//
 
 
@@ -70,6 +71,12 @@ ConfigurationLoader *ConfigurationLoader::make_ConfigurationLoader(const std::st
     {
         return new DummyConfigurationLoader();
     }
+#if defined PRJ_DISTAWARE || !defined MODULAR
+	else if (configurationLoaderObjectName == "DistAwareConfigurationLoader" )
+	{
+		return new DistAwareConfigurationLoader();
+	}
+#endif
         //###DO-NOT-DELETE-THIS-LINE###TAG:SWITCH###//
     else
     {

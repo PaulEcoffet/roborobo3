@@ -100,6 +100,7 @@ tuple[float, float, float]: (red, green, blue) from the ground sensor of the rob
                                        return {pos.x, pos.y};
                                    },
                                    "Tuple[int, int]: Robot's absolute position")
+            .def_property_readonly("absolute_orientation", &Controller::getCompass, "Float: Absolute orientation of the robot")
             .def_property_readonly("world_model", &Controller::getWorldModel,
                                    R"doc(
 pyroborobo.WorldModel: The robot's world_model
