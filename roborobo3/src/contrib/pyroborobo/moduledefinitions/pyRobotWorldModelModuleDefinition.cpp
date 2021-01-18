@@ -37,11 +37,6 @@ void addPyRobotWorldModelBinding(py::module &m)
                  R"doc(
 Return the buffer view of the camera. Should not be called, use PyWorldModel.
 )doc")
-            .def("get_ground_sensor_values",
-                 [](RobotWorldModelTrampoline &self) { return self.getRobotGroundSensors(); },
-                 R"doc(
-tuple(int,int,int): (red, green, blue) from the ground sensor of the robot
-)doc")
             .def_property("alive", &RobotWorldModel::isAlive, &RobotWorldModel::setAlive, R"doc(
 bool: State if the robot is alive
 )doc")

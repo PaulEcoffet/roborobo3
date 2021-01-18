@@ -13,6 +13,7 @@ set(CMAKE_CXX_FLAGS "-Wall")
 
 if (DEFINED ENV{PYTHON_EXECUTABLE})
     SET(PYTHON_EXECUTABLE $ENV{PYTHON_EXECUTABLE})
+    message(${PYTHON_EXECUTABLE})
 else ()
     message("PYTHON_EXECUTABLE environment variable is not set")
 endif ()

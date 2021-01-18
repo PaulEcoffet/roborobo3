@@ -41,14 +41,14 @@ sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
 
 Then, to install pyroborobo, run in the pyroborobo directory:
 
-```
+```bash
 cd roborobo3/roborobo3
 python setup.py install --force
 ```
 
 The documentation is available by opening:
 
-```open
+```bash
 xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
@@ -85,8 +85,9 @@ I use the SDL2 from brew, it *might* work with the .framework. If it does not :
 
 ```bash
 brew install sdl2
-brew install sdl2-image
+brew install sdl2_image
 brew install boost
+brew install cmake
 ```
 
 

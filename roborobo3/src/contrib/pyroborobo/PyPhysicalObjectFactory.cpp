@@ -136,5 +136,3 @@ void PyPhysicalObjectFactory::close()
     delete objectConstructionDict;
     objectConstructionDict = nullptr;
 }
-
-

@@ -65,15 +65,41 @@ Examples
 
 )doc")
             .def("reset", &Controller::reset, "call at the initialisation of roborobo")
-            .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a, "Get the robot instance seen by the sensor ``sensor_id``")
-            .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a, "Get the robot's controller seen by the sensor ``sensor_id``")
-            .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a, "Get the physical object seen by the sensor ``sensor_id``")
-            .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a, "Tell if it's a wall seen by the sensor ``sensor_id``")
-            .def_property_readonly("absolute_position", [](Controller& self) -> std::tuple<double, double> {
-                auto pos = self.getPosition();
-                return {pos.x, pos.y};
-                },
-                          "Robot's absolute position")
+            .def("set_translation", &Controller::setTranslation, "trans_speed"_a,
+                 "Set the robot translation speed between [-1, 1]")
+            .def("set_rotation", &Controller::setRotation, "rotation_speed"_a,
+                 "Set the robot rotation speed between [-1, 1]")
+            .def_property_readonly("nb_sensors", [](Controller &self)
+            { return self.getWorldModel()->_cameraSensorsNb; }, "int: Number of sensors of the robot")
+            .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a,
+                 "Robot: Get the robot instance seen by the sensor ``sensor_id``")
+            .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a,
+                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``")
+            .def("get_robot_relative_orientation_at", &Controller::getRobotRelativeOrientationAt, "sensor_id"_a,
+                 "float: Get robot's relative orientation compared to self seen by the sensor ``sensor_id``")
+            .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a,
+                 "PhysicalObject: Get the physical object seen by the sensor ``sensor_id``")
+            .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a,
+                 "Bool: Tell if it's a wall seen by the sensor ``sensor_id``")
+            .def("get_ground_sensor_values",
+                 [](Controller &self)
+                 {
+                     return py::make_tuple(self.getRedGroundDetector(),
+                                           self.getGreenGroundDetector(), self.getBlueGroundDetector());
+                 },
+                 R"doc(
+tuple[float, float, float]: (red, green, blue) from the ground sensor of the robot between [0,1]
+)doc")
+            .def_property_readonly("translation", &Controller::getActualTranslation,
+                                   "float: the robot's actual translation speed between [-1, 1]")
+            .def_property_readonly("rotation", &Controller::getActualRotation,
+                                   "float: the robot's actual rotation speed between [-1, 1]")
+            .def_property_readonly("absolute_position", [](Controller &self) -> std::tuple<double, double>
+                                   {
+                                       auto pos = self.getPosition();
+                                       return {pos.x, pos.y};
+                                   },
+                                   "Tuple[int, int]: Robot's absolute position")
             .def_property_readonly("world_model", &Controller::getWorldModel,
                                    R"doc(
 pyroborobo.WorldModel: The robot's world_model
