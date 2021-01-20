@@ -6,7 +6,7 @@
 #include <pybind11/pybind11.h>
 #include <core/WorldModels/RobotWorldModel.h>
 #include <contrib/pyroborobo/RobotWorldModelTrampoline.h>
-#include <core/Utilities/Geometry.h>
+#include <Utilities/Geometry.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -27,12 +27,12 @@ void addPyRobotWorldModelBinding(py::module &m)
             });
 
 
-    py::class_<RobotWorldModel, RobotWorldModelTrampoline, std::shared_ptr<RobotWorldModel>>(m, "RobotWorldModel")
-            .def(py::init_alias<>())
+    py::class_<RobotWorldModel, PyRobotWorldModel<>, std::shared_ptr<RobotWorldModel>>(m, "RobotWorldModel")
+            .def(py::init<>())
             .def("reset", &RobotWorldModel::reset)
-            .def("_get_max_dist_camera", [](RobotWorldModelTrampoline &self) { return gSensorRange; })
-            .def("_get_camera_sensors", [](RobotWorldModelTrampoline &self) -> const sensor_array & {
-                     return self.getCameraSensors();
+            .def("_get_max_dist_camera", [](RobotWorldModel &self) { return gSensorRange; })
+            .def("_get_camera_sensors", [](RobotWorldModel &self) -> const sensor_array & {
+                     return self._cameraSensors; /* super hack to make _cameraSensors public */
                  }, py::return_value_policy::reference,
                  R"doc(
 Return the buffer view of the camera. Should not be called, use PyWorldModel.

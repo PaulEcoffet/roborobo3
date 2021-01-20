@@ -12,63 +12,24 @@
 
 namespace py = pybind11;
 
-class RobotWorldModelTrampoline : public RobotWorldModel
+template <class RWMBase = RobotWorldModel>
+class PyRobotWorldModel : public RWMBase
 {
+protected:
+    static_assert(std::is_base_of<RobotWorldModel, RWMBase>::value, "RWMBase not derived from RobotWorldModel");
 public:
-    using RobotWorldModel::RobotWorldModel;
+    using RWMBase::RWMBase;
 
     void reset() override
     {
-        PYBIND11_OVERLOAD(void, RobotWorldModel, reset,);
+        PYBIND11_OVERLOAD(void, RWMBase, reset,);
     }
 
     void initCameraSensors(int nbsensors) override
     {
-        PYBIND11_OVERLOAD_NAME(void, RobotWorldModel, "_init_camera_sensors", initCameraSensors, nbsensors);
+        PYBIND11_OVERLOAD_NAME(void, RWMBase, "_init_camera_sensors", initCameraSensors, nbsensors);
     }
 
-    py::tuple getRobotGroundSensors()
-    {
-        return py::make_tuple(getGroundSensor_redValue(), getGroundSensor_greenValue(), getGroundSensor_blueValue());
-    }
-
-    const sensor_array &getCameraSensors()
-    {
-        return _cameraSensors;
-    }
-
-    py::array_t<double> getCameraSensorsDist()
-    {
-        py::array_t<double> res(_cameraSensorsNb);
-        auto fastres = res.mutable_unchecked();
-        for (int i = 0; i < _cameraSensorsNb; i++)
-        {
-            fastres(i) = getNormalizedDistanceValueFromCameraSensor(i);
-        }
-        return res;
-    }
-
-    py::array_t<int> getCameraObjectIds()
-    {
-        py::array_t<int> res(_cameraSensorsNb);
-        auto fastres = res.mutable_unchecked();
-        for (int i = 0; i < _cameraSensorsNb; i++)
-        {
-            fastres(i) = getObjectIdFromCameraSensor(i);
-        }
-        return res;
-    }
-
-    py::array_t<double> getCameraAngles()
-    {
-        py::array_t<double> res(_cameraSensorsNb);
-        auto fastres = res.mutable_unchecked();
-        for (int i = 0; i < _cameraSensorsNb; i++)
-        {
-            fastres(i) = getCameraSensorTargetAngle(i);
-        }
-        return res;
-    }
 };
 
 #endif //ROBOROBO3_ROBOTWORLDMODELTRAMPOLINE_H

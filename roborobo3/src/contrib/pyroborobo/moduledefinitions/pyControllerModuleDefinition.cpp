@@ -71,6 +71,9 @@ Examples
                  "Set the robot rotation speed between [-1, 1]")
             .def_property_readonly("nb_sensors", [](Controller &self)
             { return self.getWorldModel()->_cameraSensorsNb; }, "int: Number of sensors of the robot")
+            .def("get_distance_at", &Controller::getDistanceAt, "sensor_id"_a,
+                 R"doc(float: The distance to the object in range [0, 1], if 1, nothing is in sight)doc")
+            .def("get_all_distances", &Controller::getAllDistances, R"doc(Return a numpy)doc")
             .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a,
                  "Robot: Get the robot instance seen by the sensor ``sensor_id``")
             .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a,

@@ -1,9 +1,8 @@
-from pyroborobo import Controller, PyWorldModel
+from pyroborobo import Controller, PyWorldModel, Pyroborobo
 
 
 class SimpleController(Controller):
     world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
-    robot_index_offset = 1048576
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
@@ -17,16 +16,18 @@ class SimpleController(Controller):
         self.set_translation(1)  # Let's go forward
         self.set_rotation(0)
         # Now, our world_model object is a PyWorldModel, we can have access to camera_* properties
-        camera_dist = self.world_model.camera_pixel_distance
-        camera_max_range = self.world_model.maxdistcamera
-        if (camera_dist[1] < camera_max_range  # if we see something on our right
-                or camera_dist[2] < camera_max_range):  # or in front of us
-            self.set_rotation(0.5)  # turn left
-        elif camera_dist[3] < camera_max_range:  # Otherwise, if we see something on our left
-            self.set_rotation(-0.5)  # turn right
+        if (self.get_distance_at(1) < 1 # if we see something on our left
+            or self.get_distance_at(2) < 1): # or in front of us
+            self.set_rotation(0.5) # turn right
+        elif self.get_distance_at(3) < 1: # Otherwise, if we see something on our right
+            self.set_rotation(-0.5) # turn left
 
 
 class HungryController(SimpleController):
+
+    def __init__(self, wm):
+        super().__init__(wm)
+        self.rob = Pyroborobo.get()
 
     def step(self):
         self.set_translation(1)  # Let's go forward
@@ -56,6 +57,5 @@ class HungryController(SimpleController):
                 self.set_rotation(-1)
                 must_flee = True
 
-    @staticmethod
-    def _is_food(id_):
-        return 2 < id_ < SimpleController.robot_index_offset
+    def _is_food(self, id_):
+        return not self.rob.is_id_robot(id_)

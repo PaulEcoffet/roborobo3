@@ -23,5 +23,7 @@ Called at each timestep before the agent's controller.
             .def("step_post", &AgentObserver::stepPost,
                  R"doc(
 Called at each timestep after the agent's controller.
-)doc");
+)doc")
+            .def_property_readonly("controller", &AgentObserver::getController, "Controller: Controller associated with this AgentObserver")
+            .def_readonly("world_model", &AgentObserverPublicist::_wm, "WorldModel: WorldModel associated with this AgentObserver");
 }

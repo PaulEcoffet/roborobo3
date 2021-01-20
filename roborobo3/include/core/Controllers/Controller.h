@@ -84,6 +84,12 @@ public:
             return distanceSensors[sensorId];
         }
 
+        std::vector<double>& getAllDistances()
+        {
+            if ( checkRefresh() == false ) { refreshInputs(); }
+            return distanceSensors;
+        }
+
         // returns 0 (no object) or 1 (object)
         int getObjectAt( int sensorId );
 

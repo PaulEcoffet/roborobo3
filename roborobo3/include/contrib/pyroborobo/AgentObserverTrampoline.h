@@ -7,6 +7,12 @@
 
 #include <core/Observers/AgentObserver.h>
 
+class AgentObserverPublicist : public AgentObserver
+{
+public:
+    using AgentObserver::_wm;
+};
+
 class AgentObserverTrampoline : public AgentObserver
 {
 public:
@@ -25,6 +31,27 @@ public:
     void stepPost() override
     {
         PYBIND11_OVERLOAD_NAME(void, AgentObserver, "step_post", stepPost,);
+    }
+};
+
+template <class AGType> class PyAgentObserver : public AGType
+{
+public:
+    using AGType::AGType;
+
+    void reset() override
+    {
+        PYBIND11_OVERLOAD(void, AGType, reset,);
+    }
+
+    void stepPre() override
+    {
+        PYBIND11_OVERLOAD_NAME(void, AGType, "step_pre", stepPre,);
+    }
+
+    void stepPost() override
+    {
+        PYBIND11_OVERLOAD_NAME(void, AGType, "step_post", stepPost,);
     }
 };
 

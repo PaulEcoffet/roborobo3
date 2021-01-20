@@ -62,8 +62,8 @@ class SimpleController(Controller):
         print("I'm initialised")
     
     def step(self):  # step is called at each time step
-        self.world_model.translation = 2  # Let's go forward
-        self.world_model.rotation = 0  # and do not turn
+        self.set_translation(1)  # Let's go forward
+        self.set_rotation(0)  # and do not turn
 ```
 
 Then, let's edit our code to tell roborobo to use our new controller.
@@ -87,8 +87,8 @@ class SimpleController(Controller):
         print("I'm initialised")
     
     def step(self):  # step is called at each time step
-        self.world_model.translation = 1  # Let's go forward
-        self.world_model.rotation = 0  # and do not turn
+        self.set_translation(1)  # Let's go forward
+        self.setrotation(0)  # and do not turn
 
 rob = Pyroborobo.create("config/template_wander_smallrobots.properties",
                         controller_class=SimpleController)
@@ -110,23 +110,21 @@ class SimpleController(Controller):
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
-        Controller.__init__(self, world_model) 
+        Controller.__init__(self, world_model)
         print("I'm a Python controller")
 
     def reset(self):
         print("I'm initialised")
-    
+
     def step(self):  # step is called at each time step
-        self.world_model.translation = 1  # Let's go forward
-        self.world_model.rotation = 0
+        self.set_translation(1)  # Let's go forward
+        self.set_rotation(0)
         # Now, our world_model object is a PyWorldModel, we can have access to camera_* properties
-        camera_dist = self.world_model.camera_pixel_distance
-        camera_max_range = self.world_model.maxdistcamera
-        if (camera_dist[1] < camera_max_range   # if we see something on our left
-            or camera_dist[2] < camera_max_range): # or in front of us
-            self.world_model.rotation = 10 # turn right
-        elif camera_dist[3] < camera_max_range: # Otherwise, if we see something on our right
-            self.world_model.rotation = -10 # turn left
+        if (self.get_distance_at(1) < 1 # if we see something on our left
+                or self.get_distance_at(2) < 1): # or in front of us
+            self.set_rotation(0.5) # turn right
+        elif self.get_distance_at(3) < 1: # Otherwise, if we see something on our right
+            self.set_rotation(-0.5) # turn left
 
 rob = Pyroborobo.create("config/template_wander_smallrobots.properties",
                         controller_class=SimpleController,

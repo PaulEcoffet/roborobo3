@@ -28,7 +28,7 @@ class World;
 #define SENSOR_OBJECTVALUE 6
 
 typedef boost::multi_array<double, 2> sensor_array;
-
+//
 class RobotWorldModel : public WorldModel
 {
 protected:
@@ -50,11 +50,12 @@ protected:
     // _cameraSensors :
     //      a collection of sensors. Each sensor contains 7 (double) values:
     //      id sensor(R),sensor_origin_norm,sensor_origin_angle,sensor_target_distance_from_agent_center(!),sensor_target_angle, "current value", object Id.
-    sensor_array _cameraSensors;
 
     bool _initSensor;
 
 public:
+
+    sensor_array _cameraSensors;
 
     virtual void initCameraSensors(int nbSensors);
 

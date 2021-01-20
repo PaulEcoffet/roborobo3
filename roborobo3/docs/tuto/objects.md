@@ -84,6 +84,10 @@ physcialObjects[1].sendMessageTo = 0
 Then, when we create our Pyroborobo object, we must pass a dictionary mapping the `pytype` key to our object classes. The Controller classes comes from the previous tutorial
 
 ```python
+from pyroborobo import Pyroborobo, PyWorldModel
+from controllers import SimpleController
+from objects import GateObject, SwitchObject
+
 rob = Pyroborobo.create("config/pywander_pyobj.properties",
                         controller_class=SimpleController,
                         world_model_class=PyWorldModel,
@@ -144,6 +148,7 @@ from pyroborobo import Pyroborobo, PyWorldModel
 
 from controllers import HungryController
 from objects import SwitchObject, GateObject, ResourceObject
+
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander_pyobj_resource.properties",
                             controller_class=HungryController,
