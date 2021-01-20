@@ -37,8 +37,6 @@ Then, you must install some dependencies from your package manager. Here are the
 sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
 ```
 
-
-
 Then, to install pyroborobo, run in the pyroborobo directory:
 
 ```bash
@@ -48,11 +46,20 @@ python setup.py install --force
 
 The documentation is available by opening:
 
+for linux:
+
 ```bash
 xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
-Many examples are available on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_ 
+for macOS:
+
+```bash
+open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
+```
+
+Many examples are available
+on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_
 
 ## Mac OS
 

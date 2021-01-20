@@ -51,4 +51,44 @@ public:
 
 };
 
+
+template<class ControllerType = Controller>
+class PyController : public ControllerType
+{
+public:
+    /* Inherit the constructors */
+    using ControllerType::ControllerType;
+
+    /* Trampoline (need one for each virtual function) */
+    void step() override
+    {
+        PYBIND11_OVERLOAD(
+                void, /* Return type */
+                ControllerType,      /* Parent class */
+                step,          /* Name of function in C++ (must match Python name) */
+        );
+    }
+
+    void reset() override
+    {
+        PYBIND11_OVERLOAD(
+                void, /* Return type */
+                ControllerType,      /* Parent class */
+                reset,          /* Name of function in C++ (must match Python name) */
+        );
+    }
+
+    std::string inspect(std::string prefix = "") override
+    {
+        PYBIND11_OVERLOAD(
+                std::string, /* Return type */
+                ControllerType,      /* Parent class */
+                inspect,          /* Name of function in C++ (must match Python name) */
+                prefix
+        );
+    }
+
+
+};
+
 #endif //ROBOROBO3_CONTROLLERTRAMPOLINE_H

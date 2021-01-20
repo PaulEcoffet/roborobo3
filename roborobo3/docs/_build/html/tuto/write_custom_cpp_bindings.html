@@ -24,6 +24,7 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
+        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -84,7 +85,12 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic_usage.html">How to use pyroborobo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="objects.html">Object Creation</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Custom C++ Bindings</a></li>
+    <li class="toctree-l1 current"><a class="current reference internal" href="#">Custom C++ Bindings</a>
+        <ul>
+            <li class="toctree-l2"><a class="reference internal" href="#using-our-bindings-in-python">Using our bindings
+                in python</a></li>
+        </ul>
+    </li>
 <li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
@@ -169,10 +175,13 @@ trying to write your own bindings.</p>
 <p>Looking at the source of the module definitions in
 <code class="docutils literal notranslate"><span class="pre">contrib/pyroborobo/moduledefinitions</span></code> give you nice examples of how
 to write custom c++ to python bindings.</p>
-<p>As an example, let’ pretend that we want to create a new controller
-subclass <code class="docutils literal notranslate"><span class="pre">DistAwareController</span></code> that adds the method
-<code class="docutils literal notranslate"><span class="pre">distance_to_robot(int</span> <span class="pre">id)</span></code> in pyroborobo. The function
-<code class="docutils literal notranslate"><span class="pre">distanceToRobot</span></code> is written in C++.</p>
+      <p>As an example, let’s pretend that we want to create a new controller
+          subclass <code class="docutils literal notranslate"><span class="pre">DistAwareController</span></code> that
+          adds the method
+          <code class="docutils literal notranslate"><span class="pre">distance_to_robot(int</span> <span class="pre">id)</span></code>
+          in pyroborobo. The function
+          <code class="docutils literal notranslate"><span class="pre">distanceToRobot</span></code> is written in C++.
+      </p>
 <p>Let’s create a new project in roborobo. To do so, let’s clone the
 roborobo’s <code class="docutils literal notranslate"><span class="pre">Tutorial</span></code> project.</p>
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s assume you are in the roborobo directory</span>
@@ -235,48 +244,151 @@ an argument a reference to a <code class="docutils literal notranslate"><span cl
 </pre></div>
 </div>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="c1">// DistAwarePythonBindings.cpp</span>
-<span class="cp">#include</span> <span class="cpf">&quot;DistAware/include/DistAwarePythonBindings.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;DistAware/include/DistAwareController.h&quot;</span><span class="cp"></span>
-<span class="cp">#include</span> <span class="cpf">&quot;WorldModels/RobotWorldModel.h&quot;</span><span class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;DistAware/include/DistAwarePythonBindings.h&quot;</span><span
+            class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;DistAware/include/DistAwareController.h&quot;</span><span
+            class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;WorldModels/RobotWorldModel.h&quot;</span><span
+            class="cp"></span>
+<span class="cp">#include</span> <span class="cpf">&quot;contrib/pyroborobo/ControllerTrampoline.h&quot;</span><span
+            class="cp"></span>
 <span class="cp">#include</span> <span class="cpf">&lt;pybind11/pybind11.h&gt;</span><span class="cp"></span>
 
-<span class="k">namespace</span> <span class="n">py</span> <span class="o">=</span> <span class="n">pybind11</span><span class="p">;</span>
-<span class="k">using</span> <span class="k">namespace</span> <span class="n">pybind11</span><span class="o">::</span><span class="n">literals</span><span class="p">;</span>  <span class="c1">// allow string literals like &quot;argument&quot;_a</span>
+<span class="k">namespace</span> <span class="n">py</span> <span class="o">=</span> <span class="n">pybind11</span><span
+            class="p">;</span>
+<span class="k">using</span> <span class="k">namespace</span> <span class="n">pybind11</span><span
+            class="o">::</span><span class="n">literals</span><span class="p">;</span>  <span class="c1">// allow string literals like &quot;argument&quot;_a</span>
 
-<span class="kt">void</span> <span class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
+<span class="kt">void</span> <span class="nf">addDistAwareBindings</span><span class="p">(</span><span
+            class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span
+            class="n">m</span><span class="p">)</span>
 <span class="p">{</span>
 
 <span class="p">}</span>
 </pre></div>
 </div>
-<p>Now, we have to tell pybind11 that we want to add new bindings for our controller. Let’s write <code class="docutils literal notranslate"><span class="pre">addDistAwareBindings</span></code>.</p>
-<p>First we must declare our new class, using <code class="docutils literal notranslate"><span class="pre">pybind11::class_</span></code>. In code, the <code class="xref any docutils literal notranslate"><span class="pre">pybind11</span></code> namespace is shorten with <code class="docutils literal notranslate"><span class="pre">py</span></code>.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
+      <p>Now, we have to tell pybind11 that we want to add new bindings for our controller. Let’s write <code
+              class="docutils literal notranslate"><span class="pre">addDistAwareBindings</span></code>.</p>
+      <p>First we must declare our new class, using <code class="docutils literal notranslate"><span class="pre">pybind11::class_</span></code>.
+          In code, the <code class="xref any docutils literal notranslate"><span class="pre">pybind11</span></code>
+          namespace is shorten with <code class="docutils literal notranslate"><span class="pre">py</span></code>.</p>
+      <div class="highlight-cpp notranslate">
+          <div class="highlight"><pre><span></span><span class="kt">void</span> <span
+                  class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span
+                  class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span
+                  class="n">m</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span class="dl">doc(</span><span class="s">Our custom DistAwareController</span><span class="dl">)doc</span><span class="s">&quot;</span><span class="p">);</span>
+<span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span class="n">py</span><span
+                      class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span
+                      class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PyController</span><span
+                      class="o">&lt;</span><span class="n">DistAwareController</span><span class="o">&gt;</span><span
+                      class="p">,</span> <span class="n">std</span><span class="o">::</span><span
+                      class="n">shared_ptr</span><span class="o">&lt;</span><span
+                      class="n">DistAwareController</span><span class="o">&gt;</span> <span class="o">&gt;</span><span
+                      class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span
+                      class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span
+                      class="dl">doc(</span><span class="s">doc string</span><span class="dl">)doc</span><span
+                      class="s">&quot;</span><span class="p">);</span>
+
 <span class="p">}</span>
-</pre></div>
-</div>
-<p>The usage of <code class="docutils literal notranslate"><span class="pre">pybind11::class_</span></code> is complex. You should definitely look at its documentation. To be short, the first argument of the template is the class that we want to bind, the second argument is the class from which our class inherits. It allows <code class="xref any docutils literal notranslate"><span class="pre">pybind11</span></code> to know that we want to access all the methods written in Controller. The third argument is the way we want pybind11 to handle reference counts. Here we use the cpp shared pointer, used everywhere in roborobo. It prevents segfault when the python interpreter stops. The first argument of the constructor is our module <code class="docutils literal notranslate"><span class="pre">m</span></code> that we received in argument. It is the <code class="docutils literal notranslate"><span class="pre">pyroborobo</span></code> module where we want to attach our class. The second argument is the name of the python Class for <code class="docutils literal notranslate"><span class="pre">pyroborobo</span></code>. The third argument is the docstring of our class.</p>
-<p>We <strong>must</strong> declare a python constructor for our new class. To add a new method to our class, we use the <code class="docutils literal notranslate"><span class="pre">def</span></code> method.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
+</pre>
+          </div>
+      </div>
+      <p>The usage of <code class="docutils literal notranslate"><span class="pre">pybind11::class_</span></code> is
+          complex. You should definitely look at its documentation. To be short, the first argument of the template is
+          the class that we want to bind, the second argument is the class from which our class inherits. It allows
+          <code class="xref any docutils literal notranslate"><span class="pre">pybind11</span></code> to know that we
+          want to access all the methods written in Controller. The third argument link to a <em>Trampoline</em> class.
+          Trampoline class write special code that allow pybind to override c++ function with python functions in the
+          subclasses. <code class="docutils literal notranslate"><span class="pre">PyController</span></code> is a
+          special template class that will work with any controller that you write. It is included in <code
+                  class="docutils literal notranslate"><span
+                  class="pre">contrib/pyroborobo/ControllerTrampoline.h</span></code>. The fourth argument is the way we
+          want pybind11 to handle reference counts. Here we use the cpp shared pointer, used everywhere in roborobo. It
+          prevents segfault when the python interpreter stops. The first argument of the constructor is our module <code
+                  class="docutils literal notranslate"><span class="pre">m</span></code> that we received in argument.
+          It is the <code class="docutils literal notranslate"><span class="pre">pyroborobo</span></code> module where
+          we want to attach our class. The second argument is the name of the python Class for <code
+                  class="docutils literal notranslate"><span class="pre">pyroborobo</span></code>. The third argument is
+          the docstring of our class.</p>
+      <div class="admonition warning">
+          <p class="admonition-title">Warning</p>
+          <p>Writing something wrong in this class definition <strong>will result</strong> in segfault or in unexpected
+              behaviour in your code.
+              Always check that you provide : The parent class of your new c++ class, the Trampoline class (using a
+              template), and
+              the way to handle memory (in pyroborobo, it’s always a shared_ptr).</p>
+      </div>
+      <div class="admonition note">
+          <p class="admonition-title">Note</p>
+          <p>Pyroborobo provide Trampoline template for AgentObserver, WorldModel, WorldObserver and the differents
+              Object. You will find them in the header files of pyroborobo (<code
+                      class="docutils literal notranslate"><span class="pre">include/contrib/pyroborobo/</span></code>).
+          </p>
+      </div>
+      <p>We <strong>must</strong> declare a python constructor for our new class. To add a new method to our class, we
+          use the <code class="docutils literal notranslate"><span class="pre">def</span></code> method.</p>
+      <div class="highlight-cpp notranslate">
+          <div class="highlight"><pre><span></span><span class="kt">void</span> <span
+                  class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span
+                  class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span
+                  class="n">m</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span class="p">);</span>
-    <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;&gt;</span><span class="p">(),</span> <span class="s">&quot;robot_world_model&quot;</span><span class="n">_a</span><span class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span class="dl">doc(</span><span class="s">our custom Controller Init function</span><span class="dl">)doc</span><span class="s">&quot;</span><span class="p">);</span>
+    <span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span class="n">py</span><span
+                      class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span
+                      class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PyController</span><span
+                      class="o">&lt;</span><span class="n">DistAwareController</span><span class="o">&gt;</span><span
+                      class="p">,</span> <span class="n">std</span><span class="o">::</span><span
+                      class="n">shared_ptr</span><span class="o">&lt;</span><span
+                      class="n">DistAwareController</span><span class="o">&gt;</span> <span class="o">&gt;</span><span
+                      class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span
+                      class="p">);</span>
+    <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span
+                      class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span
+                      class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span
+                      class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;&gt;</span><span
+                      class="p">(),</span> <span class="s">&quot;robot_world_model&quot;</span><span class="n">_a</span><span
+                      class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span
+                      class="dl">doc(</span><span class="s">our custom Controller Init function</span><span class="dl">)doc</span><span
+                      class="s">&quot;</span><span class="p">);</span>
 <span class="p">}</span>
-</pre></div>
-</div>
-<p>We add the special method <code class="docutils literal notranslate"><span class="pre">__init__</span></code> with <code class="docutils literal notranslate"><span class="pre">py::init</span></code>. The init template takes as argument the type of the constructor arguments, here a shared pointer to a <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code>.</p>
-<div class="admonition warning">
+</pre>
+          </div>
+      </div>
+      <p>We add the special method <code class="docutils literal notranslate"><span class="pre">__init__</span></code>
+          with <code class="docutils literal notranslate"><span class="pre">py::init</span></code>. The init template
+          takes as argument the type of the constructor arguments, here a shared pointer to a <code
+                  class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code>.</p>
+      <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Not using <code class="docutils literal notranslate"><span class="pre">std::shared_pointer</span></code> here will cause segfaults!!!</p>
 </div>
 <p>Finally, we add the binding to our function with another call to <code class="docutils literal notranslate"><span class="pre">def</span></code>.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
+<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span
+        class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span
+        class="k">module</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
 <span class="p">{</span>
-    <span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span class="o">&gt;</span> <span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span class="p">);</span>
-    <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;&gt;</span><span class="p">(),</span> <span class="s">&quot;world_model&quot;</span><span class="n">_a</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
-    <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span class="s">&quot;get_distance_to_robot&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">DistAwareController</span><span class="o">::</span><span class="n">distanceToRobot</span><span class="p">,</span> <span class="s">&quot;id&quot;</span><span class="n">_a</span><span class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span class="dl">doc(</span><span class="s">float: The distance to the robot of id ``id``.</span><span class="dl">)doc</span><span class="s">&quot;</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span
+            class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span
+            class="n">DistAwareController</span><span class="p">,</span> <span class="n">Controller</span><span
+            class="p">,</span> <span class="n">PyController</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span
+            class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span
+            class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span
+            class="o">&gt;</span> <span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span
+            class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span class="p">);</span>
+    <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span
+            class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span
+            class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span
+            class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;&gt;</span><span class="p">(),</span> <span
+            class="s">&quot;world_model&quot;</span><span class="n">_a</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span
+            class="p">);</span>
+    <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span
+            class="s">&quot;get_distance_to_robot&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span
+            class="n">DistAwareController</span><span class="o">::</span><span class="n">distanceToRobot</span><span
+            class="p">,</span> <span class="s">&quot;id&quot;</span><span class="n">_a</span><span
+            class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span class="dl">doc(</span><span
+            class="s">float: The distance to the robot of id ``id``.</span><span class="dl">)doc</span><span class="s">&quot;</span><span
+            class="p">);</span>
 <span class="p">}</span>
 </pre></div>
 </div>
@@ -302,11 +414,86 @@ an argument a reference to a <code class="docutils literal notranslate"><span cl
 </pre></div>
 </div>
 <p>Let’s now compile pyroborobo by running</p>
-<p><code class="docutils literal notranslate"><span class="pre">`bash</span>
-<span class="pre">python</span> <span class="pre">setup.py</span> <span class="pre">install</span> <span class="pre">--force</span>
-<span class="pre">`</span></code></p>
+      <div class="highlight-bash notranslate">
+          <div class="highlight"><pre><span></span>python setup.py install --force
+</pre>
+          </div>
+      </div>
 <p>The class DistAwareController is now available in pyroborobo.</p>
 <p>It is only a very simple introduction to adding bindings for pyroborobo. Writing bindings can get complex really quickly. Please read carefully the pybind11 documentation as well as the already implemented bindings. They are all in <code class="docutils literal notranslate"><span class="pre">src/contrib/pyroborobo/moduledefinitions/</span></code>.</p>
+      <div class="section" id="using-our-bindings-in-python">
+          <h2>Using our bindings in python<a class="headerlink" href="#using-our-bindings-in-python"
+                                             title="Permalink to this headline">¶</a></h2>
+          <p>Now that we have compiled our new <code class="docutils literal notranslate"><span
+                  class="pre">pyroborobo</span></code> with our custom C++ controller, we can use our new controller and
+              our new method.</p>
+          <p>Let’s write a new test in the folder <code class="xref any docutils literal notranslate"><span class="pre">py_example</span></code>
+              (this folder already contains the pyroborobo data as well as default config files).</p>
+          <div class="highlight-python notranslate">
+              <div class="highlight"><pre><span></span><span class="kn">from</span> <span
+                      class="nn">pyroborobo</span> <span class="kn">import</span> <span
+                      class="n">DistAwareController</span><span class="p">,</span> <span
+                      class="n">Pyroborobo</span><span class="p">,</span> <span class="n">PyWorldModel</span>
+
+<span class="k">class</span> <span class="nc">MyCustomDistAwareController</span><span class="p">(</span><span class="n">DistAwareController</span><span
+                          class="p">):</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span
+                          class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
+        <span class="c1"># Obligatory call to super.__init__ to avoid segfault</span>
+        <span class="n">DistAwareController</span><span class="o">.</span><span class="fm">__init__</span><span
+                          class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span
+                          class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Hello, I&#39;m a custom DistAwareController&quot;</span><span
+                          class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rob</span> <span class="o">=</span> <span
+                          class="n">Pyroborobo</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span
+                          class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span
+                          class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span
+                          class="p">(</span><span class="mf">0.01</span><span class="p">)</span>
+        <span class="n">nbrob</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span
+                          class="bp">self</span><span class="o">.</span><span class="n">rob</span><span
+                          class="o">.</span><span class="n">robots</span><span class="p">)</span>
+
+        <span class="n">next_id</span> <span class="o">=</span> <span class="p">(</span><span
+                          class="bp">self</span><span class="o">.</span><span class="n">id</span> <span
+                          class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">%</span> <span
+                          class="n">nbrob</span>
+        <span class="n">dist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span
+                          class="n">get_distance_to_robot</span><span class="p">(</span><span
+                          class="n">next_id</span><span class="p">)</span>  <span
+                          class="c1"># here is our new method</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span
+                          class="s2">&quot;I am </span><span class="si">{</span><span class="n">dist</span><span
+                          class="si">}</span><span class="s2"> pixel from </span><span class="si">{</span><span
+                          class="n">next_id</span><span class="si">}</span><span class="s2">&quot;</span><span
+                          class="p">)</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span
+                          class="p">:</span>
+    <span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span
+                          class="n">create</span><span class="p">(</span><span class="s2">&quot;config/pywander_12sensors.properties&quot;</span><span
+                          class="p">,</span>
+                            <span class="n">controller_class</span><span class="o">=</span><span class="n">MyCustomDistAwareController</span><span
+                          class="p">,</span>
+                            <span class="n">world_model_class</span><span class="o">=</span><span
+                          class="n">PyWorldModel</span><span class="p">)</span>
+    <span class="n">rob</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+    <span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span
+                          class="mi">1000</span><span class="p">)</span>
+    <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre>
+              </div>
+          </div>
+          <p>When we run this program, the distance in pixel between robots is given. We have used our c++ method in our
+              python
+              program !</p>
+      </div>
 </div>
 
 
