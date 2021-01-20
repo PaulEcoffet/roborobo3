@@ -35,12 +35,13 @@ class EvolController(Controller):
         return np.concatenate(all_elem)
 
     def set_weights(self, weights):
-        i = 0
+        j = 0
         for i, elem in enumerate(self.weights):
             shape = elem.shape
             size = elem.size
-            self.weights[i] = np.array(weights[i:(i + size)]).reshape(shape)
-            i += size
+            self.weights[i] = np.array(weights[j:(j + size)]).reshape(shape)
+            j += size
+
 
 
 class EvolObserver(AgentObserver):
@@ -59,8 +60,8 @@ class EvolObserver(AgentObserver):
         dists = np.asarray(self.controller.get_all_distances())
         if np.random.rand() < 0.0001:
             print(speed, rotspeed, dists)
-            print(4*speed - 3*np.max(1 - dists) - np.abs(rotspeed))
-        self.fitness += 4*speed - 3*np.max(1 - dists) - np.abs(rotspeed)
+            print(speed - np.max(1 - dists) - np.abs(rotspeed))
+        self.fitness += speed - np.max(1 - dists) - 10*rotspeed
 
 
 def get_weights(rob: Pyroborobo):
@@ -79,14 +80,10 @@ def get_fitnesses(rob: Pyroborobo):
 
 def fitprop(weights, fitnesses):
     adjust_fit = rankdata(fitnesses)
-    print(adjust_fit)
-    cumfit = np.cumsum(adjust_fit)
-    normfit = cumfit / np.sum(cumfit)
+    normfit = adjust_fit / np.sum(adjust_fit)
     # select
     new_weights_i = np.random.choice(len(weights), len(weights), replace=True, p=normfit)
     new_weights = np.asarray(weights)[new_weights_i]
-    print(new_weights_i)
-    print(new_weights)
     # mutate
     new_weights_mutate = np.random.normal(new_weights, 0.1)
     return new_weights_mutate
@@ -97,7 +94,6 @@ def apply_weights(rob, weights):
         ctl.set_weights(weight)
 
 
-
 def reset_agent_observers(rob):
     for obs in rob.agent_observers:
         obs.reset()
@@ -105,7 +101,7 @@ def reset_agent_observers(rob):
 
 def main():
     nbgen = 10000
-    nbiterpergen = 200
+    nbiterpergen = 400
     rob: Pyroborobo = Pyroborobo.create(
         "config/pywander.properties",
         controller_class=EvolController,
@@ -121,6 +117,7 @@ def main():
             break
         weights = get_weights(rob)
         fitnesses = get_fitnesses(rob)
+
         new_weights = fitprop(weights, fitnesses)
         apply_weights(rob, new_weights)
         reset_agent_observers(rob)
