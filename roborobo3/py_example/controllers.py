@@ -16,11 +16,11 @@ class SimpleController(Controller):
         self.set_translation(1)  # Let's go forward
         self.set_rotation(0)
         # Now, our world_model object is a PyWorldModel, we can have access to camera_* properties
-        if (self.get_distance_at(1) < 1 # if we see something on our left
-            or self.get_distance_at(2) < 1): # or in front of us
-            self.set_rotation(0.5) # turn right
-        elif self.get_distance_at(3) < 1: # Otherwise, if we see something on our right
-            self.set_rotation(-0.5) # turn left
+        if (self.get_distance_at(1) < 1  # if we see something on our left
+                or self.get_distance_at(2) < 1):  # or in front of us
+            self.set_rotation(0.5)  # turn right
+        elif self.get_distance_at(3) < 1:  # Otherwise, if we see something on our right
+            self.set_rotation(-0.5)  # turn left
 
 
 class HungryController(SimpleController):

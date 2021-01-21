@@ -201,7 +201,7 @@ Using our bindings in python
 
 Now that we have compiled our new ``pyroborobo`` with our custom C++ controller, we can use our new controller and our new method.
 
-Let's write a new test in the folder `py_example` (this folder already contains the pyroborobo data as well as default config files).
+Let's write a new test in the folder ``py_example`` (this folder already contains the pyroborobo data as well as default config files).
 
 
 .. code:: python

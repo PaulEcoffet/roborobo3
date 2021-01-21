@@ -32,6 +32,9 @@ class SwitchObject(CircleObject):
         self.hide()
         self.unregister()
 
+    def inspect(self, prefix=""):
+        return "I'm a switch!"
+
 
 class GateObject(SquareObject):
     def __init__(self, id, data):
@@ -59,6 +62,9 @@ class GateObject(SquareObject):
         self.hide()
         self.unregister()
         self.cur_regrow = self.regrow_time
+
+    def inspect(self, prefix=""):
+        return "I'm a gate!"
 
 
 class ResourceObject(CircleObject):
