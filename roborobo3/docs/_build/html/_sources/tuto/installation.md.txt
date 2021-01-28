@@ -25,7 +25,8 @@ The dependencies are numpy and pybind11 on the python side. For the c++ side, yo
 If you have not done it with conda before (or pip if you don’t use conda):
 
 ```bash
-conda install pybind11 numpy
+conda install numpy
+conda install -c conda-forge pybind11  # install latest pybind11
 # or with pip
 # pip install -U pybind11
 # pip install -U numpy
@@ -34,11 +35,8 @@ conda install pybind11 numpy
 Then, you must install some dependencies from your package manager. Here are the one from ubuntu:
 
 ```bash
-sudo apt-get install cmake buildessentials
 sudo apt-get install libsdl2-dev libsdl2-image-dev libboost-dev libeigen3-dev
 ```
-
-
 
 Then, to install pyroborobo, run in the pyroborobo directory:
 
@@ -61,7 +59,8 @@ for macOS:
 open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
-Many examples are available on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_ 
+Many examples are available
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example)
 
 ## Mac OS
 
@@ -84,7 +83,8 @@ The dependencies are numpy and pybind11 on the python side. For the c++ side, yo
 If you have not done it with conda before:
 
 ```bash
-conda install pybind11 numpy
+conda install numpy
+conda install -c conda-forge pybind11  # install latest pybind11
 # or with pip
 # pip install -U pybind11
 # pip install -U numpy
@@ -115,4 +115,4 @@ The documentation is available by opening:
 open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
-Many examples are available on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_ 
+Many examples are available on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example) 

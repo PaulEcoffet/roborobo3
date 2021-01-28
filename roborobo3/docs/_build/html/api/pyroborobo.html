@@ -24,7 +24,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -193,23 +192,39 @@
 <col style="width: 90%" />
 </colgroup>
 <tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.close" title="pyroborobo.Pyroborobo.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a></p></td>
-<td><p>Exit the simulator nicely</p></td>
+<tr class="row-odd">
+    <td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.close" title="pyroborobo.Pyroborobo.close"><code
+            class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
+    <td><p>Exit the simulator nicely</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.create" title="pyroborobo.Pyroborobo.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create</span></code></a></p></td>
-<td><p>Create the singleton Pyroborobo</p></td>
+<tr class="row-even">
+    <td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.create" title="pyroborobo.Pyroborobo.create"><code
+            class="xref py py-obj docutils literal notranslate"><span class="pre">create</span></code></a>(properties_file, …)
+    </p></td>
+    <td><p>Create the singleton Pyroborobo</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.get" title="pyroborobo.Pyroborobo.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a></p></td>
-<td><p>Return the pyroborobo instance</p></td>
+<tr class="row-odd">
+    <td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.get" title="pyroborobo.Pyroborobo.get"><code
+            class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>()</p></td>
+    <td><p>Return the pyroborobo instance</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.is_id_robot" title="pyroborobo.Pyroborobo.is_id_robot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_id_robot</span></code></a></p></td>
-<td><p>tell if it’s the id of a robot tell if it’s the id of a robot</p></td>
+<tr class="row-even">
+    <td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.is_id_robot"
+              title="pyroborobo.Pyroborobo.is_id_robot"><code class="xref py py-obj docutils literal notranslate"><span
+            class="pre">is_id_robot</span></code></a>(*args, **kwargs)</p></td>
+    <td><p>Overloaded function.</p></td>
 </tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.start" title="pyroborobo.Pyroborobo.start"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code></a></p></td>
-<td><p>Starts the simulator.</p></td>
+<tr class="row-odd">
+    <td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.start" title="pyroborobo.Pyroborobo.start"><code
+            class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code></a>(self)</p></td>
+    <td><p>Starts the simulator.</p></td>
 </tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.update" title="pyroborobo.Pyroborobo.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a></p></td>
-<td><p>Performs a simulator evaluation of <code class="docutils literal notranslate"><span class="pre">nb_updates</span></code> time steps.</p></td>
+<tr class="row-even">
+    <td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.update" title="pyroborobo.Pyroborobo.update"><code
+            class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(self, nb_updates)
+    </p></td>
+    <td><p>Performs a simulator evaluation of <code class="docutils literal notranslate"><span
+            class="pre">nb_updates</span></code> time steps.</p></td>
 </tr>
 </tbody>
 </table>
@@ -229,8 +244,11 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.close">
-<code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Pyroborobo.close" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.close">
+        <code class="sig-name descname">close</code><span class="sig-paren">(</span><span class="sig-paren">)</span>
+        &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None"
+                    title="(in Python v3.9)">None</a><a class="headerlink" href="#pyroborobo.Pyroborobo.close"
+                                                        title="Permalink to this definition">¶</a></dt>
 <dd><p>Exit the simulator nicely</p>
 <p>Once the simulator is closed, it cannot be reopen in the same python interpreter.</p>
 </dd></dl>
@@ -251,8 +269,39 @@
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.create">
-<em class="property">static </em><code class="sig-name descname">create</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Pyroborobo.create" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.create">
+        <em class="property">static </em><code class="sig-name descname">create</code><span
+            class="sig-paren">(</span><em class="sig-param"><span class="n">properties_file</span><span
+            class="p">:</span> <span class="n"><a class="reference external"
+                                                  href="https://docs.python.org/3/library/stdtypes.html#str"
+                                                  title="(in Python v3.9)">str</a></span></em>, <em
+            class="sig-param"><span class="n">world_observer_class</span><span class="p">:</span> <span class="n"><a
+            class="reference external" href="https://docs.python.org/3/library/functions.html#object"
+            title="(in Python v3.9)">object</a></span> <span class="o">=</span> <span class="default_value">None</span></em>,
+        <em class="sig-param"><span class="n">controller_class</span><span class="p">:</span> <span class="n"><a
+                class="reference external" href="https://docs.python.org/3/library/functions.html#object"
+                title="(in Python v3.9)">object</a></span> <span class="o">=</span> <span
+                class="default_value">None</span></em>, <em class="sig-param"><span
+            class="n">world_model_class</span><span class="p">:</span> <span class="n"><a class="reference external"
+                                                                                          href="https://docs.python.org/3/library/functions.html#object"
+                                                                                          title="(in Python v3.9)">object</a></span>
+        <span class="o">=</span> <span class="default_value">None</span></em>, <em class="sig-param"><span class="n">agent_observer_class</span><span
+            class="p">:</span> <span class="n"><a class="reference external"
+                                                  href="https://docs.python.org/3/library/functions.html#object"
+                                                  title="(in Python v3.9)">object</a></span> <span class="o">=</span>
+        <span class="default_value">None</span></em>, <em class="sig-param"><span
+            class="n">object_class_dict</span><span class="p">:</span> <span class="n"><a class="reference external"
+                                                                                          href="https://docs.python.org/3/library/stdtypes.html#dict"
+                                                                                          title="(in Python v3.9)">dict</a></span>
+        <span class="o">=</span> <span class="default_value">{}</span></em>, <em class="sig-param"><span class="n">override_conf_dict</span><span
+            class="p">:</span> <span class="n"><a class="reference external"
+                                                  href="https://docs.python.org/3/library/stdtypes.html#dict"
+                                                  title="(in Python v3.9)">dict</a></span> <span class="o">=</span>
+        <span class="default_value">{}</span></em><span class="sig-paren">)</span> &#x2192; <a
+            class="reference internal" href="#pyroborobo.Pyroborobo"
+            title="pyroborobo.Pyroborobo">pyroborobo.Pyroborobo</a><a class="headerlink"
+                                                                      href="#pyroborobo.Pyroborobo.create"
+                                                                      title="Permalink to this definition">¶</a></dt>
 <dd><p>Create the singleton Pyroborobo</p>
 <dl class="field-list">
 <dt class="field-odd">Parameters</dt>
@@ -298,8 +347,11 @@ exist in the configuration file are added.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.get">
-<em class="property">static </em><code class="sig-name descname">get</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Pyroborobo.get" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.get">
+        <em class="property">static </em><code class="sig-name descname">get</code><span class="sig-paren">(</span><span
+            class="sig-paren">)</span> &#x2192; <a class="reference internal" href="#pyroborobo.Pyroborobo"
+                                                   title="pyroborobo.Pyroborobo">pyroborobo.Pyroborobo</a><a
+            class="headerlink" href="#pyroborobo.Pyroborobo.get" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return the pyroborobo instance</p>
 <dl class="field-list simple">
 <dt class="field-odd">Returns</dt>
@@ -310,12 +362,24 @@ exist in the configuration file are added.</p>
 </dl>
 </dd></dl>
 
-<dl class="py method">
-<dt id="pyroborobo.Pyroborobo.is_id_robot">
-<code class="sig-name descname">is_id_robot</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Pyroborobo.is_id_robot" title="Permalink to this definition">¶</a></dt>
-<dd><p>tell if it’s the id of a robot
-tell if it’s the id of a robot</p>
-</dd></dl>
+    <dl class="py method">
+        <dt id="pyroborobo.Pyroborobo.is_id_robot">
+            <code class="sig-name descname">is_id_robot</code><span class="sig-paren">(</span><em
+                class="sig-param"><span class="o">*</span><span class="n">args</span></em>, <em class="sig-param"><span
+                class="o">**</span><span class="n">kwargs</span></em><span class="sig-paren">)</span><a
+                class="headerlink" href="#pyroborobo.Pyroborobo.is_id_robot" title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>Overloaded function.</p>
+            <ol class="arabic simple">
+                <li><p>is_id_robot(self: pyroborobo.Pyroborobo, id: int) -&gt; bool</p></li>
+            </ol>
+            <p>tell if it’s the id of a robot</p>
+            <ol class="arabic simple" start="2">
+                <li><p>is_id_robot(self: pyroborobo.Pyroborobo, id: float) -&gt; bool</p></li>
+            </ol>
+            <p>tell if it’s the id of a robot</p>
+        </dd>
+    </dl>
 
 <dl class="py method">
 <dt id="pyroborobo.Pyroborobo.objects">
@@ -356,16 +420,34 @@ tell if it’s the id of a robot</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.start">
-<code class="sig-name descname">start</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Pyroborobo.start" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.start">
+        <code class="sig-name descname">start</code><span class="sig-paren">(</span><em class="sig-param"><span
+            class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal"
+                                                                             href="#pyroborobo.Pyroborobo"
+                                                                             title="pyroborobo.Pyroborobo">pyroborobo.Pyroborobo</a></span></em><span
+            class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                   href="https://docs.python.org/3/library/constants.html#None"
+                                                   title="(in Python v3.9)">None</a><a class="headerlink"
+                                                                                       href="#pyroborobo.Pyroborobo.start"
+                                                                                       title="Permalink to this definition">¶</a>
+    </dt>
 <dd><p>Starts the simulator.</p>
 <p>Starts the simulator, creates the window if the batch mode is not activated. Once started, it is impossible to
 modify the classes used to instantiate the different modules of the simulator or to change its configuration.</p>
 </dd></dl>
 
 <dl class="py method">
-<dt id="pyroborobo.Pyroborobo.update">
-<code class="sig-name descname">update</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.Pyroborobo.update" title="Permalink to this definition">¶</a></dt>
+    <dt id="pyroborobo.Pyroborobo.update">
+        <code class="sig-name descname">update</code><span class="sig-paren">(</span><em class="sig-param"><span
+            class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal"
+                                                                             href="#pyroborobo.Pyroborobo"
+                                                                             title="pyroborobo.Pyroborobo">pyroborobo.Pyroborobo</a></span></em>,
+        <em class="sig-param"><span class="n">nb_updates</span><span class="p">:</span> <span class="n"><a
+                class="reference external" href="https://docs.python.org/3/library/functions.html#int"
+                title="(in Python v3.9)">int</a></span></em><span class="sig-paren">)</span> &#x2192; <a
+            class="reference external" href="https://docs.python.org/3/library/functions.html#bool"
+            title="(in Python v3.9)">bool</a><a class="headerlink" href="#pyroborobo.Pyroborobo.update"
+                                                title="Permalink to this definition">¶</a></dt>
 <dd><p>Performs a simulator evaluation of <code class="docutils literal notranslate"><span class="pre">nb_updates</span></code> time steps.</p>
 <p>It is possible to call <a class="reference internal" href="#pyroborobo.Pyroborobo.update" title="pyroborobo.Pyroborobo.update"><code class="xref any py py-meth docutils literal notranslate"><span class="pre">update</span></code></a> multiple times. If the simulator is paused, then the frame generation has no impact
 on the number of updates.</p>

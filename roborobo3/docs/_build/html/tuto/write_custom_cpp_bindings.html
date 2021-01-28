@@ -24,7 +24,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -85,12 +84,12 @@
 <li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="basic_usage.html">How to use pyroborobo</a></li>
 <li class="toctree-l1"><a class="reference internal" href="objects.html">Object Creation</a></li>
-    <li class="toctree-l1 current"><a class="current reference internal" href="#">Custom C++ Bindings</a>
-        <ul>
-            <li class="toctree-l2"><a class="reference internal" href="#using-our-bindings-in-python">Using our bindings
-                in python</a></li>
-        </ul>
-    </li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Custom C++ Bindings</a>
+    <ul>
+        <li class="toctree-l2"><a class="reference internal" href="#using-our-bindings-in-python">Using our bindings in
+            python</a></li>
+    </ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="troubleshooting.html">Troubleshooting</a></li>
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
@@ -265,7 +264,8 @@ an argument a reference to a <code class="docutils literal notranslate"><span cl
 <span class="p">{</span>
 
 <span class="p">}</span>
-</pre></div>
+</pre>
+</div>
 </div>
       <p>Now, we have to tell pybind11 that we want to add new bindings for our controller. Let’s write <code
               class="docutils literal notranslate"><span class="pre">addDistAwareBindings</span></code>.</p>
@@ -360,38 +360,45 @@ an argument a reference to a <code class="docutils literal notranslate"><span cl
           takes as argument the type of the constructor arguments, here a shared pointer to a <code
                   class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code>.</p>
       <div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>Not using <code class="docutils literal notranslate"><span class="pre">std::shared_pointer</span></code> here will cause segfaults!!!</p>
-</div>
-<p>Finally, we add the binding to our function with another call to <code class="docutils literal notranslate"><span class="pre">def</span></code>.</p>
-<div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="kt">void</span> <span
-        class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span class="o">::</span><span
-        class="k">module</span><span class="o">&amp;</span> <span class="n">m</span><span class="p">)</span>
+          <p class="admonition-title">Warning</p>
+          <p>Not using <code class="docutils literal notranslate"><span class="pre">std::shared_pointer</span></code>
+              here will cause segfaults!!!</p>
+      </div>
+      <p>Finally, we add the binding to our function with another call to <code
+              class="docutils literal notranslate"><span class="pre">def</span></code>.</p>
+      <div class="highlight-cpp notranslate">
+          <div class="highlight"><pre><span></span><span class="kt">void</span> <span
+                  class="nf">addDistAwareBindings</span><span class="p">(</span><span class="n">py</span><span
+                  class="o">::</span><span class="k">module</span><span class="o">&amp;</span> <span
+                  class="n">m</span><span class="p">)</span>
 <span class="p">{</span>
         <span class="k">auto</span> <span class="n">distcont</span> <span class="o">=</span> <span
-            class="n">py</span><span class="o">::</span><span class="n">class_</span><span class="o">&lt;</span><span
-            class="n">DistAwareController</span><span class="p">,</span> <span class="n">Controller</span><span
-            class="p">,</span> <span class="n">PyController</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span
-            class="o">&gt;</span><span class="p">,</span> <span class="n">std</span><span class="o">::</span><span
-            class="n">shared_ptr</span><span class="o">&lt;</span><span class="n">DistAwareController</span><span
-            class="o">&gt;</span> <span class="o">&gt;</span><span class="p">(</span><span class="n">m</span><span
-            class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span class="p">);</span>
+                      class="n">py</span><span class="o">::</span><span class="n">class_</span><span
+                      class="o">&lt;</span><span class="n">DistAwareController</span><span class="p">,</span> <span
+                      class="n">Controller</span><span class="p">,</span> <span class="n">PyController</span><span
+                      class="o">&lt;</span><span class="n">DistAwareController</span><span class="o">&gt;</span><span
+                      class="p">,</span> <span class="n">std</span><span class="o">::</span><span
+                      class="n">shared_ptr</span><span class="o">&lt;</span><span
+                      class="n">DistAwareController</span><span class="o">&gt;</span> <span class="o">&gt;</span><span
+                      class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="s">&quot;DistAwareController&quot;</span><span
+                      class="p">);</span>
     <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span
-            class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span
-            class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span
-            class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;&gt;</span><span class="p">(),</span> <span
-            class="s">&quot;world_model&quot;</span><span class="n">_a</span><span class="p">,</span> <span class="s">&quot;&quot;</span><span
-            class="p">);</span>
+                      class="n">py</span><span class="o">::</span><span class="n">init</span><span class="o">&lt;</span><span
+                      class="n">std</span><span class="o">::</span><span class="n">shared_ptr</span><span
+                      class="o">&lt;</span><span class="n">RobotWorldModel</span><span class="o">&gt;&gt;</span><span
+                      class="p">(),</span> <span class="s">&quot;world_model&quot;</span><span class="n">_a</span><span
+                      class="p">,</span> <span class="s">&quot;&quot;</span><span class="p">);</span>
     <span class="n">distcont</span><span class="p">.</span><span class="n">def</span><span class="p">(</span><span
-            class="s">&quot;get_distance_to_robot&quot;</span><span class="p">,</span> <span class="o">&amp;</span><span
-            class="n">DistAwareController</span><span class="o">::</span><span class="n">distanceToRobot</span><span
-            class="p">,</span> <span class="s">&quot;id&quot;</span><span class="n">_a</span><span
-            class="p">,</span> <span class="sa">R</span><span class="s">&quot;</span><span class="dl">doc(</span><span
-            class="s">float: The distance to the robot of id ``id``.</span><span class="dl">)doc</span><span class="s">&quot;</span><span
-            class="p">);</span>
+                      class="s">&quot;get_distance_to_robot&quot;</span><span class="p">,</span> <span
+                      class="o">&amp;</span><span class="n">DistAwareController</span><span class="o">::</span><span
+                      class="n">distanceToRobot</span><span class="p">,</span> <span
+                      class="s">&quot;id&quot;</span><span class="n">_a</span><span class="p">,</span> <span class="sa">R</span><span
+                      class="s">&quot;</span><span class="dl">doc(</span><span class="s">float: The distance to the robot of id ``id``.</span><span
+                      class="dl">)doc</span><span class="s">&quot;</span><span class="p">);</span>
 <span class="p">}</span>
-</pre></div>
-</div>
+</pre>
+          </div>
+      </div>
 <p>We call def on our python class definition and give it its python name, the pointer to the method we want to call, and we provide the name of the arguments as well as a docstring.</p>
 <p>Now, we just have to add our python bindings function to the module. To do so, we must edit the file <code class="docutils literal notranslate"><span class="pre">src/contrib/pyroborobo/customModuleDefinitions.cpp</span></code> and add a call to our function in <code class="docutils literal notranslate"><span class="pre">addCustomBindings</span></code> and an include of our header file.</p>
 <div class="highlight-cpp notranslate"><div class="highlight"><pre><span></span><span class="cp">#include</span> <span class="cpf">&lt;pybind11/pybind11.h&gt;</span><span class="cp"></span>
@@ -427,7 +434,7 @@ an argument a reference to a <code class="docutils literal notranslate"><span cl
           <p>Now that we have compiled our new <code class="docutils literal notranslate"><span
                   class="pre">pyroborobo</span></code> with our custom C++ controller, we can use our new controller and
               our new method.</p>
-          <p>Let’s write a new test in the folder <code class="xref any docutils literal notranslate"><span class="pre">py_example</span></code>
+          <p>Let’s write a new test in the folder <code class="docutils literal notranslate"><span class="pre">py_example</span></code>
               (this folder already contains the pyroborobo data as well as default config files).</p>
           <div class="highlight-python notranslate">
               <div class="highlight"><pre><span></span><span class="kn">from</span> <span

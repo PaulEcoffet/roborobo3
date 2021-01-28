@@ -22,7 +22,8 @@ using namespace pybind11::literals;
 PYBIND11_MODULE(_pyroborobo, m)
 {
     py::options op;
-    op.disable_function_signatures();
+    //op.disable_function_signatures();
+    m.attr("__name__") = "pyroborobo";
     addPyRoboroboBinding(m);
     addPyControllerBinding(m);
     addPyRobotWorldModelBinding(m);

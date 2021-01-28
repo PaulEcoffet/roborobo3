@@ -134,6 +134,8 @@ rob.update(1000)
 Pyroborobo.close()
 ```
 
-PyWorldModel also provides `camera_objects_ids` giving the id of the object seen if any  (otherwise -1), `camera_normalized_distance` (slow due to numpy copy operation) and `camera_angles` (angles in radian between (-π, π]. 0 = just in front, negative = on the right, positive = on the left).
+Controller also provides `get_object_at` giving the reference of the object seen if any  (otherwise None) and many other
+helper methods.
 
-All camera output are `numpy.view` on the raw memory from roborobo, any modification on these value triggers a numpy copy that can impact the fps of roborobo by *a lot*. Avoid copy the most to avoid performance issues.
+All camera output are `numpy.view` on the raw memory from roborobo, any modification on these value triggers a numpy
+copy that can impact the fps of roborobo by *a lot*. Avoid copy the most to avoid performance issues.

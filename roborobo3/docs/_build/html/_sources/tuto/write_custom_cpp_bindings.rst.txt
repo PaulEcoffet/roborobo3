@@ -5,7 +5,7 @@ You can add custom C++ bindings to your pyroborobo installation. To do
 so, you must declare your C++ classes in the pybind11 pyroborobo module.
 
 You should definitely read the `pybind11 tutorial and
-documentation <https://pybind11.readthedocs.io/en/stable/>`__ before
+documentation <https://pybind11.readthedocs.io/en/stable/>`_ before
 trying to write your own bindings.
 
 Looking at the source of the module definitions in
@@ -201,7 +201,7 @@ Using our bindings in python
 
 Now that we have compiled our new ``pyroborobo`` with our custom C++ controller, we can use our new controller and our new method.
 
-Let's write a new test in the folder `py_example` (this folder already contains the pyroborobo data as well as default config files).
+Let's write a new test in the folder ``py_example`` (this folder already contains the pyroborobo data as well as default config files).
 
 
 .. code:: python

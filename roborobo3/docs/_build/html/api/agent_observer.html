@@ -24,7 +24,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -165,41 +164,134 @@
 <dl class="py class">
 <dt id="pyroborobo.AgentObserver">
 <em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">AgentObserver</code><a class="headerlink" href="#pyroborobo.AgentObserver" title="Permalink to this definition">¶</a></dt>
-<dd><p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.AgentObserver.reset" title="pyroborobo.AgentObserver.reset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a></p></td>
-<td><p>Reset the agent observer</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.AgentObserver.step_post" title="pyroborobo.AgentObserver.step_post"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_post</span></code></a></p></td>
-<td><p>Called at each timestep after the agent’s controller.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.AgentObserver.step_pre" title="pyroborobo.AgentObserver.step_pre"><code class="xref py py-obj docutils literal notranslate"><span class="pre">step_pre</span></code></a></p></td>
-<td><p>Called at each timestep before the agent’s controller.</p></td>
-</tr>
-</tbody>
-</table>
-<dl class="py method">
-<dt id="pyroborobo.AgentObserver.reset">
-<code class="sig-name descname">reset</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.AgentObserver.reset" title="Permalink to this definition">¶</a></dt>
-<dd><p>Reset the agent observer</p>
-</dd></dl>
+<dd>
+    <dl class="field-list simple">
+        <dt class="field-odd">Attributes</dt>
+        <dd class="field-odd">
+            <dl class="simple">
+                <dt><a class="reference internal" href="#pyroborobo.AgentObserver.controller"
+                       title="pyroborobo.AgentObserver.controller"><code
+                        class="xref py py-obj docutils literal notranslate"><span
+                        class="pre">controller</span></code></a></dt>
+                <dd><p>Controller: Controller associated with this AgentObserver</p>
+                </dd>
+                <dt><a class="reference internal" href="#pyroborobo.AgentObserver.world_model"
+                       title="pyroborobo.AgentObserver.world_model"><code
+                        class="xref py py-obj docutils literal notranslate"><span class="pre">world_model</span></code></a>
+                </dt>
+                <dd><p>WorldModel: WorldModel associated with this AgentObserver</p>
+                </dd>
+            </dl>
+        </dd>
+    </dl>
+    <p class="rubric">Methods</p>
+    <table class="longtable docutils align-default">
+        <colgroup>
+            <col style="width: 10%"/>
+            <col style="width: 90%"/>
+        </colgroup>
+        <tbody>
+        <tr class="row-odd">
+            <td><p><a class="reference internal" href="#pyroborobo.AgentObserver.reset"
+                      title="pyroborobo.AgentObserver.reset"><code
+                    class="xref py py-obj docutils literal notranslate"><span class="pre">reset</span></code></a>(self)
+            </p></td>
+            <td><p>Reset the agent observer</p></td>
+        </tr>
+        <tr class="row-even">
+            <td><p><a class="reference internal" href="#pyroborobo.AgentObserver.step_post"
+                      title="pyroborobo.AgentObserver.step_post"><code
+                    class="xref py py-obj docutils literal notranslate"><span class="pre">step_post</span></code></a>(self)
+            </p></td>
+            <td><p>Called at each timestep after the agent’s controller.</p></td>
+        </tr>
+        <tr class="row-odd">
+            <td><p><a class="reference internal" href="#pyroborobo.AgentObserver.step_pre"
+                      title="pyroborobo.AgentObserver.step_pre"><code
+                    class="xref py py-obj docutils literal notranslate"><span class="pre">step_pre</span></code></a>(self)
+            </p></td>
+            <td><p>Called at each timestep before the agent’s controller.</p></td>
+        </tr>
+        </tbody>
+    </table>
+    <dl class="py method">
+        <dt id="pyroborobo.AgentObserver.controller">
+            <em class="property">property </em><code class="sig-name descname">controller</code><a class="headerlink"
+                                                                                                   href="#pyroborobo.AgentObserver.controller"
+                                                                                                   title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>Controller associated with this AgentObserver</p>
+            <dl class="field-list simple">
+                <dt class="field-odd">Type</dt>
+                <dd class="field-odd"><p><a class="reference internal" href="controller.html#pyroborobo.Controller"
+                                            title="pyroborobo.Controller">Controller</a></p>
+                </dd>
+            </dl>
+        </dd>
+    </dl>
 
-<dl class="py method">
-<dt id="pyroborobo.AgentObserver.step_post">
-<code class="sig-name descname">step_post</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.AgentObserver.step_post" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called at each timestep after the agent’s controller.</p>
-</dd></dl>
+    <dl class="py method">
+        <dt id="pyroborobo.AgentObserver.reset">
+            <code class="sig-name descname">reset</code><span class="sig-paren">(</span><em class="sig-param"><span
+                class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal"
+                                                                                 href="#pyroborobo.AgentObserver"
+                                                                                 title="pyroborobo.AgentObserver">pyroborobo.AgentObserver</a></span></em><span
+                class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                       href="https://docs.python.org/3/library/constants.html#None"
+                                                       title="(in Python v3.9)">None</a><a class="headerlink"
+                                                                                           href="#pyroborobo.AgentObserver.reset"
+                                                                                           title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>Reset the agent observer</p>
+        </dd>
+    </dl>
 
-<dl class="py method">
-<dt id="pyroborobo.AgentObserver.step_pre">
-<code class="sig-name descname">step_pre</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyroborobo.AgentObserver.step_pre" title="Permalink to this definition">¶</a></dt>
-<dd><p>Called at each timestep before the agent’s controller.</p>
-</dd></dl>
+    <dl class="py method">
+        <dt id="pyroborobo.AgentObserver.step_post">
+            <code class="sig-name descname">step_post</code><span class="sig-paren">(</span><em class="sig-param"><span
+                class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal"
+                                                                                 href="#pyroborobo.AgentObserver"
+                                                                                 title="pyroborobo.AgentObserver">pyroborobo.AgentObserver</a></span></em><span
+                class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                       href="https://docs.python.org/3/library/constants.html#None"
+                                                       title="(in Python v3.9)">None</a><a class="headerlink"
+                                                                                           href="#pyroborobo.AgentObserver.step_post"
+                                                                                           title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>Called at each timestep after the agent’s controller.</p>
+        </dd>
+    </dl>
+
+    <dl class="py method">
+        <dt id="pyroborobo.AgentObserver.step_pre">
+            <code class="sig-name descname">step_pre</code><span class="sig-paren">(</span><em class="sig-param"><span
+                class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal"
+                                                                                 href="#pyroborobo.AgentObserver"
+                                                                                 title="pyroborobo.AgentObserver">pyroborobo.AgentObserver</a></span></em><span
+                class="sig-paren">)</span> &#x2192; <a class="reference external"
+                                                       href="https://docs.python.org/3/library/constants.html#None"
+                                                       title="(in Python v3.9)">None</a><a class="headerlink"
+                                                                                           href="#pyroborobo.AgentObserver.step_pre"
+                                                                                           title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>Called at each timestep before the agent’s controller.</p>
+        </dd>
+    </dl>
+
+    <dl class="py method">
+        <dt id="pyroborobo.AgentObserver.world_model">
+            <em class="property">property </em><code class="sig-name descname">world_model</code><a class="headerlink"
+                                                                                                    href="#pyroborobo.AgentObserver.world_model"
+                                                                                                    title="Permalink to this definition">¶</a>
+        </dt>
+        <dd><p>WorldModel associated with this AgentObserver</p>
+            <dl class="field-list simple">
+                <dt class="field-odd">Type</dt>
+                <dd class="field-odd"><p>WorldModel</p>
+                </dd>
+            </dl>
+        </dd>
+    </dl>
 
 </dd></dl>
 

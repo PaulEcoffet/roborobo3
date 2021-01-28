@@ -4,7 +4,7 @@
  *
  * Sphinx JavaScript utilities for all documentation.
  *
- * :copyright: Copyright 2007-2020 by the Sphinx team, see AUTHORS.
+ * :copyright: Copyright 2007-2021 by the Sphinx team, see AUTHORS.
  * :license: BSD, see LICENSE for details.
  *
  */
@@ -284,10 +284,11 @@ var Documentation = {
 
   initOnKeyListeners: function() {
     $(document).keydown(function(event) {
-      var activeElementType = document.activeElement.tagName;
-        // don't navigate when in search box or textarea
+        var activeElementType = document.activeElement.tagName;
+        // don't navigate when in search box, textarea, dropdown or button
         if (activeElementType !== 'TEXTAREA' && activeElementType !== 'INPUT' && activeElementType !== 'SELECT'
-            && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey) {
+            && activeElementType !== 'BUTTON' && !event.altKey && !event.ctrlKey && !event.metaKey
+            && !event.shiftKey) {
             switch (event.keyCode) {
                 case 37: // left
                     var prevHref = $('link[rel="prev"]').prop('href');
@@ -298,11 +299,11 @@ var Documentation = {
                 case 39: // right
                     var nextHref = $('link[rel="next"]').prop('href');
                     if (nextHref) {
-              window.location.href = nextHref;
-              return false;
+                        window.location.href = nextHref;
+                        return false;
+                    }
             }
         }
-      }
     });
   }
 };

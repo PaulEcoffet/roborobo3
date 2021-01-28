@@ -24,7 +24,6 @@
         <script src="../_static/jquery.js"></script>
         <script src="../_static/underscore.js"></script>
         <script src="../_static/doctools.js"></script>
-        <script src="../_static/language_data.js"></script>
     
     <script type="text/javascript" src="../_static/js/theme.js"></script>
 
@@ -238,14 +237,30 @@
 </pre></div>
 </div>
 <p>Then, when we create our Pyroborobo object, we must pass a dictionary mapping the <code class="docutils literal notranslate"><span class="pre">pytype</span></code> key to our object classes. The Controller classes comes from the previous tutorial</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;config/pywander_pyobj.properties&quot;</span><span class="p">,</span>
-                        <span class="n">controller_class</span><span class="o">=</span><span class="n">SimpleController</span><span class="p">,</span>
-                        <span class="n">world_model_class</span><span class="o">=</span><span class="n">PyWorldModel</span><span class="p">,</span>
-                        <span class="n">object_class_dict</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;gate&#39;</span><span class="p">:</span> <span class="n">GateObject</span><span class="p">,</span> <span class="s1">&#39;switch&#39;</span><span class="p">:</span> <span class="n">SwitchObject</span><span class="p">})</span>
+<div class="highlight-python notranslate">
+    <div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span
+            class="kn">import</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">PyWorldModel</span>
+<span class="kn">from</span> <span class="nn">controllers</span> <span class="kn">import</span> <span class="n">SimpleController</span>
+<span class="kn">from</span> <span class="nn">objects</span> <span class="kn">import</span> <span
+                class="n">GateObject</span><span class="p">,</span> <span class="n">SwitchObject</span>
+
+<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span
+                class="n">create</span><span class="p">(</span><span class="s2">&quot;config/pywander_pyobj.properties&quot;</span><span
+                class="p">,</span>
+                        <span class="n">controller_class</span><span class="o">=</span><span
+                class="n">SimpleController</span><span class="p">,</span>
+                        <span class="n">world_model_class</span><span class="o">=</span><span
+                class="n">PyWorldModel</span><span class="p">,</span>
+                        <span class="n">object_class_dict</span><span class="o">=</span><span class="p">{</span><span
+                class="s1">&#39;gate&#39;</span><span class="p">:</span> <span class="n">GateObject</span><span
+                class="p">,</span> <span class="s1">&#39;switch&#39;</span><span class="p">:</span> <span class="n">SwitchObject</span><span
+                class="p">})</span>
 <span class="n">rob</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">3000</span><span class="p">)</span>
+<span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">3000</span><span
+                class="p">)</span>
 <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
+</pre>
+    </div>
 </div>
 <p>We can also tell roborobo that we want objects without explicitly giving their pytype. To do so, we will overwrite the <code class="docutils literal notranslate"><span class="pre">gPhysicalObjectDefaultType</span></code> in the property file. This entry takes an id to a C++ Physical object class. To tell pyroborobo that we want python default object, we must set the value of this property to -1.</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">gPhysicalObjectDefaultType</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
@@ -289,6 +304,7 @@
 
 <span class="kn">from</span> <span class="nn">controllers</span> <span class="kn">import</span> <span class="n">HungryController</span>
 <span class="kn">from</span> <span class="nn">objects</span> <span class="kn">import</span> <span class="n">SwitchObject</span><span class="p">,</span> <span class="n">GateObject</span><span class="p">,</span> <span class="n">ResourceObject</span>
+
 <span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
     <span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;config/pywander_pyobj_resource.properties&quot;</span><span class="p">,</span>
                             <span class="n">controller_class</span><span class="o">=</span><span class="n">HungryController</span><span class="p">,</span>

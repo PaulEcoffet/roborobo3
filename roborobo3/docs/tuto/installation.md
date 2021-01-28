@@ -25,7 +25,8 @@ The dependencies are numpy and pybind11 on the python side. For the c++ side, yo
 If you have not done it with conda before (or pip if you don’t use conda):
 
 ```bash
-conda install pybind11 numpy
+conda install numpy
+conda install -c conda-forge pybind11  # install latest pybind11
 # or with pip
 # pip install -U pybind11
 # pip install -U numpy
@@ -59,7 +60,7 @@ open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
 Many examples are available
-on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example)
 
 ## Mac OS
 
@@ -82,7 +83,8 @@ The dependencies are numpy and pybind11 on the python side. For the c++ side, yo
 If you have not done it with conda before:
 
 ```bash
-conda install pybind11 numpy
+conda install numpy
+conda install -c conda-forge pybind11  # install latest pybind11
 # or with pip
 # pip install -U pybind11
 # pip install -U numpy
@@ -113,4 +115,5 @@ The documentation is available by opening:
 open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
-Many examples are available on `github in the py_example folder <https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example>`_ 
+Many examples are available
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example) 
