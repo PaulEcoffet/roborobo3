@@ -60,7 +60,7 @@ open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
 Many examples are available
-on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example)
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).
 
 ## Mac OS
 
@@ -116,4 +116,4 @@ open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
 Many examples are available
-on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example) 
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).
