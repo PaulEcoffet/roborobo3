@@ -284,26 +284,26 @@ var Documentation = {
 
   initOnKeyListeners: function() {
     $(document).keydown(function(event) {
-        var activeElementType = document.activeElement.tagName;
-        // don't navigate when in search box, textarea, dropdown or button
-        if (activeElementType !== 'TEXTAREA' && activeElementType !== 'INPUT' && activeElementType !== 'SELECT'
-            && activeElementType !== 'BUTTON' && !event.altKey && !event.ctrlKey && !event.metaKey
-            && !event.shiftKey) {
-            switch (event.keyCode) {
-                case 37: // left
-                    var prevHref = $('link[rel="prev"]').prop('href');
-                    if (prevHref) {
-                        window.location.href = prevHref;
-                        return false;
-                    }
-                case 39: // right
-                    var nextHref = $('link[rel="next"]').prop('href');
-                    if (nextHref) {
-                        window.location.href = nextHref;
-                        return false;
-                    }
+      var activeElementType = document.activeElement.tagName;
+      // don't navigate when in search box, textarea, dropdown or button
+      if (activeElementType !== 'TEXTAREA' && activeElementType !== 'INPUT' && activeElementType !== 'SELECT'
+          && activeElementType !== 'BUTTON' && !event.altKey && !event.ctrlKey && !event.metaKey
+          && !event.shiftKey) {
+        switch (event.keyCode) {
+          case 37: // left
+            var prevHref = $('link[rel="prev"]').prop('href');
+            if (prevHref) {
+              window.location.href = prevHref;
+              return false;
+            }
+          case 39: // right
+            var nextHref = $('link[rel="next"]').prop('href');
+            if (nextHref) {
+              window.location.href = nextHref;
+              return false;
             }
         }
+      }
     });
   }
 };

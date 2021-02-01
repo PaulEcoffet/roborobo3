@@ -45,22 +45,13 @@ cd roborobo3/roborobo3
 python setup.py install --force
 ```
 
-The documentation is available by opening:
-
-for linux:
+The documentation is available by opening `docs/_build/html/index.html`, you can do it using this shell command:
 
 ```bash
 xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
-
-for macOS:
-
-```bash
-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
-```
-
 Many examples are available
-on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example)
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).
 
 ## Mac OS
 
@@ -96,6 +87,7 @@ I use the SDL2 from brew, it *might* work with the .framework. If it does not :
 brew install sdl2
 brew install sdl2_image
 brew install boost
+brew install eigen
 brew install cmake
 ```
 
@@ -109,10 +101,11 @@ python setup.py install --force
 ```
 
 
-The documentation is available by opening:
+The documentation is available by opening `docs/_build/html/index.html`, you can do it using this shell command:
 
 ```bash
 open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
-Many examples are available on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example) 
+Many examples are available
+on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).

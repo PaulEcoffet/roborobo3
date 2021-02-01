@@ -199,29 +199,18 @@ the <code class="docutils literal notranslate"><span class="pre">update(nb_updat
 <p>To do so, we must create a class that codes the new behaviour and provide it to the <code class="docutils literal notranslate"><span class="pre">Pyroborobo.create</span></code> method. The class that we use must inherit from the <em>Py</em> variant of the base class. Let’s say we want to code a new Controller, to do so we create a new class <code class="docutils literal notranslate"><span class="pre">SimpleController</span></code> that inherits from <code class="docutils literal notranslate"><span class="pre">Controller</span></code>. Like in roborobo, we must provide a <code class="docutils literal notranslate"><span class="pre">step</span></code> method and a <code class="docutils literal notranslate"><span class="pre">reset</span></code> method to this controller. Let’s add this to our <code class="docutils literal notranslate"><span class="pre">main.py</span></code> document before creating the <code class="docutils literal notranslate"><span class="pre">Pyroborobo</span></code> object.</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Controller</span>
 
-<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span
-            class="n">Controller</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
         <span class="c1"># It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart</span>
-        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span
-            class="p">(</span><span class="n">world_model</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span
-            class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">world_model</span><span class="p">)</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span
-            class="s2">&quot;I&#39;m initialised&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m initialised&quot;</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">):</span>  <span class="c1"># step is called at each time step</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span
-            class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span
-            class="c1"># Let&#39;s go forward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span
-            class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span
-            class="c1"># and do not turn</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># step is called at each time step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Let&#39;s go forward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># and do not turn</span>
 </pre></div>
 </div>
 <p>Then, let’s edit our code to tell roborobo to use our new controller.</p>
@@ -232,108 +221,64 @@ the <code class="docutils literal notranslate"><span class="pre">update(nb_updat
 <p>This is what <code class="docutils literal notranslate"><span class="pre">main.py</span></code> should look like :</p>
 <div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">PyWorldModel</span>
 
-<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span
-            class="n">Controller</span><span class="p">):</span>
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
         <span class="c1"># It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart</span>
-        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span
-            class="p">(</span><span class="bp">self</span><span class="p">,</span> <span
-            class="n">world_model</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span
-            class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">)</span> 
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span
-            class="s2">&quot;I&#39;m initialised&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m initialised&quot;</span><span class="p">)</span>
     
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">):</span>  <span class="c1"># step is called at each time step</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span
-            class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span
-            class="c1"># Let&#39;s go forward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">setrotation</span><span
-            class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span
-            class="c1"># and do not turn</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># step is called at each time step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Let&#39;s go forward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setrotation</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>  <span class="c1"># and do not turn</span>
 
-<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span
-            class="n">create</span><span class="p">(</span><span class="s2">&quot;config/template_wander_smallrobots.properties&quot;</span><span
-            class="p">,</span>
-                        <span class="n">controller_class</span><span class="o">=</span><span
-            class="n">SimpleController</span><span class="p">)</span>
+<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;config/template_wander_smallrobots.properties&quot;</span><span class="p">,</span>
+                        <span class="n">controller_class</span><span class="o">=</span><span class="n">SimpleController</span><span class="p">)</span>
 <span class="n">rob</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1000</span><span
-            class="p">)</span>
+<span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 <p>The controller has a world_model object to access and manipulate the robot behaviour. By default, the world_model object is a binding to the <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code> object and the available methods and fields are limited. Even if you have extended in cpp the <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code>, only the <code class="docutils literal notranslate"><span class="pre">RobotWorldModel</span></code> fields and methods are accessible.</p>
 <p>It is also possible to override RobotWorldModel to extend its functionalities. pyroborobo provides the class <code class="docutils literal notranslate"><span class="pre">PyWorldModel</span></code> which already add many functionalities like the access to the camera sensors. We must tell that we want to use <code class="docutils literal notranslate"><span class="pre">PyWorldModel</span></code> to our <code class="docutils literal notranslate"><span class="pre">Pyroborobo</span></code> object.
 Let’s create a very simple obstacle avoidance controller.</p>
-<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span
-        class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Pyroborobo</span><span
-        class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PyWorldModel</span>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">pyroborobo</span> <span class="kn">import</span> <span class="n">Pyroborobo</span><span class="p">,</span> <span class="n">Controller</span><span class="p">,</span> <span class="n">PyWorldModel</span>
 
-<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span
-            class="n">Controller</span><span class="p">):</span>
+<span class="k">class</span> <span class="nc">SimpleController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
     <span class="n">world_model</span><span class="p">:</span> <span class="n">PyWorldModel</span>  <span class="c1"># Predeclare that world_model is a PyWorldModel for better code completion</span>
 
-    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">):</span>
         <span class="c1"># It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart</span>
-        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span
-            class="p">(</span><span class="bp">self</span><span class="p">,</span> <span
-            class="n">world_model</span><span class="p">)</span>
-        <span class="nb">print</span><span class="p">(</span><span
-            class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
+        <span class="n">Controller</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world_model</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m a Python controller&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">):</span>
-        <span class="nb">print</span><span class="p">(</span><span
-            class="s2">&quot;I&#39;m initialised&quot;</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;I&#39;m initialised&quot;</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span
-            class="p">):</span>  <span class="c1"># step is called at each time step</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span
-            class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span
-            class="c1"># Let&#39;s go forward</span>
-        <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span
-            class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>  <span class="c1"># step is called at each time step</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_translation</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># Let&#39;s go forward</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
         <span class="c1"># Now, our world_model object is a PyWorldModel, we can have access to camera_* properties</span>
-        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span
-            class="n">get_distance_at</span><span class="p">(</span><span class="mi">1</span><span
-            class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="c1"># if we see something on our left</span>
-                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_distance_at</span><span
-            class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span
-            class="mi">1</span><span class="p">):</span> <span class="c1"># or in front of us</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span
-            class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># turn right</span>
-        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span
-            class="n">get_distance_at</span><span class="p">(</span><span class="mi">3</span><span
-            class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span
-            class="c1"># Otherwise, if we see something on our right</span>
-            <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span
-            class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span
-            class="c1"># turn left</span>
+        <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_distance_at</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="c1"># if we see something on our left</span>
+                <span class="ow">or</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_distance_at</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># or in front of us</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># turn right</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_distance_at</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># Otherwise, if we see something on our right</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">set_rotation</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span> <span class="c1"># turn left</span>
 
-<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span
-            class="n">create</span><span class="p">(</span><span class="s2">&quot;config/template_wander_smallrobots.properties&quot;</span><span
-            class="p">,</span>
-                        <span class="n">controller_class</span><span class="o">=</span><span
-            class="n">SimpleController</span><span class="p">,</span>
-                        <span class="n">world_model_class</span><span class="o">=</span><span
-            class="n">PyWorldModel</span><span class="p">)</span>
+<span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;config/template_wander_smallrobots.properties&quot;</span><span class="p">,</span>
+                        <span class="n">controller_class</span><span class="o">=</span><span class="n">SimpleController</span><span class="p">,</span>
+                        <span class="n">world_model_class</span><span class="o">=</span><span class="n">PyWorldModel</span><span class="p">)</span>
 <span class="n">rob</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
-<span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1000</span><span
-            class="p">)</span>
+<span class="n">rob</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
 <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
-      <p>Controller also provides <code class="docutils literal notranslate"><span
-              class="pre">get_object_at</span></code> giving the reference of the object seen if any (otherwise None)
-          and many other helper methods.</p>
-<p>All camera output are <code class="docutils literal notranslate"><span class="pre">numpy.view</span></code> on the raw memory from roborobo, any modification on these value triggers a numpy copy that can impact the fps of roborobo by <em>a lot</em>. Avoid copy the most to avoid performance issues.</p>
+<p>Controller also provides <code class="docutils literal notranslate"><span class="pre">get_object_at</span></code> giving the reference of the object seen if any  (otherwise None) and many other
+helper methods.</p>
+<p>All camera output are <code class="docutils literal notranslate"><span class="pre">numpy.view</span></code> on the raw memory from roborobo, any modification on these value triggers a numpy
+copy that can impact the fps of roborobo by <em>a lot</em>. Avoid copy the most to avoid performance issues.</p>
 </div>
 
 
