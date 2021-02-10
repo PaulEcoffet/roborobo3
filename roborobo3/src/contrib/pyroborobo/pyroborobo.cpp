@@ -63,9 +63,7 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
         :
         currentIt(0)
 {
-    std::cout << properties_file << "\n";
     bool success = loadProperties(properties_file);
-    std::cout << success << "\n";
     if (!success)
     {
         throw std::runtime_error("Impossible to load the property files. Did you provide the correct path?");
