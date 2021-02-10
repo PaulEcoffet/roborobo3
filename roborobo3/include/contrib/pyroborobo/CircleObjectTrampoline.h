@@ -90,12 +90,12 @@ public:
         PYBIND11_OVERLOAD(std::string, BaseCircle, inspect, prefix);
     }
 
-    virtual void relocate()
+    void relocate() override
     {
         PYBIND11_OVERLOAD(void, BaseCircle, relocate,);
     }
 
-    virtual bool relocate(int x, int y)
+    bool relocate(int x, int y) override
     {
         PYBIND11_OVERLOAD(bool, BaseCircle, relocate, x, y);
     }
@@ -176,12 +176,12 @@ public:
         PYBIND11_OVERLOAD(std::string, BaseCircle, inspect, prefix);
     }
 
-    virtual void relocate()
+    void relocate() override
     {
         PYBIND11_OVERLOAD(void, BaseCircle, relocate,);
     }
 
-    virtual bool relocate(int x, int y)
+    bool relocate(int x, int y) override
     {
         PYBIND11_OVERLOAD(bool, BaseCircle, relocate, x, y);
     }

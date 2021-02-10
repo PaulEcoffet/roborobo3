@@ -33,7 +33,7 @@ class InspectorAgent : public Agent
 
 		
 		//Shows the dot on the screen
-		virtual void show(SDL_Surface *surface);
+		void show(SDL_Surface *surface) override;
 		
 		/*
 		//Sets the camera over the dot

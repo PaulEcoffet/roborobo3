@@ -33,7 +33,7 @@ std::shared_ptr<PhysicalObject> PyPhysicalObjectFactory::makeObject(const std::s
 
 void PyPhysicalObjectFactory::updateObjectConstructionDict(const py::dict &constructionDict)
 {
-    for (auto &keyval : constructionDict)
+    for (auto keyval : constructionDict)
     {
         auto key = keyval.first.cast<std::string>();
         (*objectConstructionDict)[key] = py::reinterpret_borrow<py::object>(keyval.second);

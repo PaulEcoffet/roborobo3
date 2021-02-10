@@ -79,12 +79,12 @@ public:
         PYBIND11_OVERLOAD_PURE(std::string, BaseSquare, inspect, prefix);
     }
 
-    virtual void relocate()
+    void relocate() override
     {
         PYBIND11_OVERLOAD(void, BaseSquare, relocate,);
     }
 
-    virtual bool relocate(int x, int y)
+    bool relocate(int x, int y) override
     {
         PYBIND11_OVERLOAD(bool, BaseSquare, relocate, x, y);
     }
@@ -163,12 +163,12 @@ public:
         PYBIND11_OVERLOAD(std::string, BaseSquare, inspect, prefix);
     }
 
-    virtual void relocate()
+    void relocate() override
     {
         PYBIND11_OVERLOAD(void, BaseSquare, relocate,);
     }
 
-    virtual bool relocate(int x, int y)
+    bool relocate(int x, int y) override
     {
         PYBIND11_OVERLOAD(bool, BaseSquare, relocate, x, y);
     }

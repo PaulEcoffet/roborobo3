@@ -81,7 +81,6 @@ private:
                                        py::object &agentObserverClass,
                                        py::object &objectClass);
 
-    InspectorAgent *inspectorAgent = nullptr;
     Timer fps;
     World *world = nullptr;
     long long currentIt = 0;
