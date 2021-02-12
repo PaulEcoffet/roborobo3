@@ -77,6 +77,7 @@ intersphinx_mapping = {'python': ('http://docs.python.org/3', None),
                        'pybind11': ('http://pybind11.readthedocs.io/en/stable/', None)
                        }
 default_role = 'any'
+numpydoc_show_class_members = False
 
 def setup(app):
     app.add_config_value('recommonmark_config', {

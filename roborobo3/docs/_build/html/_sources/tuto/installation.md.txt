@@ -16,7 +16,7 @@ git clone -b cleanpyroborobo https://github.com/PaulEcoffet/roborobo3.git
 Then, we must compile pyroborobo with the python interpreter that *you* intend to use for your own projects. You may want to create a new conda environment.
 
 ```bash
-conda create --name pyrob numpy pybind11
+conda create --name pyrob numpy pybind11 setuptools
 conda activate pyrob
 ```
 
@@ -25,7 +25,7 @@ The dependencies are numpy and pybind11 on the python side. For the c++ side, yo
 If you have not done it with conda before (or pip if you don’t use conda):
 
 ```bash
-conda install numpy
+conda install numpy setuptools
 conda install -c conda-forge pybind11  # install latest pybind11
 # or with pip
 # pip install -U pybind11
@@ -74,7 +74,7 @@ The dependencies are numpy and pybind11 on the python side. For the c++ side, yo
 If you have not done it with conda before:
 
 ```bash
-conda install numpy
+conda install numpy setuptools
 conda install -c conda-forge pybind11  # install latest pybind11
 # or with pip
 # pip install -U pybind11
@@ -106,6 +106,18 @@ The documentation is available by opening `docs/_build/html/index.html`, you can
 ```bash
 open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
+
+You can also build the docs yourself:
+
+```bash
+conda install sphinx recommonmark sphinx_rtd_theme numpydoc
+
+cd <yourpyroborobofolder>/roborobo3/roborobo3/docs
+make clean && make html
+open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
+```
+
+Building the doc output a lot of warning but they are generated just fine.
 
 Many examples are available
 on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).

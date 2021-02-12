@@ -176,13 +176,13 @@ git clone -b cleanpyroborobo https://github.com/PaulEcoffet/roborobo3.git
 </pre></div>
 </div>
 <p>Then, we must compile pyroborobo with the python interpreter that <em>you</em> intend to use for your own projects. You may want to create a new conda environment.</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create --name pyrob numpy pybind11
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda create --name pyrob numpy pybind11 setuptools
 conda activate pyrob
 </pre></div>
 </div>
 <p>The dependencies are numpy and pybind11 on the python side. For the c++ side, you need SDL2 and boost.</p>
 <p>If you have not done it with conda before (or pip if you don’t use conda):</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install numpy
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install numpy setuptools
 conda install -c conda-forge pybind11  <span class="c1"># install latest pybind11</span>
 <span class="c1"># or with pip</span>
 <span class="c1"># pip install -U pybind11</span>
@@ -219,7 +219,7 @@ conda activate pyrob
 </div>
 <p>The dependencies are numpy and pybind11 on the python side. For the c++ side, you need SDL2 and boost.</p>
 <p>If you have not done it with conda before:</p>
-<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install numpy
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install numpy setuptools
 conda install -c conda-forge pybind11  <span class="c1"># install latest pybind11</span>
 <span class="c1"># or with pip</span>
 <span class="c1"># pip install -U pybind11</span>
@@ -243,6 +243,15 @@ brew install cmake
 <div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>open &lt;yourpyroborobofolder&gt;/roborobo3/roborobo3/docs/_build/html/index.html
 </pre></div>
 </div>
+<p>You can also build the docs yourself:</p>
+<div class="highlight-bash notranslate"><div class="highlight"><pre><span></span>conda install sphinx recommonmark sphinx_rtd_theme numpydoc
+
+<span class="nb">cd</span> &lt;yourpyroborobofolder&gt;/roborobo3/roborobo3/docs
+make clean <span class="o">&amp;&amp;</span> make html
+open &lt;yourpyroborobofolder&gt;/roborobo3/roborobo3/docs/_build/html/index.html
+</pre></div>
+</div>
+<p>Building the doc output a lot of warning but they are generated just fine.</p>
 <p>Many examples are available
 on <a class="reference external" href="https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example">github in the py_example folder</a>.</p>
 </div>

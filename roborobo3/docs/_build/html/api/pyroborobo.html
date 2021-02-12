@@ -165,53 +165,6 @@
 <dt id="pyroborobo.Pyroborobo">
 <em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">Pyroborobo</code><a class="headerlink" href="#pyroborobo.Pyroborobo" title="Permalink to this definition">¶</a></dt>
 <dd><p>Python interface to the roborobo simulator</p>
-<dl class="field-list simple">
-<dt class="field-odd">Attributes</dt>
-<dd class="field-odd"><dl class="simple">
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.agent_observers" title="pyroborobo.Pyroborobo.agent_observers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">agent_observers</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="agent_observer.html#pyroborobo.AgentObserver" title="pyroborobo.AgentObserver"><code class="xref py py-class docutils literal notranslate"><span class="pre">AgentObserver</span></code></a>: The ordered list of all the agent observers in the simulation</p>
-</dd>
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.controllers" title="pyroborobo.Pyroborobo.controllers"><code class="xref py py-obj docutils literal notranslate"><span class="pre">controllers</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="controller.html#pyroborobo.Controller" title="pyroborobo.Controller"><code class="xref py py-class docutils literal notranslate"><span class="pre">Controller</span></code></a>: The ordered list of all the controllers in the simulation</p>
-</dd>
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.objects" title="pyroborobo.Pyroborobo.objects"><code class="xref py py-obj docutils literal notranslate"><span class="pre">objects</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <a class="reference internal" href="squareobject.html#pyroborobo.PhysicalObject" title="pyroborobo.PhysicalObject"><code class="xref py py-class docutils literal notranslate"><span class="pre">pyroborobo.PhysicalObject</span></code></a>: The ordered list of all the objects in the simulation.</p>
-</dd>
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.robot_index_offset" title="pyroborobo.Pyroborobo.robot_index_offset"><code class="xref py py-obj docutils literal notranslate"><span class="pre">robot_index_offset</span></code></a></dt><dd><p>int: Index at which the robot ids start</p>
-</dd>
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.robots" title="pyroborobo.Pyroborobo.robots"><code class="xref py py-obj docutils literal notranslate"><span class="pre">robots</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <code class="xref py py-class docutils literal notranslate"><span class="pre">pyroborobo.Robot</span></code>: The ordered list of all the robots in the simulation</p>
-</dd>
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.world_models" title="pyroborobo.Pyroborobo.world_models"><code class="xref py py-obj docutils literal notranslate"><span class="pre">world_models</span></code></a></dt><dd><p><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.9)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a> of <code class="xref py py-class docutils literal notranslate"><span class="pre">WorldModel</span></code>: The ordered list of all the world models in the simulation</p>
-</dd>
-<dt><a class="reference internal" href="#pyroborobo.Pyroborobo.world_observer" title="pyroborobo.Pyroborobo.world_observer"><code class="xref py py-obj docutils literal notranslate"><span class="pre">world_observer</span></code></a></dt><dd><p><a class="reference internal" href="worldobserver.html#pyroborobo.WorldObserver" title="pyroborobo.WorldObserver"><code class="xref py py-obj docutils literal notranslate"><span class="pre">pyroborobo.WorldObserver</span></code></a>: The World Observer of the roborobo environment</p>
-</dd>
-</dl>
-</dd>
-</dl>
-<p class="rubric">Methods</p>
-<table class="longtable docutils align-default">
-<colgroup>
-<col style="width: 10%" />
-<col style="width: 90%" />
-</colgroup>
-<tbody>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.close" title="pyroborobo.Pyroborobo.close"><code class="xref py py-obj docutils literal notranslate"><span class="pre">close</span></code></a>()</p></td>
-<td><p>Exit the simulator nicely</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.create" title="pyroborobo.Pyroborobo.create"><code class="xref py py-obj docutils literal notranslate"><span class="pre">create</span></code></a>(properties_file, …)</p></td>
-<td><p>Create the singleton Pyroborobo</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.get" title="pyroborobo.Pyroborobo.get"><code class="xref py py-obj docutils literal notranslate"><span class="pre">get</span></code></a>()</p></td>
-<td><p>Return the pyroborobo instance</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.is_id_robot" title="pyroborobo.Pyroborobo.is_id_robot"><code class="xref py py-obj docutils literal notranslate"><span class="pre">is_id_robot</span></code></a>(*args, **kwargs)</p></td>
-<td><p>Overloaded function.</p></td>
-</tr>
-<tr class="row-odd"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.start" title="pyroborobo.Pyroborobo.start"><code class="xref py py-obj docutils literal notranslate"><span class="pre">start</span></code></a>(self)</p></td>
-<td><p>Starts the simulator.</p></td>
-</tr>
-<tr class="row-even"><td><p><a class="reference internal" href="#pyroborobo.Pyroborobo.update" title="pyroborobo.Pyroborobo.update"><code class="xref py py-obj docutils literal notranslate"><span class="pre">update</span></code></a>(self, nb_updates)</p></td>
-<td><p>Performs a simulator evaluation of <code class="docutils literal notranslate"><span class="pre">nb_updates</span></code> time steps.</p></td>
-</tr>
-</tbody>
-</table>
 <dl class="py method">
 <dt id="pyroborobo.Pyroborobo.agent_observers">
 <em class="property">property </em><code class="sig-name descname">agent_observers</code><a class="headerlink" href="#pyroborobo.Pyroborobo.agent_observers" title="Permalink to this definition">¶</a></dt>
