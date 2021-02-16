@@ -28,6 +28,7 @@ class HungryController(SimpleController):
     def __init__(self, wm):
         super().__init__(wm)
         self.rob = Pyroborobo.get()
+        self.rotspeed = 0.5
 
     def step(self):
         self.set_translation(1)  # Let's go forward
@@ -39,23 +40,32 @@ class HungryController(SimpleController):
         camera_max_range = self.world_model.maxdistcamera
         camera_ids = self.world_model.camera_objects_ids
         if camera_dist[1] < camera_max_range:  # if we see something on our right
-            if self._is_food(camera_ids[1]):  # And it is food
-                self.set_rotation(-1)  # GO TOWARD IT
+            if self.get_object_at(1):  # And it is food
+                self.set_rotation(-self.rotspeed)  # GO TOWARD IT
             else:
-                self.set_rotation(1)  # flee it
+                self.set_rotation(self.rotspeed)  # flee it
                 must_flee = True
         elif camera_dist[2] < camera_max_range:  # if we see something in front of us
-            if self._is_food(camera_ids[2]) and not must_flee:  # If we are not avoiding obstacle and it's food
+            if self.get_object_at(2) and not must_flee:  # If we are not avoiding obstacle and it's food
                 self.set_rotation(0)
             else:
-                self.set_rotation(1)  # turn left
+                self.set_rotation(self.rotspeed)  # turn left
                 must_flee = True
         elif camera_dist[3] < camera_max_range:  # Otherwise, if we see something on our right
-            if self._is_food(camera_ids[3]) and not must_flee:
-                self.set_rotation(1)  # turn left
+            if self.get_object_at(3) and not must_flee:
+                self.set_rotation(self.rotspeed)  # turn left
             else:
-                self.set_rotation(-1)
+                self.set_rotation(-self.rotspeed)
                 must_flee = True
 
-    def _is_food(self, id_):
-        return not self.rob.is_id_robot(id_)
+    def inspect(self, prefix):
+        output = ""
+        for i in range(self.nb_sensors):
+            output += f"""sensor {i}:
+    dist: {self.get_distance_at(i)}
+    id: {self.world_model.camera_objects_ids[i]}
+    nbobjs: {len(self.rob.objects)}
+    is_object: {self.get_object_at(i)}
+    is_robot: {self.get_robot_id_at(i)}
+    is_wall: {self.get_wall_at(i)}\n\n"""
+        return output

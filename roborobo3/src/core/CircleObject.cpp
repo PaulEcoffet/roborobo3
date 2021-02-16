@@ -207,7 +207,7 @@ void CircleObject::registerObject()
     PhysicalObject::registerObject(); // call to superclass method
     
     int id_converted = _id + gPhysicalObjectIndexStartOffset;
-    
+
     //  draw footprint
     
     Uint32 color = SDL_MapRGBA( gFootprintImage->format, (Uint8)((id_converted & 0xFF0000)>>16), (Uint8)((id_converted & 0xFF00)>>8), (Uint8)(id_converted & 0xFF), SDL_ALPHA_OPAQUE );

@@ -12,6 +12,7 @@
 #define CONTROLLER_H
 
 #include <iostream>
+#include <World/PhysicalObject.h>
 #include "RoboroboMain/common.h"
 #include "Utilities/Geometry.h"
 
@@ -169,7 +170,8 @@ public:
         double getCompass();
     
         // #### #### #### #### #### #### #### #### #### #### #### #### ####
-    
+
+    std::shared_ptr<PhysicalObject> getObjectInstanceAt(int sensorId);
 };
 
 

@@ -1,5 +1,5 @@
-from controllers import HungryController
-from objects import SwitchObject, GateObject, ResourceObject
+from custom.controllers import HungryController
+from custom.objects import SwitchObject, GateObject, ResourceObject
 
 from pyroborobo import Pyroborobo, PyWorldModel
 

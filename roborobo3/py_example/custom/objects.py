@@ -94,3 +94,6 @@ class ResourceObject(CircleObject):
         self.cur_regrow = self.regrow_time
         self.hide()
         self.unregister()
+
+    def inspect(self, prefix=""):
+        return f"""I'm a ResourceObject with id: {self.id}"""

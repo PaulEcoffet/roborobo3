@@ -19,7 +19,6 @@ std::shared_ptr<PhysicalObject> PyPhysicalObjectFactory::makeObject(const std::s
     {
         py::dict data = PyPhysicalObjectFactory::getObjectData(id);
         py::object pyobj = (*objectConstructionDict)[type](id, data);
-        py::print(pyobj);
         obj = pyobj.cast<std::shared_ptr<PhysicalObject> >();
         objectList->emplace_back(pyobj); /* Save the object ref to avoid unexpected gc from python */
     }

@@ -1,15 +1,16 @@
 cmake_minimum_required(VERSION 3.5)
 project(roborobo3)
+set(CMAKE_BUILD_TYPE Debug)
 
 if (NOT DEFINED CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug)
 endif ()
 message("Type of build: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Wall")
+set(CMAKE_CXX_FLAGS "-Wall -g -O0")
 
 
-#SET(PYTHON_EXECUTABLE /home/pecoffet/anaConda3/bin/python)
+#SET(PYTHON_EXECUTABLE /home/pecoffet/anaconda3/bin/python)
 
 if (DEFINED ENV{PYTHON_EXECUTABLE})
     SET(PYTHON_EXECUTABLE $ENV{PYTHON_EXECUTABLE})

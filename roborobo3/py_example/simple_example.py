@@ -1,5 +1,5 @@
 from pyroborobo import Pyroborobo, PyWorldModel
-from controllers import SimpleController
+from custom.controllers import SimpleController
 
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander.properties",

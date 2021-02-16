@@ -90,23 +90,18 @@ void Controller::refreshInputs(){
         distanceSensors.push_back(_wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i));
         
         int objectId = _wm->getObjectIdFromCameraSensor(i);
-        
         if ( gSensoryInputs_physicalObjectType )
         {
             // input: physical object? which type?
             if ( PhysicalObject::isInstanceOf(objectId) )
             {
-                objectDetectors.push_back( 1 ); // match
+                objectDetectors.push_back(objectId); // match
                 objectTypeDetectors.push_back( gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset]->getType() );
             }
             else
             {
-                // not a physical object. But: should still fill in the inputs (with zeroes)
-                int nbOfTypes = PhysicalObjectFactory::getNbOfTypes();
-                for ( int i = 0 ; i != nbOfTypes ; i++ )
-                {
-                    objectDetectors.push_back( 0 );
-                }
+                    objectDetectors.push_back(-1);
+                    objectTypeDetectors.push_back(-1);
             }
         }
         
@@ -291,6 +286,22 @@ int Controller::getObjectAt( int sensorId )
     return objectDetectors[sensorId];
 }
 
+std::shared_ptr<PhysicalObject> Controller::getObjectInstanceAt( int sensorId )
+{
+    if ( gSensoryInputs_physicalObjectType == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getObjectAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    if(objectDetectors[sensorId] != -1)
+    {
+        return std::shared_ptr<PhysicalObject>(gPhysicalObjects[objectDetectors[sensorId] - gPhysicalObjectIndexStartOffset]);
+    }
+    else
+        return std::shared_ptr<PhysicalObject>(nullptr);
+}
+
 // returns target object's type (relevant if target object exists)
 // returns an integer. Check PhysicalObjectFactory class for existing types.
 // most common types are: 0 (round), 1 (energy item), 2 (gate), 3 (switch), 4 (movable), ...?
@@ -399,5 +410,8 @@ std::shared_ptr<Controller> Controller::getRobotControllerAt(int sensorId)
     {
         refreshInputs();
     }
-    return std::dynamic_pointer_cast<Controller>(gWorld->getRobot(getRobotIdAt(sensorId))->getController());
+    if (getRobotIdAt(sensorId) != -1)
+        return std::dynamic_pointer_cast<Controller>(gWorld->getRobot(getRobotIdAt(sensorId))->getController());
+    else
+        return nullptr;
 }

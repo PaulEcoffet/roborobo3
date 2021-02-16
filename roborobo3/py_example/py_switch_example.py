@@ -1,6 +1,6 @@
-from pyroborobo import Pyroborobo, Controller, PyWorldModel
-from controllers import SimpleController
-from objects import SwitchObject, GateObject
+from pyroborobo import Pyroborobo, PyWorldModel
+from custom.controllers import SimpleController
+from custom.objects import SwitchObject, GateObject
 
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander_pyobj.properties",

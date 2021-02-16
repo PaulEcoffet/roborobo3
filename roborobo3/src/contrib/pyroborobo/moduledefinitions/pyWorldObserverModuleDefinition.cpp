@@ -22,6 +22,8 @@ void addPyWorldObserverBinding(py::module &m)
     pybind11::class_<WorldObserver, std::shared_ptr<WorldObserver>>(m, "WorldObserver")
             .def(py::init<World *>(), "World"_a, py::return_value_policy::reference,
                  R"doc()doc")
+            .def("init_pre", &WorldObserver::initPre, R"doc(Called before initialising robots & objects.)doc")
+            .def("init_post", &WorldObserver::initPost, R"doc(Called after initialising robots & objects.)doc")
             .def("step_pre", &WorldObserver::stepPre, R"doc(
 Call at each time step before the steps of objects and robots
 )doc")

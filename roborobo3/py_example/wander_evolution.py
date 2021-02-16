@@ -2,7 +2,7 @@ from pyroborobo import Pyroborobo, PyWorldModel, Controller, AgentObserver
 import numpy as np
 from scipy.stats import rankdata
 
-from objects import SwitchObject, GateObject
+from custom.objects import SwitchObject, GateObject
 
 
 def evaluate_network(input_, network):
@@ -15,7 +15,6 @@ def evaluate_network(input_, network):
 
 class EvolController(Controller):
     world_model: PyWorldModel
-
 
     def __init__(self, wm):
         Controller.__init__(self, wm)

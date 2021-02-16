@@ -74,16 +74,18 @@ Examples
             .def("get_distance_at", &Controller::getDistanceAt, "sensor_id"_a,
                  R"doc(float: The distance to the object in range [0, 1], if 1, nothing is in sight)doc")
             .def("get_all_distances", [](Controller &self)
-                 { return py::array_t<double>(self.getAllDistances()); },
+                 { return self.getAllDistances(); },
                  R"doc(Return a numpy array of all distances.)doc")
             .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a,
                  "Robot: Get the robot instance seen by the sensor ``sensor_id``")
             .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a,
-                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``")
+                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``", py::return_value_policy::automatic_reference)
             .def("get_robot_relative_orientation_at", &Controller::getRobotRelativeOrientationAt, "sensor_id"_a,
                  "float: Get robot's relative orientation compared to self seen by the sensor ``sensor_id``")
             .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a,
-                 "PhysicalObject: Get the physical object seen by the sensor ``sensor_id``")
+                 "Bool: Tell if it's a physical object seen by the sensor ``sensor_id``")
+            .def("get_object_instance_at", &Controller::getObjectInstanceAt, "sensor_id"_a,
+                 py::return_value_policy::automatic_reference)
             .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a,
                  "Bool: Tell if it's a wall seen by the sensor ``sensor_id``")
             .def("get_ground_sensor_values",
@@ -94,6 +96,14 @@ Examples
                  },
                  R"doc(
 tuple[float, float, float]: (red, green, blue) from the ground sensor of the robot between [0,1]
+)doc")
+            .def("set_color", [](Controller& self, int r, int g, int b) {
+                self.getWorldModel()->setRobotLED_colorValues(r, g, b);
+            }, R"doc(Set the color of the robot (r,g,b).
+:param: r int [0, 255]
+:param: g int [0, 255]
+:param: b int [0, 255]
+
 )doc")
             .def_property_readonly("translation", &Controller::getActualTranslation,
                                    "float: the robot's actual translation speed between [-1, 1]")

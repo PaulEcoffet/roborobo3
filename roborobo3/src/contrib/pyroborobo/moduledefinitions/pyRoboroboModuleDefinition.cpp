@@ -7,6 +7,7 @@
 #include <pybind11/pybind11.h>
 #include <pybind11/attr.h>
 #include <contrib/pyroborobo/pyroborobo.h>
+#include <pybind11/numpy.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -170,5 +171,8 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
 int: Index at which the robot ids start
 
 Everything under this offset is a physical objects. Everything above is a robot.
-)doc");
+)doc")
+            .def_property_readonly("arena_size", [] (Pyroborobo& self) -> std::tuple<int, int> {
+                return {gAreaWidth, gAreaHeight};
+            });
 }

@@ -87,16 +87,17 @@ void PhysicalObjectFactory::makeObject(int type)
             }
             gPhysicalObjects.push_back(std::make_shared<MovableObject>(id));
             break;
-        case -1:
+        case 5:
 #ifdef PYROBOROBO
             if (gVerbose)
             {
                 std::cout << "[INFO] Custom Object created (type = " << type << ").\n";
             }
             gPhysicalObjects.push_back(PyPhysicalObjectFactory::makeObject("_default", id));
-            return;
+            break;
 #else
-            std::runtime_error("This behaviour is only possible when using pyroborobo");
+            throw std::runtime_error("This behaviour is only possible when using pyroborobo");
+            break;
 #endif
             // case ...: DO NOT FORGET TO UPDATE getNbOfTypes() method.
         default:

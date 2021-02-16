@@ -710,31 +710,35 @@ bool Robot::isCollision()
         collision = true;
 	}
 	else
-	{
+    {
         //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collision manager.\n";
-        
-		// * environment objects
-		for ( int i = 0 ; i != gRobotWidth ; i++ )
-			for ( int j = 0 ; j != gRobotHeight ; j++ )
-			{
-				if ( getPixel32( gRobotMaskImage , i , j) != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) ) // opt: bounding box instead of pixel-to-pixel test.
-				{
+
+        // * environment objects
+        for (int i = 0; i != gRobotWidth; i++)
+            for (int j = 0; j != gRobotHeight; j++)
+            {
+                if (getPixel32(gRobotMaskImage, i, j) != SDL_MapRGBA(gEnvironmentImage->format, 0xFF, 0xFF, 0xFF,
+                                                                     SDL_ALPHA_OPAQUE)) // opt: bounding box instead of pixel-to-pixel test.
+                {
                     // not useful: testing out-of-the-world status
                     // if ( ( _x + i < 0 ) || ( _x + i  >= gAreaWidth ) || ( _y + j < 0 ) || ( _y + i  >= gAreaHeight ) ) { return true;	}				
-					Uint32 pixel = getPixel32( gEnvironmentImage , _x+i , _y+j);
-					if (  pixel != SDL_MapRGBA( gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE ) )
-					{
+                    Uint32 pixel = getPixel32(gEnvironmentImage, _x + i, _y + j);
+                    if (pixel != SDL_MapRGBA(gEnvironmentImage->format, 0xFF, 0xFF, 0xFF, SDL_ALPHA_OPAQUE))
+                    {
                         if (gMovableObjects) // will consider *all* collisions
                         {
                             Uint8 r, g, b;
-                            SDL_GetRGB(pixel,gEnvironmentImage->format,&r,&g,&b);
-                            
-                            int targetIndex = (r<<16)+(g<<8)+b;
-                            
-                            if ( targetIndex >= gPhysicalObjectIndexStartOffset && targetIndex < gRobotIndexStartOffset)   // this is a physical object
+                            SDL_GetRGB(pixel, gEnvironmentImage->format, &r, &g, &b);
+
+                            int targetIndex = (r << 16) + (g << 8) + b;
+
+                            if (targetIndex >= gPhysicalObjectIndexStartOffset
+                                && targetIndex < gRobotIndexStartOffset)   // this is a physical object
                             {
                                 targetIndex = targetIndex - gPhysicalObjectIndexStartOffset;
-                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId()+gRobotIndexStartOffset, std::tie(_wm->_agentAbsoluteLinearSpeed, _wm->_agentAbsoluteOrientation));
+                                gPhysicalObjects[targetIndex]->isPushed(_wm->getId() + gRobotIndexStartOffset,
+                                                                        std::tie(_wm->_agentAbsoluteLinearSpeed,
+                                                                                 _wm->_agentAbsoluteOrientation));
 
                                 //std::cout << "[DEBUG] Robot #" << _wm->getId() << " collides with object #" << targetIndex << ".\n";
                             }
@@ -742,10 +746,10 @@ bool Robot::isCollision()
                         }
                         else
                             return true; // stop whenever collision is met
-					}
-				}
-			}
-	}	
+                    }
+                }
+            }
+    }
 	
     return collision;
 }
