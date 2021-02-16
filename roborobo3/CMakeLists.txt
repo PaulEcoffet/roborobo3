@@ -7,7 +7,7 @@ if (NOT DEFINED CMAKE_BUILD_TYPE)
 endif ()
 message("Type of build: " ${CMAKE_BUILD_TYPE})
 set(CMAKE_CXX_STANDARD 11)
-set(CMAKE_CXX_FLAGS "-Wall -g -O0")
+set(CMAKE_CXX_FLAGS "-Wall -O3")
 
 
 #SET(PYTHON_EXECUTABLE /home/pecoffet/anaconda3/bin/python)
