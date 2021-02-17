@@ -1,8 +1,40 @@
 # DEMO 1
 import pyroborobo
 from pyroborobo import Pyroborobo, PyWorldModel, Controller, CircleObject
-from custom.objects import ResourceObject
 import numpy as np
+
+
+class ResourceObject(CircleObject):
+    def __init__(self, id_, data):
+        CircleObject.__init__(self, id_)  # Do not forget to call super constructor
+        self.regrow_time = 100
+        self.cur_regrow = 0
+        self.triggered = False
+        self.rob = Pyroborobo.get()  # Get pyroborobo singleton
+
+    def reset(self):
+        self.show()
+        self.register()
+        self.triggered = False
+        self.cur_regrow = 0
+
+    def step(self):
+        if self.triggered:
+            self.cur_regrow -= 1
+            if self.cur_regrow <= 0:
+                self.show()
+                self.register()
+                self.triggered = False
+
+    def is_walked(self, rob_id):
+        self.triggered = True
+        self.cur_regrow = self.regrow_time
+        self.hide()
+        self.unregister()
+
+    def inspect(self, prefix=""):
+        return f"""I'm a ResourceObject with id: {self.id}"""
+
 
 class TalkingController(Controller):
 
@@ -24,7 +56,7 @@ class TalkingController(Controller):
             if rob:
                 self.say_hello(rob)
             obj = self.get_object_instance_at(i)
-            #obj = None
+            # obj = None
             if obj:
                 self.last_obj_met = obj.id
         x, y = self.absolute_position
@@ -36,7 +68,6 @@ class TalkingController(Controller):
         if x > self.arena_mid_x and y > self.arena_mid_y:
             color = [127, 127, 0]
         self.set_color(*color)
-
 
     def say_hello(self, rob):
         rob.receive_hello(self)
@@ -76,6 +107,7 @@ class SelectObject(CircleObject):
             self.hide()
             self.eaten = True
 
+
 def main():
     rob = Pyroborobo.create("config/talking_robots.properties",
                             controller_class=TalkingController,
@@ -91,6 +123,7 @@ def main():
     print("have fun")
     rob.update(1000)
     Pyroborobo.close()
+
 
 if __name__ == "__main__":
     main()
