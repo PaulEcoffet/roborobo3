@@ -305,5 +305,6 @@ y: int
             .def_readwrite("footprint_radius", &CircleObjectPublicist::_footprintRadius,
                            "int: The radius of the footprint of the object");
     py::class_<MovableObject, CircleObject,
-               PyCircleObject<MovableObject>, std::shared_ptr<MovableObject>>(m, "MovableObject");
+               PyCircleObject<MovableObject>, std::shared_ptr<MovableObject>>(m, "MovableObject")
+        .def(py::init<int>(), "id"_a, py::return_value_policy::reference);
 }

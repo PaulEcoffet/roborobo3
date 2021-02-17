@@ -25,7 +25,6 @@ class SwitchObject(CircleObject):
                 self.triggered = False
 
     def is_walked(self, rob_id):
-        print("I'm walked")
         self.triggered = True
         self.rob.objects[self.gate_id].open()
         self.cur_regrow = self.regrow_time
