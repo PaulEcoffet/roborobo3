@@ -117,7 +117,5 @@ make clean && make html
 open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
-Building the doc output a lot of warning but they are generated just fine.
-
 Many examples are available
 on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).

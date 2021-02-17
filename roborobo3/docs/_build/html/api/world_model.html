@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>World Models &mdash; Pyroborobo 0.4 documentation</title>
+  <title>World Models &mdash; Pyroborobo 0.6 documentation</title>
   
 
   
@@ -35,7 +35,7 @@
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="WorldObserver" href="worldobserver.html" />
-    <link rel="prev" title="Objects" href="squareobject.html" /> 
+    <link rel="prev" title="World" href="world.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -91,11 +91,16 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agent_observer.html">AgentObserver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="controller.html">Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="objects.html">Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyroborobo.html">Pyroborobo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="squareobject.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world.html">World</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">World Models</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#robotworldmodel">RobotWorldModel</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#pyworldmodel">PyWorldModel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyworldmodel">PyWorldModel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#template">Template</a></li>
+</ul>
+</li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="worldobserver.html">WorldObserver</a></li>
@@ -236,6 +241,8 @@
 </div>
 <div class="section" id="pyworldmodel">
 <h2>PyWorldModel<a class="headerlink" href="#pyworldmodel" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="documentation">
+<h3>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h3>
 <dl class="py class">
 <dt id="pyroborobo.PyWorldModel">
 <em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">PyWorldModel</code><a class="headerlink" href="#pyroborobo.PyWorldModel" title="Permalink to this definition">¶</a></dt>
@@ -370,6 +377,19 @@ the object is right next to the robot.</p>
 </dd></dl>
 
 </div>
+<div class="section" id="template">
+<h3>Template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h3>
+<p>If you want to extend PyWorldModel, you can use this template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyWorldModel</span><span class="p">(</span><span class="n">PyWorldModel</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 </div>
 
 
@@ -383,7 +403,7 @@ the object is right next to the robot.</p>
         <a href="worldobserver.html" class="btn btn-neutral float-right" title="WorldObserver" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
-        <a href="squareobject.html" class="btn btn-neutral float-left" title="Objects" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+        <a href="world.html" class="btn btn-neutral float-left" title="World" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   

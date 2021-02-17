@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>WorldObserver &mdash; Pyroborobo 0.4 documentation</title>
+  <title>WorldObserver &mdash; Pyroborobo 0.6 documentation</title>
   
 
   
@@ -90,10 +90,15 @@
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agent_observer.html">AgentObserver</a></li>
 <li class="toctree-l1"><a class="reference internal" href="controller.html">Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="objects.html">Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyroborobo.html">Pyroborobo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="squareobject.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world.html">World</a></li>
 <li class="toctree-l1"><a class="reference internal" href="world_model.html">World Models</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">WorldObserver</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">WorldObserver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#template">Template</a></li>
+</ul>
+</li>
 </ul>
 
             
@@ -160,10 +165,24 @@
             
   <div class="section" id="worldobserver">
 <h1>WorldObserver<a class="headerlink" href="#worldobserver" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyroborobo.WorldObserver">
 <em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">WorldObserver</code><a class="headerlink" href="#pyroborobo.WorldObserver" title="Permalink to this definition">¶</a></dt>
 <dd><dl class="py method">
+<dt id="pyroborobo.WorldObserver.init_post">
+<code class="sig-name descname">init_post</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.WorldObserver" title="pyroborobo.WorldObserver">pyroborobo.WorldObserver</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pyroborobo.WorldObserver.init_post" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called after initialising robots &amp; objects.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt id="pyroborobo.WorldObserver.init_pre">
+<code class="sig-name descname">init_pre</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.WorldObserver" title="pyroborobo.WorldObserver">pyroborobo.WorldObserver</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pyroborobo.WorldObserver.init_pre" title="Permalink to this definition">¶</a></dt>
+<dd><p>Called before initialising robots &amp; objects.</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyroborobo.WorldObserver.step_post">
 <code class="sig-name descname">step_post</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.WorldObserver" title="pyroborobo.WorldObserver">pyroborobo.WorldObserver</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pyroborobo.WorldObserver.step_post" title="Permalink to this definition">¶</a></dt>
 <dd><p>Call at each time step after the steps of objects and robots</p>
@@ -177,6 +196,28 @@
 
 </dd></dl>
 
+</div>
+<div class="section" id="template">
+<h2>Template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
+<p>If you want to extend a WorldObserver, you can use this template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyWorldObserver</span><span class="p">(</span><span class="n">WorldObserver</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">world</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">world</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">init_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_pre</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">init_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">init_post</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_post</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_pre</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

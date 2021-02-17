@@ -27,7 +27,7 @@ copyright = '2020, Paul Ecoffet, Nicolas Bredeche'
 author = 'Paul Ecoffet, Nicolas Bredeche'
 
 # The full version, including alpha/beta/rc tags
-release = '0.4'
+release = '0.6'
 
 # -- General configuration ---------------------------------------------------
 

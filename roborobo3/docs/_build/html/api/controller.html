@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Controller &mdash; Pyroborobo 0.4 documentation</title>
+  <title>Controller &mdash; Pyroborobo 0.6 documentation</title>
   
 
   
@@ -34,7 +34,7 @@
   <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
-    <link rel="next" title="Pyroborobo" href="pyroborobo.html" />
+    <link rel="next" title="Objects" href="objects.html" />
     <link rel="prev" title="AgentObserver" href="agent_observer.html" /> 
 </head>
 
@@ -90,9 +90,14 @@
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="agent_observer.html">AgentObserver</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Controller</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Controller</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#template">Template</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="objects.html">Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyroborobo.html">Pyroborobo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="squareobject.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world.html">World</a></li>
 <li class="toctree-l1"><a class="reference internal" href="world_model.html">World Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="worldobserver.html">WorldObserver</a></li>
 </ul>
@@ -161,6 +166,8 @@
             
   <div class="section" id="controller">
 <h1>Controller<a class="headerlink" href="#controller" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyroborobo.Controller">
 <em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">Controller</code><a class="headerlink" href="#pyroborobo.Controller" title="Permalink to this definition">¶</a></dt>
@@ -199,7 +206,7 @@
 
 <dl class="py method">
 <dt id="pyroborobo.Controller.get_all_distances">
-<code class="sig-name descname">get_all_distances</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.Controller" title="pyroborobo.Controller">pyroborobo.Controller</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://numpy.org/doc/stable/reference/generated/numpy.ndarray.html#numpy.ndarray" title="(in NumPy v1.20)">numpy.ndarray</a><span class="p">[</span>numpy.float64<span class="p">]</span><a class="headerlink" href="#pyroborobo.Controller.get_all_distances" title="Permalink to this definition">¶</a></dt>
+<code class="sig-name descname">get_all_distances</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.Controller" title="pyroborobo.Controller">pyroborobo.Controller</a></span></em><span class="sig-paren">)</span> &#x2192; List<span class="p">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a><span class="p">]</span><a class="headerlink" href="#pyroborobo.Controller.get_all_distances" title="Permalink to this definition">¶</a></dt>
 <dd><p>Return a numpy array of all distances.</p>
 </dd></dl>
 
@@ -218,8 +225,13 @@
 <dl class="py method">
 <dt id="pyroborobo.Controller.get_object_at">
 <code class="sig-name descname">get_object_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.Controller" title="pyroborobo.Controller">pyroborobo.Controller</a></span></em>, <em class="sig-param"><span class="n">sensor_id</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a><a class="headerlink" href="#pyroborobo.Controller.get_object_at" title="Permalink to this definition">¶</a></dt>
-<dd><p>PhysicalObject: Get the physical object seen by the sensor <code class="docutils literal notranslate"><span class="pre">sensor_id</span></code></p>
+<dd><p>Bool: Tell if it’s a physical object seen by the sensor <code class="docutils literal notranslate"><span class="pre">sensor_id</span></code></p>
 </dd></dl>
+
+<dl class="py method">
+<dt id="pyroborobo.Controller.get_object_instance_at">
+<code class="sig-name descname">get_object_instance_at</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.Controller" title="pyroborobo.Controller">pyroborobo.Controller</a></span></em>, <em class="sig-param"><span class="n">sensor_id</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference internal" href="objects.html#pyroborobo.PhysicalObject" title="pyroborobo.PhysicalObject">PhysicalObject</a><a class="headerlink" href="#pyroborobo.Controller.get_object_instance_at" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
 
 <dl class="py method">
 <dt id="pyroborobo.Controller.get_robot_controller_at">
@@ -285,6 +297,15 @@
 </dd></dl>
 
 <dl class="py method">
+<dt id="pyroborobo.Controller.set_color">
+<code class="sig-name descname">set_color</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.Controller" title="pyroborobo.Controller">pyroborobo.Controller</a></span></em>, <em class="sig-param"><span class="n">arg0</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span></em>, <em class="sig-param"><span class="n">arg1</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span></em>, <em class="sig-param"><span class="n">arg2</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.9)">int</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pyroborobo.Controller.set_color" title="Permalink to this definition">¶</a></dt>
+<dd><p>Set the color of the robot (r,g,b).
+:param: r int [0, 255]
+:param: g int [0, 255]
+:param: b int [0, 255]</p>
+</dd></dl>
+
+<dl class="py method">
 <dt id="pyroborobo.Controller.set_rotation">
 <code class="sig-name descname">set_rotation</code><span class="sig-paren">(</span><em class="sig-param"><span class="n">self</span><span class="p">:</span> <span class="n"><a class="reference internal" href="#pyroborobo.Controller" title="pyroborobo.Controller">pyroborobo.Controller</a></span></em>, <em class="sig-param"><span class="n">rotation_speed</span><span class="p">:</span> <span class="n"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.9)">float</a></span></em><span class="sig-paren">)</span> &#x2192; <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.9)">None</a><a class="headerlink" href="#pyroborobo.Controller.set_rotation" title="Permalink to this definition">¶</a></dt>
 <dd><p>Set the robot rotation speed between [-1, 1]</p>
@@ -342,6 +363,23 @@
 </dd></dl>
 
 </div>
+<div class="section" id="template">
+<h2>Template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
+<p>If you want to create a subclass of a controller, you can use this template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyController</span><span class="p">(</span><span class="n">Controller</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wm</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rob</span> <span class="o">=</span> <span class="n">Pyroborobo</span><span class="o">.</span><span class="n">get</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
 
 
            </div>
@@ -351,7 +389,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="pyroborobo.html" class="btn btn-neutral float-right" title="Pyroborobo" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="objects.html" class="btn btn-neutral float-right" title="Objects" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="agent_observer.html" class="btn btn-neutral float-left" title="AgentObserver" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>

@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>AgentObserver &mdash; Pyroborobo 0.4 documentation</title>
+  <title>AgentObserver &mdash; Pyroborobo 0.6 documentation</title>
   
 
   
@@ -89,10 +89,15 @@
 </ul>
 <p class="caption"><span class="caption-text">API documentation</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">AgentObserver</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">AgentObserver</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#documentation">Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#template">Template</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="controller.html">Controller</a></li>
+<li class="toctree-l1"><a class="reference internal" href="objects.html">Objects</a></li>
 <li class="toctree-l1"><a class="reference internal" href="pyroborobo.html">Pyroborobo</a></li>
-<li class="toctree-l1"><a class="reference internal" href="squareobject.html">Objects</a></li>
+<li class="toctree-l1"><a class="reference internal" href="world.html">World</a></li>
 <li class="toctree-l1"><a class="reference internal" href="world_model.html">World Models</a></li>
 <li class="toctree-l1"><a class="reference internal" href="worldobserver.html">WorldObserver</a></li>
 </ul>
@@ -161,6 +166,8 @@
             
   <div class="section" id="agentobserver">
 <h1>AgentObserver<a class="headerlink" href="#agentobserver" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h2>
 <dl class="py class">
 <dt id="pyroborobo.AgentObserver">
 <em class="property">class </em><code class="sig-prename descclassname">pyroborobo.</code><code class="sig-name descname">AgentObserver</code><a class="headerlink" href="#pyroborobo.AgentObserver" title="Permalink to this definition">¶</a></dt>
@@ -206,6 +213,25 @@
 
 </dd></dl>
 
+</div>
+<div class="section" id="template">
+<h2>Template<a class="headerlink" href="#template" title="Permalink to this headline">¶</a></h2>
+<p>If you want to override an AgentObserver, you can use this template:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">class</span> <span class="nc">MyAgentObserver</span><span class="p">(</span><span class="n">AgentObserver</span><span class="p">):</span>
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">wm</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">wm</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">reset</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step_post</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_post</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">step_pre</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="n">step_pre</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
 </div>
 
 

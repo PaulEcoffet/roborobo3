@@ -63,7 +63,7 @@ class CMakeBuild(build_ext):
 
 setup(
     name='pyroborobo',
-    version='0.5.4',
+    version='0.6.4',
     author='Paul Ecoffet',
     author_email='paul.ecoffet@sorbonne-universite.fr',
     description='pyroborobo',

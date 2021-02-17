@@ -1,6 +1,6 @@
 # Demo 4 : Ball
 
-from pyroborobo import Pyroborobo, PyWorldModel
+from pyroborobo import Pyroborobo, PyWorldModel, WorldObserver
 from custom.controllers import HungryController
 
 def main():
@@ -16,3 +16,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+
