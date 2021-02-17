@@ -7,6 +7,7 @@ class SimpleController(Controller):
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
         Controller.__init__(self, world_model)
+        assert self.nb_sensors == 8, "SimpleController only works with 8 sensors"
         print("I'm a Python controller")
 
     def reset(self):
@@ -28,6 +29,7 @@ class HungryController(SimpleController):
     def __init__(self, wm):
         super().__init__(wm)
         self.rob = Pyroborobo.get()
+        assert self.nb_sensors == 8, "SimpleController only works with 8 sensors"
         self.rotspeed = 0.5
 
     def step(self):
@@ -40,19 +42,19 @@ class HungryController(SimpleController):
         camera_max_range = self.world_model.maxdistcamera
         camera_ids = self.world_model.camera_objects_ids
         if camera_dist[1] < camera_max_range:  # if we see something on our right
-            if self.get_object_at(1):  # And it is food
+            if self.get_object_at(1) != -1:  # And it is food
                 self.set_rotation(-self.rotspeed)  # GO TOWARD IT
             else:
                 self.set_rotation(self.rotspeed)  # flee it
                 must_flee = True
         elif camera_dist[2] < camera_max_range:  # if we see something in front of us
-            if self.get_object_at(2) and not must_flee:  # If we are not avoiding obstacle and it's food
+            if self.get_object_at(2) != -1 and not must_flee:  # If we are not avoiding obstacle and it's food
                 self.set_rotation(0)
             else:
                 self.set_rotation(self.rotspeed)  # turn left
                 must_flee = True
         elif camera_dist[3] < camera_max_range:  # Otherwise, if we see something on our right
-            if self.get_object_at(3) and not must_flee:
+            if self.get_object_at(3) != -1 and not must_flee:
                 self.set_rotation(self.rotspeed)  # turn left
             else:
                 self.set_rotation(-self.rotspeed)

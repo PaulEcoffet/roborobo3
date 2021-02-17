@@ -9,6 +9,7 @@
 #include <core/World/CircleObject.h>
 #include <contrib/pyroborobo/CircleObjectTrampoline.h>
 #include <contrib/pyroborobo/PhysicalObjectTrampoline.h>
+#include <World/MovableObject.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -303,4 +304,6 @@ y: int
             .def_readwrite("radius", &CircleObjectPublicist::_radius, "int: The radius of the hard part of the circle")
             .def_readwrite("footprint_radius", &CircleObjectPublicist::_footprintRadius,
                            "int: The radius of the footprint of the object");
+    py::class_<MovableObject, CircleObject,
+               PyCircleObject<MovableObject>, std::shared_ptr<MovableObject>>(m, "MovableObject");
 }
