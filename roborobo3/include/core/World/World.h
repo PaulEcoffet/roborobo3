@@ -54,7 +54,7 @@ public:
 
     void deleteLandmark(int __index);
 
-    void addLandmark(LandmarkObject *objectToAdd);
+    void addLandmark(std::shared_ptr<LandmarkObject> objectToAdd);
 
     int getIterations();
 

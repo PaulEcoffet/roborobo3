@@ -153,7 +153,7 @@ void World::initWorld()
     
     for ( int i = 0 ; i != gNbOfLandmarks ; i++)
     {
-        gLandmarks.push_back(new LandmarkObject());
+        gLandmarks.push_back(std::make_shared<LandmarkObject>());
     }
     
     for ( int i = 0 ; i != gNbOfPhysicalObjects ; i++)
@@ -449,7 +449,7 @@ void World::deleteLandmark (int __index )
     gNbOfLandmarks--;
 }
 
-void World::addLandmark( LandmarkObject* objectToAdd )
+void World::addLandmark( std::shared_ptr<LandmarkObject> objectToAdd )
 {
 	gLandmarks.push_back(objectToAdd);
     gNbOfLandmarks++;

@@ -194,7 +194,7 @@ bool gInspectorAgent = false; // is there an inspector agent?
 int gMaxIt = 0; // note: value *must* be defined in the properties file. ("-1" (ie. infinite) is a nice default setting).
 
 int gNbOfLandmarks = 0;
-std::vector<LandmarkObject *> gLandmarks;
+std::vector<std::shared_ptr<LandmarkObject>> gLandmarks;
 
 int gNbOfPhysicalObjects = 0;
 int gPhysicalObjectDefaultType = 0;

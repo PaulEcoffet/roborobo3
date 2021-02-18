@@ -142,7 +142,7 @@ extern bool gInspectorAgent;		// defines if there *actually* is an inspector age
 extern int gMaxIt;
 
 extern int gNbOfLandmarks;
-extern std::vector<LandmarkObject*> gLandmarks; // list of inanimate objects (landmarks).
+extern std::vector<std::shared_ptr<LandmarkObject>> gLandmarks; // list of inanimate objects (landmarks).
 
 extern int gNbOfPhysicalObjects;
 extern int gPhysicalObjectDefaultType;

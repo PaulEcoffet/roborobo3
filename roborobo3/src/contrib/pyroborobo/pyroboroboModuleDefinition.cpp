@@ -9,6 +9,7 @@
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotWorldModelModuleDefinition.h>
 #include <contrib/pyroborobo/ModuleDefinitions/pyRobotModuleDefinition.h>
 #include <contrib/pyroborobo/ModuleDefinitions/pyObjectsModuleDefinition.h>
+#include <pyroborobo/ModuleDefinitions/landmarkModuleDefinition.h>
 #include "contrib/pyroborobo/ModuleDefinitions/pyWorldObserverModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyControllerModuleDefinition.h"
 #include "contrib/pyroborobo/ModuleDefinitions/pyRoboroboModuleDefinition.h"
@@ -32,5 +33,6 @@ PYBIND11_MODULE(_pyroborobo, m)
     addPyRobotBinding(m);
     addPyObjectsBindings(m);
     addAgentObserverBindings(m);
+    addLandmarkBindings(m);
     addCustomBindings(m);
 }

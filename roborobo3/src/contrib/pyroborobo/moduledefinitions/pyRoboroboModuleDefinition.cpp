@@ -174,5 +174,6 @@ Everything under this offset is a physical objects. Everything above is a robot.
 )doc")
             .def_property_readonly("arena_size", [] (Pyroborobo& self) -> std::tuple<int, int> {
                 return {gAreaWidth, gAreaHeight};
-            });
+            })
+            .def_property_readonly("landmarks", [] (Pyroborobo& self) { return gLandmarks;});
 }

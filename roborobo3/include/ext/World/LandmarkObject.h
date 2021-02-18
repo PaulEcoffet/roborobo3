@@ -39,7 +39,7 @@ class LandmarkObject
     public :
     
     LandmarkObject();
-    ~LandmarkObject();
+    virtual ~LandmarkObject();
     
     int getId()
     {
@@ -68,7 +68,17 @@ class LandmarkObject
     {
         return _yCenterPixel;
     }
-    
+
+    double getRadius()
+    {
+        return _radius;
+    }
+
+    void setRadius(double radius)
+    {
+        _radius = radius;
+    }
+
     void setColor( Uint8 _r, Uint8 _g, Uint8 _b )
     {
         r = _r;

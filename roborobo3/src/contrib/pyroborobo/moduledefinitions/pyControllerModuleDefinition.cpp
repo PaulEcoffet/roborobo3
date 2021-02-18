@@ -105,6 +105,8 @@ tuple[float, float, float]: (red, green, blue) from the ground sensor of the rob
 :param: b int [0, 255]
 
 )doc")
+            .def("get_closest_landmark_dist", &Controller::getClosestLandmarkDistance, "float: The distance to the closest landmark")
+            .def("get_closest_landmark_orientation", &Controller::getClosestLandmarkOrientation, "float: The orientation to the closest landmark")
             .def_property_readonly("translation", &Controller::getActualTranslation,
                                    "float: the robot's actual translation speed between [-1, 1]")
             .def_property_readonly("rotation", &Controller::getActualRotation,
