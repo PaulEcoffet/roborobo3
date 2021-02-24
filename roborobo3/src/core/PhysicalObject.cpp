@@ -272,7 +272,7 @@ void PhysicalObject::relocate()
     }
 }
 
-bool PhysicalObject::relocate( int x, int y )
+bool PhysicalObject::relocate(double x, double y )
 {
     int backup_x = getXCenterPixel();
     int backup_y = getYCenterPixel();

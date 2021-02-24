@@ -61,14 +61,31 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
                        py::dict &objectClassDict,
                        const py::dict &options)
         :
-        currentIt(0)
+        currentIt(0), worldObserverClass(worldObserverClass),
+        agentControllerClass(agentControllerClass),
+        worldModelClass(worldModelClass),
+        agentObserverClass(agentObserverClass),
+        objectClassDict(objectClassDict)
 {
     bool success = loadProperties(properties_file);
     if (!success)
     {
-        throw std::runtime_error("Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
+        throw std::runtime_error(
+                "Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
     }
     this->overrideProperties(options);
+
+
+}
+
+void Pyroborobo::start()
+{
+    currentIt = 0;
+    bool success = loadPropertiestoGlobalConf(); /* Loads all the conf from properties to roborobo*/
+    if (!success)
+    {
+        throw std::runtime_error("Impossible to load the property files. Did you provide the correct path? Does your config file contains errors? your overrides?");
+    }
     PyPhysicalObjectFactory::init();
     py::object objectClass = py::none();
     if (objectClassDict.contains("_default"))
@@ -78,11 +95,6 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
     PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
-}
-
-void Pyroborobo::start()
-{
-    currentIt = 0;
 
 
     signal(SIGINT, quit);
@@ -105,7 +117,7 @@ void Pyroborobo::start()
     initLogging();
 
 
-    // * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
+    // * Initialize Random seed -- loaded, or initialized, in loadPropertiestoGlobalConf(...)
 
     engine.seed(gRandomSeed);
 
@@ -284,7 +296,7 @@ void Pyroborobo::overrideProperties(const py::dict &dict)
 {
     for (auto elem : dict)
     {
-        gProperties.setProperty(elem.first.cast<std::string>(), elem.second.cast<std::string>());
+        gProperties.setProperty(py::str(elem.first).cast<std::string>(), py::str(elem.second).cast<std::string>());
     }
 }
 

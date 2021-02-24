@@ -139,7 +139,7 @@ public :
 
     virtual void relocate();
 
-    virtual bool relocate(int x, int y);
+    virtual bool relocate(double x, double y);
 
     int getTimestepSinceRelocation();
 

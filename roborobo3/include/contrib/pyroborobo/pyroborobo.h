@@ -94,6 +94,11 @@ private:
     std::vector<std::shared_ptr<PhysicalObject> > objects;
     std::vector<std::shared_ptr<LandmarkObject> > landmarks;
     std::shared_ptr<WorldObserver> wobs;
+    py::object worldObserverClass;
+    py::object agentControllerClass;
+    py::object worldModelClass;
+    py::object agentObserverClass;
+    py::dict objectClassDict;
 };
 
 #endif

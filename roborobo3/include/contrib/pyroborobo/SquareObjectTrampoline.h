@@ -84,7 +84,7 @@ public:
         PYBIND11_OVERLOAD(void, BaseSquare, relocate,);
     }
 
-    bool relocate(int x, int y) override
+    bool relocate(double x, double y) override
     {
         PYBIND11_OVERLOAD(bool, BaseSquare, relocate, x, y);
     }
@@ -168,7 +168,7 @@ public:
         PYBIND11_OVERLOAD(void, BaseSquare, relocate,);
     }
 
-    bool relocate(int x, int y) override
+    bool relocate(double x, double y) override
     {
         PYBIND11_OVERLOAD(bool, BaseSquare, relocate, x, y);
     }

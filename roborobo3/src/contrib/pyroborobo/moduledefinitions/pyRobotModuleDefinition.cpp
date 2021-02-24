@@ -16,12 +16,30 @@ using namespace pybind11::literals;
 void addPyRobotBinding(py::module &m)
 {
     py::class_<Robot, std::shared_ptr<Robot>>(m, "Robot")
-            .def("set_position", [](Robot &self, int x, int y) {
-                self.unregisterRobot();
+            .def("set_position", [](Robot &self, double x, double y, bool register_=true, bool force=false) {
+                bool success = true;
+                if (register_)
+                {
+                    self.unregisterRobot();
+                }
+                int x_prev, y_prev;
+                self.getCoord(x_prev, y_prev);
                 self.setCoord(x, y);
                 self.setCoordReal(x, y);
-                self.registerRobot();
-            }, "x"_a, "y"_a, "set the robot at the position (x, y)")
+                if (!force && self.isCollision())
+                {
+                    self.setCoord(x_prev, y_prev);
+                    self.setCoordReal(x_prev, y_prev);
+                    success = false;
+                }
+                if (register_)
+                {
+                    self.registerRobot();
+                }
+                return success;
+            }, "x"_a, "y"_a, py::kw_only(), "register"_a = true, "force"_a = true,
+                 "set the robot at the position (x, y). if `register` then the "
+                 "function take care of the registration. if `force` is true, the function ignore collisions.")
             .def("find_random_location", [](Robot &self) {
                 int x, y;
                 self.unregisterRobot();
@@ -33,6 +51,10 @@ void addPyRobotBinding(py::module &m)
             .def("register", &Robot::registerRobot, "Add the robot from the simulation")
             .def("unregister", &Robot::unregisterRobot, "Remove the robot from the simulation")
             .def_property_readonly("controller", &Robot::getController, "PyController: The robot's controller")
+            .def_property_readonly("position", [] (Robot& self) -> std::tuple<double, double> {
+                const auto pos = self.getController()->getPosition();
+                return {pos.x, pos.y};
+            })
             .def_property_readonly("observer", &Robot::getObserver, "PyAgentObserver: The robot's agent observer")
             .def_property_readonly("world_model", &Robot::getWorldModel, "RobotWorldModel: The robot's world model");
 }

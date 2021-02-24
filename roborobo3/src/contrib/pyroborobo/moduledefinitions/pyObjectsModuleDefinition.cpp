@@ -60,7 +60,7 @@ bool: can object register at its actual position
             .def("step", &PhysicalObject::step, "Call at each timestep")
             .def("relocate", (void (PhysicalObject::*)()) &PhysicalObject::relocate,
                  "find a random location for the object")
-            .def("relocate", (bool (PhysicalObject::*)(int, int)) &PhysicalObject::relocate, "x"_a, "y"_a,
+            .def("relocate", (bool (PhysicalObject::*)(double, double)) &PhysicalObject::relocate, "x"_a, "y"_a,
                  "relocate at the (x,y) coordinates")
             .def("is_touched", &PhysicalObject::isTouched, "Triggered when the object is touched")
             .def("is_walked", &PhysicalObject::isWalked, "Triggered when the object is walked on")
@@ -68,7 +68,13 @@ bool: can object register at its actual position
             .def("set_color", &PhysicalObject::setDisplayColor, "red"_a, "blue"_a, "green"_a,
                  "Set the color (r,g,b) of the object")
             .def("set_coordinates", &PhysicalObject::setCoordinates, "x"_a, "y"_a,
-                 "set the coordinates without checking.");
+                 "set the coordinates without checking.")
+            .def_property_readonly("position", [] (PhysicalObject& self) -> std::tuple<double, double>
+                                   {
+                                       return {self.getXCenterPixel(), self.getYCenterPixel()};
+                                   },
+                                   "Return the position of the object"
+            );
 
     py::class_<SquareObject, SquareObjectTrampoline<>, PhysicalObject, std::shared_ptr
             <SquareObject >> (m, "SquareObject", R"doc(
@@ -122,7 +128,7 @@ bool: Can the object be registered at its current location
                                    &SquareObject::getId, "int: the id of the object")
             .def("step", &SquareObject::step, "Call at each timestep")
             .def("relocate", (void (SquareObject::*)()) &SquareObject::relocate, "Find a new position for the object")
-            .def("relocate", (bool (SquareObject::*)(int, int)) &SquareObject::relocate, "x"_a, "y"_a,
+            .def("relocate", (bool (SquareObject::*)(double, double)) &SquareObject::relocate, "x"_a, "y"_a,
                  R"(
 Place the object at the (x,y) coordinates. Return if succeed or not
 
@@ -232,7 +238,7 @@ bool: Can the object be registered at its current location
             .def("step", &CircleObject::step, "called at each timestep")
             .def("relocate", (void (CircleObject::*)()) &CircleObject::relocate,
                  "Place the object at a random location")
-            .def("relocate", (bool (CircleObject::*)(int, int)) &CircleObject::relocate, "x"_a, "y"_a,
+            .def("relocate", (bool (CircleObject::*)(double, double)) &CircleObject::relocate, "x"_a, "y"_a,
                  R"(
 Place the object at the (x,y) coordinates. Return False if impossible.
 
