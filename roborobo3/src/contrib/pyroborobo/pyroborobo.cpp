@@ -75,6 +75,7 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
     {
         objectClass = objectClassDict["_default"];
     }
+    /* TODO move iinit to start */
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
     PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
