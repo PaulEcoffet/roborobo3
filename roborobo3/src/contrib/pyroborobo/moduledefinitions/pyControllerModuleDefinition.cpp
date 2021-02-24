@@ -18,6 +18,7 @@
 #include <pybind11/stl.h>
 #include <pybind11/pybind11.h>
 #include "contrib/pyroborobo/ModuleDefinitions/pyControllerModuleDefinition.h"
+#include "contrib/pyroborobo/PyArrayHelpers.h"
 
 namespace py = pybind11;
 
@@ -73,21 +74,34 @@ Examples
             { return self.getWorldModel()->_cameraSensorsNb; }, "int: Number of sensors of the robot")
             .def("get_distance_at", &Controller::getDistanceAt, "sensor_id"_a,
                  R"doc(float: The distance to the object in range [0, 1], if 1, nothing is in sight)doc")
-            .def("get_all_distances", [](Controller &self)
-                 { return self.getAllDistances(); },
+            .def("get_all_distances", [](Controller &self) -> py::array
+                 { return as_pyarray(self.getAllDistances()); },
                  R"doc(Return a numpy array of all distances.)doc")
             .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a,
                  "Robot: Get the robot instance seen by the sensor ``sensor_id``")
+            .def("get_all_robot_ids", [] (Controller& self) {
+                return as_pyarray(self.getAllRobotIds());
+            })
             .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a,
-                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``", py::return_value_policy::automatic_reference)
+                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``", py::return_value_policy::reference)
+            .def("get_all_robot_controllers", &Controller::getAllRobotControllers)
+            .def("get_robot_instance_at", &Controller::getObjectInstanceAt)
+            .def("get_all_robot_instances", &Controller::getAllRobotInstances)
             .def("get_robot_relative_orientation_at", &Controller::getRobotRelativeOrientationAt, "sensor_id"_a,
                  "float: Get robot's relative orientation compared to self seen by the sensor ``sensor_id``")
+            .def("get_all_robot_relative_orientations", [] (Controller& self)
+            {
+                return as_pyarray(self.getAllRobotRelativeOrientations());
+            })
             .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a,
-                 "Bool: Tell if it's a physical object seen by the sensor ``sensor_id``")
+                 "Int: Id of the object if seen else -1 for the sensor ``sensor_id``")
+            .def("get_all_objects", [] (Controller& self) -> py::array { return as_pyarray(self.getAllObjects()); })
             .def("get_object_instance_at", &Controller::getObjectInstanceAt, "sensor_id"_a,
                  py::return_value_policy::automatic_reference)
+            .def("get_all_object_instances", &Controller::getAllObjectInstances)
             .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a,
                  "Bool: Tell if it's a wall seen by the sensor ``sensor_id``")
+            .def("get_all_walls", [] (Controller& self) -> py::array { return as_pyarray(self.getAllWalls()); })
             .def("get_ground_sensor_values",
                  [](Controller &self)
                  {
@@ -122,6 +136,7 @@ tuple[float, float, float]: (red, green, blue) from the ground sensor of the rob
                                    R"doc(
 pyroborobo.WorldModel: The robot's world_model
 )doc")
+            .def_property_readonly("robot", [] (Controller& self) { return gWorld->getRobot(self.getId()); })
             .def_property_readonly("id", &Controller::getId, R"doc(
 int: Robot unique ID.
 )doc");

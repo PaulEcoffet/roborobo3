@@ -11,10 +11,19 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
+
 #include <iostream>
 #include <World/PhysicalObject.h>
+#include <Agents/Robot.h>
 #include "RoboroboMain/common.h"
 #include "Utilities/Geometry.h"
+
+#ifdef PYROBOROBO
+#include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
+
+namespace py = pybind11;
+#endif
 
 class RobotWorldModel;
 
@@ -31,7 +40,6 @@ private:
 protected:
 
     std::shared_ptr<RobotWorldModel> _wm;
-
     std::vector<double> distanceSensors;
     std::vector<int> objectDetectors;
     std::vector<int> objectTypeDetectors;
@@ -39,9 +47,14 @@ protected:
     std::vector<int> robotGroupDetector;
     std::vector<double> robotRelativeOrientationDetectors;
     std::vector<int> wallDetectors;
+    std::vector<std::shared_ptr<PhysicalObject>> objectInstanceDetectors;
+    std::vector<std::shared_ptr<Controller>> robotControllerDetectors;
+    std::vector<std::shared_ptr<Robot>> robotInstanceDetectors;
+
+
 
     double redGroundDetectors;
-        double greenGroundDetectors;
+    double greenGroundDetectors;
     double blueGroundDetectors;
 
     double landmark_closest_DistanceDetector;
@@ -172,6 +185,26 @@ public:
         // #### #### #### #### #### #### #### #### #### #### #### #### ####
 
     std::shared_ptr<PhysicalObject> getObjectInstanceAt(int sensorId);
+    std::shared_ptr<Robot> getRobotInstanceAt(int sensorId);
+
+
+    std::vector<int> &getAllRobotIds();
+
+    std::vector<int> &getAllWalls();
+
+    std::vector<double> &getAllRobotRelativeOrientations();
+
+    std::vector<int> &getAllRobotGroupIds();
+
+    std::vector<int> &getAllObjectTypes();
+
+    std::vector<std::shared_ptr<PhysicalObject>>& getAllObjectInstances();
+    std::vector<int>& getAllObjects();
+
+    std::vector<std::shared_ptr<Controller>>& getAllRobotControllers();
+
+    std::vector<std::shared_ptr<Robot>>& getAllRobotInstances();
+
 };
 
 

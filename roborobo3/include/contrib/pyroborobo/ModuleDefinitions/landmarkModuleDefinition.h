@@ -6,6 +6,8 @@
 #define ROBOROBO3_LANDMARKMODULEDEFINITION_H
 
 #include <pybind11/pybind11.h>
+#include <pyroborobo/pyroborobocommon.h>
+
 
 void addLandmarkBindings(pybind11::module &m);
 

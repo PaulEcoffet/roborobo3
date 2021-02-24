@@ -6,6 +6,8 @@
 #define ROBOROBO3_PYOBJECTSMODULEDEFINITION_H
 
 #include <pybind11/pybind11.h>
+#include <pyroborobo/pyroborobocommon.h>
+
 
 void addPyObjectsBindings(pybind11::module &m);
 

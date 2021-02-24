@@ -1,6 +1,7 @@
 #ifndef _PYROBOROBO_DEF_H_
 #define _PYROBOROBO_DEF_H_
 
+#include "pyroborobocommon.h"
 #include <pybind11/pybind11.h>
 #include <pybind11/stl.h>
 #include <Agents/Robot.h>
@@ -39,24 +40,26 @@ public:
 
     const std::vector<std::shared_ptr<Controller>> & getControllers();
 
-    const std::vector<std::shared_ptr<RobotWorldModel>> & getWorldModels();
+    const std::vector<std::shared_ptr<WorldModel>> & getWorldModels();
 
     const std::vector<std::shared_ptr<AgentObserver>> & getAgentObservers();
 
     std::shared_ptr<WorldObserver> getWorldObserver()
     {
-        if (wobs == nullptr || !initialized)
+        if (!initialized)
         {
             throw std::runtime_error("World Observer has not been instantiated yet. Have you called roborobo.start()?");
         }
         return wobs;
     }
 
-    const std::vector<std::shared_ptr<Robot>> &getRobots();
+    const std::vector<std::shared_ptr<Robot>>&getRobots();
 
-    const std::vector<std::shared_ptr<PhysicalObject>> & getObjects();
+    const std::vector<std::shared_ptr<PhysicalObject>>& getObjects();
 
     static void close();
+    void _gatherProjectInstances();
+
 
 private:
 
@@ -71,7 +74,6 @@ private:
                const py::dict &options);
 
 
-    void gatherProjectInstances();
 
     void overrideProperties(const py::dict &dict);
 
@@ -86,10 +88,11 @@ private:
     long long currentIt = 0;
     bool initialized = false;
     std::vector<std::shared_ptr<Controller> > controllers;
-    std::vector<std::shared_ptr<RobotWorldModel> > worldmodels;
+    std::vector<std::shared_ptr<WorldModel> > worldmodels;
     std::vector<std::shared_ptr<AgentObserver> > agentobservers;
     std::vector<std::shared_ptr<Robot>> robots;
     std::vector<std::shared_ptr<PhysicalObject> > objects;
+    std::vector<std::shared_ptr<LandmarkObject> > landmarks;
     std::shared_ptr<WorldObserver> wobs;
 };
 

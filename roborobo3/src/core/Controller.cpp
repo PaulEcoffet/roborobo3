@@ -11,6 +11,7 @@
 #include "RoboroboMain/roborobo.h"
 #include "World/World.h"
 
+
 Controller::Controller(  )
 {
     lastRefreshIteration = -1;
@@ -20,6 +21,16 @@ Controller::Controller(std::shared_ptr<RobotWorldModel> __wm)
 {
     lastRefreshIteration = -1;
 	_wm = __wm;
+    distanceSensors.resize(_wm->_cameraSensorsNb);
+    objectDetectors.resize(_wm->_cameraSensorsNb);
+    objectTypeDetectors.resize(_wm->_cameraSensorsNb);
+    objectInstanceDetectors.resize(_wm->_cameraSensorsNb);
+    robotDetectors.resize(_wm->_cameraSensorsNb);
+    robotGroupDetector.resize(_wm->_cameraSensorsNb);
+    robotRelativeOrientationDetectors.resize(_wm->_cameraSensorsNb);
+    wallDetectors.resize(_wm->_cameraSensorsNb);
+    robotControllerDetectors.resize(_wm->_cameraSensorsNb);
+    robotInstanceDetectors.resize(_wm->_cameraSensorsNb);
 }
 
 Controller::~Controller()
@@ -65,17 +76,9 @@ void Controller::refreshInputs(){
     //      - green value
     //      - blue value
     // - relative distance and/or orientation of either the closest landmark (if any, zero if none)
-    
+
+
     lastRefreshIteration = gWorld->getIterations();
-    
-    distanceSensors.clear();
-    objectDetectors.clear();
-    objectTypeDetectors.clear();
-    robotDetectors.clear();
-    robotGroupDetector.clear();
-    robotRelativeOrientationDetectors.clear();
-    wallDetectors.clear();
-    
     redGroundDetectors = -1;
     greenGroundDetectors = -1;
     blueGroundDetectors = -1;
@@ -84,10 +87,10 @@ void Controller::refreshInputs(){
     landmark_closest_DistanceDetector = -1;
     
     // camera sensors
-    
+
     for(int i  = 0; i < _wm->_cameraSensorsNb; i++)
     {
-        distanceSensors.push_back(_wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i));
+        distanceSensors[i] = (_wm->getDistanceValueFromCameraSensor(i) / _wm->getCameraSensorMaximumDistanceValue(i));
         
         int objectId = _wm->getObjectIdFromCameraSensor(i);
         if ( gSensoryInputs_physicalObjectType )
@@ -95,13 +98,16 @@ void Controller::refreshInputs(){
             // input: physical object? which type?
             if ( PhysicalObject::isInstanceOf(objectId) )
             {
-                objectDetectors.push_back(objectId); // match
-                objectTypeDetectors.push_back( gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset]->getType() );
+                objectDetectors[i] = objectId; // match
+                objectInstanceDetectors[i] = gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset];
+                objectTypeDetectors[i] = (objectInstanceDetectors[i]->getType() );
+
             }
             else
             {
-                    objectDetectors.push_back(-1);
-                    objectTypeDetectors.push_back(-1);
+                    objectDetectors[i] = (-1);
+                    objectInstanceDetectors[i] = nullptr;
+                    objectTypeDetectors[i] = (-1);
             }
         }
         
@@ -111,13 +117,15 @@ void Controller::refreshInputs(){
             if ( Agent::isInstanceOf(objectId) )
             {
                 // this is an agent
-                int targetRobotId = gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->getId();
-                robotDetectors.push_back( targetRobotId );
-                
+                robotInstanceDetectors[i] = gWorld->getRobot(objectId-gRobotIndexStartOffset);
+                int targetRobotId = robotInstanceDetectors[i]->getWorldModel()->getId();
+                robotDetectors[i] = ( targetRobotId );
+                robotControllerDetectors[i] = robotInstanceDetectors[i]->getController();
+
                 if ( gSensoryInputs_otherAgentGroup )
                 {
                     int targetRobotGroup = gWorld->getRobot(objectId-gRobotIndexStartOffset)->getWorldModel()->getGroupId();
-                    robotGroupDetector.push_back( targetRobotGroup );
+                    robotGroupDetector[i] = ( targetRobotGroup );
                 }
                 
                 if ( gSensoryInputs_otherAgentOrientation )
@@ -137,19 +145,21 @@ void Controller::refreshInputs(){
                             delta_orientation = - ( - 360.0 - delta_orientation );
                         }
                     }
-                    robotRelativeOrientationDetectors.push_back( delta_orientation/180.0 );
+                    robotRelativeOrientationDetectors[i] = ( delta_orientation/180.0 );
                 }
             }
             else
             {
-                robotDetectors.push_back( -1 ); // not an agent...
+                robotDetectors[i] = ( -1 ); // not an agent...
+                robotInstanceDetectors[i] = nullptr;
+                robotControllerDetectors[i] = nullptr;
                 if ( gSensoryInputs_otherAgentGroup )
                 {
-                    robotGroupDetector.push_back( 0 ); // ...therefore no match wrt. group.
+                    robotGroupDetector[i] = ( 0 ); // ...therefore no match wrt. group.
                 }
                 if ( gSensoryInputs_otherAgentOrientation )
                 {
-                    robotRelativeOrientationDetectors.push_back( 0 ); // ...and no orientation.
+                    robotRelativeOrientationDetectors[i] = ( 0 ); // ...and no orientation.
                 }
             }
         }
@@ -159,11 +169,11 @@ void Controller::refreshInputs(){
             // input: wall or empty?
             if ( objectId >= 0 && objectId < gPhysicalObjectIndexStartOffset ) // not empty, but cannot be identified: this is a wall.
             {
-                wallDetectors.push_back( 1 );
+                wallDetectors[i] = ( 1 );
             }
             else
             {
-                wallDetectors.push_back( 0 ); // nothing. (objectId=-1)
+                wallDetectors[i] = ( 0 ); // nothing. (objectId=-1)
             }
         }
         
@@ -274,7 +284,7 @@ Point2d Controller::getPosition()
     return posRobot;
 }
 
-// returns 0 (no object) or 1 (object)
+// returns -1 (no object) or objectId (object)
 int Controller::getObjectAt( int sensorId )
 {
     if ( gSensoryInputs_physicalObjectType == false )
@@ -286,6 +296,17 @@ int Controller::getObjectAt( int sensorId )
     return objectDetectors[sensorId];
 }
 
+std::vector<int>& Controller::getAllObjects( )
+{
+    if ( gSensoryInputs_physicalObjectType == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getObjectAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    return objectDetectors;
+}
+
 std::shared_ptr<PhysicalObject> Controller::getObjectInstanceAt( int sensorId )
 {
     if ( gSensoryInputs_physicalObjectType == false )
@@ -294,12 +315,19 @@ std::shared_ptr<PhysicalObject> Controller::getObjectInstanceAt( int sensorId )
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
-    if(objectDetectors[sensorId] != -1)
+    return objectInstanceDetectors[sensorId];
+}
+
+std::vector<std::shared_ptr<PhysicalObject>>& Controller::getAllObjectInstances()
+{
+    if ( gSensoryInputs_physicalObjectType == false )
     {
-        return std::shared_ptr<PhysicalObject>(gPhysicalObjects[objectDetectors[sensorId] - gPhysicalObjectIndexStartOffset]);
+        std::cout << "[ERROR] Unauthorized call to Controller::getObjectAt(.)\n";
+        exit(-1);
     }
-    else
-        return std::shared_ptr<PhysicalObject>(nullptr);
+    if ( checkRefresh() == false ) { refreshInputs(); }
+
+    return objectInstanceDetectors;
 }
 
 // returns target object's type (relevant if target object exists)
@@ -316,6 +344,17 @@ int Controller::getObjectTypeAt( int sensorId )
     return objectTypeDetectors[sensorId];
 }
 
+std::vector<int>& Controller::getAllObjectTypes()
+{
+    if ( gSensoryInputs_physicalObjectType == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getObjectTypeAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    return objectTypeDetectors;
+}
+
 // returns robot's id, or -1 (not a robot)
 int Controller::getRobotIdAt( int sensorId )
 {
@@ -326,6 +365,17 @@ int Controller::getRobotIdAt( int sensorId )
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
     return robotDetectors[sensorId];
+}
+
+std::vector<int>& Controller::getAllRobotIds()
+{
+    if ( gSensoryInputs_isOtherAgent == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotIdAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    return robotDetectors;
 }
 
 // returns target robot's group, or -1
@@ -340,6 +390,17 @@ int Controller::getRobotGroupIdAt( int sensorId )
     return robotGroupDetector[sensorId];
 }
 
+std::vector<int>& Controller::getAllRobotGroupIds()
+{
+    if ( gSensoryInputs_isOtherAgent == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotIdAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    return robotGroupDetector;
+}
+
 // returns 0 (not a wall) or 1 (wall)
 int Controller::getWallAt( int sensorId )
 {
@@ -352,6 +413,17 @@ int Controller::getWallAt( int sensorId )
     return wallDetectors[sensorId];
 }
 
+std::vector<int>& Controller::getAllWalls()
+{
+    if ( gSensoryInputs_isWall == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getWallAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    return wallDetectors;
+}
+
 double Controller::getRobotRelativeOrientationAt( int sensorId )
 {
     if ( gSensoryInputs_otherAgentOrientation == false )
@@ -362,6 +434,18 @@ double Controller::getRobotRelativeOrientationAt( int sensorId )
     if ( checkRefresh() == false ) { refreshInputs(); }
     return robotRelativeOrientationDetectors[sensorId];
 }
+
+std::vector<double>& Controller::getAllRobotRelativeOrientations( )
+{
+    if ( gSensoryInputs_otherAgentOrientation == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotRelativeOrientationAt(.)\n";
+        exit(-1);
+    }
+    if ( checkRefresh() == false ) { refreshInputs(); }
+    return robotRelativeOrientationDetectors;
+}
+
 
 // return a value in [0,1] (red component)
 double Controller::getRedGroundDetector( )
@@ -410,8 +494,47 @@ std::shared_ptr<Controller> Controller::getRobotControllerAt(int sensorId)
     {
         refreshInputs();
     }
-    if (getRobotIdAt(sensorId) != -1)
-        return std::dynamic_pointer_cast<Controller>(gWorld->getRobot(getRobotIdAt(sensorId))->getController());
-    else
-        return nullptr;
+    return robotControllerDetectors[sensorId];
+}
+
+std::vector<std::shared_ptr<Controller>>& Controller::getAllRobotControllers()
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return robotControllerDetectors;
+}
+
+std::vector<std::shared_ptr<Robot>> &Controller::getAllRobotInstances()
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return robotInstanceDetectors;
+}
+
+std::shared_ptr<Robot> Controller::getRobotInstanceAt(int sensorId)
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return robotInstanceDetectors[sensorId];
 }

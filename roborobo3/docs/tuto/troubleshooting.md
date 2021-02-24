@@ -1,5 +1,13 @@
 # Troubleshooting
 
+## Pyroborobo is not found
+
+Be sure that you have activated your conda virtual env, like:
+
+```bash
+conda activate pyrob
+```
+
 ## I have a segfault
 
 Be sure that your object on the python side correspond to the right object on the c++ side. When implementing code on the c++ side with a python binding, always test if you don't return `null` or receive a `null` value. Raise exceptions when you have unwanted `null` values. This will give pybind11 clearer error and avoids segfaults.

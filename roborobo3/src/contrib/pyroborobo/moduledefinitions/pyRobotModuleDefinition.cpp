@@ -30,6 +30,8 @@ void addPyRobotBinding(py::module &m)
                 self.setCoordReal(x, y);
                 self.registerRobot();
             }, "Place the robot at a random location")
+            .def("register", &Robot::registerRobot, "Add the robot from the simulation")
+            .def("unregister", &Robot::unregisterRobot, "Remove the robot from the simulation")
             .def_property_readonly("controller", &Robot::getController, "PyController: The robot's controller")
             .def_property_readonly("observer", &Robot::getObserver, "PyAgentObserver: The robot's agent observer")
             .def_property_readonly("world_model", &Robot::getWorldModel, "RobotWorldModel: The robot's world model");

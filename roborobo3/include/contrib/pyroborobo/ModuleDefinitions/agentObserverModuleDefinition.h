@@ -6,6 +6,7 @@
 #define ROBOROBO3_AGENTOBSERVERMODULEDEFINITION_H
 
 #include <pybind11/pybind11.h>
+#include <pyroborobo/pyroborobocommon.h>
 
 void addAgentObserverBindings(pybind11::module &m);
 

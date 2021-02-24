@@ -125,7 +125,7 @@ void Pyroborobo::start()
         initMonitor(true);
     } // add speed monitoring and inspector agent
 
-    gatherProjectInstances();
+    _gatherProjectInstances();
     initialized = true;
 }
 
@@ -188,7 +188,7 @@ bool Pyroborobo::update(size_t n_step)
     return quit;
 }
 
-const std::vector<std::shared_ptr<Controller>> & Pyroborobo::getControllers()
+const std::vector<std::shared_ptr<Controller> > & Pyroborobo::getControllers()
 {
     if (!initialized)
     {
@@ -197,7 +197,7 @@ const std::vector<std::shared_ptr<Controller>> & Pyroborobo::getControllers()
     return controllers;
 }
 
-const std::vector<std::shared_ptr<RobotWorldModel>> & Pyroborobo::getWorldModels()
+const std::vector<std::shared_ptr<WorldModel> > & Pyroborobo::getWorldModels()
 {
     if (!initialized)
     {
@@ -206,7 +206,7 @@ const std::vector<std::shared_ptr<RobotWorldModel>> & Pyroborobo::getWorldModels
     return worldmodels;
 }
 
-const std::vector<std::shared_ptr<AgentObserver>> & Pyroborobo::getAgentObservers()
+const std::vector<std::shared_ptr<AgentObserver> > & Pyroborobo::getAgentObservers()
 {
     if (!initialized)
     {
@@ -216,7 +216,7 @@ const std::vector<std::shared_ptr<AgentObserver>> & Pyroborobo::getAgentObserver
     return agentobservers;
 }
 
-const std::vector<std::shared_ptr<Robot>> & Pyroborobo::getRobots()
+const std::vector<std::shared_ptr<Robot> > & Pyroborobo::getRobots()
 {
     if (!initialized)
     {
@@ -226,13 +226,13 @@ const std::vector<std::shared_ptr<Robot>> & Pyroborobo::getRobots()
 }
 
 
-const std::vector<std::shared_ptr<PhysicalObject>> & Pyroborobo::getObjects()
+const std::vector<std::shared_ptr<PhysicalObject> > & Pyroborobo::getObjects()
 {
     if (!initialized)
     {
         throw std::runtime_error("Objects have not been instantiated yet. Have you called roborobo.start()?");
     }
-    return gPhysicalObjects;
+    return objects;
 }
 
 
@@ -245,18 +245,18 @@ void Pyroborobo::close()
 
 }
 
-void Pyroborobo::gatherProjectInstances()
+void Pyroborobo::_gatherProjectInstances()
 {
     size_t nbRob = world->getNbOfRobots();
-
-    controllers.clear();
+    size_t nbObj = gPhysicalObjects.size();
+    size_t nbLandmarks = gLandmarks.size();
     controllers.reserve(nbRob);
-    worldmodels.clear();
     worldmodels.reserve(nbRob);
-    agentobservers.clear();
     agentobservers.reserve(nbRob);
-    robots.clear();
     robots.reserve(nbRob);
+    objects.reserve(nbObj);
+    landmarks.reserve(nbLandmarks);
+
 
     wobs = world->getWorldObserver();
 
@@ -268,13 +268,23 @@ void Pyroborobo::gatherProjectInstances()
         agentobservers.emplace_back(rob->getObserver());
         controllers.emplace_back(rob->getController());
     }
+
+    for (size_t i = 0; i < nbObj; i++)
+    {
+        objects.emplace_back(gPhysicalObjects[i]);
+    }
+
+    for (size_t i = 0; i < nbLandmarks; i++)
+    {
+        landmarks.emplace_back(gLandmarks[i]);
+    }
 }
 
 void Pyroborobo::overrideProperties(const py::dict &dict)
 {
     for (auto elem : dict)
     {
-        gProperties.setProperty(py::str(elem.first), py::str(elem.second));
+        gProperties.setProperty(elem.first.cast<std::string>(), elem.second.cast<std::string>());
     }
 }
 

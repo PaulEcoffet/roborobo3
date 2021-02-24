@@ -4,10 +4,12 @@
 
 #include "contrib/pyroborobo/ModuleDefinitions/pyRoboroboModuleDefinition.h"
 
+#include <pyroborobo/pyroborobocommon.h>
 #include <pybind11/pybind11.h>
 #include <pybind11/attr.h>
 #include <contrib/pyroborobo/pyroborobo.h>
 #include <pybind11/numpy.h>
+#include <pyroborobo/PyPhysicalObjectFactory.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -15,6 +17,12 @@ using namespace pybind11::literals;
 
 void addPyRoboroboBinding(py::module &m)
 {
+    py::bind_vector<std::vector<std::shared_ptr<Controller>>>(m, "ControllerVector");
+    py::bind_vector<std::vector<std::shared_ptr<PhysicalObject>>>(m, "PhysicalObjectVector");
+    py::bind_vector<std::vector<std::shared_ptr<LandmarkObject>>>(m, "LandmarkObjectVector");
+    py::bind_vector<std::vector<std::shared_ptr<RobotWorldModel>>>(m, "RobotWorldModelVector");
+    py::bind_vector<std::vector<std::shared_ptr<Robot>>>(m, "RobotVector");
+
     py::class_<Pyroborobo>(m, "Pyroborobo", R"doc(
         Python interface to the roborobo simulator
 
@@ -127,6 +135,25 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
             .def("is_id_robot", [] (Pyroborobo& /*self*/, double id) {
                 return id > gRobotIndexStartOffset;
             }, "id"_a, "tell if it's the id of a robot")
+            .def("add_robot", [] (Pyroborobo& self){
+                auto robot = std::make_shared<Robot>(gWorld);
+                gWorld->addRobot(robot);
+                self._gatherProjectInstances();
+                return robot;
+                })
+            .def("add_object", [] (Pyroborobo& self, std::string valuepytype) {
+                int id = PhysicalObjectFactory::getNextId();
+                auto obj = PyPhysicalObjectFactory::makeObject(valuepytype, id);
+                gPhysicalObjects.push_back(obj);
+                self._gatherProjectInstances();
+                return obj;
+            })
+            .def("add_landmark", [] (Pyroborobo& self) {
+                auto landmark = std::make_shared<LandmarkObject>();
+                gWorld->addLandmark(landmark);
+                self._gatherProjectInstances();
+                return landmark;
+            })
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(
 :class:`list` of :class:`~pyroborobo.Controller`: The ordered list of all the controllers in the simulation
@@ -175,5 +202,6 @@ Everything under this offset is a physical objects. Everything above is a robot.
             .def_property_readonly("arena_size", [] (Pyroborobo& self) -> std::tuple<int, int> {
                 return {gAreaWidth, gAreaHeight};
             })
-            .def_property_readonly("landmarks", [] (Pyroborobo& self) { return gLandmarks;});
+            .def_property_readonly("landmarks", [] (Pyroborobo& self) { return gLandmarks;})
+            .def_property_readonly("iterations", [] (Pyroborobo& self) {return gWorld->getIterations();});
 }

@@ -42,6 +42,8 @@ Then, to install pyroborobo, run in the pyroborobo directory:
 
 ```bash
 cd roborobo3/roborobo3
+# if you don't have activated your virtual env
+conda activate pyrob
 python setup.py install --force
 ```
 
@@ -50,6 +52,20 @@ The documentation is available by opening `docs/_build/html/index.html`, you can
 ```bash
 xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
+
+
+You can also build the docs yourself:
+
+```bash
+conda activate pyrob
+conda install sphinx recommonmark sphinx_rtd_theme numpydoc
+
+cd <yourpyroborobofolder>/roborobo3/roborobo3/docs
+make clean && make html
+open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
+```
+
+
 Many examples are available
 on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).
 
@@ -110,6 +126,7 @@ open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 You can also build the docs yourself:
 
 ```bash
+conda activate pyrob
 conda install sphinx recommonmark sphinx_rtd_theme numpydoc
 
 cd <yourpyroborobofolder>/roborobo3/roborobo3/docs

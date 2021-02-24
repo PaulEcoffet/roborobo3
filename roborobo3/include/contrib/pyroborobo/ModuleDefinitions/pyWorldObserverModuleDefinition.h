@@ -6,6 +6,8 @@
 #define ROBOROBO3_PYWORLDOBSERVERMODULEDEFINITION_H
 
 #include "pybind11/pybind11.h"
+#include <pyroborobo/pyroborobocommon.h>
+
 
 namespace py = pybind11;
 
