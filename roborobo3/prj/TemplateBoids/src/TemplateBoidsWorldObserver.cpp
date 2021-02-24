@@ -11,7 +11,7 @@
 #include "WorldModels/RobotWorldModel.h"
 #include "TemplateBoids/include/TemplateBoidsSharedData.h"
 
-TemplateBoidsWorldObserver::TemplateBoidsWorldObserver( World* world ) : WorldObserver( world )
+TemplateBoidsWorldObserver::TemplateBoidsWorldObserver( std::shared_ptr<World>  world ) : WorldObserver( world )
 {
     _world = world;
     

@@ -60,7 +60,7 @@ World::World()
     
 	_iterations = 0;
 	_agentsVariation = false;
-	_worldObserver = gConfigurationLoader->make_WorldObserver(this);
+	_worldObserver = gConfigurationLoader->make_WorldObserver(shared_from_this());
 }
 
 
@@ -163,7 +163,7 @@ void World::initWorld()
 
     for (int i = 0; i != gInitialNumberOfRobots; i++)
     {
-        auto robot = std::make_shared<Robot>(this);
+        auto robot = std::make_shared<Robot>(shared_from_this());
         this->addRobot(robot);
     }
 

@@ -10,7 +10,7 @@
 #include "RoboroboMain/roborobo.h"
 #include "WorldModels/RobotWorldModel.h"
 
-DummyWorldObserver::DummyWorldObserver( World* world ) : WorldObserver( world )
+DummyWorldObserver::DummyWorldObserver( std::shared_ptr<World>  world ) : WorldObserver( world )
 {
     _world = world;
 }

@@ -15,7 +15,7 @@ TemplateMedeaConfigurationLoader::~TemplateMedeaConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> TemplateMedeaConfigurationLoader::make_WorldObserver(World *wm)
+std::shared_ptr<WorldObserver> TemplateMedeaConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
 {
     return std::make_shared<TemplateMedeaWorldObserver>(wm);
 }

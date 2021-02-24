@@ -153,7 +153,7 @@ Roborobo is turn-based with randomized-ordering updates for both objects and rob
 3. for each robot, call an observer, ie. observe (and possibly modify) the state of the agent before moving.
 4. perform state update for all robots, ie. robots make decisions
 5. perform location update for all robots, ie. robots move
-6. call a world observer (WorldObserve::.stepPost()), ie. observe (and possibly modify) the state of the world *after* the robots moved
+6. call a world observer (WorldObserve::.stepPost()), ie. observe (and possibly modify) the state of the std::shared_ptr<World> after* the robots moved
 
 More general information about the simulation update cycle:
 - Observers are pretty useful for logging data.

@@ -16,7 +16,7 @@ class WorldObserver;
 class Robot;
 class LandmarkObject;
 
-class World
+class World : public std::enable_shared_from_this<World>
 {
 protected:
 

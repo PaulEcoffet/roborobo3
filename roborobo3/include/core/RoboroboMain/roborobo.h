@@ -88,7 +88,7 @@ extern long int gVersion;
 // global data
 
 class World;
-extern World *gWorld;				// pointer to the World
+extern std::shared_ptr<World> gWorld;				// pointer to the World
 
 extern std::vector<std::shared_ptr<Robot>> gRobots;
 extern std::vector<bool> gRobotsRegistry;

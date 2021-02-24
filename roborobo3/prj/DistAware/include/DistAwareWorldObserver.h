@@ -15,7 +15,7 @@ class DistAwareWorldObserver : public WorldObserver
 	protected:
 		
 	public:
-		DistAwareWorldObserver( World *__world );
+		DistAwareWorldObserver( std::shared_ptr<World> __world );
 		~DistAwareWorldObserver();
 				
 		void initPre();

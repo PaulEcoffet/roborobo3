@@ -84,7 +84,7 @@ private:
                                        py::object &objectClass);
 
     Timer fps;
-    World *world = nullptr;
+    std::shared_ptr<World> world = nullptr;
     long long currentIt = 0;
     bool initialized = false;
     std::vector<std::shared_ptr<Controller> > controllers;

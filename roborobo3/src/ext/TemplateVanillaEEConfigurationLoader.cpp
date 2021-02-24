@@ -15,7 +15,7 @@ TemplateVanillaEEConfigurationLoader::~TemplateVanillaEEConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> TemplateVanillaEEConfigurationLoader::make_WorldObserver(World *wm)
+std::shared_ptr<WorldObserver> TemplateVanillaEEConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
 {
     return std::make_shared<TemplateVanillaEEWorldObserver>(wm);
 }

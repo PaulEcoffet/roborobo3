@@ -10,7 +10,7 @@
 #include "RoboroboMain/roborobo.h"
 
 
-DistAwareWorldObserver::DistAwareWorldObserver( World *__world ) : WorldObserver( __world )
+DistAwareWorldObserver::DistAwareWorldObserver( std::shared_ptr<World> __world ) : WorldObserver( __world )
 {
 	_world = __world;
 }

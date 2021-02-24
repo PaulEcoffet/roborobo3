@@ -15,7 +15,7 @@ class TutorialWorldObserver : public WorldObserver
 	protected:
 		
 	public:
-		TutorialWorldObserver( World *__world );
+		TutorialWorldObserver( std::shared_ptr<World> __world );
 		~TutorialWorldObserver();
 				
 		void initPre();

@@ -13,7 +13,7 @@ class World;
 class TemplateMedeaWorldObserver : public TemplateEEWorldObserver
 {
 public:
-    TemplateMedeaWorldObserver(World *world);
+    TemplateMedeaWorldObserver(std::shared_ptr<World> world);
     ~TemplateMedeaWorldObserver();
     
     void initPre();

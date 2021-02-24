@@ -16,7 +16,7 @@ public:
 
     ~TemplateEEConfigurationLoader();
 
-    std::shared_ptr<WorldObserver> make_WorldObserver(World *wm);
+    std::shared_ptr<WorldObserver> make_WorldObserver(std::shared_ptr<World> wm);
 
     std::shared_ptr<RobotWorldModel> make_RobotWorldModel();
 

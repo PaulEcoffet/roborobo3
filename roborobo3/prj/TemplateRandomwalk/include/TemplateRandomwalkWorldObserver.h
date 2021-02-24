@@ -15,7 +15,7 @@ class TemplateRandomwalkWorldObserver : public WorldObserver
 	protected:
 		
 	public:
-		TemplateRandomwalkWorldObserver( World *__world );
+		TemplateRandomwalkWorldObserver( std::shared_ptr<World> __world );
 		~TemplateRandomwalkWorldObserver();
 				
 		void initPre();

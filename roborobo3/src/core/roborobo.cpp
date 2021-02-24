@@ -317,7 +317,7 @@ SDL_Event gEvent; //The event structure
 // special simulation data
 
 InspectorAgent *inspectorAgent = nullptr;
-World *gWorld = nullptr;
+std::shared_ptr<World> gWorld = nullptr;
 Timer fps;
 int timetag = -1;
 Timer timeWatch;
@@ -354,8 +354,6 @@ void clean_up()
 
     if (inspectorAgent != nullptr)
         delete (inspectorAgent);
-
-    delete gWorld;
 }
 
 
@@ -2436,7 +2434,7 @@ void initRoborobo()
     //srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
     gLogFile << "# random seed             : " << gRandomSeed << std::endl;
 
-    gWorld = new World();
+    gWorld = std::make_shared<World>();
 
     // * run
     gWorld->initWorld();

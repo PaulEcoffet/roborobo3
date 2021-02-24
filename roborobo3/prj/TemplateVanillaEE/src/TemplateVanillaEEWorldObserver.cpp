@@ -10,7 +10,7 @@
 #include "World/World.h"
 #include "RoboroboMain/roborobo.h"
 
-TemplateVanillaEEWorldObserver::TemplateVanillaEEWorldObserver( World* world ) : TemplateEEWorldObserver( world )
+TemplateVanillaEEWorldObserver::TemplateVanillaEEWorldObserver( std::shared_ptr<World>  world ) : TemplateEEWorldObserver( world )
 {
     // superclass constructor called before
     

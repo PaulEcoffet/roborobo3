@@ -15,7 +15,7 @@ TemplateBoidsConfigurationLoader::~TemplateBoidsConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> TemplateBoidsConfigurationLoader::make_WorldObserver(World *wm)
+std::shared_ptr<WorldObserver> TemplateBoidsConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
 {
     return std::make_shared<TemplateBoidsWorldObserver>(wm);
 }

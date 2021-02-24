@@ -7,7 +7,7 @@
 #include "World/World.h"
 
 
-TemplateWanderWorldObserver::TemplateWanderWorldObserver( World *__world ) : WorldObserver( __world )
+TemplateWanderWorldObserver::TemplateWanderWorldObserver( std::shared_ptr<World> __world ) : WorldObserver( __world )
 {
 	_world = __world;
 }

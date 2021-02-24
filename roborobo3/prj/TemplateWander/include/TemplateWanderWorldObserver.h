@@ -15,7 +15,7 @@ class TemplateWanderWorldObserver : public WorldObserver
 	protected:
 		
 	public:
-		TemplateWanderWorldObserver( World *__world );
+		TemplateWanderWorldObserver( std::shared_ptr<World> __world );
 		~TemplateWanderWorldObserver();
 				
 		void initPre();

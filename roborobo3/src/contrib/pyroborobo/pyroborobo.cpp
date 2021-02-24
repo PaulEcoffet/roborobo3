@@ -69,7 +69,20 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
         throw std::runtime_error("Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
     }
     this->overrideProperties(options);
+
+}
+
+void Pyroborobo::start()
+{
+    bool success = loadPropertiestoGlobalConf();
+    if (!success)
+    {
+        throw std::runtime_error("Impossible to load the properties to the roborobo conf. Check your properties.");
+    }
+    currentIt = 0;
     PyPhysicalObjectFactory::init();
+    PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
+
     py::object objectClass = py::none();
     if (objectClassDict.contains("_default"))
     {
@@ -77,12 +90,6 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
     }
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
-    PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
-}
-
-void Pyroborobo::start()
-{
-    currentIt = 0;
 
 
     signal(SIGINT, quit);
@@ -112,7 +119,7 @@ void Pyroborobo::start()
     //srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
     //gLogFile << "# random seed             : " << gRandomSeed << std::endl;
 
-    world = new World();
+    world = std::make_shared<World>();
     gWorld = world;
 
     // * run
@@ -292,6 +299,7 @@ void Pyroborobo::initCustomConfigurationLoader(py::object &worldObserverClass, p
                                                py::object &worldModelClass, py::object &agentObserverClass,
                                                py::object &objectClass)
 {
+    std::cout << gConfigurationLoader << "\n";
     gConfigurationLoader = new PyConfigurationLoader(gConfigurationLoader, worldObserverClass, agentControllerClass,
                                                      worldModelClass, agentObserverClass, objectClass);
 }

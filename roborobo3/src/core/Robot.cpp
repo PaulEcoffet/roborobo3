@@ -17,7 +17,7 @@
 #include "Observers/AgentObserver.h"
 #include "Utilities/Graphics.h"
 
-Robot::Robot( World *__world )
+Robot::Robot(std::shared_ptr<World> __world )
 {    
 	_wm = gConfigurationLoader->make_RobotWorldModel(); // TODO: externalize object referenced to create the new instance
 

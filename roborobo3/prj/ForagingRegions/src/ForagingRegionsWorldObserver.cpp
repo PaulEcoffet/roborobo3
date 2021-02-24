@@ -13,7 +13,7 @@
 #include <math.h>
 #include "Utilities/Misc.h"
 
-ForagingRegionsWorldObserver::ForagingRegionsWorldObserver( World* world ) : TemplateEEWorldObserver( world )
+ForagingRegionsWorldObserver::ForagingRegionsWorldObserver( std::shared_ptr<World>  world ) : TemplateEEWorldObserver( world )
 {
     // superclass constructor called before
 
