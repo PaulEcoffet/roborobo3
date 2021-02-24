@@ -34,7 +34,7 @@ public:
     ~World();
 
     bool loadFiles();
-    //bool loadProperties( std::string __propertiesFilename );
+    //bool loadPropertiestoGlobalConf( std::string __propertiesFilename );
 
     void initWorld();
 

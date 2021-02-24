@@ -1117,17 +1117,17 @@ void updateMonitor(const Uint8 *_keyboardStates)
     }
 }
 
-
 bool loadProperties(const std::string &_propertiesFilename)
 {
-    bool returnValue = true;
-
     std::ifstream in(_propertiesFilename.c_str());
 
     // * check main file for imports
 
     if (!in.is_open())
+    {
+        std::cout << "[ERROR] Failed to import properties from file " << _propertiesFilename << std::endl;
         return false;
+    }
     std::string target("import(");
 
     while (in)
@@ -1157,10 +1157,27 @@ bool loadProperties(const std::string &_propertiesFilename)
     // * handle main file content
 
     if (!in.is_open())
+    {
+        std::cout << "[ERROR] Failed to import properties from file (after import) " << _propertiesFilename << std::endl;
         return false;
+    }
     gProperties.load(in);
     in.close();
+    return true;
+}
 
+
+bool loadPropertiestoGlobalConf(const std::string& _propertiesFilename)
+{
+    bool returnValue = true;
+    if(_propertiesFilename != "")
+    {
+        returnValue = loadProperties(_propertiesFilename);
+    }
+    if (!returnValue)
+    {
+        return false;
+    }
     // Load properties given in the config file
 
     std::string s;
@@ -2383,7 +2400,7 @@ void initRoborobo()
 {
 
     // load properties
-    if (!loadProperties(gPropertiesFilename))
+    if (!loadPropertiestoGlobalConf(gPropertiesFilename))
     {
         std::cout << "[CRITICAL] properties file contains error(s) or does not exist (\"" << gPropertiesFilename
                   << "\"). EXITING." << std::endl << std::endl;
@@ -2411,7 +2428,7 @@ void initRoborobo()
     initLogging();
 
 
-    // * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
+    // * Initialize Random seed -- loaded, or initialized, in loadPropertiestoGlobalConf(...)
 
     engine.seed(gRandomSeed);
     randint.seed(gRandomSeed);
