@@ -19,7 +19,6 @@ class MedeaController(Controller):
         self.is_walls = None
         self.is_objects = None
         self.prev_dist = np.array([0])
-        self.all_controller_cache = None
 
     def reset(self):
         if self.weights is None:
@@ -30,12 +29,9 @@ class MedeaController(Controller):
         self.is_robots = self.get_all_robot_ids()  # only ref, so fast
         self.is_walls = self.get_all_walls()  # only ref, so fast
         self.is_objects = self.get_all_objects()  # only ref, so fast
-        self.all_controller_cache = self.get_all_robot_controllers()
 
 
     def step(self):
-        if self.id == 0:
-            print(self.all_controller_cache)
         self.next_gen_in_it -= 1
         if self.next_gen_in_it < 0 or self.deactivated:
             self.new_generation()
@@ -63,7 +59,7 @@ class MedeaController(Controller):
                 )
 
     def share_weights(self):
-        all_controllers = set(self.all_controller_cache)
+        all_controllers = set(self.get_all_robot_controllers())
         for robot_controller in all_controllers:
             if robot_controller:
                 robot_controller.receive_weights(self.id, self.weights)
