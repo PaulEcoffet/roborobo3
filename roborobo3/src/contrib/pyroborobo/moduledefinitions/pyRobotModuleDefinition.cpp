@@ -37,7 +37,7 @@ void addPyRobotBinding(py::module &m)
                     self.registerRobot();
                 }
                 return success;
-            }, "x"_a, "y"_a, py::kw_only(), "register"_a = true, "force"_a = true,
+            }, "x"_a, "y"_a, "register"_a = true, "force"_a = true,
                  "set the robot at the position (x, y). if `register` then the "
                  "function take care of the registration. if `force` is true, the function ignore collisions.")
             .def("find_random_location", [](Robot &self) {
