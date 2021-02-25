@@ -36,15 +36,15 @@ public:
 
     bool update(size_t n_step = 1);
 
-    int addObjectToEnv(PhysicalObject *);
+    std::shared_ptr<PhysicalObject> addObjectToEnv(std::shared_ptr<PhysicalObject>);
 
-    const std::vector<std::shared_ptr<Controller>> & getControllers();
+    const std::vector<py::object> & getControllers() const;
 
-    const std::vector<std::shared_ptr<WorldModel>> & getWorldModels();
+    const std::vector<py::object> & getWorldModels() const;
 
-    const std::vector<std::shared_ptr<AgentObserver>> & getAgentObservers();
+    const std::vector<py::object> & getAgentObservers() const;
 
-    std::shared_ptr<WorldObserver> getWorldObserver()
+    py::object getWorldObserver()
     {
         if (!initialized)
         {
@@ -53,9 +53,9 @@ public:
         return wobs;
     }
 
-    const std::vector<std::shared_ptr<Robot>>&getRobots();
+    const std::vector<py::object>& getRobots() const;
 
-    const std::vector<std::shared_ptr<PhysicalObject>>& getObjects();
+    const std::vector<py::object>& getObjects() const;
 
     static void close();
     void _gatherProjectInstances();
@@ -87,13 +87,13 @@ private:
     World *world = nullptr;
     long long currentIt = 0;
     bool initialized = false;
-    std::vector<std::shared_ptr<Controller> > controllers;
-    std::vector<std::shared_ptr<WorldModel> > worldmodels;
-    std::vector<std::shared_ptr<AgentObserver> > agentobservers;
-    std::vector<std::shared_ptr<Robot>> robots;
-    std::vector<std::shared_ptr<PhysicalObject> > objects;
-    std::vector<std::shared_ptr<LandmarkObject> > landmarks;
-    std::shared_ptr<WorldObserver> wobs;
+    std::vector<py::object > controllers;
+    std::vector<py::object > worldmodels;
+    std::vector<py::object > agentobservers;
+    std::vector<py::object > robots;
+    std::vector<py::object > objects;
+    std::vector<py::object > landmarks;
+    py::object wobs;
     py::object worldObserverClass;
     py::object agentControllerClass;
     py::object worldModelClass;

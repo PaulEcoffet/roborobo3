@@ -6,6 +6,10 @@
  *
  */
 
+#ifdef PYROBOROBO
+#include <pyroborobo/pyroborobo.h>
+#endif
+
 #include "Controllers/Controller.h"
 #include "WorldModels/RobotWorldModel.h"
 #include "RoboroboMain/roborobo.h"
@@ -31,6 +35,12 @@ Controller::Controller(std::shared_ptr<RobotWorldModel> __wm)
     wallDetectors.resize(_wm->_cameraSensorsNb);
     robotControllerDetectors.resize(_wm->_cameraSensorsNb);
     robotInstanceDetectors.resize(_wm->_cameraSensorsNb);
+#ifdef PYROBOROBO
+    pyRobotInstanceDetectors.resize(_wm->_cameraSensorsNb);
+    pyRobotControllerDetectors.resize(_wm->_cameraSensorsNb);
+    pyObjectInstanceDetectors.resize(_wm->_cameraSensorsNb);
+#endif
+
 }
 
 Controller::~Controller()
@@ -76,7 +86,9 @@ void Controller::refreshInputs(){
     //      - green value
     //      - blue value
     // - relative distance and/or orientation of either the closest landmark (if any, zero if none)
-
+#ifdef PYROBOROBO
+    Pyroborobo* rob = Pyroborobo::get();
+#endif
 
     lastRefreshIteration = gWorld->getIterations();
     redGroundDetectors = -1;
@@ -101,6 +113,9 @@ void Controller::refreshInputs(){
                 objectDetectors[i] = objectId; // match
                 objectInstanceDetectors[i] = gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset];
                 objectTypeDetectors[i] = (objectInstanceDetectors[i]->getType() );
+#ifdef PYROBOROBO
+                pyObjectInstanceDetectors[i] = rob->getObjects()[objectId];
+#endif
 
             }
             else
@@ -108,6 +123,9 @@ void Controller::refreshInputs(){
                     objectDetectors[i] = (-1);
                     objectInstanceDetectors[i] = nullptr;
                     objectTypeDetectors[i] = (-1);
+#ifdef PYROBOROBO
+                pyObjectInstanceDetectors[i] = py::none();
+#endif
             }
         }
         
@@ -121,6 +139,10 @@ void Controller::refreshInputs(){
                 int targetRobotId = robotInstanceDetectors[i]->getWorldModel()->getId();
                 robotDetectors[i] = ( targetRobotId );
                 robotControllerDetectors[i] = robotInstanceDetectors[i]->getController();
+#ifdef PYROBOROBO
+                pyRobotControllerDetectors[i] = rob->getControllers()[targetRobotId];
+                pyRobotInstanceDetectors[i] = rob->getRobots()[targetRobotId];
+#endif
 
                 if ( gSensoryInputs_otherAgentGroup )
                 {
@@ -153,6 +175,10 @@ void Controller::refreshInputs(){
                 robotDetectors[i] = ( -1 ); // not an agent...
                 robotInstanceDetectors[i] = nullptr;
                 robotControllerDetectors[i] = nullptr;
+#ifdef PYROBOROBO
+                pyRobotControllerDetectors[i] = py::none();
+                pyRobotInstanceDetectors[i] = py::none();
+#endif
                 if ( gSensoryInputs_otherAgentGroup )
                 {
                     robotGroupDetector[i] = ( 0 ); // ...therefore no match wrt. group.
@@ -300,7 +326,7 @@ std::vector<int>& Controller::getAllObjects( )
 {
     if ( gSensoryInputs_physicalObjectType == false )
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getObjectAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllObjects(.)\n";
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
@@ -311,7 +337,7 @@ std::shared_ptr<PhysicalObject> Controller::getObjectInstanceAt( int sensorId )
 {
     if ( gSensoryInputs_physicalObjectType == false )
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getObjectAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getObjectInstanceAt(.)\n";
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
@@ -322,7 +348,7 @@ std::vector<std::shared_ptr<PhysicalObject>>& Controller::getAllObjectInstances(
 {
     if ( gSensoryInputs_physicalObjectType == false )
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getObjectAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllObjectInstances(.)\n";
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
@@ -348,7 +374,7 @@ std::vector<int>& Controller::getAllObjectTypes()
 {
     if ( gSensoryInputs_physicalObjectType == false )
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getObjectTypeAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllObjectTypes(.)\n";
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
@@ -371,7 +397,7 @@ std::vector<int>& Controller::getAllRobotIds()
 {
     if ( gSensoryInputs_isOtherAgent == false )
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getRobotIdAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllRobotIds(.)\n";
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
@@ -394,7 +420,7 @@ std::vector<int>& Controller::getAllRobotGroupIds()
 {
     if ( gSensoryInputs_isOtherAgent == false )
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getRobotIdAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllRobotGroupIds(.)\n";
         exit(-1);
     }
     if ( checkRefresh() == false ) { refreshInputs(); }
@@ -501,7 +527,7 @@ std::vector<std::shared_ptr<Controller>>& Controller::getAllRobotControllers()
 {
     if (gSensoryInputs_isOtherAgent == false)
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllRobotControllers(.)\n";
         exit(-1);
     }
     if (checkRefresh() == false)
@@ -515,7 +541,7 @@ std::vector<std::shared_ptr<Robot>> &Controller::getAllRobotInstances()
 {
     if (gSensoryInputs_isOtherAgent == false)
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllRobotInstances(.)\n";
         exit(-1);
     }
     if (checkRefresh() == false)
@@ -529,7 +555,7 @@ std::shared_ptr<Robot> Controller::getRobotInstanceAt(int sensorId)
 {
     if (gSensoryInputs_isOtherAgent == false)
     {
-        std::cout << "[ERROR] Unauthorized call to Controller::getRobotControllerAt(.)\n";
+        std::cout << "[ERROR] Unauthorized call to Controller::getRobotInstanceAt(.)\n";
         exit(-1);
     }
     if (checkRefresh() == false)
@@ -538,3 +564,89 @@ std::shared_ptr<Robot> Controller::getRobotInstanceAt(int sensorId)
     }
     return robotInstanceDetectors[sensorId];
 }
+
+#ifdef PYROBOROBO
+std::vector<py::object> Controller::getAllPyObjectInstances()
+{
+    if ( gSensoryInputs_physicalObjectType == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getAllPyObjectInstances(.)\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return pyObjectInstanceDetectors;
+}
+
+std::vector<py::object> Controller::getAllPyRobotControllers()
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to getAllPyRobotControllers\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return pyRobotControllerDetectors;
+}
+
+std::vector<py::object> Controller::getAllPyRobotInstances()
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to getAllPyRobotInstances\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return pyRobotInstanceDetectors;
+}
+
+py::object Controller::getPyRobotControllerAt(int sensorId)
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to getPyRobotControllerAt\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return pyRobotControllerDetectors[sensorId];
+}
+
+py::object Controller::getPyObjectInstanceAt(int sensorId)
+{
+    if ( gSensoryInputs_physicalObjectType == false )
+    {
+        std::cout << "[ERROR] Unauthorized call to Controller::getPyObjectInstanceAt(.)\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return pyObjectInstanceDetectors[sensorId];
+}
+
+py::object Controller::getPyRobotInstanceAt(int sensorId)
+{
+    if (gSensoryInputs_isOtherAgent == false)
+    {
+        std::cout << "[ERROR] Unauthorized call to getPyRobotInstanceAt\n";
+        exit(-1);
+    }
+    if (checkRefresh() == false)
+    {
+        refreshInputs();
+    }
+    return pyRobotInstanceDetectors[sensorId];
+}
+#endif
