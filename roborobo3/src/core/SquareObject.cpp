@@ -10,102 +10,105 @@
 
 SquareObject::SquareObject( int __id ) : PhysicalObject( __id ) // a unique and consistent __id should be given as argument
 {
-	std::string s = "";
-	std::stringstream out;
-	out << getId();
-    
-    s = "physicalObject[";
-	s += out.str();
-	s += "].solid_w";
-	if ( gProperties.hasProperty( s ) )
-		convertFromString<int>(_solid_w, gProperties.getProperty( s ), std::dec);
-	else
+    if (__id >= 0)
     {
-        if ( gVerbose )
-            std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing solid_w (integer, >=0). Get default value.\n";
-        gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSolid_w", &_solid_w, true);
-    }
+        std::string s = "";
+        std::stringstream out;
+        out << getId();
 
-    s = "physicalObject[";
-	s += out.str();
-	s += "].solid_h";
-	if ( gProperties.hasProperty( s ) )
-		convertFromString<int>(_solid_h, gProperties.getProperty( s ), std::dec);
-	else
-    {
-        if ( gVerbose )
-            std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing solid_h (integer, >=0). Get default value.\n";
-        gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSolid_h", &_solid_h, true);
-    }
-    
-    s = "physicalObject[";
-	s += out.str();
-	s += "].soft_w";
-	if ( gProperties.hasProperty( s ) )
-		convertFromString<int>(_soft_w, gProperties.getProperty( s ), std::dec);
-	else
-    {
-        if ( gVerbose )
-            std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing soft_w (integer, >=0). Get default value.\n";
-        gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSoft_w", &_soft_h, true);
-    }
-    
-    s = "physicalObject[";
-	s += out.str();
-	s += "].soft_h";
-	if ( gProperties.hasProperty( s ) )
-		convertFromString<int>(_soft_h, gProperties.getProperty( s ), std::dec);
-	else
-    {
-        if ( gVerbose )
-            std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing soft_h (integer, >=0). Get default value.\n";
-        gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSoft_h", &_soft_h, true);
-    }
-
-    double x = 0.0, y = 0.0;
-    x = getXCenterPixel();
-	y = getYCenterPixel();
-    
-    int tries = 0;
-    bool randomLocation = false;
-    
-    if ( x == -1.0 || y == -1.0 )
-    {
-        tries = tries + findRandomLocation();
-        randomLocation = true;
-    }
-    else
-    {
-        if ( canRegister() == false )  // i.e. user-defined location, but cannot register. Pick random.
-        {
-            std::cerr << "[CRITICAL] cannot use user-defined initial location (" << x << "," << y << ") for physical object #" << getId() << " (localization failed). EXITING.";
-            exit(-1);
-        }
-        randomLocation = false;
-    }
-    
-    if ( gVerbose )
-    {
-        std::cout << "[INFO] Physical Object #" << getId() << "  (of super type SquareObject) positioned at ( "<< std::setw(5) << getXCenterPixel() << " , " << std::setw(5) << getYCenterPixel() << " ) -- ";
-        if ( randomLocation == false )
-            std::cout << "[user-defined position]\n";
+        s = "physicalObject[";
+        s += out.str();
+        s += "].solid_w";
+        if ( gProperties.hasProperty( s ) )
+            convertFromString<int>(_solid_w, gProperties.getProperty( s ), std::dec);
         else
         {
-            std::cout << "[random pick after " << tries;
-            if ( tries <= 1 )
-                std::cout << " try]";
-            else
-                std::cout << " tries]";
-            std::cout << "\n";
+            if ( gVerbose )
+                std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing solid_w (integer, >=0). Get default value.\n";
+            gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSolid_w", &_solid_w, true);
         }
+
+        s = "physicalObject[";
+        s += out.str();
+        s += "].solid_h";
+        if ( gProperties.hasProperty( s ) )
+            convertFromString<int>(_solid_h, gProperties.getProperty( s ), std::dec);
+        else
+        {
+            if ( gVerbose )
+                std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing solid_h (integer, >=0). Get default value.\n";
+            gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSolid_h", &_solid_h, true);
+        }
+
+        s = "physicalObject[";
+        s += out.str();
+        s += "].soft_w";
+        if ( gProperties.hasProperty( s ) )
+            convertFromString<int>(_soft_w, gProperties.getProperty( s ), std::dec);
+        else
+        {
+            if ( gVerbose )
+                std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing soft_w (integer, >=0). Get default value.\n";
+            gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSoft_w", &_soft_w, true);
+        }
+
+        s = "physicalObject[";
+        s += out.str();
+        s += "].soft_h";
+        if ( gProperties.hasProperty( s ) )
+            convertFromString<int>(_soft_h, gProperties.getProperty( s ), std::dec);
+        else
+        {
+            if ( gVerbose )
+                std::cerr << "[MISSING] Physical Object #" << _id << " (of super type SquareObject) missing soft_h (integer, >=0). Get default value.\n";
+            gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultSoft_h", &_soft_h, true);
+        }
+
+        double x = 0.0, y = 0.0;
+        x = getXCenterPixel();
+        y = getYCenterPixel();
+
+        int tries = 0;
+        bool randomLocation = false;
+
+        if ( x == -1.0 || y == -1.0 )
+        {
+            tries = tries + findRandomLocation();
+            randomLocation = true;
+        }
+        else
+        {
+            if ( canRegister() == false )  // i.e. user-defined location, but cannot register. Pick random.
+            {
+                std::cerr << "[CRITICAL] cannot use user-defined initial location (" << x << "," << y << ") for physical object #" << getId() << " (localization failed). EXITING.";
+                exit(-1);
+            }
+            randomLocation = false;
+        }
+
+        if ( gVerbose )
+        {
+            std::cout << "[INFO] Physical Object #" << getId() << "  (of super type SquareObject) positioned at ( "<< std::setw(5) << getXCenterPixel() << " , " << std::setw(5) << getYCenterPixel() << " ) -- ";
+            if ( randomLocation == false )
+                std::cout << "[user-defined position]\n";
+            else
+            {
+                std::cout << "[random pick after " << tries;
+                if ( tries <= 1 )
+                    std::cout << " try]";
+                else
+                    std::cout << " tries]";
+                std::cout << "\n";
+            }
+        }
+
+        if ( _visible )
+        {
+            registerObject();
+        }
+
+        registered = true;
     }
-    
-    if ( _visible )
-    {
-        registerObject();
-    }
-    
-    registered = true;
 }
 
 void SquareObject::show(SDL_Surface *surface) // display on screen (called in the step() method if gDisplayMode=0 and _visible=true)
