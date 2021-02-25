@@ -4,6 +4,7 @@ import re
 import subprocess
 import sys
 from distutils.version import LooseVersion
+from sphinx.setup_command import BuildDoc
 
 from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
@@ -61,17 +62,29 @@ class CMakeBuild(build_ext):
         subprocess.check_call(['cmake', ext.sourcedir] + cmake_args, cwd=self.build_temp, env=env)
         subprocess.check_call(['cmake', '--build', '.'] + build_args, cwd=self.build_temp)
 
+cmdclass = {'build_sphinx': BuildDoc, "build_ext":CMakeBuild}
+name = 'pyroborobo'
+version = '0.7.0'
+release = '0.7.0'
+
+
 setup(
-    name='pyroborobo',
-    version='0.6.4',
+    name=name,
+    version=version,
     author='Paul Ecoffet',
     author_email='paul.ecoffet@sorbonne-universite.fr',
     description='pyroborobo',
     long_description='',
     ext_modules=[CMakeExtension('_pyroborobo')],
-    cmdclass=dict(build_ext=CMakeBuild),
     packages=['pyroborobo'],
-    packages_dir={'': 'pyroborobo'},
     zip_safe=False,
-    debug=True
+    cmdclass=cmdclass,
+    # these are optional and override conf.py settings
+    command_options={
+        'build_sphinx': {
+            'project': ('setup.py', name),
+            'version': ('setup.py', version),
+            'release': ('setup.py', release),
+            'source_dir': ('setup.py', 'docs')}},
+
 )

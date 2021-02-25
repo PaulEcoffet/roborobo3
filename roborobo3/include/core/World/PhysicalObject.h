@@ -100,7 +100,10 @@ public :
         type = _type;
     }
 
-    virtual void step() = 0;
+    virtual void step()
+    {
+        stepPhysicalObject();
+    }
 
     virtual void
     stepPhysicalObject() final; // default step method. Suggested: call this method from step(). Do not override.

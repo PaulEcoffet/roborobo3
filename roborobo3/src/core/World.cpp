@@ -79,7 +79,7 @@ World::~World()
      */
 }
 
-void World::initWorld()
+void World::initWorld(std::function<void()> callbackOnceObjectsAreCreated)
 {
 	// *** load environment and agents files
     if( loadFiles() == false )
@@ -170,7 +170,7 @@ void World::initWorld()
     for ( int i = 0 ; i != gNbOfRobots ; i++ )
 		gRobotsRegistry[i]=false;
 
-    
+    callbackOnceObjectsAreCreated();
     _worldObserver->initPost();
 }
 

@@ -30,6 +30,7 @@ public :
     void unregisterObject() override; // unregister object in the world (write blank pixels)
     void show(SDL_Surface *surface) override; // wrt. screen-rendering
     void hide() override;    // wrt. screen-rendering
+    void step() override;
 
     /* add default behavior for callbacks */
 

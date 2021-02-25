@@ -31,7 +31,7 @@ public:
 
     void step() override
     {
-        PYBIND11_OVERLOAD_PURE(void, BaseSquare, step,);
+        PYBIND11_OVERLOAD(void, BaseSquare, step,);
     }
 
     bool canRegister() override
@@ -98,6 +98,7 @@ public:
     void trueShow()
     {
         BaseSquare::_visible = true;
+        show(gScreen);
     }
 
 };

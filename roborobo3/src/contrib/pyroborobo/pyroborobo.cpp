@@ -125,7 +125,7 @@ void Pyroborobo::start()
 
     // * run
 
-    world->initWorld();
+    world->initWorld([=]() {this->_gatherProjectInstances();});
 
 
     if (!gBatchMode)
@@ -133,8 +133,6 @@ void Pyroborobo::start()
         initMonitor(true);
     } // add speed monitoring and inspector agent
 
-    _gatherProjectInstances();
-    initialized = true;
 }
 
 bool Pyroborobo::update(size_t n_step)
@@ -286,6 +284,8 @@ void Pyroborobo::_gatherProjectInstances()
     {
         landmarks.emplace_back(py::cast(gLandmarks[i]));
     }
+    initialized = true;
+
 }
 
 void Pyroborobo::overrideProperties(const py::dict &dict)
@@ -308,7 +308,9 @@ std::shared_ptr<PhysicalObject> Pyroborobo::addObjectToEnv(std::shared_ptr<Physi
 {
     int id = PhysicalObjectFactory::getNextId();
     obj->setId(id);
-    gPhysicalObjects.emplace_back(obj);
+    gPhysicalObjects.push_back(obj);
+    gNbOfPhysicalObjects = gPhysicalObjects.size();
+    _gatherProjectInstances();
     return obj;
 }
 

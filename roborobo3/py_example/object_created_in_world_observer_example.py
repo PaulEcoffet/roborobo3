@@ -7,16 +7,24 @@ class CreateObjectWorldObserver(WorldObserver):
         self.rob = Pyroborobo.get()
 
     def init_post(self):
-        print("coucou")
-        for i in range(16):
-            squareobj = SquareObject(-1)
-            squareobj.soft_width = 0
-            squareobj.soft_height = 0
-            squareobj.solid_width = 10
-            squareobj.soft_height = 10
-            squareobj.set_coordinates(10 + 10 * i, 10)
-            squareobj = self.rob.add_object(squareobj)
-            squareobj.register()
+        path = {"left": (100, 200), "bottom": (110, 290), "right": (200, 200)}
+        color = {"left": (0, 0, 255), "bottom": (0, 255, 0), "right": (255, 0, 0)}
+        nb = {"left": 10, "bottom": 9, "right": 10}
+        for orient in ["left", "bottom", "right"]:
+            for j in range(nb[orient]):
+                squareobj = SquareObject(-1, {})
+                squareobj = self.rob.add_object(squareobj)
+                squareobj.soft_width = 0
+                squareobj.soft_height = 0
+                squareobj.solid_width = 10
+                squareobj.solid_height = 10
+                squareobj.set_color(*color[orient])
+                if orient in ["left", "right"]:
+                    squareobj.set_coordinates(path[orient][0], path[orient][1] + 10 * j)
+                else:
+                    squareobj.set_coordinates(path[orient][0] + 10 * j, path[orient][1])
+                squareobj.register()
+                squareobj.show()
 
 
 def main():
