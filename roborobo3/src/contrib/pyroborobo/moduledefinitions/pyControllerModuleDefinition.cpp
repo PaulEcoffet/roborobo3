@@ -82,11 +82,11 @@ Examples
             .def("get_all_robot_ids", [] (Controller& self) {
                 return as_pyarray(self.getAllRobotIds());
             })
-            .def("get_robot_controller_at", &Controller::getRobotControllerAt, "sensor_id"_a,
+            .def("get_robot_controller_at", &Controller::getPyRobotControllerAt, "sensor_id"_a,
                  "Controller: Get the robot's controller seen by the sensor ``sensor_id``", py::return_value_policy::reference)
-            .def("get_all_robot_controllers", &Controller::getAllRobotControllers)
-            .def("get_robot_instance_at", &Controller::getObjectInstanceAt)
-            .def("get_all_robot_instances", &Controller::getAllRobotInstances)
+            .def("get_all_robot_controllers", &Controller::getAllPyRobotControllers)
+            .def("get_robot_instance_at", &Controller::getPyObjectInstanceAt)
+            .def("get_all_robot_instances", &Controller::getAllPyRobotInstances)
             .def("get_robot_relative_orientation_at", &Controller::getRobotRelativeOrientationAt, "sensor_id"_a,
                  "float: Get robot's relative orientation compared to self seen by the sensor ``sensor_id``")
             .def("get_all_robot_relative_orientations", [] (Controller& self)
@@ -96,9 +96,9 @@ Examples
             .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a,
                  "Int: Id of the object if seen else -1 for the sensor ``sensor_id``")
             .def("get_all_objects", [] (Controller& self) -> py::array { return as_pyarray(self.getAllObjects()); })
-            .def("get_object_instance_at", &Controller::getObjectInstanceAt, "sensor_id"_a,
+            .def("get_object_instance_at", &Controller::getPyObjectInstanceAt, "sensor_id"_a,
                  py::return_value_policy::automatic_reference)
-            .def("get_all_object_instances", &Controller::getAllObjectInstances)
+            .def("get_all_object_instances", &Controller::getAllPyObjectInstances)
             .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a,
                  "Bool: Tell if it's a wall seen by the sensor ``sensor_id``")
             .def("get_all_walls", [] (Controller& self) -> py::array { return as_pyarray(self.getAllWalls()); })

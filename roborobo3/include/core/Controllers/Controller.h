@@ -51,6 +51,12 @@ protected:
     std::vector<std::shared_ptr<Controller>> robotControllerDetectors;
     std::vector<std::shared_ptr<Robot>> robotInstanceDetectors;
 
+#ifdef PYROBOROBO
+    std::vector<py::object> pyObjectInstanceDetectors;
+    std::vector<py::object> pyRobotControllerDetectors;
+    std::vector<py::object> pyRobotInstanceDetectors;
+#endif
+
 
 
     double redGroundDetectors;
@@ -204,6 +210,17 @@ public:
     std::vector<std::shared_ptr<Controller>>& getAllRobotControllers();
 
     std::vector<std::shared_ptr<Robot>>& getAllRobotInstances();
+
+#ifdef PYROBOROBO
+    std::vector<py::object> getAllPyObjectInstances();
+    std::vector<py::object> getAllPyRobotControllers();
+    std::vector<py::object> getAllPyRobotInstances();
+    py::object getPyRobotControllerAt(int sensorId);
+    py::object getPyObjectInstanceAt(int sensorId);
+    py::object getPyRobotInstanceAt(int sensorId);
+
+
+#endif
 
 };
 

@@ -286,7 +286,9 @@ void initMonitor(bool _isInspectorAgent = false);
 
 void updateMonitor(const Uint8 *_keyboardStates);
 
-bool loadProperties(const std::string &_propertiesFilename);
+bool loadPropertiesFile(const std::string &_propertiesFilename);
+
+bool loadProperties(const std::string &_propertiesFilename = "");
 
 void initRoborobo();
 

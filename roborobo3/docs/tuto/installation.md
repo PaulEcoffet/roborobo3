@@ -47,22 +47,26 @@ conda activate pyrob
 python setup.py install --force
 ```
 
-The documentation is available by opening `docs/_build/html/index.html`, you can do it using this shell command:
-
-```bash
-xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
-```
-
-
-You can also build the docs yourself:
+and to build the doc:
 
 ```bash
 conda activate pyrob
 conda install sphinx recommonmark sphinx_rtd_theme numpydoc
+python setup.py build_sphinx
+```
 
-cd <yourpyroborobofolder>/roborobo3/roborobo3/docs
-make clean && make html
-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
+
+The documentation is available by opening `build/html/index.html`, you can do it using this shell command:
+
+```bash
+open <yourpyroborobofolder>/roborobo3/roborobo3/build/sphinx/html/index.html
+```
+
+
+The documentation is available by opening `docs/_build/html/index.html`, you can do it using this shell command:
+
+```bash
+xdg-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
 ```
 
 
@@ -107,8 +111,6 @@ brew install eigen
 brew install cmake
 ```
 
-
-
 Then, to install pyroborobo, run
 
 ```
@@ -116,23 +118,21 @@ cd roborobo3/roborobo3
 python setup.py install --force
 ```
 
-
-The documentation is available by opening `docs/_build/html/index.html`, you can do it using this shell command:
-
-```bash
-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
-```
-
-You can also build the docs yourself:
+and to build the doc:
 
 ```bash
 conda activate pyrob
 conda install sphinx recommonmark sphinx_rtd_theme numpydoc
-
-cd <yourpyroborobofolder>/roborobo3/roborobo3/docs
-make clean && make html
-open <yourpyroborobofolder>/roborobo3/roborobo3/docs/_build/html/index.html
+python setup.py build_sphinx
 ```
+
+
+The documentation is available by opening `build/html/index.html`, you can do it using this shell command:
+
+```bash
+open <yourpyroborobofolder>/roborobo3/roborobo3/build/sphinx/html/index.html
+```
+
 
 Many examples are available
 on [github in the py_example folder](https://github.com/PaulEcoffet/roborobo3/tree/cleanpyroborobo/roborobo3/py_example).

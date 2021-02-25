@@ -17,11 +17,7 @@ using namespace pybind11::literals;
 
 void addPyRoboroboBinding(py::module &m)
 {
-    py::bind_vector<std::vector<std::shared_ptr<Controller>>>(m, "ControllerVector");
-    py::bind_vector<std::vector<std::shared_ptr<PhysicalObject>>>(m, "PhysicalObjectVector");
-    py::bind_vector<std::vector<std::shared_ptr<LandmarkObject>>>(m, "LandmarkObjectVector");
-    py::bind_vector<std::vector<std::shared_ptr<RobotWorldModel>>>(m, "RobotWorldModelVector");
-    py::bind_vector<std::vector<std::shared_ptr<Robot>>>(m, "RobotVector");
+    py::bind_vector<std::vector<py::object>>(m, "PyObjectFastVector");
 
     py::class_<Pyroborobo>(m, "Pyroborobo", R"doc(
         Python interface to the roborobo simulator
@@ -141,13 +137,8 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
                 self._gatherProjectInstances();
                 return robot;
                 })
-            .def("add_object", [] (Pyroborobo& self, std::string valuepytype) {
-                int id = PhysicalObjectFactory::getNextId();
-                auto obj = PyPhysicalObjectFactory::makeObject(valuepytype, id);
-                gPhysicalObjects.push_back(obj);
-                self._gatherProjectInstances();
-                return obj;
-            })
+            .def("add_object", &Pyroborobo::addObjectToEnv, "physical_object"_a,
+                 "Add a new object to the environment")
             .def("add_landmark", [] (Pyroborobo& self) {
                 auto landmark = std::make_shared<LandmarkObject>();
                 gWorld->addLandmark(landmark);

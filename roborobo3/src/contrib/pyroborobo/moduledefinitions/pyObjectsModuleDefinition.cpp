@@ -66,7 +66,7 @@ bool: can object register at its actual position
             .def("is_walked", &PhysicalObject::isWalked, "Triggered when the object is walked on")
             .def("is_pushed", &PhysicalObject::isPushed, "Triggered when the object is pushed")
             .def("set_color", &PhysicalObject::setDisplayColor, "red"_a, "blue"_a, "green"_a,
-                 "Set the color (r,g,b) of the object")
+                 "Set the color (r,g,b) of the object. r [0, 255], g [0, 255], b [0,255]")
             .def("set_coordinates", &PhysicalObject::setCoordinates, "x"_a, "y"_a,
                  "set the coordinates without checking.")
             .def_property_readonly("position", [] (PhysicalObject& self) -> std::tuple<double, double>

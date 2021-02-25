@@ -279,3 +279,7 @@ void CircleObject::unregisterObject()
     }
 }
 
+void CircleObject::step() {
+    stepPhysicalObject();
+}
+

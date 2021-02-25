@@ -1,6 +1,8 @@
 from pyroborobo import Pyroborobo, Controller
 import numpy as np
 from numba import jit
+from time import perf_counter
+
 
 class MedeaController(Controller):
 
@@ -18,6 +20,7 @@ class MedeaController(Controller):
         self.is_robots = None
         self.is_walls = None
         self.is_objects = None
+        self.robot_controllers = None
         self.prev_dist = np.array([0])
 
     def reset(self):
@@ -49,8 +52,8 @@ class MedeaController(Controller):
             # Movement
             inputs = self.get_inputs()
             trans_speed, rot_speed = inputs @ self.weights
-            self.set_translation(np.clip(trans_speed, -1, 1))
-            self.set_rotation(np.clip(rot_speed, -1, 1))
+            self.set_translation(min(max(-1, trans_speed), 1))  # np.clip is *slow*
+            self.set_rotation(min(max(-1, rot_speed), 1))
 
     def nb_inputs(self):
         return (1  # bias
@@ -59,10 +62,10 @@ class MedeaController(Controller):
                 )
 
     def share_weights(self):
-        all_controllers = set(self.get_all_robot_controllers())
-        for robot_controller in all_controllers:
-            if robot_controller:
-                robot_controller.receive_weights(self.id, self.weights)
+        all_controllers = set(self.is_robots)
+        for robot_id in all_controllers:
+            if robot_id != -1:
+                self.rob.controllers[robot_id].receive_weights(self.id, self.weights)
 
     def receive_weights(self, rid, weights):
         self.received_weights[rid] = (weights.copy())
@@ -70,7 +73,7 @@ class MedeaController(Controller):
     def get_inputs(self):
         landmark_dist = self.get_closest_landmark_dist()
         landmark_orient = self.get_closest_landmark_orientation()
-        self._cur_inputs = fast_input_generation(self._cur_inputs, self.distances, self.is_objects, self.is_robots,
+        fast_input_generation(self._cur_inputs, self.distances, self.is_objects, self.is_robots,
                                                  self.is_walls, landmark_dist, landmark_orient)
         return self._cur_inputs
 
@@ -92,7 +95,8 @@ class MedeaController(Controller):
         output += str(list(self.received_weights.keys()))
         return output
 
-@jit(nopython=True)
+
+@jit(nopython=True, fastmath=True)
 def fast_input_generation(inputs, dists, is_objects, is_robots, is_walls, landmark_dist, landmark_orient):
     i = 0
     inputs[i] = 1
@@ -109,13 +113,19 @@ def fast_input_generation(inputs, dists, is_objects, is_robots, is_walls, landma
     inputs[i] = landmark_orient
     i += 1
     assert (i == len(inputs))
-    return inputs
 
 def main():
     rob = Pyroborobo.create("config/medea.properties",
-                            controller_class=MedeaController)
+                            controller_class=MedeaController,
+                            override_conf_dict={"gVerbose": "True", "gDisplayMode": "2"})
     rob.start()
-    rob.update(10000)
+    for i in range(10):
+        print("start timer")
+        curtime = perf_counter()
+        should_quit = rob.update(1000)
+        print(perf_counter() - curtime)
+        if should_quit:
+            break
     Pyroborobo.close()
 
 

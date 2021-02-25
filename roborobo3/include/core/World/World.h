@@ -36,7 +36,7 @@ public:
     bool loadFiles();
     //bool loadProperties( std::string __propertiesFilename );
 
-    void initWorld();
+    void initWorld(std::function<void()> callbackOnceObjectsAreCreated = [](){});
 
     void updateWorld(const Uint8 *__keyboardStates = NULL);
 

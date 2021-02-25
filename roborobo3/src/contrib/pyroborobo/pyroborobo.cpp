@@ -61,14 +61,25 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
                        py::dict &objectClassDict,
                        const py::dict &options)
         :
-        currentIt(0)
+        currentIt(0),
+        worldObserverClass(worldObserverClass),
+        agentControllerClass(agentControllerClass),
+        worldModelClass(worldModelClass),
+        agentObserverClass(agentObserverClass),
+        objectClassDict(objectClassDict)
 {
-    bool success = loadProperties(properties_file);
+    bool success = loadPropertiesFile(properties_file);
     if (!success)
     {
-        throw std::runtime_error("Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
+        throw std::runtime_error(
+                "Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
     }
     this->overrideProperties(options);
+}
+
+void Pyroborobo::start()
+{
+    loadProperties(); /* file has already been loaded in constructor */
     PyPhysicalObjectFactory::init();
     py::object objectClass = py::none();
     if (objectClassDict.contains("_default"))
@@ -79,10 +90,7 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
     PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
-}
 
-void Pyroborobo::start()
-{
     currentIt = 0;
 
 
@@ -118,7 +126,7 @@ void Pyroborobo::start()
 
     // * run
 
-    world->initWorld();
+    world->initWorld([=]() {this->_gatherProjectInstances();});
 
 
     if (!gBatchMode)
@@ -126,8 +134,6 @@ void Pyroborobo::start()
         initMonitor(true);
     } // add speed monitoring and inspector agent
 
-    _gatherProjectInstances();
-    initialized = true;
 }
 
 bool Pyroborobo::update(size_t n_step)
@@ -189,7 +195,7 @@ bool Pyroborobo::update(size_t n_step)
     return quit;
 }
 
-const std::vector<std::shared_ptr<Controller> > & Pyroborobo::getControllers()
+const std::vector<py::object > & Pyroborobo::getControllers() const
 {
     if (!initialized)
     {
@@ -198,7 +204,7 @@ const std::vector<std::shared_ptr<Controller> > & Pyroborobo::getControllers()
     return controllers;
 }
 
-const std::vector<std::shared_ptr<WorldModel> > & Pyroborobo::getWorldModels()
+const std::vector<py::object > & Pyroborobo::getWorldModels() const
 {
     if (!initialized)
     {
@@ -207,7 +213,7 @@ const std::vector<std::shared_ptr<WorldModel> > & Pyroborobo::getWorldModels()
     return worldmodels;
 }
 
-const std::vector<std::shared_ptr<AgentObserver> > & Pyroborobo::getAgentObservers()
+const std::vector<py::object > & Pyroborobo::getAgentObservers() const
 {
     if (!initialized)
     {
@@ -217,7 +223,7 @@ const std::vector<std::shared_ptr<AgentObserver> > & Pyroborobo::getAgentObserve
     return agentobservers;
 }
 
-const std::vector<std::shared_ptr<Robot> > & Pyroborobo::getRobots()
+const std::vector<py::object > & Pyroborobo::getRobots() const
 {
     if (!initialized)
     {
@@ -227,7 +233,7 @@ const std::vector<std::shared_ptr<Robot> > & Pyroborobo::getRobots()
 }
 
 
-const std::vector<std::shared_ptr<PhysicalObject> > & Pyroborobo::getObjects()
+const std::vector<py::object > & Pyroborobo::getObjects() const
 {
     if (!initialized)
     {
@@ -259,26 +265,28 @@ void Pyroborobo::_gatherProjectInstances()
     landmarks.reserve(nbLandmarks);
 
 
-    wobs = world->getWorldObserver();
+    wobs = py::cast(world->getWorldObserver());
 
     for (size_t i = 0; i < nbRob; i++)
     {
         auto rob = world->getRobot(i);
-        robots.emplace_back(rob);
-        worldmodels.emplace_back(rob->getWorldModel());
-        agentobservers.emplace_back(rob->getObserver());
-        controllers.emplace_back(rob->getController());
+        robots.emplace_back(py::cast(rob));
+        worldmodels.emplace_back(py::cast(rob->getWorldModel()));
+        agentobservers.emplace_back(py::cast(rob->getObserver()));
+        controllers.emplace_back(py::cast(rob->getController()));
     }
 
     for (size_t i = 0; i < nbObj; i++)
     {
-        objects.emplace_back(gPhysicalObjects[i]);
+        objects.emplace_back(py::cast(gPhysicalObjects[i]));
     }
 
     for (size_t i = 0; i < nbLandmarks; i++)
     {
-        landmarks.emplace_back(gLandmarks[i]);
+        landmarks.emplace_back(py::cast(gLandmarks[i]));
     }
+    initialized = true;
+
 }
 
 void Pyroborobo::overrideProperties(const py::dict &dict)
@@ -297,15 +305,14 @@ void Pyroborobo::initCustomConfigurationLoader(py::object &worldObserverClass, p
                                                      worldModelClass, agentObserverClass, objectClass);
 }
 
-int Pyroborobo::addObjectToEnv(PhysicalObject *obj)
+std::shared_ptr<PhysicalObject> Pyroborobo::addObjectToEnv(std::shared_ptr<PhysicalObject> obj)
 {
     int id = PhysicalObjectFactory::getNextId();
     obj->setId(id);
-    gPhysicalObjects.emplace_back(obj);
-    return id;
+    gPhysicalObjects.push_back(obj);
+    gNbOfPhysicalObjects = gPhysicalObjects.size();
+    _gatherProjectInstances();
+    return obj;
 }
 
-Pyroborobo::~Pyroborobo()
-{
-    // World is deleted by closeRoborobo()
-}
+Pyroborobo::~Pyroborobo() = default;

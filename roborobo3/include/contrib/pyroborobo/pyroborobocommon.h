@@ -14,11 +14,7 @@
 #include <WorldModels/RobotWorldModel.h>
 #include <Agents/Robot.h>
 
-PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<Controller>>);
-PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<PhysicalObject>>);
-PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<LandmarkObject>>);
-PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<RobotWorldModel>>);
-PYBIND11_MAKE_OPAQUE(std::vector<std::shared_ptr<Robot>>);
+PYBIND11_MAKE_OPAQUE(std::vector<py::object>);
 
 
 

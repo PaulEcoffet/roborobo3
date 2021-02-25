@@ -1117,11 +1117,8 @@ void updateMonitor(const Uint8 *_keyboardStates)
     }
 }
 
-
-bool loadProperties(const std::string &_propertiesFilename)
+bool loadPropertiesFile(const std::string &_propertiesFilename)
 {
-    bool returnValue = true;
-
     std::ifstream in(_propertiesFilename.c_str());
 
     // * check main file for imports
@@ -1160,10 +1157,27 @@ bool loadProperties(const std::string &_propertiesFilename)
         return false;
     gProperties.load(in);
     in.close();
+    return true;
+}
 
+
+bool loadProperties(const std::string &_propertiesFilename)
+{
+    bool returnValue = true;
+
+    if (_propertiesFilename != "")
+    {
+        returnValue = loadPropertiesFile(_propertiesFilename);
+    }
+    if (! returnValue)
+    {
+        std::cerr << "Cannot load the properties file\n";
+        return returnValue;
+    }
     // Load properties given in the config file
 
     std::string s;
+
     if (gProperties.hasProperty("ConfigurationLoaderObjectName"))
     {
         std::string configurationLoaderObjectName = gProperties.getProperty("ConfigurationLoaderObjectName");
