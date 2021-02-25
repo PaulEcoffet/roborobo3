@@ -16,7 +16,7 @@ class WorldObserver;
 class Robot;
 class LandmarkObject;
 
-class World : public std::enable_shared_from_this<World>
+class World
 {
 protected:
 
@@ -34,7 +34,7 @@ public:
     ~World();
 
     bool loadFiles();
-    //bool loadPropertiestoGlobalConf( std::string __propertiesFilename );
+    //bool loadProperties( std::string __propertiesFilename );
 
     void initWorld();
 

@@ -20,10 +20,10 @@ class WorldObserver : public Observer
 {
 	//private:
 	protected:
-		std::shared_ptr<World> _world;
+		World *_world;
 		
 	public:
-		WorldObserver( std::shared_ptr<World> __world );
+		WorldObserver( World *__world );
 		virtual ~WorldObserver();
 				
     /* initPre() and initPost() methods

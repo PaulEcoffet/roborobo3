@@ -17,7 +17,7 @@ TemplateRandomwalkConfigurationLoader::~TemplateRandomwalkConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> TemplateRandomwalkConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
+std::shared_ptr<WorldObserver> TemplateRandomwalkConfigurationLoader::make_WorldObserver(World *wm)
 {
     return std::make_shared<TemplateRandomwalkWorldObserver>(wm);
 }

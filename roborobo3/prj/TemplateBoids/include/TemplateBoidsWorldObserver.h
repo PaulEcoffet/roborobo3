@@ -21,7 +21,7 @@ protected:
     int _generationItCount;
     
 public:
-    TemplateBoidsWorldObserver(std::shared_ptr<World> world);
+    TemplateBoidsWorldObserver(World *world);
     ~TemplateBoidsWorldObserver();
     
     void initPre();

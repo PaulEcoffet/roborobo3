@@ -17,7 +17,7 @@ TutorialConfigurationLoader::~TutorialConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> TutorialConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
+std::shared_ptr<WorldObserver> TutorialConfigurationLoader::make_WorldObserver(World *wm)
 {
     return std::make_shared<TutorialWorldObserver>(wm);
 }

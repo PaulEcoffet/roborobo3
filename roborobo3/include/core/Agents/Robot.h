@@ -44,7 +44,7 @@ private:
         void applyRobotPhysics( );
 
 	public:
-		Robot(std::shared_ptr<World> __world );
+		Robot( World *__world );
 		virtual ~Robot();
 
 		void reset() override;

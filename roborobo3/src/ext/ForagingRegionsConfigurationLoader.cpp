@@ -15,7 +15,7 @@ ForagingRegionsConfigurationLoader::~ForagingRegionsConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> ForagingRegionsConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
+std::shared_ptr<WorldObserver> ForagingRegionsConfigurationLoader::make_WorldObserver(World *wm)
 {
     return std::make_shared<ForagingRegionsWorldObserver>(wm);
 }

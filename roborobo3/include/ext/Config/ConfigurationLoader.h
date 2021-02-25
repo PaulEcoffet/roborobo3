@@ -24,7 +24,7 @@ public:
 
     static ConfigurationLoader *make_ConfigurationLoader(const std::string &configurationLoaderObjectName);
 
-    virtual std::shared_ptr<WorldObserver> make_WorldObserver(std::shared_ptr<World> wm) = 0;
+    virtual std::shared_ptr<WorldObserver> make_WorldObserver(World *wm) = 0;
 
     virtual std::shared_ptr<RobotWorldModel> make_RobotWorldModel() = 0;
 

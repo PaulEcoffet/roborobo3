@@ -30,11 +30,11 @@ public:
                           py::object objectClass)
             :
             fallbackconf(configurationLoader),
-            worldObserverClass(worldObserverClass),
-            agentControllerClass(agentControllerClass),
-            worldModelClass(worldModelClass),
-            agentObserverClass(agentObserverClass),
-            objectClass(objectClass),
+            worldObserverClass(std::move(worldObserverClass)),
+            agentControllerClass(std::move(agentControllerClass)),
+            worldModelClass(std::move(worldModelClass)),
+            agentObserverClass(std::move(agentObserverClass)),
+            objectClass(std::move(objectClass)),
             allocated()
     {
     }
@@ -44,7 +44,7 @@ public:
         delete fallbackconf;
     }
 
-    std::shared_ptr<WorldObserver> make_WorldObserver(std::shared_ptr<World> w) override
+    std::shared_ptr<WorldObserver> make_WorldObserver(World *w) override
     {
         if (worldObserverClass.is(py::none()))
         {

@@ -13,7 +13,7 @@ class World;
 class ForagingRegionsWorldObserver : public TemplateEEWorldObserver
 {
 public:
-    ForagingRegionsWorldObserver(std::shared_ptr<World> world);
+    ForagingRegionsWorldObserver(World *world);
     ~ForagingRegionsWorldObserver();
     
     void initPre();

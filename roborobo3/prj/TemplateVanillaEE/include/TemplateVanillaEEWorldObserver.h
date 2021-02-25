@@ -13,7 +13,7 @@ class World;
 class TemplateVanillaEEWorldObserver : public TemplateEEWorldObserver
 {
 public:
-    TemplateVanillaEEWorldObserver(std::shared_ptr<World> world);
+    TemplateVanillaEEWorldObserver(World *world);
     ~TemplateVanillaEEWorldObserver();
     
     void initPre() override;

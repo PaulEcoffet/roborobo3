@@ -88,7 +88,7 @@ extern long int gVersion;
 // global data
 
 class World;
-extern std::shared_ptr<World> gWorld;				// pointer to the World
+extern World *gWorld;				// pointer to the World
 
 extern std::vector<std::shared_ptr<Robot>> gRobots;
 extern std::vector<bool> gRobotsRegistry;
@@ -286,9 +286,9 @@ void initMonitor(bool _isInspectorAgent = false);
 
 void updateMonitor(const Uint8 *_keyboardStates);
 
-bool loadPropertiestoGlobalConf(const std::string &_propertiesFilename = "");
+bool loadPropertiesFile(const std::string &_propertiesFilename);
 
-bool loadProperties(const std::string &_propertiesFilename);
+bool loadProperties(const std::string &_propertiesFilename = "");
 
 void initRoborobo();
 

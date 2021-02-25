@@ -317,7 +317,7 @@ SDL_Event gEvent; //The event structure
 // special simulation data
 
 InspectorAgent *inspectorAgent = nullptr;
-std::shared_ptr<World> gWorld = nullptr;
+World *gWorld = nullptr;
 Timer fps;
 int timetag = -1;
 Timer timeWatch;
@@ -354,6 +354,8 @@ void clean_up()
 
     if (inspectorAgent != nullptr)
         delete (inspectorAgent);
+
+    delete gWorld;
 }
 
 
@@ -1115,17 +1117,14 @@ void updateMonitor(const Uint8 *_keyboardStates)
     }
 }
 
-bool loadProperties(const std::string &_propertiesFilename)
+bool loadPropertiesFile(const std::string &_propertiesFilename)
 {
     std::ifstream in(_propertiesFilename.c_str());
 
     // * check main file for imports
 
     if (!in.is_open())
-    {
-        std::cout << "[ERROR] Failed to import properties from file " << _propertiesFilename << std::endl;
         return false;
-    }
     std::string target("import(");
 
     while (in)
@@ -1155,30 +1154,30 @@ bool loadProperties(const std::string &_propertiesFilename)
     // * handle main file content
 
     if (!in.is_open())
-    {
-        std::cout << "[ERROR] Failed to import properties from file (after import) " << _propertiesFilename << std::endl;
         return false;
-    }
     gProperties.load(in);
     in.close();
     return true;
 }
 
 
-bool loadPropertiestoGlobalConf(const std::string& _propertiesFilename)
+bool loadProperties(const std::string &_propertiesFilename)
 {
     bool returnValue = true;
-    if(_propertiesFilename != "")
+
+    if (_propertiesFilename != "")
     {
-        returnValue = loadProperties(_propertiesFilename);
+        returnValue = loadPropertiesFile(_propertiesFilename);
     }
-    if (!returnValue)
+    if (! returnValue)
     {
-        return false;
+        std::cerr << "Cannot load the properties file\n";
+        return returnValue;
     }
     // Load properties given in the config file
 
     std::string s;
+
     if (gProperties.hasProperty("ConfigurationLoaderObjectName"))
     {
         std::string configurationLoaderObjectName = gProperties.getProperty("ConfigurationLoaderObjectName");
@@ -2398,7 +2397,7 @@ void initRoborobo()
 {
 
     // load properties
-    if (!loadPropertiestoGlobalConf(gPropertiesFilename))
+    if (!loadProperties(gPropertiesFilename))
     {
         std::cout << "[CRITICAL] properties file contains error(s) or does not exist (\"" << gPropertiesFilename
                   << "\"). EXITING." << std::endl << std::endl;
@@ -2426,7 +2425,7 @@ void initRoborobo()
     initLogging();
 
 
-    // * Initialize Random seed -- loaded, or initialized, in loadPropertiestoGlobalConf(...)
+    // * Initialize Random seed -- loaded, or initialized, in loadProperties(...)
 
     engine.seed(gRandomSeed);
     randint.seed(gRandomSeed);
@@ -2434,7 +2433,7 @@ void initRoborobo()
     //srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
     gLogFile << "# random seed             : " << gRandomSeed << std::endl;
 
-    gWorld = std::make_shared<World>();
+    gWorld = new World();
 
     // * run
     gWorld->initWorld();

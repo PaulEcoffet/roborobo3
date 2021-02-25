@@ -61,28 +61,26 @@ Pyroborobo::Pyroborobo(const std::string &properties_file,
                        py::dict &objectClassDict,
                        const py::dict &options)
         :
-        currentIt(0)
+        currentIt(0),
+        worldObserverClass(worldObserverClass),
+        agentControllerClass(agentControllerClass),
+        worldModelClass(worldModelClass),
+        agentObserverClass(agentObserverClass),
+        objectClassDict(objectClassDict)
 {
-    bool success = loadProperties(properties_file);
+    bool success = loadPropertiesFile(properties_file);
     if (!success)
     {
-        throw std::runtime_error("Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
+        throw std::runtime_error(
+                "Impossible to load the property files. Did you provide the correct path? Does your config file contains errors?");
     }
     this->overrideProperties(options);
-
 }
 
 void Pyroborobo::start()
 {
-    bool success = loadPropertiestoGlobalConf();
-    if (!success)
-    {
-        throw std::runtime_error("Impossible to load the properties to the roborobo conf. Check your properties.");
-    }
-    currentIt = 0;
+    loadProperties(); /* file has already been loaded in constructor */
     PyPhysicalObjectFactory::init();
-    PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
-
     py::object objectClass = py::none();
     if (objectClassDict.contains("_default"))
     {
@@ -90,6 +88,9 @@ void Pyroborobo::start()
     }
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
+    PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
+
+    currentIt = 0;
 
 
     signal(SIGINT, quit);
@@ -119,7 +120,7 @@ void Pyroborobo::start()
     //srand(gRandomSeed); // fixed seed - useful to reproduce results (ie. deterministic sequence of random values)
     //gLogFile << "# random seed             : " << gRandomSeed << std::endl;
 
-    world = std::make_shared<World>();
+    world = new World();
     gWorld = world;
 
     // * run
@@ -299,7 +300,6 @@ void Pyroborobo::initCustomConfigurationLoader(py::object &worldObserverClass, p
                                                py::object &worldModelClass, py::object &agentObserverClass,
                                                py::object &objectClass)
 {
-    std::cout << gConfigurationLoader << "\n";
     gConfigurationLoader = new PyConfigurationLoader(gConfigurationLoader, worldObserverClass, agentControllerClass,
                                                      worldModelClass, agentObserverClass, objectClass);
 }
@@ -312,7 +312,4 @@ int Pyroborobo::addObjectToEnv(PhysicalObject *obj)
     return id;
 }
 
-Pyroborobo::~Pyroborobo()
-{
-    // World is deleted by closeRoborobo()
-}
+Pyroborobo::~Pyroborobo() = default;

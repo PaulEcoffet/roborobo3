@@ -9,9 +9,7 @@
 
  
 #ifndef OBSERVER_H
-#define OBSERVER_H
-
-#include <memory>
+#define OBSERVER_H 
 
 class Observer
 {

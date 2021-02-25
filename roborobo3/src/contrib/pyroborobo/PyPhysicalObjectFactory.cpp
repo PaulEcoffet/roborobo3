@@ -32,10 +32,6 @@ std::shared_ptr<PhysicalObject> PyPhysicalObjectFactory::makeObject(const std::s
 
 void PyPhysicalObjectFactory::updateObjectConstructionDict(const py::dict &constructionDict)
 {
-    if (objectConstructionDict == nullptr)
-    {
-        throw std::runtime_error("PyPhysicalObjectFactory is not initialized.");
-    }
     for (auto keyval : constructionDict)
     {
         auto key = keyval.first.cast<std::string>();

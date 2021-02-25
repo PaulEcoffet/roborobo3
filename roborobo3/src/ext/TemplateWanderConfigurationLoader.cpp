@@ -17,7 +17,7 @@ TemplateWanderConfigurationLoader::~TemplateWanderConfigurationLoader()
 	//nothing to do
 }
 
-std::shared_ptr<WorldObserver> TemplateWanderConfigurationLoader::make_WorldObserver(std::shared_ptr<World> wm)
+std::shared_ptr<WorldObserver> TemplateWanderConfigurationLoader::make_WorldObserver(World *wm)
 {
     return std::make_shared<TemplateWanderWorldObserver>(wm);
 }

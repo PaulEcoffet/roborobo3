@@ -11,7 +11,7 @@
 #include "World/World.h"
 
 
-TemplateMedeaWorldObserver::TemplateMedeaWorldObserver( std::shared_ptr<World>  world ) : TemplateEEWorldObserver( world )
+TemplateMedeaWorldObserver::TemplateMedeaWorldObserver( World* world ) : TemplateEEWorldObserver( world )
 {
     // superclass constructor called before
     

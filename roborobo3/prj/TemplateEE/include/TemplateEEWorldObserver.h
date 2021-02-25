@@ -22,7 +22,7 @@ protected:
     int _generationItCount;
     
 public:
-    TemplateEEWorldObserver(std::shared_ptr<World> world);
+    TemplateEEWorldObserver(World *world);
     ~TemplateEEWorldObserver();
     
     void initPre() override;

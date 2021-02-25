@@ -11,7 +11,7 @@
 #include "TemplateEE/include/TemplateEESharedData.h"
 #include "Utilities/Graphics.h"
 
-TemplateEEWorldObserver::TemplateEEWorldObserver( std::shared_ptr<World>  world ) : WorldObserver( world )
+TemplateEEWorldObserver::TemplateEEWorldObserver( World* world ) : WorldObserver( world )
 {
     _world = world;
     

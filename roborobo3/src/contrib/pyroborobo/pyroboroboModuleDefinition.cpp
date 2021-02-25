@@ -29,7 +29,7 @@ PYBIND11_MODULE(_pyroborobo, m)
     addPyControllerBinding(m);
     addPyRobotWorldModelBinding(m);
     addPyWorldObserverBinding(m);
-    py::class_<World, std::shared_ptr<World>> world_def(m, "World");
+    py::class_<World> world_def(m, "World");
     addPyRobotBinding(m);
     addPyObjectsBindings(m);
     addAgentObserverBindings(m);

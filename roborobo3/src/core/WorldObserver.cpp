@@ -11,7 +11,7 @@
 #include "World/World.h"
 
 
-WorldObserver::WorldObserver( std::shared_ptr<World> __world )
+WorldObserver::WorldObserver( World *__world ) 
 {
 	_world = __world;
 }

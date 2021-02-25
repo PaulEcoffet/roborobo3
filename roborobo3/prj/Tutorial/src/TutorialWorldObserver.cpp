@@ -10,7 +10,7 @@
 #include "RoboroboMain/roborobo.h"
 
 
-TutorialWorldObserver::TutorialWorldObserver( std::shared_ptr<World> __world ) : WorldObserver( __world )
+TutorialWorldObserver::TutorialWorldObserver( World *__world ) : WorldObserver( __world )
 {
 	_world = __world;
 }

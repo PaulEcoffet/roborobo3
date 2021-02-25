@@ -74,7 +74,7 @@ public:
         _cameraSensors[sensorId][valueId] = value;
     }
     
-    std::shared_ptr<World> _world;
+    World *_world;
 	
     int _id;
 	
@@ -111,7 +111,7 @@ public:
     
     // * other methods
     
-    std::shared_ptr<World> getWorld(); // return pointer to the current World
+    World* getWorld(); // return pointer to the current World
 	
     // * sensor methods
     

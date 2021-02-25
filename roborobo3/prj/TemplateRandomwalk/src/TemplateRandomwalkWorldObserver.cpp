@@ -10,7 +10,7 @@
 #include "RoboroboMain/roborobo.h"
 
 
-TemplateRandomwalkWorldObserver::TemplateRandomwalkWorldObserver( std::shared_ptr<World> __world ) : WorldObserver( __world )
+TemplateRandomwalkWorldObserver::TemplateRandomwalkWorldObserver( World *__world ) : WorldObserver( __world )
 {
 	_world = __world;
 }

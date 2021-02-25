@@ -137,8 +137,3 @@ void RobotWorldModel::updateLandmarkSensor()
         std::cout << "Energy Requested (if asked) : " << std::setw(4) << getEnergyRequestValue() << " ]" << std::endl;
     }
 }
-
-std::shared_ptr<World> RobotWorldModel::getWorld()
-{
-    return _world;
-}
