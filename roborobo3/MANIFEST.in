@@ -1,6 +1,6 @@
-recursive-include src *.cpp *.h *.hpp
-recursive-include include *.cpp *.h *.hpp
-recursive-include prj *.cpp *.h *.hpp
+recursive-include src *
+recursive-include include *
+recursive-include prj *
 include CMakeLists.txt
 include cmake/*.cmake
 recursive-include py_example *

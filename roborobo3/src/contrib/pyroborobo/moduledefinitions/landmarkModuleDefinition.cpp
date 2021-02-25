@@ -20,8 +20,9 @@ void addLandmarkBindings(pybind11::module &m)
         auto pos = self.getCoordinates();
         return {pos.x, pos.y};
         }, "return the (x,y) coordinates of the landmark.")
-    .def("hide", &LandmarkObject::hide)
-    .def("show", [] (LandmarkObject& self) {self.show();})
-    .def_property("radius", &LandmarkObject::getRadius, &LandmarkObject::setRadius);
+    .def("hide", [] (LandmarkObject& self) {self.hide(); self._visible = false;})
+    .def("show", [] (LandmarkObject& self) {self.show(); self._visible = true;})
+    .def_property("radius", &LandmarkObject::getRadius, &LandmarkObject::setRadius)
+    .def_readonly("visible", &LandmarkObject::_visible);
 }
 

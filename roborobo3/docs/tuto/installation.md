@@ -27,6 +27,8 @@ If you have not done it with conda before (or pip if you don’t use conda):
 ```bash
 conda install numpy setuptools
 conda install -c conda-forge pybind11  # install latest pybind11
+conda install sphinx recommonmark sphinx_rtd_theme numpydoc  # install dependencies for the doc
+
 # or with pip
 # pip install -U pybind11
 # pip install -U numpy
@@ -51,7 +53,6 @@ and to build the doc:
 
 ```bash
 conda activate pyrob
-conda install sphinx recommonmark sphinx_rtd_theme numpydoc
 python setup.py build_sphinx
 ```
 
@@ -96,6 +97,7 @@ If you have not done it with conda before:
 ```bash
 conda install numpy setuptools
 conda install -c conda-forge pybind11  # install latest pybind11
+conda install sphinx recommonmark sphinx_rtd_theme numpydoc  # install dependencies for doc generation
 # or with pip
 # pip install -U pybind11
 # pip install -U numpy
@@ -122,7 +124,6 @@ and to build the doc:
 
 ```bash
 conda activate pyrob
-conda install sphinx recommonmark sphinx_rtd_theme numpydoc
 python setup.py build_sphinx
 ```
 

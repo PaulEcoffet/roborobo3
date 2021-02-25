@@ -45,6 +45,13 @@ public :
     void isPushed(int _id, std::tuple<double, double> _speed) override
     {};
 
+    std::string inspect(std::string prefix="") override
+    {
+        std::stringstream stream;
+        stream << "[INFO] SquareObject with id" << getId() << "\n";
+        stream << "Override inspect to display your own info\n";
+        return stream.str();
+    }
 };
 
 #endif

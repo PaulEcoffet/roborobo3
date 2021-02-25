@@ -36,6 +36,8 @@ If you want to extend a SquareObject, you can start from this template:
     def is_walked(self, id_):
         return super().is_walked(id_)
 
+    def inspect(self, prefix=""):
+        return f"[INFO] I'm the object #{self.id}"
 
 
 CircleObject
@@ -109,6 +111,9 @@ If you want to extend a MovableObject, you can start from this template:
 
     def is_walked(self, id_):
         return super().is_walked(id_)
+
+    def inspect(self, prefix=""):
+        return f"[INFO] I'm the object #{self.id}"
 
 
 PhysicalObject

@@ -32,7 +32,7 @@ class LandmarkObject
     protected :
     
     double _radius; // radius, in pixels.
-    bool _visible; // display option (default: true)
+    // display option (default: true)
     
     int _state; // a state value, not used. Could be used for any particular purpose.
     
@@ -95,7 +95,8 @@ class LandmarkObject
     
     virtual void show(SDL_Surface *surface = gScreen);
     virtual void hide();
-    
+
+    bool _visible;
 };
 
 #endif

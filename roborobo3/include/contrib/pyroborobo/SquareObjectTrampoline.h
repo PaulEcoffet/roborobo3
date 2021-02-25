@@ -76,7 +76,7 @@ public:
 
     std::string inspect(std::string prefix) override
     {
-        PYBIND11_OVERLOAD_PURE(std::string, BaseSquare, inspect, prefix);
+        PYBIND11_OVERLOAD(std::string, BaseSquare, inspect, prefix);
     }
 
     void relocate() override

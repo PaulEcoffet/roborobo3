@@ -26,3 +26,6 @@ If you want to create a subclass of a controller, you can use this template:
 
         def step(self):
             super().step()
+
+        def inspect(self, prefix=""):
+            return f"[INFO] I'm the robot #{self.id}"
