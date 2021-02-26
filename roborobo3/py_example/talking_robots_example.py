@@ -1,6 +1,6 @@
 # DEMO 1
 import pyroborobo
-from pyroborobo import Pyroborobo, PyWorldModel, Controller, CircleObject
+from pyroborobo import Pyroborobo, Controller, CircleObject
 import numpy as np
 
 
@@ -38,7 +38,7 @@ class ResourceObject(CircleObject):
 
 class TalkingController(Controller):
 
-    def __init__(self, wm: PyWorldModel):
+    def __init__(self, wm):
         super().__init__(wm)
         self.rob = Pyroborobo.get()
         self.last_rob_met = -1
@@ -56,7 +56,6 @@ class TalkingController(Controller):
             if rob:
                 self.say_hello(rob)
             obj = self.get_object_instance_at(i)
-            # obj = None
             if obj:
                 self.last_obj_met = obj.id
         x, y = self.absolute_position
@@ -111,7 +110,6 @@ class SelectObject(CircleObject):
 def main():
     rob = Pyroborobo.create("config/talking_robots.properties",
                             controller_class=TalkingController,
-                            world_model_class=PyWorldModel,
                             object_class_dict={'_default': ResourceObject, 'select': SelectObject}
                             )
     rob.start()
@@ -121,7 +119,7 @@ def main():
     print("Click on a robot to know more info about him")
     print("The orange object can only be activated by the robot #9")
     print("have fun")
-    rob.update(1000)
+    should_quit = rob.update(1000)
     Pyroborobo.close()
 
 

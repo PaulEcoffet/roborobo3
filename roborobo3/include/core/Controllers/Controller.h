@@ -33,7 +33,7 @@ private:
 
     int lastRefreshIteration;
 
-    bool checkRefresh();
+    bool checkRefresh() const;
 
     void refreshInputs();
 
@@ -41,6 +41,7 @@ protected:
 
     std::shared_ptr<RobotWorldModel> _wm;
     std::vector<double> distanceSensors;
+    std::vector<double> angleSensors;
     std::vector<int> objectDetectors;
     std::vector<int> objectTypeDetectors;
     std::vector<int> robotDetectors;
@@ -103,6 +104,10 @@ public:
             if ( checkRefresh() == false ) { refreshInputs(); }
             return distanceSensors[sensorId];
         }
+
+        double getSensorAngleAt(int sensorId);
+
+        std::vector<double>& getAllSensorAngles();
 
         std::vector<double>& getAllDistances()
         {

@@ -63,8 +63,8 @@ class CMakeBuild(build_ext):
 
 cmdclass = {'build_sphinx': BuildDoc, "build_ext":CMakeBuild}
 name = 'pyroborobo'
-version = '0.7.0'
-release = '0.7.0'
+version = '0.7.2'
+release = '0.7.2'
 
 
 setup(
@@ -74,8 +74,8 @@ setup(
     author_email='paul.ecoffet@sorbonne-universite.fr',
     description='pyroborobo',
     long_description='',
-    ext_modules=[CMakeExtension('_pyroborobo')],
-    packages=['pyroborobo'],
+    ext_modules=[CMakeExtension('pyroborobo')],
+    #packages=['pyroborobo'],
     zip_safe=False,
     cmdclass=cmdclass,
     # these are optional and override conf.py settings

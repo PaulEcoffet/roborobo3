@@ -1,4 +1,4 @@
-from pyroborobo import Pyroborobo, PyWorldModel, Controller, AgentObserver
+from pyroborobo import Pyroborobo, Controller, AgentObserver
 import numpy as np
 from scipy.stats import rankdata
 
@@ -14,7 +14,6 @@ def evaluate_network(input_, network):
 
 
 class EvolController(Controller):
-    world_model: PyWorldModel
 
     def __init__(self, wm):
         Controller.__init__(self, wm)
@@ -53,7 +52,6 @@ class EvolController(Controller):
 
 
 class EvolObserver(AgentObserver):
-    world_model: PyWorldModel
 
     def __init__(self, wm):
         super().__init__(wm)
@@ -115,7 +113,6 @@ def main():
     rob: Pyroborobo = Pyroborobo.create(
         "config/pywander_pyobj.properties",
         controller_class=EvolController,
-        world_model_class=PyWorldModel,
         agent_observer_class=EvolObserver,
         object_class_dict={'gate': GateObject, 'switch': SwitchObject}
     )

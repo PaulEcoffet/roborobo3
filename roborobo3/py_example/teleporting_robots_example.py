@@ -3,6 +3,7 @@
 from pyroborobo import Pyroborobo, Controller
 import numpy as np
 
+
 class TeleportingController(Controller):
 
     def __init__(self, wm):
@@ -13,10 +14,10 @@ class TeleportingController(Controller):
         pass
 
     def step(self):
-        x, y = self.robot.position
+        x, y = self.absolute_position
         success = True
         if x < 20:
-            success = self.robot.set_position(self.arena_size[0] - 2*x, y)
+            success = self.set_position(self.arena_size[0] - 2*x, y)
             # handle the registration by yourself
             # self.robot.unregister()
             # success = self.robot.set_position(self.arena_size[0] - 2 * x, y, register=False)
@@ -25,7 +26,7 @@ class TeleportingController(Controller):
             # success = self.robot.set_position(self.arena_size[0] - 2 * x, y, force=True)
         elif x > self.arena_size[0] - 20:
             new_x = self.arena_size[0]-x
-            success = self.robot.set_position(2 * new_x, y)
+            success = self.set_position(2 * new_x, y)
         if not success:
             print(self.id, "cannot be teleported. Something is in the way.")
         self.set_translation(1)

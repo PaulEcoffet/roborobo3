@@ -20,7 +20,7 @@ class Pyroborobo
 {
 public:
 
-    static Pyroborobo *createRoborobo(const std::string &properties_file,
+    static std::shared_ptr<Pyroborobo>createRoborobo(const std::string &properties_file,
                                       py::object &worldObserverClass,
                                       py::object &agentControllerClass,
                                       py::object &worldModelClass,
@@ -30,7 +30,7 @@ public:
 
     ~Pyroborobo();
 
-    static Pyroborobo *get();
+    static std::shared_ptr<Pyroborobo> get();
 
     void start();
 
@@ -50,7 +50,7 @@ public:
         {
             throw std::runtime_error("World Observer has not been instantiated yet. Have you called roborobo.start()?");
         }
-        return wobs;
+        return pywobs;
     }
 
     const std::vector<py::object>& getRobots() const;
@@ -60,11 +60,6 @@ public:
     static void close();
     void _gatherProjectInstances();
 
-
-private:
-
-    static Pyroborobo *instance;
-
     Pyroborobo(const std::string &properties_file,
                py::object &worldObserverClass,
                py::object &agentControllerClass,
@@ -72,6 +67,13 @@ private:
                py::object &agentObserverClass,
                py::dict &objectClassDict,
                const py::dict &options);
+
+
+
+private:
+
+    static std::shared_ptr<Pyroborobo> instance;
+
 
 
 
@@ -93,7 +95,8 @@ private:
     std::vector<py::object > robots;
     std::vector<py::object > objects;
     std::vector<py::object > landmarks;
-    py::object wobs;
+    std::shared_ptr<WorldObserver> wobs;
+    py::object pywobs;
     py::object worldObserverClass;
     py::object agentControllerClass;
     py::object worldModelClass;

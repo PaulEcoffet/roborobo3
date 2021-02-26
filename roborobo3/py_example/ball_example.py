@@ -1,6 +1,6 @@
 # Demo 4 : Ball
 
-from pyroborobo import Pyroborobo, PyWorldModel, WorldObserver, MovableObject
+from pyroborobo import Pyroborobo, WorldObserver, MovableObject
 from custom.controllers import HungryController
 import numpy as np
 
@@ -29,7 +29,6 @@ class BallObject(MovableObject):
 def main():
     rob: Pyroborobo = Pyroborobo.create("config/ball.properties",
                             controller_class=HungryController,
-                            world_model_class=PyWorldModel,
                             object_class_dict={"ball": BallObject})
     # Do not forget to set gMovableObjects in properties
     rob.start()

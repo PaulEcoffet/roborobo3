@@ -40,6 +40,7 @@ class GateObject(SquareObject):
         SquareObject.__init__(self, id)
         self.triggered = False
         self.regrow_time = data['regrowTimeMax']
+        self.force_close = data.get("forceClose", False)
         self.cur_regrow = 0
 
     def reset(self):
@@ -51,7 +52,7 @@ class GateObject(SquareObject):
     def step(self):
         if self.triggered:
             self.cur_regrow -= 1
-            if self.cur_regrow <= 0 and self.can_register():
+            if self.cur_regrow <= 0 and (self.can_register() or self.force_close):
                 self.show()
                 self.register()
                 self.triggered = False

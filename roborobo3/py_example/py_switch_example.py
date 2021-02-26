@@ -1,8 +1,7 @@
-from pyroborobo import Pyroborobo, PyWorldModel, Controller, CircleObject, SquareObject
+from pyroborobo import Pyroborobo, Controller, CircleObject, SquareObject
 
 
 class SimpleController(Controller):
-    world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
@@ -42,7 +41,7 @@ class SwitchObject(CircleObject):
     def step(self):
         if self.triggered:
             self.cur_regrow -= 1
-            if self.cur_regrow <= 0:
+            if self.cur_regrow <= 0 and self.can_register():
                 self.show()
                 self.register()
                 self.triggered = False
@@ -74,7 +73,7 @@ class GateObject(SquareObject):
     def step(self):
         if self.triggered:
             self.cur_regrow -= 1
-            if self.cur_regrow <= 0:
+            if self.cur_regrow <= 0 and self.can_register():
                 self.show()
                 self.register()
                 self.triggered = False
@@ -93,7 +92,6 @@ class GateObject(SquareObject):
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander_pyobj.properties",
                             controller_class=SimpleController,
-                            world_model_class=PyWorldModel,
                             object_class_dict={'gate': GateObject, 'switch': SwitchObject})
     rob.start()
     rob.update(3000)

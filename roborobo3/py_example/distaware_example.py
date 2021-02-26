@@ -1,4 +1,4 @@
-from pyroborobo import DistAwareController, Pyroborobo, PyWorldModel
+from pyroborobo import DistAwareController, Pyroborobo
 
 
 class MyCustomDistAwareController(DistAwareController):
@@ -21,8 +21,7 @@ class MyCustomDistAwareController(DistAwareController):
 
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander_12sensors.properties",
-                            controller_class=MyCustomDistAwareController,
-                            world_model_class=PyWorldModel)
+                            controller_class=MyCustomDistAwareController)
     rob.start()
     rob.update(1000)
     Pyroborobo.close()

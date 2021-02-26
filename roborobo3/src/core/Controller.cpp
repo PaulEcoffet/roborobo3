@@ -8,6 +8,8 @@
 
 #ifdef PYROBOROBO
 #include <pyroborobo/pyroborobo.h>
+
+#include <utility>
 #endif
 
 #include "Controllers/Controller.h"
@@ -16,16 +18,15 @@
 #include "World/World.h"
 
 
-Controller::Controller(  )
+Controller::Controller(  ): lastRefreshIteration(-1)
 {
-    lastRefreshIteration = -1;
 }
 
-Controller::Controller(std::shared_ptr<RobotWorldModel> __wm)
+Controller::Controller(std::shared_ptr<RobotWorldModel> __wm) :
+    lastRefreshIteration(-1), _wm(__wm)
 {
-    lastRefreshIteration = -1;
-	_wm = __wm;
     distanceSensors.resize(_wm->_cameraSensorsNb);
+    angleSensors.resize(_wm->_cameraSensorsNb);
     objectDetectors.resize(_wm->_cameraSensorsNb);
     objectTypeDetectors.resize(_wm->_cameraSensorsNb);
     objectInstanceDetectors.resize(_wm->_cameraSensorsNb);
@@ -41,12 +42,14 @@ Controller::Controller(std::shared_ptr<RobotWorldModel> __wm)
     pyObjectInstanceDetectors.resize(_wm->_cameraSensorsNb);
 #endif
 
+    for (size_t i = 0; i < angleSensors.size(); i++)
+    {
+        angleSensors[i] = _wm->getCameraSensorValue(i, SENSOR_TARGETANGLE);
+    }
+
 }
 
-Controller::~Controller()
-{
-	// nothing to do.
-}
+Controller::~Controller() = default;
 
 std::string Controller::inspect( std::string prefix )
 {
@@ -87,7 +90,7 @@ void Controller::refreshInputs(){
     //      - blue value
     // - relative distance and/or orientation of either the closest landmark (if any, zero if none)
 #ifdef PYROBOROBO
-    Pyroborobo* rob = Pyroborobo::get();
+    auto rob = Pyroborobo::get();
 #endif
 
     lastRefreshIteration = gWorld->getIterations();
@@ -114,9 +117,8 @@ void Controller::refreshInputs(){
                 objectInstanceDetectors[i] = gPhysicalObjects[objectId - gPhysicalObjectIndexStartOffset];
                 objectTypeDetectors[i] = (objectInstanceDetectors[i]->getType() );
 #ifdef PYROBOROBO
-                pyObjectInstanceDetectors[i] = rob->getObjects()[objectId];
+                pyObjectInstanceDetectors[i] = rob->getObjects()[objectId - gPhysicalObjectIndexStartOffset];
 #endif
-
             }
             else
             {
@@ -230,7 +232,7 @@ void Controller::refreshInputs(){
 
 }
 
-bool Controller::checkRefresh()
+bool Controller::checkRefresh() const
 {
     if ( lastRefreshIteration != gWorld->getIterations() )
         return false;
@@ -649,4 +651,13 @@ py::object Controller::getPyRobotInstanceAt(int sensorId)
     }
     return pyRobotInstanceDetectors[sensorId];
 }
+
+double Controller::getSensorAngleAt(int sensorId) {
+    return angleSensors[sensorId];
+}
+
+std::vector<double>& Controller::getAllSensorAngles() {
+    return angleSensors;
+}
+
 #endif

@@ -71,37 +71,45 @@ Examples
             .def("set_rotation", &Controller::setRotation, "rotation_speed"_a,
                  "Set the robot rotation speed between [-1, 1]")
             .def_property_readonly("nb_sensors", [](Controller &self)
-            { return self.getWorldModel()->_cameraSensorsNb; }, "int: Number of sensors of the robot")
+                                   { return self.getWorldModel()->_cameraSensorsNb; },
+                                   "int: Number of sensors of the robot")
             .def("get_distance_at", &Controller::getDistanceAt, "sensor_id"_a,
                  R"doc(float: The distance to the object in range [0, 1], if 1, nothing is in sight)doc")
             .def("get_all_distances", [](Controller &self) -> py::array
                  { return as_pyarray(self.getAllDistances()); },
                  R"doc(Return a numpy array of all distances.)doc")
+            .def("get_sensor_angle_at", &Controller::getSensorAngleAt, "sensor_id"_a,
+                 R"doc(float: The angle of the sensor target from the center of the robot in degree)doc")
+            .def("get_all_sensor_angles", [](Controller &self) -> py::array
+                 { return as_pyarray(self.getAllSensorAngles()); },
+                 R"doc(Return a numpy array of all sensor target angles from the center of the robot in degree.)doc")
             .def("get_robot_id_at", &Controller::getRobotIdAt, "sensor_id"_a,
                  "Robot: Get the robot instance seen by the sensor ``sensor_id``")
-            .def("get_all_robot_ids", [] (Controller& self) {
+            .def("get_all_robot_ids", [](Controller &self)
+            {
                 return as_pyarray(self.getAllRobotIds());
             })
             .def("get_robot_controller_at", &Controller::getPyRobotControllerAt, "sensor_id"_a,
-                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``", py::return_value_policy::reference)
+                 "Controller: Get the robot's controller seen by the sensor ``sensor_id``")
             .def("get_all_robot_controllers", &Controller::getAllPyRobotControllers)
             .def("get_robot_instance_at", &Controller::getPyObjectInstanceAt)
             .def("get_all_robot_instances", &Controller::getAllPyRobotInstances)
             .def("get_robot_relative_orientation_at", &Controller::getRobotRelativeOrientationAt, "sensor_id"_a,
                  "float: Get robot's relative orientation compared to self seen by the sensor ``sensor_id``")
-            .def("get_all_robot_relative_orientations", [] (Controller& self)
+            .def("get_all_robot_relative_orientations", [](Controller &self)
             {
                 return as_pyarray(self.getAllRobotRelativeOrientations());
             })
             .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a,
                  "Int: Id of the object if seen else -1 for the sensor ``sensor_id``")
-            .def("get_all_objects", [] (Controller& self) -> py::array { return as_pyarray(self.getAllObjects()); })
-            .def("get_object_instance_at", &Controller::getPyObjectInstanceAt, "sensor_id"_a,
-                 py::return_value_policy::automatic_reference)
+            .def("get_all_objects", [](Controller &self) -> py::array
+            { return as_pyarray(self.getAllObjects()); })
+            .def("get_object_instance_at", &Controller::getPyObjectInstanceAt, "sensor_id"_a)
             .def("get_all_object_instances", &Controller::getAllPyObjectInstances)
             .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a,
                  "Bool: Tell if it's a wall seen by the sensor ``sensor_id``")
-            .def("get_all_walls", [] (Controller& self) -> py::array { return as_pyarray(self.getAllWalls()); })
+            .def("get_all_walls", [](Controller &self) -> py::array
+            { return as_pyarray(self.getAllWalls()); })
             .def("get_ground_sensor_values",
                  [](Controller &self)
                  {
@@ -111,7 +119,8 @@ Examples
                  R"doc(
 tuple[float, float, float]: (red, green, blue) from the ground sensor of the robot between [0,1]
 )doc")
-            .def("set_color", [](Controller& self, int r, int g, int b) {
+            .def("set_color", [](Controller &self, int r, int g, int b)
+            {
                 self.getWorldModel()->setRobotLED_colorValues(r, g, b);
             }, R"doc(Set the color of the robot (r,g,b).
 :param: r int [0, 255]
@@ -119,8 +128,10 @@ tuple[float, float, float]: (red, green, blue) from the ground sensor of the rob
 :param: b int [0, 255]
 
 )doc")
-            .def("get_closest_landmark_dist", &Controller::getClosestLandmarkDistance, "float: The distance to the closest landmark")
-            .def("get_closest_landmark_orientation", &Controller::getClosestLandmarkOrientation, "float: The orientation to the closest landmark")
+            .def("get_closest_landmark_dist", &Controller::getClosestLandmarkDistance,
+                 "float: The distance to the closest landmark")
+            .def("get_closest_landmark_orientation", &Controller::getClosestLandmarkOrientation,
+                 "float: The orientation to the closest landmark")
             .def_property_readonly("translation", &Controller::getActualTranslation,
                                    "float: the robot's actual translation speed between [-1, 1]")
             .def_property_readonly("rotation", &Controller::getActualRotation,
@@ -131,15 +142,68 @@ tuple[float, float, float]: (red, green, blue) from the ground sensor of the rob
                                        return {pos.x, pos.y};
                                    },
                                    "Tuple[int, int]: Robot's absolute position")
-            .def_property_readonly("absolute_orientation", &Controller::getCompass, "Float: Absolute orientation of the robot")
+            .def_property_readonly("absolute_orientation", &Controller::getCompass,
+                                   "Float: Absolute orientation of the robot")
             .def_property_readonly("world_model", &Controller::getWorldModel,
                                    R"doc(
 pyroborobo.WorldModel: The robot's world_model
 )doc")
-            .def_property_readonly("robot", [] (Controller& self) { return gWorld->getRobot(self.getId()); })
+            .def_property_readonly("robot", [](Controller &self)
+            { return gWorld->getRobot(self.getId()); })
             .def_property_readonly("id", &Controller::getId, R"doc(
 int: Robot unique ID.
 )doc")
             .def("get_id", &Controller::getId, R"doc(int: Robot unique ID. (alias of property `id`).)doc")
+            .def("set_position", [](Controller &self, double x, double y, bool register_ = true, bool force = false)
+                 {
+                     std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
+                     bool success = true;
+                     if (register_)
+                     {
+                         robot->unregisterRobot();
+                     }
+                     int x_prev, y_prev;
+                     robot->getCoord(x_prev, y_prev);
+                     robot->setCoord(x, y);
+                     robot->setCoordReal(x, y);
+                     if (!force && robot->isCollision())
+                     {
+                         robot->setCoord(x_prev, y_prev);
+                         robot->setCoordReal(x_prev, y_prev);
+                         success = false;
+                     }
+                     if (register_)
+                     {
+                         robot->registerRobot();
+                     }
+                     return success;
+                 }, "x"_a, "y"_a, "register"_a = true, "force"_a = true,
+                 "set the robot at the position (x, y). if `register` then the "
+                 "function take care of the registration. if `force` is true, the function ignore collisions.")
+            .def("set_absolute_orientation", [](Controller &self, double angle)
+            {
+                self.getWorldModel()->_agentAbsoluteOrientation = angle;
+            })
+            .def("find_random_location", [](Controller &self)
+            {
+                std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
+                int x, y;
+                robot->unregisterRobot();
+                std::tie(x, y) = robot->findRandomLocation(gLocationFinderMaxNbOfTrials);
+                robot->setCoord(x, y);
+                robot->setCoordReal(x, y);
+                robot->registerRobot();
+            }, "Place the robot at a random location")
+            .def("register", [](Controller& self)
+            {
+                std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
+                robot->registerRobot();
+            },
+            "Add the robot from the simulation")
+            .def("unregister", [](Controller& self)
+            {
+                std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
+                robot->unregisterRobot();
+            }, "Remove the robot from the simulation")
             ;
 }

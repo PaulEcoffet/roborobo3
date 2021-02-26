@@ -26,10 +26,10 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-Pyroborobo *Pyroborobo::instance = nullptr;
+std::shared_ptr<Pyroborobo> Pyroborobo::instance = nullptr;
 
 
-Pyroborobo *Pyroborobo::createRoborobo(const std::string &properties_file, py::object &worldObserverClass,
+std::shared_ptr<Pyroborobo> Pyroborobo::createRoborobo(const std::string &properties_file, py::object &worldObserverClass,
                                        py::object &agentControllerClass, py::object &worldModelClass,
                                        py::object &agentObserverClass, py::dict &objectClassDict,
                                        const py::dict &options)
@@ -38,12 +38,12 @@ Pyroborobo *Pyroborobo::createRoborobo(const std::string &properties_file, py::o
     {
         throw std::runtime_error("Pyroborobo has already been instantiated");
     }
-    instance = new Pyroborobo(properties_file, worldObserverClass, agentControllerClass, worldModelClass,
+    instance = std::make_shared<Pyroborobo>(properties_file, worldObserverClass, agentControllerClass, worldModelClass,
                               agentObserverClass, objectClassDict, options);
     return instance;
 }
 
-Pyroborobo *Pyroborobo::get()
+std::shared_ptr<Pyroborobo> Pyroborobo::get()
 {
     if (instance == nullptr)
     {
@@ -86,7 +86,7 @@ void Pyroborobo::start()
     {
         objectClass = objectClassDict["_default"];
     }
-    /* TODO move iinit to start */
+    /* TODO move init to start */
     this->initCustomConfigurationLoader(worldObserverClass, agentControllerClass,
                                         worldModelClass, agentObserverClass, objectClass);
     PyPhysicalObjectFactory::updateObjectConstructionDict(objectClassDict);
@@ -249,7 +249,6 @@ void Pyroborobo::close()
     gConfigurationLoader = nullptr;
     PyPhysicalObjectFactory::close();
     closeRoborobo();
-
 }
 
 void Pyroborobo::_gatherProjectInstances()
@@ -265,7 +264,8 @@ void Pyroborobo::_gatherProjectInstances()
     landmarks.reserve(nbLandmarks);
 
 
-    wobs = py::cast(world->getWorldObserver());
+    wobs = world->getWorldObserver();
+    pywobs = py::cast(wobs);
 
     for (size_t i = 0; i < nbRob; i++)
     {
@@ -293,7 +293,7 @@ void Pyroborobo::overrideProperties(const py::dict &dict)
 {
     for (auto elem : dict)
     {
-        gProperties.setProperty(elem.first.cast<std::string>(), elem.second.cast<std::string>());
+        gProperties.setProperty(py::str(elem.first).cast<std::string>(), py::str(elem.second).cast<std::string>());
     }
 }
 

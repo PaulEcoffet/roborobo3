@@ -1,12 +1,11 @@
 # Demo 3
 # each agent count the unique partners they met
 
-from pyroborobo import Pyroborobo, Controller, WorldObserver, PyWorldModel
+from pyroborobo import Pyroborobo, Controller, WorldObserver
 
 
 class SimpleController(Controller):
 
-    world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
@@ -20,7 +19,6 @@ class SimpleController(Controller):
     def step(self):  # step is called at each time step
         self.set_translation(1)  # Let's go forward
         self.set_rotation(0)
-        # Now, our world_model object is a PyWorldModel, we can have access to camera_* properties
         if (self.get_distance_at(1) < 1  # if we see something on our left
                 or self.get_distance_at(2) < 1):  # or in front of us
             self.set_rotation(0.5)  # turn right
@@ -62,8 +60,7 @@ def main():
         "config/unique_meet.properties",
         controller_class=CounterController,
         world_observer_class=CounterWorldObserver,
-        world_model_class=PyWorldModel,
-        override_conf_dict={"gNbOfInitialRobots": 30}
+        override_conf_dict={"gInitialNumberOfRobots": 30}
     )
     rob.start()
     rob.update(3000)

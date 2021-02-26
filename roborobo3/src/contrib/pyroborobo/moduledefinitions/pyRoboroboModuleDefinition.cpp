@@ -19,7 +19,7 @@ void addPyRoboroboBinding(py::module &m)
 {
     py::bind_vector<std::vector<py::object>>(m, "PyObjectFastVector");
 
-    py::class_<Pyroborobo>(m, "Pyroborobo", R"doc(
+    py::class_<Pyroborobo, std::shared_ptr<Pyroborobo>>(m, "Pyroborobo", R"doc(
         Python interface to the roborobo simulator
 
 )doc")

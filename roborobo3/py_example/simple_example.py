@@ -1,9 +1,7 @@
-from pyroborobo import Pyroborobo, PyWorldModel, Controller
+from pyroborobo import Pyroborobo, Controller
 
 
 class SimpleController(Controller):
-    world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
-
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
         Controller.__init__(self, world_model)
@@ -27,8 +25,7 @@ class SimpleController(Controller):
 
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander.properties",
-                            controller_class=SimpleController,
-                            world_model_class=PyWorldModel)
+                            controller_class=SimpleController)
     rob.start()
     rob.update(1000)
     Pyroborobo.close()
