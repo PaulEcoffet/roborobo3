@@ -51,7 +51,7 @@ class GateObject(SquareObject):
     def step(self):
         if self.triggered:
             self.cur_regrow -= 1
-            if self.cur_regrow <= 0:
+            if self.cur_regrow <= 0 and self.can_register():
                 self.show()
                 self.register()
                 self.triggered = False
