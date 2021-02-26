@@ -45,7 +45,7 @@ PhysicalObject cannot be instantiated by itself, only its subclasses :class:`Squ
 Read :doc:`/tuto/objects` for a tutorial on how to use Objects.
 
 )doc")
-            .def(py::init<int>(), "id"_a, py::return_value_policy::reference)
+            .def(py::init<int>(), "id"_a = -1, py::return_value_policy::reference)
             .def("can_register", &PhysicalObject::canRegister, R"doc(
 Can the object be register at its position
 
@@ -74,7 +74,12 @@ bool: can object register at its actual position
                                        return {self.getXCenterPixel(), self.getYCenterPixel()};
                                    },
                                    "Return the position of the object"
-            );
+            )
+            .def_property_readonly("id",
+                                   &PhysicalObject::getId, "int: the unique ID of the object.")
+            .def("get_id", &PhysicalObject::getId, R"doc(int: the unique ID of the object. (alias of property `id`).)doc")
+
+            ;
 
     py::class_<SquareObject, SquareObjectTrampoline<>, PhysicalObject, std::shared_ptr
             <SquareObject >> (m, "SquareObject", R"doc(
@@ -96,11 +101,11 @@ See also
 PhysicalObject: Reference for physical objects
 
 )doc")
-            .def(py::init_alias<int>(), "id"_a,
+            .def(py::init_alias<int>(), "id"_a = -1,
                  py::return_value_policy::reference,
                  "")
             .def(py::init_alias<int, const py::dict &>(),
-                 "id"_a, "data"_a,
+                 "id"_a = -1, "data"_a = py::dict(),
                  py::return_value_policy::reference,
                  "")
             .def("can_register",
@@ -124,8 +129,6 @@ bool: Can the object be registered at its current location
             .def("show",
                  [](SquareObjectTrampoline<> &self) { self.trueShow(); },
                  "show the object from the screen (collision is still inactive)")
-            .def_property_readonly("id",
-                                   &SquareObject::getId, "int: the id of the object")
             .def("step", &SquareObject::step, "Call at each timestep")
             .def("relocate", (void (SquareObject::*)()) &SquareObject::relocate, "Find a new position for the object")
             .def("relocate", (bool (SquareObject::*)(double, double)) &SquareObject::relocate, "x"_a, "y"_a,
@@ -206,11 +209,11 @@ PhysicalObject: Reference for physical objects
 
 
 )doc")
-            .def(py::init_alias<int>(), "id"_a,
+            .def(py::init_alias<int>(), "id"_a = -1,
                  py::return_value_policy::reference,
                  "")
             .def(py::init_alias<int, const py::dict &>(),
-                 "id"_a, "data"_a,
+                 "id"_a = -1, "data"_a = py::dict(),
                  py::return_value_policy::reference,
                  "")
             .def("can_register",
@@ -306,11 +309,10 @@ x: int
 y: int
     The y coordinate
 )")
-            .def_property_readonly("id", &CircleObject::getId, "int: the id of the object")
             .def_readwrite("radius", &CircleObjectPublicist::_radius, "int: The radius of the hard part of the circle")
             .def_readwrite("footprint_radius", &CircleObjectPublicist::_footprintRadius,
                            "int: The radius of the footprint of the object");
     py::class_<MovableObject, CircleObject,
                PyCircleObject<MovableObject>, std::shared_ptr<MovableObject>>(m, "MovableObject")
-        .def(py::init<int>(), "id"_a, py::return_value_policy::reference);
+        .def(py::init<int>(), "id"_a = -1, py::return_value_policy::reference);
 }

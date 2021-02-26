@@ -40,6 +40,9 @@ void addPyRobotBinding(py::module &m)
             }, "x"_a, "y"_a, "register"_a = true, "force"_a = true,
                  "set the robot at the position (x, y). if `register` then the "
                  "function take care of the registration. if `force` is true, the function ignore collisions.")
+            .def("set_absolute_orientation", [] (Robot &self, double angle) {
+                self.getWorldModel()->_agentAbsoluteOrientation = angle;
+            })
             .def("find_random_location", [](Robot &self) {
                 int x, y;
                 self.unregisterRobot();

@@ -139,5 +139,7 @@ pyroborobo.WorldModel: The robot's world_model
             .def_property_readonly("robot", [] (Controller& self) { return gWorld->getRobot(self.getId()); })
             .def_property_readonly("id", &Controller::getId, R"doc(
 int: Robot unique ID.
-)doc");
+)doc")
+            .def("get_id", &Controller::getId, R"doc(int: Robot unique ID. (alias of property `id`).)doc")
+            ;
 }

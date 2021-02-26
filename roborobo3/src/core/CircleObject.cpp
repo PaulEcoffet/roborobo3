@@ -10,84 +10,87 @@
 
 CircleObject::CircleObject( int __id ) : PhysicalObject( __id ) // a unique and consistent __id should be given as argument
 {
-	std::string s = "";
-	std::stringstream out;
-	out << getId();
-    
-    s = "physicalObject[";
-	s += out.str();
-	s += "].radius";
-	if ( gProperties.hasProperty( s ) )
-		convertFromString<double>(_radius, gProperties.getProperty( s ), std::dec);
-	else
+    if (__id >= 0)
     {
-        if ( gVerbose )
-            std::cerr << "[MISSING] Physical Object #" << _id << " (of super type CircleObject) missing radius (integer, >=0). Check default value.\n";
-        gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultRadius", &_radius, true);
-    }
-    
-    s = "physicalObject[";
-	s += out.str();
-	s += "].footprintRadius";
-	if ( gProperties.hasProperty( s ) )
-		convertFromString<double>(_footprintRadius, gProperties.getProperty( s ), std::dec);
-	else
-    {
-        if ( gVerbose )
-            std::cerr << "[MISSING] Physical Object #" << _id << " (of super type CircleObject) missing footprint radius (integer, >=0). Check default value.\n";
-        gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultFootprintRadius", &_footprintRadius, true);
-    }
+        std::string s = "";
+        std::stringstream out;
+        out << getId();
 
-    double x = 0.0, y = 0.0;
-    x = getXCenterPixel();
-	y = getYCenterPixel();
-    
-    int tries = 0;
-    bool randomLocation = false;
-
-    if ( x == -1.0 || y == -1.0 )
-    {
-        tries = tries + findRandomLocation();
-        randomLocation = true;
-    }
-    else
-    {
-        if ( canRegister() == false )  // i.e. user-defined location, but cannot register. Pick random.
-        {
-            std::cerr << "[CRITICAL] cannot use user-defined initial location (" << x << "," << y << ") for physical object #" << getId() << " (localization failed). EXITING.";
-            exit(-1);
-        }
-        randomLocation = false;
-    }
-    
-    if ( gVerbose )
-    {
-        std::cout << "[INFO] Physical Object #" << getId() << " (of super type CircleObject) positioned at ( "<< std::setw(5) << getXCenterPixel() << " , " << std::setw(5) << getYCenterPixel() << " ) -- ";
-        if ( randomLocation == false )
-            std::cout << "[user-defined position]\n";
+        s = "physicalObject[";
+        s += out.str();
+        s += "].radius";
+        if ( gProperties.hasProperty( s ) )
+            convertFromString<double>(_radius, gProperties.getProperty( s ), std::dec);
         else
         {
-            std::cout << "[random pick after " << tries;
-            if ( tries <= 1 )
-                std::cout << " try]";
-            else
-                std::cout << " tries]";
-            std::cout << "\n";
+            if ( gVerbose )
+                std::cerr << "[MISSING] Physical Object #" << _id << " (of super type CircleObject) missing radius (integer, >=0). Check default value.\n";
+            gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultRadius", &_radius, true);
         }
-    }
-    
-    if ( canRegister() ) // in case location is not possible (may occur if findRandomLocation() failed, and gLocationFinderExitOnFail is false)
-    {
-        if ( _visible )
+
+        s = "physicalObject[";
+        s += out.str();
+        s += "].footprintRadius";
+        if ( gProperties.hasProperty( s ) )
+            convertFromString<double>(_footprintRadius, gProperties.getProperty( s ), std::dec);
+        else
         {
-            registerObject();
+            if ( gVerbose )
+                std::cerr << "[MISSING] Physical Object #" << _id << " (of super type CircleObject) missing footprint radius (integer, >=0). Check default value.\n";
+            gProperties.checkAndGetPropertyValue("gPhysicalObjectDefaultFootprintRadius", &_footprintRadius, true);
         }
-        registered = true;
-    }
-    else
-    {
-        //_visible = false;
-        registered = false;
+
+        double x = 0.0, y = 0.0;
+        x = getXCenterPixel();
+        y = getYCenterPixel();
+
+        int tries = 0;
+        bool randomLocation = false;
+
+        if ( x == -1.0 || y == -1.0 )
+        {
+            tries = tries + findRandomLocation();
+            randomLocation = true;
+        }
+        else
+        {
+            if ( canRegister() == false )  // i.e. user-defined location, but cannot register. Pick random.
+            {
+                std::cerr << "[CRITICAL] cannot use user-defined initial location (" << x << "," << y << ") for physical object #" << getId() << " (localization failed). EXITING.";
+                exit(-1);
+            }
+            randomLocation = false;
+        }
+
+        if ( gVerbose )
+        {
+            std::cout << "[INFO] Physical Object #" << getId() << " (of super type CircleObject) positioned at ( "<< std::setw(5) << getXCenterPixel() << " , " << std::setw(5) << getYCenterPixel() << " ) -- ";
+            if ( randomLocation == false )
+                std::cout << "[user-defined position]\n";
+            else
+            {
+                std::cout << "[random pick after " << tries;
+                if ( tries <= 1 )
+                    std::cout << " try]";
+                else
+                    std::cout << " tries]";
+                std::cout << "\n";
+            }
+        }
+
+        if ( canRegister() ) // in case location is not possible (may occur if findRandomLocation() failed, and gLocationFinderExitOnFail is false)
+        {
+            if ( _visible )
+            {
+                registerObject();
+            }
+            registered = true;
+        }
+        else
+        {
+            //_visible = false;
+            registered = false;
+        }
     }
 }
 

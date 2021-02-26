@@ -1,4 +1,16 @@
 from pyroborobo import Pyroborobo, WorldObserver, SquareObject
+from textwrap import dedent
+
+
+class SquareObjectVerbose(SquareObject):
+    def __init__(self, id=-1, data={}):
+        super().__init__(id, data)
+
+    def inspect(self, prefix=""):
+        return dedent(f"""
+        Square Object #{self.get_id()}
+
+        """)
 
 
 class CreateObjectWorldObserver(WorldObserver):
@@ -12,7 +24,7 @@ class CreateObjectWorldObserver(WorldObserver):
         nb = {"left": 10, "bottom": 9, "right": 10}
         for orient in ["left", "bottom", "right"]:
             for j in range(nb[orient]):
-                squareobj = SquareObject(-1, {})
+                squareobj = SquareObjectVerbose()
                 squareobj = self.rob.add_object(squareobj)
                 squareobj.soft_width = 0
                 squareobj.soft_height = 0
