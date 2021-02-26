@@ -146,12 +146,11 @@ Then we just have to edit our main. We change the simple controller for a hungry
 ```python
 from pyroborobo import Pyroborobo, PyWorldModel
 
-from controllers import HungryController
 from objects import SwitchObject, GateObject, ResourceObject
 
 if __name__ == "__main__":
     rob = Pyroborobo.create("config/pywander_pyobj_resource.properties",
-                            controller_class=HungryController,
+                            controller_class=SimpleController,
                             world_model_class=PyWorldModel,
                             object_class_dict={'_default': ResourceObject, 'gate': GateObject, 'switch': SwitchObject})
     rob.start()

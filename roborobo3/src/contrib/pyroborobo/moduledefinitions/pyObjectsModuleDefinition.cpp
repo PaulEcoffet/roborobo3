@@ -125,10 +125,10 @@ bool: Can the object be registered at its current location
                  &SquareObject::unregisterObject, "Unregister the object (deactivate collision)")
             .def("hide",
                  [](SquareObjectTrampoline<> &self) { self.trueHide(); },
-                 "hide the object from the screen (collision is still active)")
+                 "hide the object from the screen (collision can be still active)")
             .def("show",
                  [](SquareObjectTrampoline<> &self) { self.trueShow(); },
-                 "show the object from the screen (collision is still inactive)")
+                 "show the object from the screen (collision can be still inactive)")
             .def("step", &SquareObject::step, "Call at each timestep")
             .def("relocate", (void (SquareObject::*)()) &SquareObject::relocate, "Find a new position for the object")
             .def("relocate", (bool (SquareObject::*)(double, double)) &SquareObject::relocate, "x"_a, "y"_a,
@@ -174,7 +174,16 @@ speed: tuple(double, double)
     The speed at which the robot pushed the object
 )")
             .def("set_color", &SquareObject::setDisplayColor, "red"_a, "blue"_a, "green"_a,
-                 "set the (r,g,b) color for the object")
+                 R"doc(set the (r,g,b) color for the object.
+Parameters
+----------
+red: int
+    The red component of the color in [0, 255]
+blue: int
+    The blue component of the color in [0, 255]
+green: int
+    The green component of the color in [0, 255]
+)doc")
             .def("set_coordinates", &SquareObject::setCoordinates, "x"_a, "y"_a,
                  "force the object to be at the (x,y) coordinates without checking")
             .def_property_readonly("id", &SquareObject::getId, "int: the id of the object")
@@ -232,10 +241,10 @@ bool: Can the object be registered at its current location
                  &CircleObject::unregisterObject, "Unregister the object (deactivate collision)")
             .def("hide",
                  [](CircleObjectTrampoline<> &self) { self.trueHide(); },
-                 "Hide the object (collision is still active)")
+                 "Hide the object (collision can be still active)")
             .def("show",
                  [](CircleObjectTrampoline<> &self) { self.trueShow(); },
-                 "Show the object (collision is still inactive)")
+                 "Show the object (collision can be still inactive)")
             .def_property_readonly("id",
                                    &CircleObject::getId, "int: the id of the object")
             .def("step", &CircleObject::step, "called at each timestep")

@@ -88,28 +88,30 @@ Examples
             .def("get_all_robot_ids", [](Controller &self)
             {
                 return as_pyarray(self.getAllRobotIds());
-            })
+            },
+            "Return a vector of all the robots id seen for each sensor (-1 if not robot in sight)")
             .def("get_robot_controller_at", &Controller::getPyRobotControllerAt, "sensor_id"_a,
                  "Controller: Get the robot's controller seen by the sensor ``sensor_id``")
-            .def("get_all_robot_controllers", &Controller::getAllPyRobotControllers)
-            .def("get_robot_instance_at", &Controller::getPyObjectInstanceAt)
-            .def("get_all_robot_instances", &Controller::getAllPyRobotInstances)
+            .def("get_all_robot_controllers", &Controller::getAllPyRobotControllers,
+                 "Vector[Controller]: Get the robots' controllers seen by all the sensors (None if a sensor has no robot in sight)")
             .def("get_robot_relative_orientation_at", &Controller::getRobotRelativeOrientationAt, "sensor_id"_a,
                  "float: Get robot's relative orientation compared to self seen by the sensor ``sensor_id``")
             .def("get_all_robot_relative_orientations", [](Controller &self)
             {
                 return as_pyarray(self.getAllRobotRelativeOrientations());
-            })
+            },
+            "Vector[float]: Get the robots' relative orientations compared to self for each sensors")
             .def("get_object_at", &Controller::getObjectAt, "sensor_id"_a,
                  "Int: Id of the object if seen else -1 for the sensor ``sensor_id``")
             .def("get_all_objects", [](Controller &self) -> py::array
-            { return as_pyarray(self.getAllObjects()); })
-            .def("get_object_instance_at", &Controller::getPyObjectInstanceAt, "sensor_id"_a)
-            .def("get_all_object_instances", &Controller::getAllPyObjectInstances)
+            { return as_pyarray(self.getAllObjects()); }, "Vector[int]: Id of the object seen by each sensor. -1 if no object in sight")
+            .def("get_object_instance_at", &Controller::getPyObjectInstanceAt, "sensor_id"_a, "`PhysicalObject`: The instance of the object seen by ``sensor_id``. None if no object in sight.")
+            .def("get_all_object_instances", &Controller::getAllPyObjectInstances,
+                 R"doc(Vector[`PhysicalObject`]: A vector of the object instances seen by each sensor, None if no object in sight.)doc")
             .def("get_wall_at", &Controller::getWallAt, "sensor_id"_a,
                  "Bool: Tell if it's a wall seen by the sensor ``sensor_id``")
             .def("get_all_walls", [](Controller &self) -> py::array
-            { return as_pyarray(self.getAllWalls()); })
+            { return as_pyarray(self.getAllWalls()); }, "Vector[`bool`]: Tell if it's a wall seen by each sensor")
             .def("get_ground_sensor_values",
                  [](Controller &self)
                  {
@@ -148,8 +150,7 @@ tuple[float, float, float]: (red, green, blue) from the ground sensor of the rob
                                    R"doc(
 pyroborobo.WorldModel: The robot's world_model
 )doc")
-            .def_property_readonly("robot", [](Controller &self)
-            { return gWorld->getRobot(self.getId()); })
+
             .def_property_readonly("id", &Controller::getId, R"doc(
 int: Robot unique ID.
 )doc")
@@ -183,7 +184,7 @@ int: Robot unique ID.
             .def("set_absolute_orientation", [](Controller &self, double angle)
             {
                 self.getWorldModel()->_agentAbsoluteOrientation = angle;
-            })
+            }, "set the absolute orientation of the robot")
             .def("find_random_location", [](Controller &self)
             {
                 std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
@@ -199,11 +200,11 @@ int: Robot unique ID.
                 std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
                 robot->registerRobot();
             },
-            "Add the robot from the simulation")
+            "Add the robot in the simulation (can collide with others)")
             .def("unregister", [](Controller& self)
             {
                 std::shared_ptr<Robot> robot = gWorld->getRobot(self.getId());
                 robot->unregisterRobot();
-            }, "Remove the robot from the simulation")
+            }, "Remove the robot from the simulation (cannot collide with other, not shown)")
             ;
 }

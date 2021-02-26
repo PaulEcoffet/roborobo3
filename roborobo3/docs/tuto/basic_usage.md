@@ -88,7 +88,7 @@ class SimpleController(Controller):
     
     def step(self):  # step is called at each time step
         self.set_translation(1)  # Let's go forward
-        self.setrotation(0)  # and do not turn
+        self.set_rotation(0)  # and do not turn
 
 rob = Pyroborobo.create("config/template_wander_smallrobots.properties",
                         controller_class=SimpleController)
@@ -103,10 +103,9 @@ It is also possible to override RobotWorldModel to extend its functionalities. p
 Let's create a very simple obstacle avoidance controller.
 
 ```python
-from pyroborobo import Pyroborobo, Controller, PyWorldModel
+from pyroborobo import Pyroborobo, Controller
 
 class SimpleController(Controller):
-    world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart

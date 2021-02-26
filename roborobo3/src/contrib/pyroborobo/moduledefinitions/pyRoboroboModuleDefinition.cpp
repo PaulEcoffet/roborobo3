@@ -145,7 +145,8 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
                 self._gatherProjectInstances();
                 return landmark;
             })
-            .def("get_screen", [] (Pyroborobo& self) { return gScreen;}, py::return_value_policy::reference)
+            .def("get_screen", [] (Pyroborobo& self) { return gScreen;},py::return_value_policy::reference,
+                 R"doc(Return the pyroborobo screen. can be cast into np.array. Still in development.)doc")
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(
 :class:`list` of :class:`~pyroborobo.Controller`: The ordered list of all the controllers in the simulation
@@ -193,7 +194,10 @@ Everything under this offset is a physical objects. Everything above is a robot.
 )doc")
             .def_property_readonly("arena_size", [] (Pyroborobo& self) -> std::tuple<int, int> {
                 return {gAreaWidth, gAreaHeight};
-            })
-            .def_property_readonly("landmarks", [] (Pyroborobo& self) { return gLandmarks;})
-            .def_property_readonly("iterations", [] (Pyroborobo& self) {return gWorld->getIterations();});
+            },
+                                   R"doc(Tuple[int, int]: The size of the arena)doc")
+            .def_property_readonly("landmarks", [] (Pyroborobo& self) { return gLandmarks;},
+                                   "List[Landmark]: The list of all the landmarks in the environment")
+            .def_property_readonly("iterations", [] (Pyroborobo& self) {return gWorld->getIterations();},
+                                   "The number of update iterations since the beginning of the simulation.");
 }
