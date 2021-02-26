@@ -149,6 +149,7 @@ bool Pyroborobo::update(size_t n_step)
         if (gBatchMode)
         {
             gWorld->updateWorld();
+            i++;
             if (gWorld->getIterations() % 10000 == 0)
             {
                 if (gVerbose)

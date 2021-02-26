@@ -1,7 +1,7 @@
 # Demo 2
 
 from pyroborobo import Pyroborobo, Controller, CircleObject, SquareObject
-
+import numpy as np
 
 class SimpleController(Controller):
 
@@ -94,7 +94,10 @@ def main():
                             controller_class=SimpleController,
                             object_class_dict={'gate': GateObject, 'switch': SwitchObject})
     rob.start()
-    rob.update(3000)
+    rob.update(1)
+    # test for screen shots
+    #screen = rob.get_screen()
+    #print(np.array(screen, copy=False))
     Pyroborobo.close()
 
 

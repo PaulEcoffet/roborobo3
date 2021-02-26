@@ -24,6 +24,28 @@ using namespace pybind11::literals;
 PYBIND11_MODULE(pyroborobo, m)
 {
     py::options op;
+    py::class_<SDL_Surface>(m, "RoboroboSurface", py::buffer_protocol())
+            .def_buffer([](SDL_Surface &m) -> py::buffer_info {
+                auto* fmt=m.format;
+
+                /* Check the bitdepth of the surface */
+                if(fmt->BitsPerPixel!=32){
+                    throw std::runtime_error("Invalid RGBA surface for casting to numpy");
+                }
+
+                return py::buffer_info(
+                        m.pixels,                               /* Pointer to buffer */
+                        sizeof(uint8_t),                          /* Size of one scalar */
+                        py::format_descriptor<uint8_t>::format(), /* Python struct-style format descriptor */
+                        3,                                      /* Number of dimensions */
+                        { m.h, m.w, 4 }, /* Buffer dimensions */
+                        { sizeof(uint8_t) * 4 * m.w,
+                          sizeof(uint8_t) * 4,
+                          sizeof(uint8_t) /* Strides (in bytes) for each index */
+                        },
+                        true
+                );
+            });
     //op.disable_function_signatures();
     //m.attr("__name__") = "pyroborobo";
     addPyRoboroboBinding(m);
@@ -38,4 +60,5 @@ PYBIND11_MODULE(pyroborobo, m)
     addAgentObserverBindings(m);
     addLandmarkBindings(m);
     addCustomBindings(m);
+
 }

@@ -145,6 +145,7 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
                 self._gatherProjectInstances();
                 return landmark;
             })
+            .def("get_screen", [] (Pyroborobo& self) { return gScreen;}, py::return_value_policy::reference)
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(
 :class:`list` of :class:`~pyroborobo.Controller`: The ordered list of all the controllers in the simulation
