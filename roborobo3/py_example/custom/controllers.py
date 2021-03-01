@@ -1,8 +1,7 @@
-from pyroborobo import Controller, PyWorldModel, Pyroborobo
+from pyroborobo import Controller, Pyroborobo
 
 
 class SimpleController(Controller):
-    world_model: PyWorldModel  # Predeclare that world_model is a PyWorldModel for better code completion
 
     def __init__(self, world_model):
         # It is *mandatory* to call the super constructor before any other operation to link the python object to its C++ counterpart
@@ -38,22 +37,20 @@ class HungryController(SimpleController):
 
         must_flee: bool = False  # have we encountered a wall and must prioritise avoiding obstacle
 
-        camera_dist = self.world_model.camera_pixel_distance
-        camera_max_range = self.world_model.maxdistcamera
-        camera_ids = self.world_model.camera_objects_ids
-        if camera_dist[1] < camera_max_range:  # if we see something on our right
+        camera_dist = self.get_all_distances()
+        if camera_dist[1] < 1:  # if we see something on our right
             if self.get_object_at(1) != -1:  # And it is food
                 self.set_rotation(-self.rotspeed)  # GO TOWARD IT
             else:
                 self.set_rotation(self.rotspeed)  # flee it
                 must_flee = True
-        elif camera_dist[2] < camera_max_range:  # if we see something in front of us
+        elif camera_dist[2] < 1:  # if we see something in front of us
             if self.get_object_at(2) != -1 and not must_flee:  # If we are not avoiding obstacle and it's food
                 self.set_rotation(0)
             else:
                 self.set_rotation(self.rotspeed)  # turn left
                 must_flee = True
-        elif camera_dist[3] < camera_max_range:  # Otherwise, if we see something on our right
+        elif camera_dist[3] < 1:  # Otherwise, if we see something on our right
             if self.get_object_at(3) != -1 and not must_flee:
                 self.set_rotation(self.rotspeed)  # turn left
             else:
