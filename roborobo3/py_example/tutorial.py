@@ -51,4 +51,4 @@ if __name__ == "__main__":
                             controller_class=TutorialController)
     rob.start()
     rob.update(10000)
-    Pyroborobo.close()
+    rob.close()

@@ -39,4 +39,4 @@ if __name__ == "__main__":
                             controller_class=RepulseController)
     rob.start()
     rob.update(10000)
-    Pyroborobo.close()
+    rob.close()

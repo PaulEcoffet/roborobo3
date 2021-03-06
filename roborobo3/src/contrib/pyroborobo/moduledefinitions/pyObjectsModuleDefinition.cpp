@@ -104,7 +104,7 @@ PhysicalObject: Reference for physical objects
             .def(py::init_alias<int>(), "id"_a = -1,
                  py::return_value_policy::reference,
                  "")
-            .def(py::init_alias<int, const py::dict &>(),
+            .def(py::init_alias<int, const py::dict >(),
                  "id"_a = -1, "data"_a = py::dict(),
                  py::return_value_policy::reference,
                  "")
@@ -221,7 +221,7 @@ PhysicalObject: Reference for physical objects
             .def(py::init_alias<int>(), "id"_a = -1,
                  py::return_value_policy::reference,
                  "")
-            .def(py::init_alias<int, const py::dict &>(),
+            .def(py::init_alias<int, const py::dict >(),
                  "id"_a = -1, "data"_a = py::dict(),
                  py::return_value_policy::reference,
                  "")

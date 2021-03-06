@@ -2,6 +2,7 @@
 
 from pyroborobo import Pyroborobo, Controller
 import numpy as np
+import pyroborobo
 
 
 class TeleportingController(Controller):
@@ -34,12 +35,14 @@ class TeleportingController(Controller):
 
 
 def main():
+    print(pyroborobo.__file__)
+
     pyrob = Pyroborobo.create("config/boids.properties",
                               controller_class=TeleportingController,
                               override_conf_dict={"gInitialNumberOfRobots": "2"})
     pyrob.start()
     pyrob.update(1000)
-    Pyroborobo.close()
+    pyrob.close()
 
 
 if __name__ == "__main__":

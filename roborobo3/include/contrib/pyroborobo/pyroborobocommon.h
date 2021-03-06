@@ -15,6 +15,7 @@
 #include <Agents/Robot.h>
 
 PYBIND11_MAKE_OPAQUE(std::vector<py::object>);
+PYBIND11_MAKE_OPAQUE(std::vector<py::handle>);
 
 
 

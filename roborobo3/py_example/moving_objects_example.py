@@ -64,7 +64,7 @@ def main():
         object_class_dict={"slowmove": SlowMoveObject, "uwall": UWallObject})
     rob.start()
     rob.update(10000)
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

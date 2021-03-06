@@ -154,4 +154,4 @@ if __name__ == "__main__":
                             object_class_dict={'_default': ResourceObject, 'gate': GateObject, 'switch': SwitchObject})
     rob.start()
     rob.update(10000)
-    Pyroborobo.close()
+    rob.close()

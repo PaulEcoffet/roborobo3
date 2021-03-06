@@ -12,7 +12,7 @@ class MyCustomDistAwareController(DistAwareController):
     def step(self):
         self.set_translation(1)
         self.set_rotation(0.01)
-        nbrob = len(self.rob.robots)
+        nbrob = len(self.rob.controllers)
 
         next_id = (self.id + 1) % nbrob
         dist = self.get_distance_to_robot(next_id)
@@ -24,4 +24,4 @@ if __name__ == "__main__":
                             controller_class=MyCustomDistAwareController)
     rob.start()
     rob.update(1000)
-    Pyroborobo.close()
+    rob.close()

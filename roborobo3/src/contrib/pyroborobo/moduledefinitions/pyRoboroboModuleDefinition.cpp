@@ -18,6 +18,7 @@ using namespace pybind11::literals;
 void addPyRoboroboBinding(py::module &m)
 {
     py::bind_vector<std::vector<py::object>>(m, "PyObjectFastVector");
+    py::bind_vector<std::vector<py::handle>>(m, "PyHandleFastVector");
 
     py::class_<Pyroborobo, std::shared_ptr<Pyroborobo>>(m, "Pyroborobo", R"doc(
         Python interface to the roborobo simulator
@@ -172,13 +173,6 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
             .def_property_readonly("world_observer", &Pyroborobo::getWorldObserver, py::return_value_policy::reference,
                                    R"doc(
 :obj:`pyroborobo.WorldObserver`: The World Observer of the roborobo environment
-
-.. warning::
-    :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property
-)doc")
-            .def_property_readonly("robots", &Pyroborobo::getRobots, py::return_value_policy::reference,
-                                   R"doc(
-:class:`list` of :class:`pyroborobo.Robot`: The ordered list of all the robots in the simulation
 
 .. warning::
     :meth:`~pyroborobo.Pyroborobo.start` must have been called before using this property

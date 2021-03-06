@@ -28,4 +28,4 @@ if __name__ == "__main__":
                             controller_class=SimpleController)
     rob.start()
     rob.update(1000)
-    Pyroborobo.close()
+    rob.close()

@@ -126,7 +126,7 @@ def main():
         print(perf_counter() - curtime)
         if should_quit:
             break
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

@@ -34,7 +34,7 @@ def main():
     rob.start()
     print(rob.objects)
     rob.update(10000)
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

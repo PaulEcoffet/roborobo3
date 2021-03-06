@@ -37,7 +37,6 @@ Controller::Controller(std::shared_ptr<RobotWorldModel> __wm) :
     robotControllerDetectors.resize(_wm->_cameraSensorsNb);
     robotInstanceDetectors.resize(_wm->_cameraSensorsNb);
 #ifdef PYROBOROBO
-    pyRobotInstanceDetectors.resize(_wm->_cameraSensorsNb);
     pyRobotControllerDetectors.resize(_wm->_cameraSensorsNb);
     pyObjectInstanceDetectors.resize(_wm->_cameraSensorsNb);
 #endif
@@ -143,7 +142,6 @@ void Controller::refreshInputs(){
                 robotControllerDetectors[i] = robotInstanceDetectors[i]->getController();
 #ifdef PYROBOROBO
                 pyRobotControllerDetectors[i] = rob->getControllers()[targetRobotId];
-                pyRobotInstanceDetectors[i] = rob->getRobots()[targetRobotId];
 #endif
 
                 if ( gSensoryInputs_otherAgentGroup )
@@ -179,7 +177,6 @@ void Controller::refreshInputs(){
                 robotControllerDetectors[i] = nullptr;
 #ifdef PYROBOROBO
                 pyRobotControllerDetectors[i] = py::none();
-                pyRobotInstanceDetectors[i] = py::none();
 #endif
                 if ( gSensoryInputs_otherAgentGroup )
                 {
@@ -568,7 +565,7 @@ std::shared_ptr<Robot> Controller::getRobotInstanceAt(int sensorId)
 }
 
 #ifdef PYROBOROBO
-std::vector<py::object> Controller::getAllPyObjectInstances()
+std::vector<py::handle> & Controller::getAllPyObjectInstances()
 {
     if ( gSensoryInputs_physicalObjectType == false )
     {
@@ -582,7 +579,7 @@ std::vector<py::object> Controller::getAllPyObjectInstances()
     return pyObjectInstanceDetectors;
 }
 
-std::vector<py::object> Controller::getAllPyRobotControllers()
+std::vector<py::handle> & Controller::getAllPyRobotControllers()
 {
     if (gSensoryInputs_isOtherAgent == false)
     {
@@ -596,21 +593,8 @@ std::vector<py::object> Controller::getAllPyRobotControllers()
     return pyRobotControllerDetectors;
 }
 
-std::vector<py::object> Controller::getAllPyRobotInstances()
-{
-    if (gSensoryInputs_isOtherAgent == false)
-    {
-        std::cout << "[ERROR] Unauthorized call to getAllPyRobotInstances\n";
-        exit(-1);
-    }
-    if (checkRefresh() == false)
-    {
-        refreshInputs();
-    }
-    return pyRobotInstanceDetectors;
-}
 
-py::object Controller::getPyRobotControllerAt(int sensorId)
+py::handle Controller::getPyRobotControllerAt(int sensorId)
 {
     if (gSensoryInputs_isOtherAgent == false)
     {
@@ -624,7 +608,7 @@ py::object Controller::getPyRobotControllerAt(int sensorId)
     return pyRobotControllerDetectors[sensorId];
 }
 
-py::object Controller::getPyObjectInstanceAt(int sensorId)
+py::handle Controller::getPyObjectInstanceAt(int sensorId)
 {
     if ( gSensoryInputs_physicalObjectType == false )
     {
@@ -636,20 +620,6 @@ py::object Controller::getPyObjectInstanceAt(int sensorId)
         refreshInputs();
     }
     return pyObjectInstanceDetectors[sensorId];
-}
-
-py::object Controller::getPyRobotInstanceAt(int sensorId)
-{
-    if (gSensoryInputs_isOtherAgent == false)
-    {
-        std::cout << "[ERROR] Unauthorized call to getPyRobotInstanceAt\n";
-        exit(-1);
-    }
-    if (checkRefresh() == false)
-    {
-        refreshInputs();
-    }
-    return pyRobotInstanceDetectors[sensorId];
 }
 
 double Controller::getSensorAngleAt(int sensorId) {

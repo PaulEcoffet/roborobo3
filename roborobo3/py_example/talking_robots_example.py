@@ -120,7 +120,7 @@ def main():
     print("The orange object can only be activated by the robot #9")
     print("have fun")
     should_quit = rob.update(1000)
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

@@ -53,9 +53,8 @@ protected:
     std::vector<std::shared_ptr<Robot>> robotInstanceDetectors;
 
 #ifdef PYROBOROBO
-    std::vector<py::object> pyObjectInstanceDetectors;
-    std::vector<py::object> pyRobotControllerDetectors;
-    std::vector<py::object> pyRobotInstanceDetectors;
+    std::vector<py::handle> pyObjectInstanceDetectors;
+    std::vector<py::handle> pyRobotControllerDetectors;
 #endif
 
 
@@ -217,12 +216,10 @@ public:
     std::vector<std::shared_ptr<Robot>>& getAllRobotInstances();
 
 #ifdef PYROBOROBO
-    std::vector<py::object> getAllPyObjectInstances();
-    std::vector<py::object> getAllPyRobotControllers();
-    std::vector<py::object> getAllPyRobotInstances();
-    py::object getPyRobotControllerAt(int sensorId);
-    py::object getPyObjectInstanceAt(int sensorId);
-    py::object getPyRobotInstanceAt(int sensorId);
+    std::vector<py::handle> & getAllPyObjectInstances();
+    std::vector<py::handle> & getAllPyRobotControllers();
+    py::handle getPyRobotControllerAt(int sensorId);
+    py::handle getPyObjectInstanceAt(int sensorId);
 
 
 #endif

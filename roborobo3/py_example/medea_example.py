@@ -90,7 +90,7 @@ def main():
                             controller_class=MedeaController)
     rob.start()
     rob.update(10000)
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

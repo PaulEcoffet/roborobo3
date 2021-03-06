@@ -26,16 +26,14 @@ class PyConfigurationLoader : public ConfigurationLoader
 public:
     PyConfigurationLoader(ConfigurationLoader *configurationLoader, py::object worldObserverClass,
                           py::object agentControllerClass,
-                          py::object worldModelClass, py::object agentObserverClass,
-                          py::object objectClass)
+                          py::object worldModelClass, py::object agentObserverClass, Pyroborobo& pyrob)
             :
             fallbackconf(configurationLoader),
             worldObserverClass(std::move(worldObserverClass)),
             agentControllerClass(std::move(agentControllerClass)),
             worldModelClass(std::move(worldModelClass)),
             agentObserverClass(std::move(agentObserverClass)),
-            objectClass(std::move(objectClass)),
-            allocated()
+            pyroborobo(pyrob)
     {
     }
 
@@ -46,81 +44,96 @@ public:
 
     std::shared_ptr<WorldObserver> make_WorldObserver(World *w) override
     {
+        py::object pyobj;
+        std::shared_ptr<WorldObserver> cobj;
         if (worldObserverClass.is(py::none()))
         {
-            return fallbackconf->make_WorldObserver(w);
+            cobj = fallbackconf->make_WorldObserver(w);
+            pyobj = py::cast(cobj);
         }
         else if (py::isinstance<py::str>(worldObserverClass) && worldObserverClass.cast<std::string>() == "dummy")
         {
-            return std::make_shared<DummyWorldObserver>(w);
+            cobj = std::make_shared<DummyWorldObserver>(w);
+            pyobj = py::cast(cobj);
         }
         else
         {
-            py::object py_worldobserver = worldObserverClass(w);
-            allocated.push_back(py_worldobserver);
-            auto c_worldobserver = py_worldobserver.cast<std::shared_ptr<WorldObserver>>();
-            return c_worldobserver;
+            pyobj = worldObserverClass(w);
+            cobj = pyobj.cast<std::shared_ptr<WorldObserver>>();
         }
+        pyroborobo.setWorldObserver(pyobj);
+        return cobj;
     }
 
     std::shared_ptr<RobotWorldModel> make_RobotWorldModel() override
     {
-
+        py::object pyobj;
+        std::shared_ptr<RobotWorldModel> cobj;
         if (worldModelClass.is(py::none()))
         {
-            return fallbackconf->make_RobotWorldModel();
+            cobj = fallbackconf->make_RobotWorldModel();
+            pyobj = py::cast(cobj);
         }
         else if (py::isinstance<py::str>(worldModelClass) && worldModelClass.cast<std::string>() == "dummy")
         {
-            return std::make_shared<RobotWorldModel>();
+            cobj = std::make_shared<RobotWorldModel>();
+            pyobj = py::cast(cobj);
         }
         else
         {
-            py::object py_worldmodel = worldModelClass();
-            allocated.push_back(py_worldmodel);
-            auto c_worldmodel = py_worldmodel.cast<std::shared_ptr<PyRobotWorldModel<>>>();
-            return c_worldmodel;
+            pyobj = worldModelClass();
+            cobj = pyobj.cast<std::shared_ptr<RobotWorldModel>>();
         }
+        pyroborobo.appendWorldModel(pyobj);
+        return cobj;
     }
 
     std::shared_ptr<AgentObserver> make_AgentObserver(std::shared_ptr<RobotWorldModel> wm) override
     {
-
+        std::shared_ptr<AgentObserver> cobj;
+        py::object pyobj;
         if (agentObserverClass.is(py::none()))
         {
-            return fallbackconf->make_AgentObserver(wm);
+            cobj = fallbackconf->make_AgentObserver(wm);
+            pyobj = py::cast(cobj);
         }
         else if (py::isinstance<py::str>(agentObserverClass) && agentObserverClass.cast<std::string>() == "dummy")
         {
-            return std::make_shared<DummyAgentObserver>(wm);
+            cobj = std::make_shared<DummyAgentObserver>(wm);
+            pyobj = py::cast(cobj);
         }
         else
         {
-            py::object py_agentobserver = agentObserverClass(wm);
-            allocated.push_back(py_agentobserver);
-            auto c_agentobserver = py_agentobserver.cast<std::shared_ptr<AgentObserver> >();
-            return c_agentobserver;
+            pyobj = agentObserverClass(wm);
+            // allocated.push_back(py_agentobserver);
+            cobj = pyobj.cast<std::shared_ptr<AgentObserver> >();
         }
+        pyroborobo.appendAgentObserver(pyobj);
+        return cobj;
     }
 
     std::shared_ptr<Controller> make_Controller(std::shared_ptr<RobotWorldModel> wm) override
     {
-
+        std::shared_ptr<Controller> cobj;
+        py::object pyobj;
         if (agentControllerClass.is(py::none()))
         {
-            return fallbackconf->make_Controller(wm);
+            cobj = fallbackconf->make_Controller(wm);
+            pyobj = py::cast(cobj);
         }
         else if (py::isinstance<py::str>(agentControllerClass) && agentControllerClass.cast<std::string>() == "dummy")
         {
-            return std::make_shared<DummyController>(wm);
+            cobj = std::make_shared<DummyController>(wm);
+            pyobj = py::cast(cobj);
         }
         else
         {
-            py::object py_controller = agentControllerClass(wm);
-            allocated.push_back(py_controller);
-            auto c_controller = py_controller.cast<std::shared_ptr<Controller>>();
-            return c_controller;
+            pyobj = agentControllerClass(wm);
+            // allocated.push_back(py_controller);
+            cobj = pyobj.cast<std::shared_ptr<Controller>>();
         }
+        pyroborobo.appendController(pyobj);
+        return cobj;
     }
 
     std::shared_ptr<PhysicalObject> make_CustomObject(int id) override
@@ -135,8 +148,7 @@ private:
     py::object agentControllerClass;
     py::object worldModelClass;
     py::object agentObserverClass;
-    py::object objectClass;
-    std::vector<py::object> allocated; // keep references to the allocated object by the conf loader
+    Pyroborobo &pyroborobo;
 };
 
 

@@ -95,4 +95,4 @@ if __name__ == "__main__":
                             object_class_dict={'gate': GateObject, 'switch': SwitchObject})
     rob.start()
     rob.update(3000)
-    Pyroborobo.close()
+    rob.close()

@@ -98,7 +98,7 @@ def main():
     # test for screen shots
     #screen = rob.get_screen()
     #print(np.array(screen, copy=False))
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

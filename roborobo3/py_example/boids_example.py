@@ -60,4 +60,4 @@ if __name__ == "__main__":
                             controller_class=BoidsController)
     rob.start()
     rob.update(100000)
-    Pyroborobo.close()
+    rob.close()

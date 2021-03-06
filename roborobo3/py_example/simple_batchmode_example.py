@@ -60,4 +60,4 @@ if __name__ == "__main__":
         for agobs in rob.agent_observers:
             agobs.receive_writer(writer)
         rob.update(1000)
-    Pyroborobo.close()
+    rob.close()

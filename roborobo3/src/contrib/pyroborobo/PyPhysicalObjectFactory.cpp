@@ -8,12 +8,17 @@
 #include <boost/algorithm/string/predicate.hpp>
 #include <boost/algorithm/string.hpp>
 
-std::map<std::string, py::object> *PyPhysicalObjectFactory::objectConstructionDict = nullptr; /* Might raise an exception that cannot be caught. */
+std::map<std::string, py::handle> *PyPhysicalObjectFactory::objectConstructionDict = nullptr; /* Might raise an exception that cannot be caught. */
 std::vector<py::object> *PyPhysicalObjectFactory::objectList = nullptr;
 
 std::shared_ptr<PhysicalObject> PyPhysicalObjectFactory::makeObject(const std::string &type, int id)
 {
     std::shared_ptr<PhysicalObject> obj;
+
+    if (objectConstructionDict == nullptr)
+    {
+        throw std::runtime_error("objectConstructorDict not initialised. Did you run Pyroborobo.create()?");
+    }
 
     if (objectConstructionDict->find(type) != objectConstructionDict->end())
     {
@@ -30,12 +35,16 @@ std::shared_ptr<PhysicalObject> PyPhysicalObjectFactory::makeObject(const std::s
     return obj;
 }
 
-void PyPhysicalObjectFactory::updateObjectConstructionDict(const py::dict &constructionDict)
+void PyPhysicalObjectFactory::updateObjectConstructionDict(const std::map<std::string, py::handle> &constructionDict)
 {
-    for (auto keyval : constructionDict)
+    if (objectConstructionDict == nullptr)
     {
-        auto key = keyval.first.cast<std::string>();
-        (*objectConstructionDict)[key] = py::reinterpret_borrow<py::object>(keyval.second);
+        throw std::runtime_error("objectConstructorDict not initialised. Did you run Pyroborobo.create()?");
+    }
+    for (const auto& keyval : constructionDict)
+    {
+        auto key = keyval.first;
+        (*objectConstructionDict)[key] = keyval.second;
     }
 }
 
@@ -124,7 +133,7 @@ void PyPhysicalObjectFactory::init()
     }
     if (objectConstructionDict == nullptr)
     {
-        objectConstructionDict = new std::map<std::string, py::object>;
+        objectConstructionDict = new std::map<std::string, py::handle>;
     }
 }
 

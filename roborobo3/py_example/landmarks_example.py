@@ -59,7 +59,7 @@ def main():
         must_quit = rob.update(400)
         if must_quit:
             break
-    Pyroborobo.close()
+    rob.close()
 
 
 if __name__ == "__main__":

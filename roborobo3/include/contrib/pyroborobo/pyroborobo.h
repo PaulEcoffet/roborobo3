@@ -20,13 +20,13 @@ class Pyroborobo
 {
 public:
 
-    static std::shared_ptr<Pyroborobo>createRoborobo(const std::string &properties_file,
-                                      py::object &worldObserverClass,
-                                      py::object &agentControllerClass,
-                                      py::object &worldModelClass,
-                                      py::object &agentObserverClass,
-                                      py::dict &objectClassDict,
-                                      const py::dict &options);
+    static std::shared_ptr<Pyroborobo> createRoborobo(const std::string &properties_file,
+                                      py::object worldObserverClass,
+                                      py::object agentControllerClass,
+                                      py::object worldModelClass,
+                                      py::object agentObserverClass,
+                                      py::dict objectClassDict,
+                                      const py::dict options);
 
     ~Pyroborobo();
 
@@ -53,22 +53,27 @@ public:
         return pywobs;
     }
 
-    const std::vector<py::object>& getRobots() const;
-
     const std::vector<py::object>& getObjects() const;
 
-    static void close();
+    void close();
     void _gatherProjectInstances();
 
     Pyroborobo(const std::string &properties_file,
-               py::object &worldObserverClass,
-               py::object &agentControllerClass,
-               py::object &worldModelClass,
-               py::object &agentObserverClass,
-               py::dict &objectClassDict,
-               const py::dict &options);
+               py::object worldObserverClass,
+               py::object agentControllerClass,
+               py::object worldModelClass,
+               py::object agentObserverClass,
+               py::dict objectClassDict,
+               const py::dict options);
 
 
+    void setWorldObserver(py::object object);
+
+    void appendWorldModel(py::object pywm);
+
+    void appendAgentObserver(py::object pyao);
+
+    void appendController(py::object pyctl);
 
 private:
 
@@ -77,13 +82,12 @@ private:
 
 
 
-    void overrideProperties(const py::dict &dict);
+    void overrideProperties(const py::dict dict);
 
-    void initCustomConfigurationLoader(py::object &worldObserverClass,
-                                       py::object &agentControllerClass,
-                                       py::object &worldModelClass,
-                                       py::object &agentObserverClass,
-                                       py::object &objectClass);
+    void initCustomConfigurationLoader(py::object worldObserverClass,
+                                       py::object agentControllerClass,
+                                       py::object worldModelClass,
+                                       py::object agentObserverClass);
 
     Timer fps;
     World *world = nullptr;
@@ -92,7 +96,6 @@ private:
     std::vector<py::object > controllers;
     std::vector<py::object > worldmodels;
     std::vector<py::object > agentobservers;
-    std::vector<py::object > robots;
     std::vector<py::object > objects;
     std::vector<py::object > landmarks;
     std::shared_ptr<WorldObserver> wobs;
@@ -101,7 +104,7 @@ private:
     py::object agentControllerClass;
     py::object worldModelClass;
     py::object agentObserverClass;
-    py::dict objectClassDict;
+    std::map<std::string, py::handle> objectClassDict;
 };
 
 #endif
