@@ -10,6 +10,7 @@
 #include <contrib/pyroborobo/pyroborobo.h>
 #include <pybind11/numpy.h>
 #include <pyroborobo/PyPhysicalObjectFactory.h>
+#include <Utilities/Graphics.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -146,6 +147,82 @@ Once the simulator is closed, it cannot be reopen in the same python interpreter
                 self._gatherProjectInstances();
                 return landmark;
             })
+            .def("save_screenshot", [] (Pyroborobo& self, std::string comment) {
+                saveCustomScreenshot(comment);
+            }, "comment"_a = "", R"doc(Save a screenshot of the rendered frame in the logfolder.
+Parameters
+----------
+
+comment: str
+    string to append to the file name
+
+)doc")
+            .def("save_footprint_screenshot", [] (Pyroborobo& self, std::string comment) {
+                saveFootprintScreenshot(comment);
+            }, "comment"_a = "", R"doc(Save a screenshot of the actual footprint at the current timestep in the logfolder.
+Parameters
+----------
+
+comment: str
+    string to append to the file name
+
+)doc")
+            .def("save_environment_screenshot", [] (Pyroborobo& self, std::string comment) {
+                saveEnvironmentScreenshot(comment);
+            }, "comment"_a = "", R"doc(Save a screenshot of the actual environment at the current timestep in the logfolder.
+Parameters
+----------
+
+comment: str
+    string to append to the file name
+
+)doc")
+            .def("save_trajectory_image", [] (Pyroborobo& self, std::string comment) {
+                saveTrajectoryImage(comment);
+            }, "comment"_a = "", R"doc(Save a screenshot of the actual trajectory recorded at the current timestep in the logfolder.
+
+.. warning:
+
+    Trajectory recording must be asked by calling pyroborobo.init_trajectory_monitor()
+
+Parameters
+----------
+
+comment: str
+    string to append to the file name
+
+)doc")
+            .def("init_trajectory_monitor", [] (Pyroborobo& self, int agent_id) {
+                if (agent_id >= 0)
+                {
+                    if (agent_id < gNbOfRobots)
+                    {
+                        gRobotIndexFocus = agent_id;
+                        gTrajectoryMonitorMode = 1;
+                    }
+                    else
+                    {
+                        throw std::runtime_error("Invalid agent_id for init_trajectory_monitor");
+                    }
+                }
+                else
+                {
+                    gTrajectoryMonitorMode = 0;
+                }
+                initTrajectoriesMonitor();
+
+            }, "agent_id"_a = -1, R"doc(
+Monitor the trajectory of all agents (no argument or -1) or of agent with id ``agent_id``. Save the trajectory image with
+`save_trajectory_image`.
+
+Parameters
+----------
+
+agent_id : int (default -1)
+    If -1, monitor all agents trajectory, else monitor the trajectory of agent with id `agent_id`.
+
+
+)doc")
             .def("get_screen", [] (Pyroborobo& self) { return gScreen;},py::return_value_policy::reference,
                  R"doc(Return the pyroborobo screen. can be cast into np.array. Still in development.)doc")
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
