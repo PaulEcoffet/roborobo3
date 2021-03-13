@@ -1,6 +1,11 @@
 from pyroborobo import Pyroborobo, Controller, AgentObserver
 import numpy as np
-from scipy.stats import rankdata
+try:
+    from scipy.stats import rankdata
+except ImportError:
+    print("This example need scipy as a dependancy. please install scipy with conda or pip")
+    import sys
+    sys.exit(-1)
 
 from custom.objects import SwitchObject, GateObject
 
