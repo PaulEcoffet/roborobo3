@@ -2,6 +2,7 @@
 
 from pyroborobo import Pyroborobo, Controller, AgentObserver
 from csv import DictWriter
+import gzip
 
 class SimpleController(Controller):
     def __init__(self, world_model):
@@ -55,6 +56,13 @@ if __name__ == "__main__":
         print("WARNING: You should set SDL_VIDEODRIVER=dummy to run me on a cluster")
         print("SDL_VIDEODRIVER=dummy python simple_batchmode_example.py")
     with open("logs/simple_pos_log.txt", "w") as f:
+        writer = DictWriter(f, ["it", "id", "x", "y"])
+        writer.writeheader()
+        for agobs in rob.agent_observers:
+            agobs.receive_writer(writer)
+        rob.update(1000)
+    # and now with a gzip file
+    with gzip.open("logs/simple_pos_log2.txt.gz", "wt") as f:  # write a gzip file in text mode, see doc of gzip
         writer = DictWriter(f, ["it", "id", "x", "y"])
         writer.writeheader()
         for agobs in rob.agent_observers:
