@@ -223,7 +223,7 @@ agent_id : int (default -1)
 
 
 )doc")
-            .def("get_screen", [] (Pyroborobo& self) { return gScreen;},py::return_value_policy::reference,
+            .def("get_screen", [] (Pyroborobo& self) { renderSnapshot(); return gSnapshot;},py::return_value_policy::reference,
                  R"doc(Return the pyroborobo screen. can be cast into np.array. Still in development.)doc")
             .def_property_readonly("controllers", &Pyroborobo::getControllers, py::return_value_policy::reference,
                                    R"doc(

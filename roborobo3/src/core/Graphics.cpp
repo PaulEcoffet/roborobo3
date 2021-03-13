@@ -20,6 +20,8 @@ int gEnvironmentScreenshotIndex = 0;
 int gFootprintScreenshotIndex = 0;
 int gTrajectoryFileIndex = 0; // numbering trajectory images (used by saveTrajectoryImage(...))
 
+void renderSnapshot();
+
 void saveImage(SDL_Surface *image, const std::string &prefix, const std::string &comment) // comment is optional
 {
     std::string sLog = gLogDirectoryname + "/" + prefix + "_" + gStartTime + "_" + getpidAsReadableString();
@@ -51,7 +53,17 @@ void saveCustomScreenshot(const std::string &_comment)
     {
         snapshotIndexStr = "0" + snapshotIndexStr;
     }
+    renderSnapshot();
 
+    // saving
+
+    saveImage(gSnapshot, "screenshot_custom", snapshotIndexStr + "_" + _comment);
+
+    gSnapshotIndex++;
+}
+
+void renderSnapshot()
+{
     // rendering
 
     SDL_FillRect(gSnapshot, &gSnapshot->clip_rect,
@@ -102,12 +114,6 @@ void saveCustomScreenshot(const std::string &_comment)
         }
         gDisplaySensors = backupDisplaySensorsValue;
     }
-
-    // saving
-
-    saveImage(gSnapshot, "screenshot_custom", snapshotIndexStr + "_" + _comment);
-
-    gSnapshotIndex++;
 }
 
 void saveTrajectoryImage(const std::string &_comment)

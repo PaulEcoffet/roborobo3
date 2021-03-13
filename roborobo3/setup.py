@@ -63,8 +63,8 @@ class CMakeBuild(build_ext):
 
 cmdclass = {'build_sphinx': BuildDoc, "build_ext":CMakeBuild}
 name = 'pyroborobo'
-version = '0.7.2'
-release = '0.7.2'
+version = '0.9.2'
+release = '0.9.2'
 
 
 setup(

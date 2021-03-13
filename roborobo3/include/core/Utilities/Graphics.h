@@ -101,5 +101,7 @@ bool castLine(SDL_Surface * image,
              int *y2pt,
              int maxLength = -1 );
 
+void renderSnapshot();
+
 #endif // GRAPHICS_H
 
