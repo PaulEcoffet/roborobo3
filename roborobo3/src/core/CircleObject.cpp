@@ -240,7 +240,7 @@ void CircleObject::registerObject()
             }
         }
     }
-    
+    registered = true;
 }
 
 void CircleObject::unregisterObject()
@@ -280,9 +280,40 @@ void CircleObject::unregisterObject()
             }
         }
     }
+    registered = false;
 }
 
 void CircleObject::step() {
     stepPhysicalObject();
+}
+
+double CircleObject::getRadius() const
+{
+    return _radius;
+}
+
+void CircleObject::setRadius(double radius, bool force)
+{
+    if (isRegistered() && !force)
+    {
+        throw std::runtime_error("You must unregister object before changing their shape to avoid unwanted behaviour. "
+                                 "You can set force to true if you know what you are doing");
+    }
+    _radius = radius;
+}
+
+double CircleObject::getFootprintRadius() const
+{
+    return _footprintRadius;
+}
+
+void CircleObject::setFootprintRadius(double footprintRadius, bool force)
+{
+    if (isRegistered() && !force)
+    {
+        throw std::runtime_error("You must unregister object before changing their shape to avoid unwanted behaviour. "
+                                 "You can set force to true if you know what you are doing");
+    }
+    _footprintRadius = footprintRadius;
 }
 

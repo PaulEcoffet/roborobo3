@@ -85,8 +85,8 @@ void ForagingRegionsEnergyItem::relocate()
         
         double x = xPos * ( gScreenWidth - 2*border ) + border;
         double y = random01() * ( gScreenHeight - 2*border ) + border;
-        
-        setCoordinates(x,y);
+
+        setCoordinates(x, y, false);
         
     } while ( canRegister() == false );
     

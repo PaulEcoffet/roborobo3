@@ -14,7 +14,7 @@ PhysicalObject::PhysicalObject( int __id ) // a unique and consistent __id shoul
 
     this->lastRelocationDate = gWorld->getIterations();
     //std::cout << "[DEBUG]" << lastRelocationDate << "\n";
-    
+    registered = false;
     init();
 }
 
@@ -132,8 +132,8 @@ void PhysicalObject::init()
 	{
         y = -1.0;
 	}
-    
-    setCoordinates( x, y );
+
+    setCoordinates(x, y, false);
 }
 
 int PhysicalObject::findRandomLocation( )
@@ -148,8 +148,8 @@ int PhysicalObject::findRandomLocation( )
         
         //x = (randint() % (gAreaWidth-20)) + 10;  // deprecated
         //y = (randint() % (gAreaHeight-20)) + 10; // deprecated
-        
-        setCoordinates( x, y );
+
+        setCoordinates(x, y, false);
         
         tries++;
     } while ( canRegister() == false && tries < gLocationFinderMaxNbOfTrials );
@@ -165,7 +165,7 @@ int PhysicalObject::findRandomLocation( )
         {
             std::cerr << "[WARNING] Random initialization of initial position for physical object #" << getId() << " after trying " << gLocationFinderMaxNbOfTrials << " random picks (all failed). Retry later.\n";
             regrowTime = 1;
-            setCoordinates( -1, -1 );
+            setCoordinates(-1, -1, false);
         }
     }
     
@@ -276,8 +276,8 @@ bool PhysicalObject::relocate(double x, double y )
 {
     int backup_x = getXCenterPixel();
     int backup_y = getYCenterPixel();
-    
-    setCoordinates( x,y );
+
+    setCoordinates(x, y, false);
     
     if ( canRegister() == true )
     {
@@ -288,7 +288,7 @@ bool PhysicalObject::relocate(double x, double y )
     }
     else
     {
-        setCoordinates(backup_x, backup_y);
+        setCoordinates(backup_x, backup_y, false);
         return false;
     }
 }
@@ -310,4 +310,9 @@ int PhysicalObject::getTimestepSinceRelocation()
 void PhysicalObject::setId(int id)
 {
     _id = id;
+}
+
+bool PhysicalObject::isRegistered()
+{
+    return registered;
 }

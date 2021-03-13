@@ -82,8 +82,13 @@ public :
         return (Sint16) _yReal;
     }
 
-    void setCoordinates(double x, double y)
+    void setCoordinates(double x, double y, bool force = false)
     {
+        if (isRegistered() && !force)
+        {
+            throw std::runtime_error("You must unregister object before changing their shape to avoid unwanted behaviour. "
+                                     "You can set force to true if you know what you are doing");
+        }
         _xReal = x;
         _yReal = y;
     }
@@ -104,6 +109,8 @@ public :
     {
         stepPhysicalObject();
     }
+
+    virtual bool isRegistered() final;
 
     virtual void
     stepPhysicalObject() final; // default step method. Suggested: call this method from step(). Do not override.

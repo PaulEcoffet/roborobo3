@@ -18,6 +18,10 @@ class SlowMoveObject(CircleObject):
         if self.cur_it < 0:
             x, y = self.position
             new_x, new_y = x+20, y
+            try:
+                self.radius = 100
+            except RuntimeError:
+                print("[ERROR FOR THE EXAMPLE] Cannot work, object not unregistered first")
             self.unregister()
             success = self.relocate(new_x, new_y)
             if not success:

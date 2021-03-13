@@ -17,7 +17,15 @@ class CircleObject : public PhysicalObject
 protected:
 
     double _radius; // radius. In pixels.
-    double _footprintRadius; // radius of footprint, accessible to ground sensors. In pixels.
+    double _footprintRadius;
+public:
+    double getFootprintRadius() const;
+
+    void setFootprintRadius(double footprintRadius, bool force = false);
+    double getRadius() const;
+
+    void setRadius(double radius, bool force = false);
+    // radius of footprint, accessible to ground sensors. In pixels.
 
 public :
 

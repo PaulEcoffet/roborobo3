@@ -21,6 +21,22 @@ protected:
     int _solid_h;
     int _soft_w;
     int _soft_h;
+public:
+    int getSolidW() const;
+
+    void setSolidW(int solidW);
+
+    int getSolidH() const;
+
+    void setSolidH(int solidH, bool force=false);
+
+    int getSoftW() const;
+
+    void setSoftW(int softW, bool force=false);
+
+    int getSoftH() const;
+
+    void setSoftH(int softH, bool force=false);
 
 public :
 

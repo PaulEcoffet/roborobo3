@@ -28,7 +28,6 @@ void GateObject::isWalked( int __idAgent )
     hide();
     _visible = false;
 
-    registered = false;
     regrowTime = regrowTimeMax;
 }
 

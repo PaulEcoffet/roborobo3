@@ -67,7 +67,7 @@ bool: can object register at its actual position
             .def("is_pushed", &PhysicalObject::isPushed, "Triggered when the object is pushed")
             .def("set_color", &PhysicalObject::setDisplayColor, "red"_a, "blue"_a, "green"_a,
                  "Set the color (r,g,b) of the object. r [0, 255], g [0, 255], b [0,255]")
-            .def("set_coordinates", &PhysicalObject::setCoordinates, "x"_a, "y"_a,
+            .def("set_coordinates", &PhysicalObject::setCoordinates, "x"_a, "y"_a, "force"_a = false,
                  "set the coordinates without checking.")
             .def_property_readonly("position", [] (PhysicalObject& self) -> std::tuple<double, double>
                                    {
@@ -78,7 +78,8 @@ bool: can object register at its actual position
             .def_property_readonly("id",
                                    &PhysicalObject::getId, "int: the unique ID of the object.")
             .def("get_id", &PhysicalObject::getId, R"doc(int: the unique ID of the object. (alias of property `id`).)doc")
-
+            .def_property_readonly("registered", &PhysicalObject::isRegistered, "Is the object registered")
+            .def("is_registered", &PhysicalObject::isRegistered, "Is the object registered")
             ;
 
     py::class_<SquareObject, SquareObjectTrampoline<>, PhysicalObject, std::shared_ptr
@@ -184,17 +185,30 @@ blue: int
 green: int
     The green component of the color in [0, 255]
 )doc")
-            .def("set_coordinates", &SquareObject::setCoordinates, "x"_a, "y"_a,
-                 "force the object to be at the (x,y) coordinates without checking")
+            .def("set_coordinates", &SquareObject::setCoordinates, "x"_a, "y"_a, "force"_a = false,
+                 "force the object to be at the (x,y) coordinates without checking if the place is empty. Do a check"
+                 "on registration. set force to True to avoid the check on registration.")
             .def_property_readonly("id", &SquareObject::getId, "int: the id of the object")
-            .def_readwrite("solid_height", &SquareObjectPublicist::_solid_h,
+            .def_property("solid_height", &SquareObject::getSolidH, [] (SquareObject& self, int value) {self.setSolidH(value);},
                            "int: the height of the solid part of the object in pixel")
-            .def_readwrite("solid_width", &SquareObjectPublicist::_solid_w,
-                           "int: the width of the solid part of the object in pixel")
-            .def_readwrite("soft_height", &SquareObjectPublicist::_soft_h,
-                           "int: the height of the soft part of the object (can be walked on) in pixel")
-            .def_readwrite("soft_width", &SquareObjectPublicist::_soft_w,
-                           "int: the width of the soft part of the object (can be walked on) in pixel");
+            .def("set_solid_height", &SquareObject::setSolidH, "height"_a, "force"_a = false,
+                 R"doc(Set the solid height of the square object, if force is true, then no check is performed
+on registration.)doc")
+            .def_property("solid_width", &SquareObject::getSolidW,  [] (SquareObject& self, int value) {self.setSolidW(value);},
+                          "int: the width of the solid part of the object in pixel")
+            .def("set_solid_width", &SquareObject::setSolidH, "width"_a, "force"_a = false,
+                 R"doc(Set the solid width of the square object, if force is true, then no check is performed
+on registration.)doc")
+            .def_property("soft_height", &SquareObject::getSoftH, [] (SquareObject& self, int value) {self.setSoftH(value);},
+                          "int: the height of the soft part of the object (can be walked on) in pixel")
+            .def("set_soft_height", &SquareObject::setSoftH, "height"_a, "force"_a = false,
+                 R"doc(Set the soft height (can be walked on) of the square object, if force is true, then no check is performed
+on registration.)doc")
+            .def_property("soft_width", &SquareObject::getSoftW, [] (SquareObject& self, int value) {self.setSoftW(value);},
+                          "int: the width of the soft part of the object (can be walked on) in pixel")
+            .def("set_soft_width", &SquareObject::setSoftW, "width"_a, "force"_a = false,
+                 R"doc(Set the soft width (can be walked on) of the square object, if force is true, then no check is performed
+on registration.)doc");
 
     py::class_<CircleObject, CircleObjectTrampoline<>, PhysicalObject, std::shared_ptr
             <CircleObject >> (m, "CircleObject",
@@ -307,9 +321,10 @@ blue: int
 green: int
     The green component of the color in [0, 255]
 )")
-            .def("set_coordinates", &CircleObject::setCoordinates, "x"_a, "y"_a,
+            .def("set_coordinates", &CircleObject::setCoordinates, "x"_a, "y"_a, "force"_a = false,
                  R"(
-Place the object at the (x,y) coordinate without checking
+Place the object at the (x,y) coordinate without checking if the place is empty. Prevent moving the object if it's still
+registered unless forcee is True
 
 Parameters
 ----------
@@ -317,10 +332,16 @@ x: int
     The x coordinate
 y: int
     The y coordinate
+force: bool
+    Force to change the object even if it's still registered.
 )")
-            .def_readwrite("radius", &CircleObjectPublicist::_radius, "int: The radius of the hard part of the circle")
-            .def_readwrite("footprint_radius", &CircleObjectPublicist::_footprintRadius,
-                           "int: The radius of the footprint of the object");
+            .def_property("radius", &CircleObject::getRadius, [] (CircleObject& self, int value) { self.setRadius(value);}, "int: The radius of the hard part of the circle")
+            .def("set_radius", &CircleObject::setRadius, "radius"_a, "force"_a = false,
+                 "set the radius of the circle in pixel. if force is true, no check about the object being unregistered is done.")
+
+            .def_property("footprint_radius", &CircleObject::getFootprintRadius, [] (CircleObject& self, int value) { self.setFootprintRadius(value);}, "int: The radius of the footprint of the circle")
+            .def("set_footprint_radius", &CircleObject::setFootprintRadius, "radius"_a, "force"_a = false,
+                 "set the footprint radius of the circle in pixel. if force is true, no check about the object being unregistered is done.");
     py::class_<MovableObject, CircleObject,
                PyCircleObject<MovableObject>, std::shared_ptr<MovableObject>>(m, "MovableObject")
         .def(py::init<int>(), "id"_a = -1, py::return_value_policy::reference);

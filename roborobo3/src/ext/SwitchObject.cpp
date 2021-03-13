@@ -45,7 +45,6 @@ void SwitchObject::isWalked( int __idAgent )
     hide();
     _visible = false;
 
-    registered = false;
     regrowTime = regrowTimeMax;
 }
 

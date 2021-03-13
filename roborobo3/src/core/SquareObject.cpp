@@ -232,6 +232,7 @@ void SquareObject::registerObject()
             putPixel32_secured(gEnvironmentImage, xColor, yColor,  color);
         }
     }
+	registered = true;
 }
 
 void SquareObject::unregisterObject()
@@ -265,4 +266,61 @@ void SquareObject::unregisterObject()
             putPixel32_secured(gEnvironmentImage, xColor, yColor,  color);//color);
         }
     }
+
+	registered = false;
+}
+
+int SquareObject::getSolidW() const
+{
+    return _solid_w;
+}
+
+void SquareObject::setSolidW(int solidW)
+{
+    _solid_w = solidW;
+}
+
+int SquareObject::getSolidH() const
+{
+    return _solid_h;
+}
+
+void SquareObject::setSolidH(int solidH, bool force)
+{
+    if (isRegistered() && !force)
+    {
+        throw std::runtime_error("You must unregister object before changing their shape to avoid unwanted behaviour. "
+                                 "You can set force to true if you know what you are doing");
+    }
+    _solid_h = solidH;
+}
+
+int SquareObject::getSoftW() const
+{
+    return _soft_w;
+}
+
+void SquareObject::setSoftW(int softW, bool force)
+{
+    if (isRegistered() && !force)
+    {
+        throw std::runtime_error("You must unregister object before changing their shape to avoid unwanted behaviour. "
+                                 "You can set force to true if you know what you are doing");
+    }
+    _soft_w = softW;
+}
+
+int SquareObject::getSoftH() const
+{
+    return _soft_h;
+}
+
+void SquareObject::setSoftH(int softH, bool force)
+{
+    if (isRegistered() && !force)
+    {
+        throw std::runtime_error("You must unregister object before changing their shape to avoid unwanted behaviour. "
+                                 "You can set force to true if you know what you are doing");
+    }
+    _soft_h = softH;
 }
